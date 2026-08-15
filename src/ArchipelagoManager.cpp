@@ -9,6 +9,9 @@ ArchipelagoManager* ArchipelagoManager::instance()
 
 void ArchipelagoManager::Initialize(std::string host, uint16_t port, Archipelago::ConnectPacketOptions options)
 {
+    if (_client)
+        return;
+
     _client = std::make_unique<Archipelago::APClient>(std::move(host), port, std::move(options));
     _client->Start();
 }

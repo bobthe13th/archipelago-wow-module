@@ -16,6 +16,7 @@ namespace Archipelago
         Connecting,
         AwaitingRoomInfo,
         Connected,
+        HandshakeComplete,
         Refused
     };
 
