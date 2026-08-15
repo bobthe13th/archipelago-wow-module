@@ -1,0 +1,37 @@
+# azerothcore-wotlk/modules/archipelago_wow/conf/archipelago_wow.conf.dist
+
+[worldserver]
+
+###################################################################################################
+# ARCHIPELAGO WOW MODULE
+#
+#    Archipelago.Enabled
+#        Description: Enable the Archipelago multiworld client.
+#        Default:     0 (disabled)
+
+Archipelago.Enabled = 0
+
+#    Archipelago.ServerAddress
+#        Description: Hostname or IP of the Archipelago server to connect to.
+#        Default:     "localhost"
+
+Archipelago.ServerAddress = "localhost"
+
+#    Archipelago.ServerPort
+#        Description: Port of the Archipelago server.
+#        Default:     38281
+
+Archipelago.ServerPort = 38281
+
+#    Archipelago.SlotName
+#        Description: The player slot name for this realm in the multiworld.
+#        Default:     ""
+
+Archipelago.SlotName = ""
+
+#    Archipelago.Password
+#        Description: Room password, if the Archipelago server requires one.
+#        Default:     ""
+
+Archipelago.Password = ""
+###################################################################################################
