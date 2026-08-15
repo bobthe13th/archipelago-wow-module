@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoCommandScript.cpp
 #include "Chat.h"
 #include "ScriptMgr.h"
+#include "ArchipelagoManager.h"
 
 using namespace Acore::ChatCommands;
 
@@ -24,7 +25,23 @@ public:
 
     static bool HandleApStatusCommand(ChatHandler* handler, const char* /*args*/)
     {
-        handler->PSendSysMessage("Archipelago: module loaded, not yet connected (M1 skeleton).");
+        switch (sArchipelagoMgr->GetConnectionState())
+        {
+            case Archipelago::ConnectionState::Connected:
+                handler->PSendSysMessage("Archipelago: connected.");
+                break;
+            case Archipelago::ConnectionState::Connecting:
+            case Archipelago::ConnectionState::AwaitingRoomInfo:
+                handler->PSendSysMessage("Archipelago: connecting...");
+                break;
+            case Archipelago::ConnectionState::Refused:
+                handler->PSendSysMessage("Archipelago: server refused the connection.");
+                break;
+            case Archipelago::ConnectionState::Disconnected:
+            default:
+                handler->PSendSysMessage("Archipelago: not connected.");
+                break;
+        }
         return true;
     }
 };
