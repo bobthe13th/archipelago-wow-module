@@ -9,7 +9,6 @@ Usage:
     python generate_content.py --host 127.0.0.1 --port 3306 --user acore --password acore --database acore_world
 """
 import argparse
-import textwrap
 
 import pymysql  # pip install pymysql
 
@@ -28,6 +27,7 @@ ITEM_QUERY = """
     WHERE Quality IN (1, 2) AND ItemLevel BETWEEN 1 AND 15
       AND `class` IN (2, 4) -- Weapon, Armor
       AND RequiredLevel <= 10
+      AND (Flags & 16) = 0 -- exclude ITEM_FLAG_DEPRECATED (legacy duplicate rows)
     ORDER BY entry
     LIMIT 19
 """
