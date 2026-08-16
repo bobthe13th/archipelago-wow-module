@@ -9,8 +9,11 @@
 #include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "World.h"
 #include "APProtocol.h"
 #include "ArchipelagoContentTable.h"
+#include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoRealmState.h"
 
 namespace
 {
@@ -72,6 +75,42 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
     {
         if (received.index <= lastIndex)
             continue; // already delivered before a previous restart/reconnect
+
+        // Core-loop progression items (M2.1) are routed to the realm-wide
+        // ArchipelagoRealmState instead of being mailed as WoW items -- they
+        // have no WoW item entry at all. Dedup above still applies to them.
+        if (received.item == Archipelago::CoreLoop::AP_ITEM_PROGRESSIVE_LEVEL_CAP)
+        {
+            uint32_t newCap = sArchipelagoRealmState->GetLevelCap() + Archipelago::CoreLoop::LEVEL_CAP_STEP;
+            sArchipelagoRealmState->RaiseLevelCap(newCap);
+            sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, newCap);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        if (received.item == Archipelago::CoreLoop::AP_ITEM_INSTANCE_UNLOCK_RAGEFIRE_CHASM)
+        {
+            sArchipelagoRealmState->UnlockInstance(Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        if (received.item == Archipelago::CoreLoop::AP_ITEM_INSTANCE_UNLOCK_DEADMINES)
+        {
+            sArchipelagoRealmState->UnlockInstance(Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        if (received.item == Archipelago::CoreLoop::AP_ITEM_DARK_PORTAL_ACCESS)
+        {
+            sArchipelagoRealmState->UnlockDarkPortal();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        if (received.item == Archipelago::CoreLoop::AP_ITEM_NORTHREND_PASSAGE)
+        {
+            sArchipelagoRealmState->UnlockNorthrendPassage();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
 
         auto entryIt = Archipelago::Content::ApItemIdToWowItemEntry.find(received.item);
         if (entryIt == Archipelago::Content::ApItemIdToWowItemEntry.end())
