@@ -2,6 +2,7 @@
 #include "APClient.h"
 
 #include <algorithm>
+#include <deque>
 
 #include <boost/asio/connect.hpp>
 #include <boost/asio/dispatch.hpp>
@@ -9,6 +10,7 @@
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/asio/ssl/context.hpp>
+#include <boost/asio/ssl/error.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/core/tcp_stream.hpp>
 #include <boost/beast/ssl.hpp>
@@ -80,12 +82,9 @@ namespace Archipelago
                 {
                     if (self->_state.load() != ConnectionState::HandshakeComplete)
                         return; // not connected right now; drop (AP resends on next connect anyway)
-                    if (self->_options.useTls)
-                        self->_sslWs.async_write(net::buffer(*payload),
-                            [payload](error_code, std::size_t) {});
-                    else
-                        self->_plainWs.async_write(net::buffer(*payload),
-                            [payload](error_code, std::size_t) {});
+                    self->_outbox.push_back(payload);
+                    if (self->_outbox.size() == 1)
+                        self->WriteNextQueued();
                 });
         }
 
@@ -106,6 +105,11 @@ namespace Archipelago
 
             if (_options.useTls)
             {
+                if (!SSL_set_tlsext_host_name(_sslWs.next_layer().native_handle(), _options.host.c_str()))
+                {
+                    error_code sniEc{ static_cast<int>(::ERR_get_error()), net::error::get_ssl_category() };
+                    return Fail("ssl sni", sniEc);
+                }
                 beast::get_lowest_layer(_sslWs).expires_after(kOperationTimeout);
                 _sslWs.next_layer().async_handshake(ssl::stream_base::client,
                     beast::bind_front_handler(&APClientSession::OnSslHandshake, shared_from_this()));
@@ -137,6 +141,24 @@ namespace Archipelago
         void OnWsHandshake(error_code ec)
         {
             if (ec) { return Fail("ws handshake", ec); }
+
+            // The handshake-time deadline set in DoWsHandshake() is a sticky, absolute
+            // Beast basic_stream deadline: it is never reset by activity, only replaced
+            // by a fresh call. Left alone, it fires ~kOperationTimeout after handshake
+            // regardless of traffic and force-closes an otherwise-healthy persistent
+            // session. Replace it with expires_never() plus Beast's own websocket
+            // keep-alive/idle-timeout option, which is activity-aware.
+            if (_options.useTls)
+            {
+                beast::get_lowest_layer(_sslWs).expires_never();
+                _sslWs.set_option(websocket::stream_base::timeout::suggested(beast::role_type::client));
+            }
+            else
+            {
+                beast::get_lowest_layer(_plainWs).expires_never();
+                _plainWs.set_option(websocket::stream_base::timeout::suggested(beast::role_type::client));
+            }
+
             _state = ConnectionState::AwaitingRoomInfo;
             LOG_INFO("module.archipelago_wow", "Archipelago: websocket upgrade complete, awaiting RoomInfo");
             ReadNext(/*expectRoomInfo=*/true);
@@ -215,11 +237,39 @@ namespace Archipelago
             _state = ConnectionState::Disconnected;
         }
 
+        // Beast tolerates at most one in-flight async_write plus one suspended write on
+        // a websocket::stream; a second concurrent call beyond that hits an internal
+        // precondition. Serialize location-check writes through this outbox instead of
+        // firing async_write directly, so a burst of SendLocationChecks() calls (e.g. a
+        // quest chain completing several locations back to back) can't violate it. Runs
+        // entirely on the session's strand (SendLocationChecks() dispatches onto it), so
+        // no extra locking is needed.
+        void WriteNextQueued()
+        {
+            auto const& payload = _outbox.front();
+            if (_options.useTls)
+                _sslWs.async_write(net::buffer(*payload),
+                    beast::bind_front_handler(&APClientSession::OnLocationChecksWritten, shared_from_this()));
+            else
+                _plainWs.async_write(net::buffer(*payload),
+                    beast::bind_front_handler(&APClientSession::OnLocationChecksWritten, shared_from_this()));
+        }
+
+        void OnLocationChecksWritten(error_code ec, std::size_t)
+        {
+            _outbox.pop_front();
+            if (ec)
+                return Fail("location checks write", ec);
+            if (!_outbox.empty())
+                WriteNextQueued();
+        }
+
         tcp::resolver _resolver;
         websocket::stream<beast::tcp_stream> _plainWs;
         ssl::context _sslCtx;
         websocket::stream<beast::ssl_stream<beast::tcp_stream>> _sslWs;
         beast::flat_buffer _readBuffer;
+        std::deque<std::shared_ptr<std::string>> _outbox;
         bool _expectRoomInfo = true;
         bool _stopping = false;
 
