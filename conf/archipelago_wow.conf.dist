@@ -46,4 +46,16 @@ Archipelago.DeliveryCharacter = ""
 #        Default:     0 (disabled)
 
 Archipelago.UseTLS = 0
+
+#    Archipelago.ReconnectMinSeconds
+#        Description: Initial delay before retrying a dropped connection.
+#        Default:     2
+
+Archipelago.ReconnectMinSeconds = 2
+
+#    Archipelago.ReconnectMaxSeconds
+#        Description: Maximum backoff delay between reconnect attempts.
+#        Default:     60
+
+Archipelago.ReconnectMaxSeconds = 60
 ###################################################################################################

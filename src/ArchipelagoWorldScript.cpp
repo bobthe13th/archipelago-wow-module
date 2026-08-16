@@ -27,6 +27,8 @@ public:
         _password = sConfigMgr->GetOption<std::string>("Archipelago.Password", "");
         _useTls = sConfigMgr->GetOption<bool>("Archipelago.UseTLS", false);
         _deliveryCharacter = sConfigMgr->GetOption<std::string>("Archipelago.DeliveryCharacter", "");
+        _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
+        _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -41,6 +43,8 @@ public:
         options.host = _serverAddress;
         options.port = _serverPort;
         options.useTls = _useTls;
+        options.reconnectMinSeconds = _reconnectMinSeconds;
+        options.reconnectMaxSeconds = _reconnectMaxSeconds;
         options.connectOptions.game = "World of Warcraft WotLK";
         options.connectOptions.slotName = _slotName;
         options.connectOptions.password = _password;
@@ -87,6 +91,8 @@ private:
     std::string _password;
     bool _useTls = false;
     std::string _deliveryCharacter;
+    int32_t _reconnectMinSeconds = 2;
+    int32_t _reconnectMaxSeconds = 60;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.

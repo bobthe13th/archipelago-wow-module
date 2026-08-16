@@ -27,15 +27,16 @@ public:
     {
         switch (sArchipelagoMgr->GetConnectionState())
         {
-            case Archipelago::ConnectionState::Connected:
-                handler->PSendSysMessage("Archipelago: connected.");
-                break;
             case Archipelago::ConnectionState::HandshakeComplete:
-                handler->PSendSysMessage("Archipelago: connected (persistent session active).");
+                handler->PSendSysMessage("Archipelago: connected.");
                 break;
             case Archipelago::ConnectionState::Connecting:
             case Archipelago::ConnectionState::AwaitingRoomInfo:
+            case Archipelago::ConnectionState::Connected:
                 handler->PSendSysMessage("Archipelago: connecting...");
+                break;
+            case Archipelago::ConnectionState::Reconnecting:
+                handler->PSendSysMessage("Archipelago: connection lost, reconnecting...");
                 break;
             case Archipelago::ConnectionState::Refused:
                 handler->PSendSysMessage("Archipelago: server refused the connection.");
