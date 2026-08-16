@@ -12,7 +12,16 @@ void ArchipelagoManager::Initialize(std::string host, uint16_t port, Archipelago
     if (_client)
         return;
 
-    _client = std::make_unique<Archipelago::APClient>(std::move(host), port, std::move(options));
+    Archipelago::ClientOptions clientOptions;
+    clientOptions.host = std::move(host);
+    clientOptions.port = port;
+    clientOptions.connectOptions = std::move(options);
+
+    // M2 Task 2 scope is APClient itself; wiring received items through to
+    // players/world state is Task 4's job. Until then this is a no-op so the
+    // module keeps building and connecting.
+    _client = std::make_unique<Archipelago::APClient>(std::move(clientOptions),
+        [](std::vector<Archipelago::ReceivedItem> const&) {});
     _client->Start();
 }
 

@@ -31,7 +31,7 @@ public:
                 handler->PSendSysMessage("Archipelago: connected.");
                 break;
             case Archipelago::ConnectionState::HandshakeComplete:
-                handler->PSendSysMessage("Archipelago: handshake succeeded (session closed - M1 skeleton, no persistent connection yet).");
+                handler->PSendSysMessage("Archipelago: connected (persistent session active).");
                 break;
             case Archipelago::ConnectionState::Connecting:
             case Archipelago::ConnectionState::AwaitingRoomInfo:
