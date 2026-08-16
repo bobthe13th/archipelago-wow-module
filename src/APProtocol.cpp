@@ -32,6 +32,15 @@ namespace Archipelago
         return packet.dump();
     }
 
+    std::string BuildStatusUpdatePacket(int32_t status)
+    {
+        json packet = json::array({ json{
+            { "cmd", "StatusUpdate" },
+            { "status", status }
+        } });
+        return packet.dump();
+    }
+
     namespace
     {
         ServerMessageType TypeFromElement(json const& element)

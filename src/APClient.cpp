@@ -107,6 +107,33 @@ namespace Archipelago
                 });
         }
 
+        void SendGoalComplete()
+        {
+            // Reuses the exact same _outbox/WriteNextQueued/OnLocationChecksWritten
+            // machinery as SendLocationChecks above -- both are just outgoing text
+            // frames that must be serialized through the same single in-flight-write
+            // budget (see WriteNextQueued's comment on Beast's one-write precondition).
+            // A second, separate queue here would defeat that serialization.
+            auto payload = std::make_shared<std::string>(BuildStatusUpdatePacket(30 /* ClientStatus.CLIENT_GOAL */));
+            net::dispatch(_options.useTls ? _sslWs.get_executor() : _plainWs.get_executor(),
+                [self = shared_from_this(), payload]
+                {
+                    if (self->_state.load() != ConnectionState::HandshakeComplete)
+                    {
+                        // Not connected right now: same known, deliberately deferred gap
+                        // as SendLocationChecks above -- this goal-complete send is
+                        // dropped and NOT retried/resent on the next connect. See
+                        // docs/m2-manual-verification-checklist.md item 6 in the outer
+                        // repo, and the M2.1 checklist's note for this specific case.
+                        LOG_ERROR("module.archipelago_wow", "Archipelago: dropped goal-complete status update while not connected (not resent, permanently lost)");
+                        return;
+                    }
+                    self->_outbox.push_back(payload);
+                    if (self->_outbox.size() == 1)
+                        self->WriteNextQueued();
+                });
+        }
+
     private:
         void OnResolve(error_code ec, tcp::resolver::results_type results)
         {
@@ -448,6 +475,13 @@ namespace Archipelago
         std::lock_guard<std::mutex> lock(_sessionMutex);
         if (_session)
             _session->SendLocationChecks(locationIds);
+    }
+
+    void APClient::SendGoalComplete()
+    {
+        std::lock_guard<std::mutex> lock(_sessionMutex);
+        if (_session)
+            _session->SendGoalComplete();
     }
 
     void APClient::RunIoContext()

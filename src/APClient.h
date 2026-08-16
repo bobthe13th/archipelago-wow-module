@@ -49,6 +49,7 @@ namespace Archipelago
         void Start();
         void Stop();
         void SendLocationChecks(std::vector<int64_t> const& locationIds);
+        void SendGoalComplete();
 
         ConnectionState GetState() const { return _state.load(); }
 

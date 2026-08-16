@@ -128,6 +128,13 @@ TEST_CASE("ParseReceivedItems collects items from multiple ReceivedItems command
     CHECK(items[1].index == 10);
 }
 
+TEST_CASE("BuildStatusUpdatePacket produces the real AP goal-complete wire format")
+{
+    std::string json = Archipelago::BuildStatusUpdatePacket(30);
+    CHECK(json.find("\"cmd\":\"StatusUpdate\"") != std::string::npos);
+    CHECK(json.find("\"status\":30") != std::string::npos);
+}
+
 TEST_CASE("BuildConnectPacket still round-trips through the JSON library (M1 regression)")
 {
     Archipelago::ConnectPacketOptions options;

@@ -17,6 +17,7 @@ public:
     void Shutdown();
 
     void SendLocationChecks(std::vector<int64_t> const& locationIds);
+    void SendGoalComplete();
     Archipelago::ConnectionState GetConnectionState() const;
 
 private:

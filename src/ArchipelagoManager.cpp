@@ -29,6 +29,12 @@ void ArchipelagoManager::SendLocationChecks(std::vector<int64_t> const& location
         _client->SendLocationChecks(locationIds);
 }
 
+void ArchipelagoManager::SendGoalComplete()
+{
+    if (_client)
+        _client->SendGoalComplete();
+}
+
 Archipelago::ConnectionState ArchipelagoManager::GetConnectionState() const
 {
     return _client ? _client->GetState() : Archipelago::ConnectionState::Disconnected;

@@ -42,6 +42,13 @@ namespace Archipelago
     std::string BuildConnectPacket(ConnectPacketOptions const& options);
     std::string BuildLocationChecksPacket(std::vector<int64_t> const& locationIds);
 
+    // Builds a StatusUpdate command. M2.1 uses this exclusively to report
+    // ClientStatus.CLIENT_GOAL (30) when the Sprint mode's goal level is
+    // reached; see Archipelago/NetUtils.py's ClientStatus enum and
+    // Archipelago/CommonClient.py's status-update send path for the wire
+    // format this mirrors.
+    std::string BuildStatusUpdatePacket(int32_t status);
+
     // A single websocket text frame from the Archipelago server may batch
     // multiple protocol commands into one JSON array (e.g.
     // [{"cmd":"PrintJSON"...},{"cmd":"ReceivedItems"...}]). Returns the
