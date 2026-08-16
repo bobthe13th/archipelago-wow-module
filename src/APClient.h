@@ -71,9 +71,9 @@ namespace Archipelago
         std::atomic<bool> _reachedHandshake{ false };
         boost::asio::io_context _ioc;
         // _session is reassigned on the io thread (inside RunIoContext's reconnect-timer
-        // handler) but read from the world thread (Stop(), SendLocationChecks()); guard
-        // every access with _sessionMutex so those two threads never race on the
-        // shared_ptr itself.
+        // handler) but read from the world thread (Stop(), SendLocationChecks(),
+        // SendGoalComplete()); guard every access with _sessionMutex so those two
+        // threads never race on the shared_ptr itself.
         std::mutex _sessionMutex;
         std::shared_ptr<APClientSession> _session;
         std::thread _ioThread;
