@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace Archipelago
 {
@@ -11,7 +12,9 @@ namespace Archipelago
         Unknown,
         RoomInfo,
         Connected,
-        ConnectionRefused
+        ConnectionRefused,
+        ReceivedItems,
+        PrintJSON
     };
 
     struct ConnectPacketOptions
@@ -23,12 +26,22 @@ namespace Archipelago
         uint32_t itemsHandling = 0b111;
     };
 
-    // Hand-rolled JSON string builder for the one outbound message M1 needs.
-    // A real JSON library replaces this once M2 needs to parse structured
-    // ReceivedItems/LocationInfo payloads.
-    std::string BuildConnectPacket(ConnectPacketOptions const& options);
+    struct ReceivedItem
+    {
+        int64_t item = 0;
+        int64_t location = 0;
+        int64_t player = 0;
+        int32_t flags = 0;
+        int64_t index = 0; // absolute position in the server's item stream
+    };
 
-    // Scans a raw server text frame for the outer "cmd" field. Only distinguishes
-    // the three messages the M1 handshake needs to see; anything else is Unknown.
+    // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
+    // websocket protocol's JSON message arrays. M2: replaces M1's hand-rolled
+    // string builder/scanner now that item/location traffic needs structured
+    // parsing, not just outer "cmd" detection.
+    std::string BuildConnectPacket(ConnectPacketOptions const& options);
+    std::string BuildLocationChecksPacket(std::vector<int64_t> const& locationIds);
+
     ServerMessageType ParseServerMessageType(std::string const& raw);
+    std::vector<ReceivedItem> ParseReceivedItems(std::string const& raw);
 }
