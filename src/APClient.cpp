@@ -249,9 +249,38 @@ namespace Archipelago
         {
             if (_stopping)
                 return; // expected: Stop() closed the socket out from under a pending read
+            if (_failed)
+                return; // already tearing this session down; avoid double-logging and
+                         // redundant state churn when the socket close below aborts a
+                         // second op (e.g. a pending read) that was concurrently in flight
+            _failed = true;
             LOG_ERROR("module.archipelago_wow", "Archipelago: {} failed: {}", what, ec.message());
             _state = ConnectionState::Disconnected;
             DisarmIdleTimer();
+
+            // Close the lowest-layer socket so every other outstanding async op on this
+            // session is aborted too, not just whichever one happened to fail here.
+            // This matters most for the write path: Beast's write-error handling never
+            // aborts or errors out a concurrently pending async_read. On a half-open
+            // connection (peer vanished without a clean TCP close -- e.g. cable pulled,
+            // NAT/firewall silently dropped the mapping), reads never error because
+            // nothing ever arrives to error on, but a SendLocationChecks() write can
+            // still eventually fail once TCP's own retransmits are exhausted. Before
+            // this close() call, that write failure would disarm the idle timer above
+            // and then leave *nothing* watching the connection: the pending read (which
+            // holds a shared_from_this() and so keeps this session alive) runs forever,
+            // io_context::run() in APClient::RunIoContext never returns, the reconnect
+            // loop never re-fires, and the client is stuck at Disconnected with a leaked
+            // session and an open socket. Closing the socket here aborts that pending
+            // read immediately (with operation_aborted), which routes it back through
+            // this same Fail() (see the _failed guard above) and lets _ioc.run() return
+            // right away -- making the timer-disarm above redundant on this path rather
+            // than load-bearing, and closing the actual gap.
+            error_code closeEc;
+            if (_options.useTls)
+                beast::get_lowest_layer(_sslWs).socket().close(closeEc);
+            else
+                beast::get_lowest_layer(_plainWs).socket().close(closeEc);
         }
 
         // OnWsHandshake's idle_timeout/keep_alive_pings option arms Beast's internal
@@ -325,6 +354,7 @@ namespace Archipelago
         std::deque<std::shared_ptr<std::string>> _outbox;
         bool _expectRoomInfo = true;
         bool _stopping = false;
+        bool _failed = false;
 
         ClientOptions _options;
         std::atomic<ConnectionState>& _state;
