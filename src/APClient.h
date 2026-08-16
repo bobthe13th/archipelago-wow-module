@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/steady_timer.hpp>
 
 #include "APProtocol.h"
 
@@ -57,8 +58,20 @@ namespace Archipelago
         std::function<void(std::vector<ReceivedItem> const&)> _onItemsReceived;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
+        // Set by APClientSession the moment a session reaches HandshakeComplete, and
+        // consumed (read-and-cleared) by RunIoContext to decide whether to reset the
+        // backoff counter. This can't be inferred from _state alone: by the time a
+        // dropped session's Fail() path runs and RunIoContext's io_context::run() call
+        // returns, _state has already been overwritten away from HandshakeComplete (to
+        // Disconnected/Refused) by that same Fail() call, in the same call chain -- so a
+        // plain "was _state HandshakeComplete when run() returned" check can never
+        // observe it.
+        std::atomic<bool> _reachedHandshake{ false };
         boost::asio::io_context _ioc;
         std::shared_ptr<APClientSession> _session;
         std::thread _ioThread;
+        std::atomic<bool> _stoppingAll{ false };
+        std::unique_ptr<boost::asio::steady_timer> _reconnectTimer;
+        int32_t _currentBackoffSeconds = 0;
     };
 }

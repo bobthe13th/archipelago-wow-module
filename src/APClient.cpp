@@ -45,7 +45,7 @@ namespace Archipelago
     {
     public:
         APClientSession(net::io_context& ioc, ClientOptions const& options,
-            std::atomic<ConnectionState>& state,
+            std::atomic<ConnectionState>& state, std::atomic<bool>& reachedHandshake,
             std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
@@ -53,6 +53,7 @@ namespace Archipelago
             , _sslWs(net::make_strand(ioc), _sslCtx)
             , _options(options)
             , _state(state)
+            , _reachedHandshake(reachedHandshake)
             , _onItemsReceived(onItemsReceived)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
@@ -223,6 +224,7 @@ namespace Archipelago
                 if (_state.load() != ConnectionState::HandshakeComplete)
                 {
                     _state = ConnectionState::HandshakeComplete;
+                    _reachedHandshake = true; // consumed by APClient::RunIoContext to reset backoff
                     LOG_INFO("module.archipelago_wow", "Archipelago: handshake complete, connected to multiworld server");
                 }
             }
@@ -289,6 +291,7 @@ namespace Archipelago
 
         ClientOptions _options;
         std::atomic<ConnectionState>& _state;
+        std::atomic<bool>& _reachedHandshake;
         std::function<void(std::vector<ReceivedItem> const&)> const& _onItemsReceived;
     };
 
@@ -307,15 +310,18 @@ namespace Archipelago
         if (_ioThread.joinable())
             return;
 
-        _session = std::make_shared<APClientSession>(_ioc, _options, _state, _onItemsReceived);
+        _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
         _session->Run();
         _ioThread = std::thread(&APClient::RunIoContext, this);
     }
 
     void APClient::Stop()
     {
+        _stoppingAll = true;
         if (_session)
             _session->Stop();
+        if (_reconnectTimer)
+            _reconnectTimer->cancel();
         _ioc.stop();
         if (_ioThread.joinable())
             _ioThread.join();
@@ -329,10 +335,60 @@ namespace Archipelago
 
     void APClient::RunIoContext()
     {
-        // A single io_context::run() call returns once all work (the resolve/
-        // connect/handshake/read chain, plus any pending writes) completes or
-        // ioc.stop() is called from Stop(). Reconnect-with-backoff (Task 4)
-        // extends this loop to re-arm a new Session instead of returning.
-        _ioc.run();
+        while (!_stoppingAll)
+        {
+            _ioc.restart();
+            _ioc.run();
+
+            if (_stoppingAll)
+                break;
+
+            ConnectionState state = _state.load();
+
+            // Reset backoff after any period of being genuinely connected, so a
+            // later drop starts from reconnectMinSeconds again rather than
+            // staying maxed out. This can't be decided from `state` here: by the
+            // time a dropped session's Fail() call returns and _ioc.run() above
+            // unblocks, _state has already been overwritten away from
+            // HandshakeComplete (to Disconnected, in the same Fail() call) --
+            // verified live during manual testing, where checking `state ==
+            // HandshakeComplete` here never once fired and backoff climbed
+            // 2s/4s/8s/16s/32s across repeated reconnects instead of resetting.
+            // _reachedHandshake is set by OnRead the instant HandshakeComplete is
+            // reached and is consumed (read-and-cleared) here instead.
+            if (_reachedHandshake.exchange(false))
+                _currentBackoffSeconds = 0;
+
+            if (state == ConnectionState::Refused)
+                break; // server explicitly refused; do not hammer it with retries
+
+            // Any other exit (Disconnected after a failed step, or a dropped
+            // read) is treated as reconnect-worthy.
+            _state = ConnectionState::Reconnecting;
+            _currentBackoffSeconds = _currentBackoffSeconds == 0
+                ? _options.reconnectMinSeconds
+                : std::min(_currentBackoffSeconds * 2, _options.reconnectMaxSeconds);
+
+            LOG_INFO("module.archipelago_wow", "Archipelago: reconnecting in {}s", _currentBackoffSeconds);
+
+            // Arm the backoff with async_wait rather than a blocking wait(). steady_timer::cancel()
+            // (called from Stop(), which may run on a different thread than this one) only forces
+            // completion of a pending *asynchronous* wait; against a synchronous wait() it is a
+            // documented no-op (boost/asio/detail/deadline_timer_service.hpp's wait() is a plain
+            // blocking sleep loop with no cancellation hook). A blocking wait() here would mean
+            // Stop() during backoff blocks its caller for up to reconnectMaxSeconds joining this
+            // thread. async_wait keeps the wait genuinely cancellable, and the handler (run inside
+            // this same loop's _ioc.run() call on the next iteration) drives the next connection
+            // attempt to completion without this thread ever blocking outside of io_context::run().
+            _reconnectTimer = std::make_unique<net::steady_timer>(_ioc, std::chrono::seconds(_currentBackoffSeconds));
+            _reconnectTimer->async_wait(
+                [this](error_code ec)
+                {
+                    if (ec || _stoppingAll)
+                        return; // cancelled by Stop(), or already shutting down
+                    _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
+                    _session->Run();
+                });
+        }
     }
 }
