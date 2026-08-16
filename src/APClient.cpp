@@ -31,6 +31,11 @@ namespace Archipelago
     namespace
     {
         constexpr std::chrono::seconds kOperationTimeout{ 10 };
+        // Post-handshake idle timeout: closes the session if no frame (including
+        // pings) is received within this window, and sets the cadence for our own
+        // keep-alive pings. See OnWsHandshake() for why this must be an explicit
+        // option rather than websocket::stream_base::timeout::suggested(client).
+        constexpr std::chrono::seconds kIdleTimeout{ 60 };
     }
 
     // Owns exactly one live connection attempt (plain or TLS). A new Session
@@ -146,17 +151,26 @@ namespace Archipelago
             // Beast basic_stream deadline: it is never reset by activity, only replaced
             // by a fresh call. Left alone, it fires ~kOperationTimeout after handshake
             // regardless of traffic and force-closes an otherwise-healthy persistent
-            // session. Replace it with expires_never() plus Beast's own websocket
-            // keep-alive/idle-timeout option, which is activity-aware.
+            // session. Replace it with expires_never() plus an explicit websocket
+            // idle-timeout option: this closes the connection if no frame, including
+            // pings, is received for kIdleTimeout, and keeps the connection alive by
+            // sending our own pings on that same cadence. (Beast's
+            // timeout::suggested(client) must NOT be used here: in Boost 1.81 it sets
+            // idle_timeout = none() and keep_alive_pings = false, which combined with
+            // expires_never() leaves a silently-dead peer with zero timeouts forever.)
+            websocket::stream_base::timeout opt;
+            opt.handshake_timeout = kOperationTimeout;
+            opt.idle_timeout = kIdleTimeout;
+            opt.keep_alive_pings = true;
             if (_options.useTls)
             {
                 beast::get_lowest_layer(_sslWs).expires_never();
-                _sslWs.set_option(websocket::stream_base::timeout::suggested(beast::role_type::client));
+                _sslWs.set_option(opt);
             }
             else
             {
                 beast::get_lowest_layer(_plainWs).expires_never();
-                _plainWs.set_option(websocket::stream_base::timeout::suggested(beast::role_type::client));
+                _plainWs.set_option(opt);
             }
 
             _state = ConnectionState::AwaitingRoomInfo;
