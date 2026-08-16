@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "World.h"
+#include "WorldSessionMgr.h"
 #include "APProtocol.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
@@ -84,6 +85,18 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             uint32_t newCap = sArchipelagoRealmState->GetLevelCap() + Archipelago::CoreLoop::LEVEL_CAP_STEP;
             sArchipelagoRealmState->RaiseLevelCap(newCap);
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, newCap);
+            // The actual XP-suppression gate re-reads CONFIG_MAX_PLAYER_LEVEL
+            // live on every Player::GiveXP call, so the setIntConfig above is
+            // already effective. PLAYER_FIELD_MAX_LEVEL is a separate cached
+            // update-field only recomputed by Player::InitStatsForLevel (on
+            // login/level-up/stat-reset); it drives Player::IsMaxLevel() and
+            // the LFG handler's XP-reward check, so refresh it on everyone
+            // already online now instead of leaving it stale until their next
+            // level-up or relog.
+            sWorldSessionMgr->DoForAllOnlinePlayers([newCap](Player* onlinePlayer)
+            {
+                onlinePlayer->SetUInt32Value(PLAYER_FIELD_MAX_LEVEL, newCap);
+            });
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

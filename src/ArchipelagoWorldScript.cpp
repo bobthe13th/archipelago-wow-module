@@ -6,7 +6,9 @@
 #include "Config.h"
 #include "Log.h"
 #include "ScriptMgr.h"
+#include "World.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 // Defined in ArchipelagoPlayerScript.cpp. Touches Player/CharacterCache/
 // CharacterDatabase, so it must only ever be invoked from the world thread.
@@ -37,6 +39,14 @@ public:
 
     void OnStartup() override
     {
+        // Realm state (including the persisted level cap) must load and apply
+        // regardless of whether the AP connection itself is enabled, so a
+        // restart doesn't silently reset the cap to DEFAULT_MAX_LEVEL even
+        // when an operator is running with Archipelago.Enabled=false for
+        // local testing. Keep this above the _enabled early-return below.
+        sArchipelagoRealmState->Load();
+        sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
+
         if (!_enabled)
             return;
 
