@@ -200,9 +200,20 @@ namespace Archipelago
 
             std::string message = beast::buffers_to_string(_readBuffer.data());
 
+            // A single frame can batch multiple commands as a JSON array
+            // (e.g. [{"cmd":"PrintJSON"...},{"cmd":"ReceivedItems"...}]), so
+            // every element must be inspected -- looking only at element 0
+            // would silently miss a command (most critically ReceivedItems,
+            // whose loss here is permanent player progression loss with no
+            // re-request mechanism in this milestone) riding along after
+            // something else in the same frame.
+            std::vector<ServerMessageType> types = ParseServerMessageTypes(message);
+
             if (_expectRoomInfo)
             {
-                if (ParseServerMessageType(message) != ServerMessageType::RoomInfo)
+                bool sawRoomInfo = std::any_of(types.begin(), types.end(),
+                    [](ServerMessageType type) { return type == ServerMessageType::RoomInfo; });
+                if (!sawRoomInfo)
                 {
                     LOG_ERROR("module.archipelago_wow", "Archipelago: expected RoomInfo, got something else");
                     _state = ConnectionState::Disconnected;
@@ -218,29 +229,43 @@ namespace Archipelago
                 return;
             }
 
-            ServerMessageType type = ParseServerMessageType(message);
-            if (type == ServerMessageType::Connected)
+            bool refused = false;
+            for (ServerMessageType type : types)
             {
-                if (_state.load() != ConnectionState::HandshakeComplete)
+                if (type == ServerMessageType::Connected)
                 {
-                    _state = ConnectionState::HandshakeComplete;
-                    _reachedHandshake = true; // consumed by APClient::RunIoContext to reset backoff
-                    LOG_INFO("module.archipelago_wow", "Archipelago: handshake complete, connected to multiworld server");
+                    if (_state.load() != ConnectionState::HandshakeComplete)
+                    {
+                        _state = ConnectionState::HandshakeComplete;
+                        _reachedHandshake = true; // consumed by APClient::RunIoContext to reset backoff
+                        LOG_INFO("module.archipelago_wow", "Archipelago: handshake complete, connected to multiworld server");
+                    }
                 }
+                else if (type == ServerMessageType::ConnectionRefused)
+                {
+                    refused = true;
+                    LOG_ERROR("module.archipelago_wow", "Archipelago: server refused the connection");
+                    break; // Refused is terminal; no need to scan the rest of this frame
+                }
+                // ReceivedItems is handled once below (via ParseReceivedItems, which
+                // itself scans every element) rather than per-element here, since a
+                // frame could in principle batch more than one ReceivedItems command.
+                // PrintJSON / Unknown: no action needed in M2 beyond staying connected.
             }
-            else if (type == ServerMessageType::ConnectionRefused)
+
+            if (refused)
             {
                 _state = ConnectionState::Refused;
-                LOG_ERROR("module.archipelago_wow", "Archipelago: server refused the connection");
                 return; // do not keep reading; Refused is terminal for this session
             }
-            else if (type == ServerMessageType::ReceivedItems)
+
+            if (std::any_of(types.begin(), types.end(),
+                    [](ServerMessageType type) { return type == ServerMessageType::ReceivedItems; }))
             {
                 auto items = ParseReceivedItems(message);
                 if (!items.empty() && _onItemsReceived)
                     _onItemsReceived(items);
             }
-            // PrintJSON / Unknown: no action needed in M2 beyond staying connected.
 
             ReadNext(false);
         }

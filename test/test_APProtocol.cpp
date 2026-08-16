@@ -99,6 +99,35 @@ TEST_CASE("ParseReceivedItems extracts item entries with running index")
     CHECK(items[1].index == 3);
 }
 
+TEST_CASE("ParseServerMessageTypes returns every command in a batched frame, in order")
+{
+    std::string raw = R"([{"cmd":"PrintJSON","data":[]},{"cmd":"ReceivedItems","index":0,"items":[{"item":111,"location":222,"player":1,"flags":0}]}])";
+    auto types = ParseServerMessageTypes(raw);
+    REQUIRE(types.size() == 2);
+    CHECK(types[0] == ServerMessageType::PrintJSON);
+    CHECK(types[1] == ServerMessageType::ReceivedItems);
+}
+
+TEST_CASE("ParseReceivedItems finds ReceivedItems even when it isn't the first element in a batched frame")
+{
+    std::string raw = R"([{"cmd":"PrintJSON","data":[]},{"cmd":"ReceivedItems","index":5,"items":[{"item":111,"location":222,"player":1,"flags":0}]}])";
+    auto items = ParseReceivedItems(raw);
+    REQUIRE(items.size() == 1);
+    CHECK(items[0].item == 111);
+    CHECK(items[0].index == 5);
+}
+
+TEST_CASE("ParseReceivedItems collects items from multiple ReceivedItems commands batched in one frame")
+{
+    std::string raw = R"([{"cmd":"ReceivedItems","index":0,"items":[{"item":111,"location":222,"player":1,"flags":0}]},{"cmd":"PrintJSON","data":[]},{"cmd":"ReceivedItems","index":10,"items":[{"item":222,"location":333,"player":1,"flags":0}]}])";
+    auto items = ParseReceivedItems(raw);
+    REQUIRE(items.size() == 2);
+    CHECK(items[0].item == 111);
+    CHECK(items[0].index == 0);
+    CHECK(items[1].item == 222);
+    CHECK(items[1].index == 10);
+}
+
 TEST_CASE("BuildConnectPacket still round-trips through the JSON library (M1 regression)")
 {
     Archipelago::ConnectPacketOptions options;

@@ -35,6 +35,12 @@ Archipelago.SlotName = ""
 
 Archipelago.Password = ""
 
+#    Archipelago.DeliveryCharacter
+#        Description: Character name that receives AP-granted items via mail.
+#        Default:     ""
+
+Archipelago.DeliveryCharacter = ""
+
 #    Archipelago.UseTLS
 #        Description: Connect over wss:// (TLS) instead of plain ws://.
 #        Default:     0 (disabled)
