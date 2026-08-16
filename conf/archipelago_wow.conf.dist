@@ -34,4 +34,10 @@ Archipelago.SlotName = ""
 #        Default:     ""
 
 Archipelago.Password = ""
+
+#    Archipelago.UseTLS
+#        Description: Connect over wss:// (TLS) instead of plain ws://.
+#        Default:     0 (disabled)
+
+Archipelago.UseTLS = 0
 ###################################################################################################

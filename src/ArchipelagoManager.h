@@ -1,9 +1,9 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoManager.h
 #pragma once
 
-#include <cstdint>
+#include <functional>
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "APClient.h"
 
@@ -12,9 +12,11 @@ class ArchipelagoManager
 public:
     static ArchipelagoManager* instance();
 
-    void Initialize(std::string host, uint16_t port, Archipelago::ConnectPacketOptions options);
+    void Initialize(Archipelago::ClientOptions options,
+        std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived);
     void Shutdown();
 
+    void SendLocationChecks(std::vector<int64_t> const& locationIds);
     Archipelago::ConnectionState GetConnectionState() const;
 
 private:
