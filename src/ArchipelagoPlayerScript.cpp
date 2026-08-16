@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "Log.h"
 #include "Mail.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "APProtocol.h"
@@ -11,16 +12,27 @@
 
 namespace
 {
-    int64_t LoadLastItemIndex()
+    // Cached in memory so the dedup check never depends on a synchronous
+    // Query racing an async Execute/transaction-commit from a very recent
+    // prior drain (see fix-round 2 in task-7-report.md). Loaded once at
+    // startup, bumped in memory immediately after each successful drain;
+    // the DB row exists only so this survives a process restart.
+    int64_t g_lastItemIndex = -2; // -2 == "not yet loaded from DB"
+
+    int64_t LoadLastItemIndexFromDB()
     {
         if (QueryResult result = CharacterDatabase.Query("SELECT last_item_index FROM archipelago_state WHERE id = 1"))
             return (*result)[0].Get<int64_t>();
         return -1;
     }
 
-    void SaveLastItemIndex(int64_t index)
+    // NOTE: must only ever be called from the world thread; see the note on
+    // DeliverArchipelagoItems below.
+    int64_t GetLastItemIndex()
     {
-        CharacterDatabase.Execute("UPDATE archipelago_state SET last_item_index = {} WHERE id = 1", index);
+        if (g_lastItemIndex == -2)
+            g_lastItemIndex = LoadLastItemIndexFromDB();
+        return g_lastItemIndex;
     }
 }
 
@@ -43,9 +55,16 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         return;
     }
 
-    int64_t lastIndex = LoadLastItemIndex();
+    int64_t lastIndex = GetLastItemIndex();
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
     int64_t highestSeen = lastIndex;
+
+    ObjectGuid::LowType lowGuid = receiverGuid.GetCounter();
+    // Resolve the live player, if any, so a delivery character who is online
+    // right now gets the normal "new mail" notification / in-memory mail
+    // list update instead of only seeing the mail after a relog. See
+    // cs_send.cpp's MailReceiver(target->GetConnectedPlayer(), ...) precedent.
+    Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
 
     for (Archipelago::ReceivedItem const& received : items)
     {
@@ -66,15 +85,23 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
             draft.AddItem(item);
             MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
-            draft.SendMailTo(trans, MailReceiver(receiverGuid.GetCounter()), sender);
+            draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
         }
 
         highestSeen = std::max(highestSeen, received.index);
     }
 
-    CharacterDatabase.CommitTransaction(trans);
     if (highestSeen > lastIndex)
-        SaveLastItemIndex(highestSeen);
+        trans->Append("UPDATE archipelago_state SET last_item_index = {} WHERE id = 1", highestSeen);
+
+    CharacterDatabase.CommitTransaction(trans);
+
+    // Only after the transaction (mail rows + index bump) has been handed to
+    // the async worker does the in-memory value advance, so a concurrent
+    // drain on the world thread can't observe it early. Since drains only
+    // ever happen on the world thread, there is no reader/writer race here.
+    if (highestSeen > lastIndex)
+        g_lastItemIndex = highestSeen;
 }
 
 class ArchipelagoPlayerScript : public PlayerScript
