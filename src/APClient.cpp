@@ -83,11 +83,24 @@ namespace Archipelago
         void SendLocationChecks(std::vector<int64_t> const& locationIds)
         {
             auto payload = std::make_shared<std::string>(BuildLocationChecksPacket(locationIds));
+            std::size_t count = locationIds.size();
             net::dispatch(_options.useTls ? _sslWs.get_executor() : _plainWs.get_executor(),
-                [self = shared_from_this(), payload]
+                [self = shared_from_this(), payload, count]
                 {
                     if (self->_state.load() != ConnectionState::HandshakeComplete)
-                        return; // not connected right now; drop (AP resends on next connect anyway)
+                    {
+                        // Not connected right now: this location check is dropped and is
+                        // NOT retried or resent on the next connect. The Archipelago
+                        // protocol has no server-side memory of checks the client never
+                        // actually sent, so a quest completed during a reconnect window
+                        // (or while the AP server is down) permanently never releases its
+                        // item to whoever picked up that location. This is a known,
+                        // deliberately deferred gap -- see docs/m2-manual-verification-
+                        // checklist.md in the outer repo. Log it so the loss is at least
+                        // visible instead of silent.
+                        LOG_ERROR("module.archipelago_wow", "Archipelago: dropped {} location check(s) while not connected (not resent, permanently lost)", count);
+                        return;
+                    }
                     self->_outbox.push_back(payload);
                     if (self->_outbox.size() == 1)
                         self->WriteNextQueued();

@@ -1,4 +1,5 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoWorldScript.cpp
+#include <algorithm>
 #include <mutex>
 #include <vector>
 
@@ -43,8 +44,11 @@ public:
         options.host = _serverAddress;
         options.port = _serverPort;
         options.useTls = _useTls;
-        options.reconnectMinSeconds = _reconnectMinSeconds;
-        options.reconnectMaxSeconds = _reconnectMaxSeconds;
+        // Clamp operator-supplied values: a min <= 0 would pin APClient's backoff
+        // timer at (or below) zero, spinning connect->fail->reconnect with no
+        // delay and hammering both this process and the AP server.
+        options.reconnectMinSeconds = std::max(1, _reconnectMinSeconds);
+        options.reconnectMaxSeconds = std::max(options.reconnectMinSeconds, _reconnectMaxSeconds);
         options.connectOptions.game = "World of Warcraft WotLK";
         options.connectOptions.slotName = _slotName;
         options.connectOptions.password = _password;

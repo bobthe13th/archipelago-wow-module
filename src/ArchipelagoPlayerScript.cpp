@@ -1,4 +1,6 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoPlayerScript.cpp
+#include <algorithm>
+
 #include "CharacterCache.h"
 #include "DatabaseEnv.h"
 #include "Item.h"
@@ -14,9 +16,9 @@ namespace
 {
     // Cached in memory so the dedup check never depends on a synchronous
     // Query racing an async Execute/transaction-commit from a very recent
-    // prior drain (see fix-round 2 in task-7-report.md). Loaded once at
-    // startup, bumped in memory immediately after each successful drain;
-    // the DB row exists only so this survives a process restart.
+    // prior drain. Loaded once at startup, bumped in memory immediately
+    // after each successful drain; the DB row exists only so this survives
+    // a process restart.
     int64_t g_lastItemIndex = -2; // -2 == "not yet loaded from DB"
 
     int64_t LoadLastItemIndexFromDB()
@@ -86,6 +88,10 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             draft.AddItem(item);
             MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
             draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+        }
+        else
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for AP item id {} (WoW item entry {}), item is lost", received.item, entryIt->second);
         }
 
         highestSeen = std::max(highestSeen, received.index);
