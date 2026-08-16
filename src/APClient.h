@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -68,6 +69,11 @@ namespace Archipelago
         // observe it.
         std::atomic<bool> _reachedHandshake{ false };
         boost::asio::io_context _ioc;
+        // _session is reassigned on the io thread (inside RunIoContext's reconnect-timer
+        // handler) but read from the world thread (Stop(), SendLocationChecks()); guard
+        // every access with _sessionMutex so those two threads never race on the
+        // shared_ptr itself.
+        std::mutex _sessionMutex;
         std::shared_ptr<APClientSession> _session;
         std::thread _ioThread;
         std::atomic<bool> _stoppingAll{ false };

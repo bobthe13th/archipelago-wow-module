@@ -251,6 +251,43 @@ namespace Archipelago
                 return; // expected: Stop() closed the socket out from under a pending read
             LOG_ERROR("module.archipelago_wow", "Archipelago: {} failed: {}", what, ec.message());
             _state = ConnectionState::Disconnected;
+            DisarmIdleTimer();
+        }
+
+        // OnWsHandshake's idle_timeout/keep_alive_pings option arms Beast's internal
+        // websocket idle timer, which re-arms itself at idle_timeout/2 on every
+        // successful read. On a read *error*, Beast's read op only calls
+        // check_stop_now() -- it never calls update_timer() -- so the timer is left
+        // armed and outstanding. Since this session (and its stream) stays alive after
+        // Fail(), that outstanding timer is still pending io_context work, and
+        // APClient::RunIoContext's blocking _ioc.run() call cannot return until it
+        // fires (up to kIdleTimeout after its last re-arm) -- stalling the whole
+        // reconnect loop for up to ~30s after a drop instead of starting immediately.
+        //
+        // set_option() only calls the timer's cancel() synchronously when BOTH
+        // handshake_timeout and idle_timeout are none() (see
+        // stream_impl.hpp's set_option(): `if (opt.handshake_timeout == none() &&
+        // opt.idle_timeout == none()) { timer.cancel(); ... }`) -- leaving
+        // handshake_timeout at any non-none value, as an earlier version of this
+        // function did, skips that branch entirely and only updates timeout_opt_
+        // for future re-arms, which never happens on a dying session. The
+        // already-scheduled async_wait then keeps counting down to whatever
+        // absolute time it was last armed for, and that pending op is exactly
+        // what keeps _ioc.run() blocked -- reproduced live with a drop at 33s of
+        // uptime (past the idle_timeout/2=30s keep-alive re-arm), where the
+        // stall landed at *exactly* the pre-existing timer deadline (t=60s)
+        // instead of resolving immediately. Both fields must be none() to
+        // actually hit the cancel() branch and unblock RunIoContext right away.
+        void DisarmIdleTimer()
+        {
+            websocket::stream_base::timeout off;
+            off.handshake_timeout = websocket::stream_base::none();
+            off.idle_timeout = websocket::stream_base::none();
+            off.keep_alive_pings = false;
+            if (_options.useTls)
+                _sslWs.set_option(off);
+            else
+                _plainWs.set_option(off);
         }
 
         // Beast tolerates at most one in-flight async_write plus one suspended write on
@@ -310,18 +347,29 @@ namespace Archipelago
         if (_ioThread.joinable())
             return;
 
-        _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
-        _session->Run();
+        std::shared_ptr<APClientSession> session;
+        {
+            std::lock_guard<std::mutex> lock(_sessionMutex);
+            _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
+            session = _session;
+        }
+        session->Run();
         _ioThread = std::thread(&APClient::RunIoContext, this);
     }
 
     void APClient::Stop()
     {
         _stoppingAll = true;
-        if (_session)
-            _session->Stop();
-        if (_reconnectTimer)
-            _reconnectTimer->cancel();
+        {
+            // _reconnectTimer is deliberately not touched here: it's reassigned on the
+            // io thread and only ever read+cancelled here with a bare null-check, which
+            // is a use-after-free race, and it isn't load-bearing anyway -- _ioc.stop()
+            // below already makes a pending async_wait (and everything else) fall out
+            // of _ioc.run() immediately.
+            std::lock_guard<std::mutex> lock(_sessionMutex);
+            if (_session)
+                _session->Stop();
+        }
         _ioc.stop();
         if (_ioThread.joinable())
             _ioThread.join();
@@ -329,6 +377,7 @@ namespace Archipelago
 
     void APClient::SendLocationChecks(std::vector<int64_t> const& locationIds)
     {
+        std::lock_guard<std::mutex> lock(_sessionMutex);
         if (_session)
             _session->SendLocationChecks(locationIds);
     }
@@ -386,8 +435,17 @@ namespace Archipelago
                 {
                     if (ec || _stoppingAll)
                         return; // cancelled by Stop(), or already shutting down
-                    _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
-                    _session->Run();
+                    std::shared_ptr<APClientSession> session;
+                    {
+                        // Guards against Stop() (world thread) reading/dereferencing
+                        // _session concurrently with this reassignment; see the
+                        // _sessionMutex comment on the member in APClient.h.
+                        std::lock_guard<std::mutex> lock(_sessionMutex);
+                        _session = std::make_shared<APClientSession>(
+                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived);
+                        session = _session;
+                    }
+                    session->Run();
                 });
         }
     }
