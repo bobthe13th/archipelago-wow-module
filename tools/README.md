@@ -3,7 +3,7 @@
 `generate_content.py` compiles a YAML content-table family (`content/*.yaml`)
 into both halves of this project's content tables: the C++ module's header
 (`src/Archipelago*ContentTable.h`) and the Python apworld's data module
-(`Archipelago/worlds/wow/*content_data.py`). See
+(`Archipelago/worlds/wow/*content_data.py`). See the project root's
 `docs/wow-archipelago-design-spec.md` §4 for the design rationale (drift
 between the two languages becomes structurally impossible, not something to
 remember to check).
