@@ -1,0 +1,73 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/core_loop.yaml
+family: core_loop
+
+constants:
+  STARTING_LEVEL_CAP: 10
+  LEVEL_CAP_STEP: 5
+  SPRINT_GOAL_LEVEL: 60
+
+locations:
+  - name: Reach Level 5
+    location_id: 710000
+    trigger: {kind: level_milestone, level: 5}
+  - name: Reach Level 10
+    location_id: 710001
+    trigger: {kind: level_milestone, level: 10}
+  - name: Reach Level 15
+    location_id: 710002
+    trigger: {kind: level_milestone, level: 15}
+  - name: Reach Level 20
+    location_id: 710003
+    trigger: {kind: level_milestone, level: 20}
+  - name: Reach Level 25
+    location_id: 710004
+    trigger: {kind: level_milestone, level: 25}
+  - name: Reach Level 30
+    location_id: 710005
+    trigger: {kind: level_milestone, level: 30}
+  - name: Reach Level 35
+    location_id: 710006
+    trigger: {kind: level_milestone, level: 35}
+  - name: Reach Level 40
+    location_id: 710007
+    trigger: {kind: level_milestone, level: 40}
+  - name: Reach Level 45
+    location_id: 710008
+    trigger: {kind: level_milestone, level: 45}
+  - name: Reach Level 50
+    location_id: 710009
+    trigger: {kind: level_milestone, level: 50}
+  - name: Reach Level 55
+    location_id: 710010
+    trigger: {kind: level_milestone, level: 55}
+  - name: Reach Level 60
+    location_id: 710011
+    trigger: {kind: level_milestone, level: 60}
+  - name: Clear Ragefire Chasm
+    location_id: 720000
+    trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520}
+  - name: Clear Deadmines
+    location_id: 720001
+    trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639}
+
+items:
+  - name: Progressive Level Cap
+    item_id: 810000
+    count: 10
+    delivery: {kind: realm_state, effect: raise_level_cap, step: 5}
+  - name: "Instance Unlock: Ragefire Chasm"
+    item_id: 810001
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: ragefire_chasm}
+  - name: "Instance Unlock: Deadmines"
+    item_id: 810002
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: deadmines}
+  - name: Dark Portal Access
+    item_id: 810003
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_dark_portal}
+  - name: Northrend Passage
+    item_id: 810004
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_northrend_passage}
