@@ -68,6 +68,19 @@ class TestLoadFamily(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 load_family(path)
 
+    def test_unrecognized_trigger_kind_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710000
+                    trigger: {kind: level_milestonee, level: 5}
+                items: []
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
     def test_valid_quests_family_loads_and_emits_python(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = self._write(tmp, """

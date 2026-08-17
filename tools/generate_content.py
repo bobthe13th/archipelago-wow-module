@@ -33,6 +33,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_unique_ids(data["items"], "item_id", yaml_path, "item")
     _validate_unique_names(data["locations"], data["items"], yaml_path)
     _validate_instance_unlock_references(data["locations"], data["items"], yaml_path)
+    _validate_recognized_kinds(data["family"], data["locations"], data["items"], yaml_path)
 
     return data
 
@@ -72,6 +73,57 @@ def _validate_instance_unlock_references(locations: list, items: list, yaml_path
                     f"{instance_key!r} but no location row has a matching "
                     f"instance_clear trigger"
                 )
+
+
+_TRIGGER_KINDS_BY_FAMILY = {
+    "quests": {"quest"},
+    "core_loop": {"level_milestone", "instance_clear"},
+}
+
+_DELIVERY_KINDS_BY_FAMILY = {
+    "quests": {"mail"},
+    "core_loop": {"realm_state"},
+}
+
+_REALM_STATE_EFFECTS = {
+    "raise_level_cap",
+    "unlock_instance",
+    "unlock_dark_portal",
+    "unlock_northrend_passage",
+}
+
+
+def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_path: pathlib.Path) -> None:
+    valid_trigger_kinds = _TRIGGER_KINDS_BY_FAMILY.get(family)
+    if valid_trigger_kinds is not None:
+        for loc in locations:
+            kind = loc["trigger"]["kind"]
+            if kind not in valid_trigger_kinds:
+                raise ValidationError(
+                    f"{yaml_path}: location {loc['name']!r} has unrecognized "
+                    f"trigger.kind {kind!r} for family {family!r} "
+                    f"(expected one of {sorted(valid_trigger_kinds)})"
+                )
+
+    valid_delivery_kinds = _DELIVERY_KINDS_BY_FAMILY.get(family)
+    if valid_delivery_kinds is not None:
+        for item in items:
+            delivery = item["delivery"]
+            kind = delivery["kind"]
+            if kind not in valid_delivery_kinds:
+                raise ValidationError(
+                    f"{yaml_path}: item {item['name']!r} has unrecognized "
+                    f"delivery.kind {kind!r} for family {family!r} "
+                    f"(expected one of {sorted(valid_delivery_kinds)})"
+                )
+            if kind == "realm_state":
+                effect = delivery["effect"]
+                if effect not in _REALM_STATE_EFFECTS:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has unrecognized "
+                        f"delivery.effect {effect!r} "
+                        f"(expected one of {sorted(_REALM_STATE_EFFECTS)})"
+                    )
 
 
 _GENERATED_HEADER_PY = (
@@ -231,8 +283,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     data = load_family(args.yaml_path)
-    args.py_out.write_text(emit_python(data), encoding="utf-8")
-    args.cpp_out.write_text(emit_cpp(data), encoding="utf-8")
+    args.py_out.write_text(emit_python(data), encoding="utf-8", newline="\n")
+    args.cpp_out.write_text(emit_cpp(data), encoding="utf-8", newline="\n")
     print(f"wrote {args.py_out}")
     print(f"wrote {args.cpp_out}")
     return 0

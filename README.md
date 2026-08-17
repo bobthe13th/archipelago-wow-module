@@ -68,7 +68,8 @@ module and the Python apworld's data modules by
 `tools/generate_content.py` -- see `tools/README.md` for the regeneration
 workflow. Never hand-edit `src/Archipelago*ContentTable.h` or
 `Archipelago/worlds/wow/*content_data.py`; edit the YAML and regenerate.
-`tools/test_content_freshness.py` enforces this in CI.
+`tools/test_content_freshness.py` catches drift between them -- run it before
+committing.
 
 ## Build
 

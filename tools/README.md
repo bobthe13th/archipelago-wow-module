@@ -15,11 +15,11 @@ directly, then run:
 
 ```bash
 python tools/generate_content.py content/quests.yaml \
-  --py-out ../../Archipelago/worlds/wow/content_data.py \
+  --py-out ../../../Archipelago/worlds/wow/content_data.py \
   --cpp-out src/ArchipelagoContentTable.h
 
 python tools/generate_content.py content/core_loop.yaml \
-  --py-out ../../Archipelago/worlds/wow/core_loop_content_data.py \
+  --py-out ../../../Archipelago/worlds/wow/core_loop_content_data.py \
   --cpp-out src/ArchipelagoCoreLoopContentTable.h
 ```
 
