@@ -60,18 +60,15 @@ already-delivered item. If `Item::CreateItem` fails for a resolved item, the
 failure is logged (AP item id and WoW item entry) so there's a diagnostic
 trail, but note that item is still marked processed -- it is not retried.
 
-## Content generation
+## Content tables
 
-The curated quest/item mapping lives in the generated header
-`src/ArchipelagoContentTable.h`. It is produced by
-`tools/generate_content.py`, a standalone script (not part of the build)
-that queries a live `acore_world` database for the curated quest IDs and a
-pool of starter-appropriate items, and writes the header out. Run it
-manually whenever the curated quest/item set changes:
-
-```
-python tools/generate_content.py --host 127.0.0.1 --port 3306 --user acore --password acore --database acore_world
-```
+Locations and items are defined in YAML under `content/` (`quests.yaml`,
+`core_loop.yaml`) and compiled into both the C++ header maps used by this
+module and the Python apworld's data modules by
+`tools/generate_content.py` -- see `tools/README.md` for the regeneration
+workflow. Never hand-edit `src/Archipelago*ContentTable.h` or
+`Archipelago/worlds/wow/*content_data.py`; edit the YAML and regenerate.
+`tools/test_content_freshness.py` enforces this in CI.
 
 ## Build
 
