@@ -60,7 +60,8 @@ public:
         float const z = player->GetPositionZ();
         float const o = player->GetOrientation();
 
-        ChatHandler(player->GetSession()).PSendSysMessage("Passage to Northrend is sealed. Find the Archipelago Northrend Passage item first.");
+        ChatHandler(player->GetSession()).PSendSysMessage(
+            "Passage to Northrend is sealed. Find the Archipelago Northrend Passage item first.");
 
         // Defer to the player's next update tick (0ms offset -- guaranteed to
         // run on a later call to EventProcessor::Update(), never inside the
