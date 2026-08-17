@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from generate_content import load_family, emit_python, ValidationError
+from generate_content import load_family, emit_python, emit_cpp, ValidationError
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -88,6 +88,57 @@ class TestLoadFamily(unittest.TestCase):
             self.assertIn('"A Threat Within": 700000', text)
             self.assertIn('"Worn Shortsword": 800000', text)
             self.assertIn("GENERATED FILE", text)
+
+
+class TestEmitCpp(unittest.TestCase):
+    def test_quests_family_emits_cpp_maps(self) -> None:
+        data = {
+            "family": "quests",
+            "constants": {},
+            "locations": [
+                {"name": "A Threat Within", "location_id": 700000,
+                 "trigger": {"kind": "quest", "quest_id": 783}},
+            ],
+            "items": [
+                {"name": "Worn Shortsword", "item_id": 800000, "count": 1,
+                 "delivery": {"kind": "mail", "wow_item_entry": 25}},
+            ],
+        }
+        text = emit_cpp(data)
+        self.assertIn("QuestIdToLocationId", text)
+        self.assertIn("{ 783, 700000 }, // A Threat Within", text)
+        self.assertIn("LocationIdToQuestId", text)
+        self.assertIn("{ 700000, 783 }, // A Threat Within", text)
+        self.assertIn("ApItemIdToWowItemEntry", text)
+        self.assertIn('{ 800000, 25 }, // "Worn Shortsword"', text)
+
+    def test_core_loop_family_emits_cpp_constants_and_maps(self) -> None:
+        data = {
+            "family": "core_loop",
+            "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710000,
+                 "trigger": {"kind": "level_milestone", "level": 5}},
+                {"name": "Clear Ragefire Chasm", "location_id": 720000,
+                 "trigger": {"kind": "instance_clear", "instance_key": "ragefire_chasm",
+                             "final_boss_entry": 11520}},
+            ],
+            "items": [
+                {"name": "Progressive Level Cap", "item_id": 810000, "count": 10,
+                 "delivery": {"kind": "realm_state", "effect": "raise_level_cap", "step": 5}},
+                {"name": "Instance Unlock: Ragefire Chasm", "item_id": 810001, "count": 1,
+                 "delivery": {"kind": "realm_state", "effect": "unlock_instance",
+                              "instance_key": "ragefire_chasm"}},
+            ],
+        }
+        text = emit_cpp(data)
+        self.assertIn("AP_ITEM_PROGRESSIVE_LEVEL_CAP = 810000", text)
+        self.assertIn("AP_ITEM_INSTANCE_UNLOCK_RAGEFIRE_CHASM = 810001", text)
+        self.assertIn("STARTING_LEVEL_CAP = 10", text)
+        self.assertIn('INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm"', text)
+        self.assertIn("{ INSTANCE_KEY_RAGEFIRE_CHASM, 11520 }", text)
+        self.assertIn("{ 5, 710000 }", text)
+        self.assertIn('{ INSTANCE_KEY_RAGEFIRE_CHASM, 720000 }', text)
 
 
 if __name__ == "__main__":

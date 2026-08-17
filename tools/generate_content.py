@@ -131,6 +131,98 @@ def _emit_python_core_loop(data: dict) -> str:
     return "\n".join(lines)
 
 
+_GENERATED_HEADER_CPP = (
+    "// GENERATED FILE - do not edit by hand.\n"
+    "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
+)
+
+
+def emit_cpp(data: dict) -> str:
+    family = data["family"]
+    if family == "quests":
+        return _emit_cpp_quests(data)
+    if family == "core_loop":
+        return _emit_cpp_core_loop(data)
+    raise ValidationError(f"unknown family: {family!r}")
+
+
+def _emit_cpp_quests(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/quests.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::Content", "{",
+    ]
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const QuestIdToLocationId = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> const LocationIdToQuestId = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["location_id"]}, {loc["trigger"]["quest_id"]} }}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_core_loop(data: dict) -> str:
+    constants = data["constants"]
+    milestone_locs = sorted(
+        (loc for loc in data["locations"] if loc["trigger"]["kind"] == "level_milestone"),
+        key=lambda loc: loc["trigger"]["level"],
+    )
+    clear_locs = [loc for loc in data["locations"] if loc["trigger"]["kind"] == "instance_clear"]
+
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/core_loop.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <string>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::CoreLoop", "{",
+    ]
+    lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
+    for item in data["items"]:
+        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
+    lines.append("")
+    for key in ("STARTING_LEVEL_CAP", "LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
+        lines.append(f"    inline constexpr uint32_t {key} = {constants[key]};")
+    lines.append("")
+    for loc in clear_locs:
+        key = loc["trigger"]["instance_key"]
+        const_name = "INSTANCE_KEY_" + key.upper()
+        lines.append(f'    inline std::string const {const_name} = "{key}";')
+    lines.append("")
+    lines.append("    inline std::unordered_map<std::string, uint32_t> const INSTANCE_FINAL_BOSS_ENTRY = {")
+    for loc in clear_locs:
+        const_name = "INSTANCE_KEY_" + loc["trigger"]["instance_key"].upper()
+        lines.append(f'        {{ {const_name}, {loc["trigger"]["final_boss_entry"]} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const LEVEL_LOCATIONS = {")
+    for loc in milestone_locs:
+        lines.append(f'        {{ {loc["trigger"]["level"]}, {loc["location_id"]} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<std::string, int64_t> const INSTANCE_CLEAR_LOCATIONS = {")
+    for loc in clear_locs:
+        const_name = "INSTANCE_KEY_" + loc["trigger"]["instance_key"].upper()
+        lines.append(f'        {{ {const_name}, {loc["location_id"]} }},')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml_path", type=pathlib.Path)
@@ -140,8 +232,9 @@ def main(argv: list[str] | None = None) -> int:
 
     data = load_family(args.yaml_path)
     args.py_out.write_text(emit_python(data), encoding="utf-8")
-    # --cpp-out is wired up in Task 2; until then this only writes the Python side.
+    args.cpp_out.write_text(emit_cpp(data), encoding="utf-8")
     print(f"wrote {args.py_out}")
+    print(f"wrote {args.cpp_out}")
     return 0
 
 
