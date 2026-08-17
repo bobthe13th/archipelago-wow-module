@@ -70,6 +70,11 @@ public:
     // would bypass a closed door, but not this map-entry gate.
     bool OnPlayerCanEnterMap(Player* player, MapEntry const* entry, InstanceTemplate const* /*instance*/, MapDifficulty const* /*mapDiff*/, bool /*loginCheck*/) override
     {
+        // When the module is disabled, this must be full vanilla behavior:
+        // no gating, no lookups into unlock state at all.
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
         // Map ids verified against AreaDefines.h in this checkout:
         // MAP_RAGEFIRE_CHASM = 389, MAP_DEADMINES = 36.
         std::string instanceKey;

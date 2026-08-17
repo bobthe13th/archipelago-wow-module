@@ -33,19 +33,33 @@ public:
         _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
         _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
 
+        // Mirror into ArchipelagoRealmState so the gating scripts (instance
+        // entry, Dark Portal, Northrend transports), which only ever touch
+        // ArchipelagoRealmState and never this class, can all check the same
+        // cached enabled flag without each re-reading sConfigMgr on their own
+        // per-call gating paths.
+        sArchipelagoRealmState->SetEnabled(_enabled);
+
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
     }
 
     void OnStartup() override
     {
-        // Realm state (including the persisted level cap) must load and apply
+        // Realm state (including the persisted level cap) must load
         // regardless of whether the AP connection itself is enabled, so a
-        // restart doesn't silently reset the cap to DEFAULT_MAX_LEVEL even
-        // when an operator is running with Archipelago.Enabled=false for
-        // local testing. Keep this above the _enabled early-return below.
+        // restart doesn't lose the persisted values the moment an operator
+        // flips Archipelago.Enabled back on later. But actually *applying*
+        // the persisted level cap to the live server config must only
+        // happen when Archipelago is enabled: otherwise every character on
+        // a realm that ships/keeps this module disabled would be
+        // permanently capped at whatever level_cap happens to be persisted
+        // (10, for a fresh install) instead of the operator's own
+        // worldserver.conf MaxPlayerLevel setting -- full vanilla behavior
+        // when disabled, matching every gating script below.
         sArchipelagoRealmState->Load();
-        sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
+        if (_enabled)
+            sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
 
         if (!_enabled)
             return;

@@ -48,6 +48,11 @@ public:
 
     void OnAddPassenger(Transport* transport, Player* player) override
     {
+        // When the module is disabled, this must be full vanilla behavior:
+        // no gating, no lookups into unlock state at all.
+        if (!sArchipelagoRealmState->IsEnabled())
+            return;
+
         if (sArchipelagoRealmState->IsNorthrendPassageUnlocked())
             return;
 

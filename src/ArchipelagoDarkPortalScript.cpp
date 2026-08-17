@@ -11,6 +11,11 @@ public:
 
     bool OnTrigger(Player* player, AreaTrigger const* /*trigger*/) override
     {
+        // When the module is disabled, this must be full vanilla behavior:
+        // no gating, no lookups into unlock state at all.
+        if (!sArchipelagoRealmState->IsEnabled())
+            return false; // let the default teleport proceed
+
         if (sArchipelagoRealmState->IsDarkPortalUnlocked())
             return false; // let the default teleport proceed
 
