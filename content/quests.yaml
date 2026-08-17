@@ -1,0 +1,139 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/quests.yaml
+family: quests
+
+locations:
+  - name: A Threat Within
+    location_id: 700000
+    trigger: {kind: quest, quest_id: 783}
+  - name: Simple Letter
+    location_id: 700001
+    trigger: {kind: quest, quest_id: 3100}
+  - name: Consecrated Letter
+    location_id: 700002
+    trigger: {kind: quest, quest_id: 3101}
+  - name: Encrypted Letter
+    location_id: 700003
+    trigger: {kind: quest, quest_id: 3102}
+  - name: Hallowed Letter
+    location_id: 700004
+    trigger: {kind: quest, quest_id: 3103}
+  - name: Glyphic Letter
+    location_id: 700005
+    trigger: {kind: quest, quest_id: 3104}
+  - name: Tainted Letter
+    location_id: 700006
+    trigger: {kind: quest, quest_id: 3105}
+  - name: Eagan Peltskinner
+    location_id: 700007
+    trigger: {kind: quest, quest_id: 5261}
+  - name: Kobold Camp Cleanup
+    location_id: 700008
+    trigger: {kind: quest, quest_id: 7}
+  - name: Wolves Across the Border
+    location_id: 700009
+    trigger: {kind: quest, quest_id: 33}
+  - name: Investigate Echo Ridge
+    location_id: 700010
+    trigger: {kind: quest, quest_id: 15}
+  - name: Brotherhood of Thieves
+    location_id: 700011
+    trigger: {kind: quest, quest_id: 18}
+  - name: Milly Osworth
+    location_id: 700012
+    trigger: {kind: quest, quest_id: 3903}
+  - name: In Favor of the Light
+    location_id: 700013
+    trigger: {kind: quest, quest_id: 5623}
+  - name: Milly's Harvest
+    location_id: 700014
+    trigger: {kind: quest, quest_id: 3904}
+  - name: Grape Manifest
+    location_id: 700015
+    trigger: {kind: quest, quest_id: 3905}
+  - name: Bounty on Garrick Padfoot
+    location_id: 700016
+    trigger: {kind: quest, quest_id: 6}
+  - name: Skirmish at Echo Ridge
+    location_id: 700017
+    trigger: {kind: quest, quest_id: 21}
+  - name: Report to Goldshire
+    location_id: 700018
+    trigger: {kind: quest, quest_id: 54}
+
+items:
+  - name: Worn Shortsword
+    item_id: 800000
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25}
+  - name: Bent Staff
+    item_id: 800001
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 35}
+  - name: Worn Mace
+    item_id: 800002
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 36}
+  - name: Worn Axe
+    item_id: 800003
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 37}
+  - name: Recruit's Shirt
+    item_id: 800004
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 38}
+  - name: Recruit's Boots
+    item_id: 800005
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 40}
+  - name: Squire's Boots
+    item_id: 800006
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43}
+  - name: Squire's Shirt
+    item_id: 800007
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45}
+  - name: Footpad's Shoes
+    item_id: 800008
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 47}
+  - name: Footpad's Shirt
+    item_id: 800009
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 49}
+  - name: Neophyte's Boots
+    item_id: 800010
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 51}
+  - name: Neophyte's Shirt
+    item_id: 800011
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 53}
+  - name: Apprentice's Boots
+    item_id: 800012
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 55}
+  - name: Acolyte's Shoes
+    item_id: 800013
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 59}
+  - name: Layered Tunic
+    item_id: 800014
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 60}
+  - name: Dwarven Leather Pants
+    item_id: 800015
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 61}
+  - name: Dwarven Cloth Britches
+    item_id: 800016
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 79}
+  - name: Soft Fur-lined Shoes
+    item_id: 800017
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 80}
+  - name: Dirty Leather Vest
+    item_id: 800018
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 85}

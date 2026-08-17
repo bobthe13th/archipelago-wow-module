@@ -1,5 +1,6 @@
 // GENERATED FILE - do not edit by hand.
-// Regenerate with: python modules/archipelago_wow/tools/generate_content.py
+// Regenerate with: python modules/archipelago_wow/tools/generate_content.py content/quests.yaml
+
 #pragma once
 
 #include <cstdint>
