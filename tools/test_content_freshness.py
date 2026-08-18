@@ -17,6 +17,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "core_loop_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCoreLoopContentTable.h",
     },
+    "gates": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "gates_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGatesContentTable.h",
+    },
 }
 
 

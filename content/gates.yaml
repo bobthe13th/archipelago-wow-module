@@ -1,0 +1,26 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/gates.yaml
+family: gates
+
+locations: []
+
+items:
+  - name: "Progressive Riding: Apprentice"
+    item_id: 830000
+    count: 1
+    delivery: {kind: flag, flag_key: riding, tier: 1}
+  - name: "Progressive Riding: Journeyman"
+    item_id: 830001
+    count: 1
+    delivery: {kind: flag, flag_key: riding, tier: 2}
+  - name: "Progressive Riding: Expert"
+    item_id: 830002
+    count: 1
+    delivery: {kind: flag, flag_key: riding, tier: 3}
+  - name: "Progressive Riding: Artisan"
+    item_id: 830003
+    count: 1
+    delivery: {kind: flag, flag_key: riding, tier: 4}
+  - name: "Progressive Riding: Cold Weather Flying"
+    item_id: 830004
+    count: 1
+    delivery: {kind: flag, flag_key: riding, tier: 5}

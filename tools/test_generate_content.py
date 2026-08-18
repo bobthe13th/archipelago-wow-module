@@ -103,6 +103,49 @@ class TestLoadFamily(unittest.TestCase):
             self.assertIn("GENERATED FILE", text)
 
 
+class TestGatesFamily(unittest.TestCase):
+    def _write(self, tmpdir: str, text: str) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "test.yaml"
+        path.write_text(textwrap.dedent(text), encoding="utf-8")
+        return path
+
+    def test_flag_delivery_emits_python_and_cpp(self) -> None:
+        data = {
+            "family": "gates",
+            "constants": {},
+            "locations": [],
+            "items": [
+                {"name": "Progressive Riding: Apprentice", "item_id": 830000, "count": 1,
+                 "delivery": {"kind": "flag", "flag_key": "riding", "tier": 1}},
+                {"name": "Progressive Riding: Journeyman", "item_id": 830001, "count": 1,
+                 "delivery": {"kind": "flag", "flag_key": "riding", "tier": 2}},
+            ],
+        }
+        py_text = emit_python(data)
+        self.assertIn('"Progressive Riding: Apprentice": (830000, 1)', py_text)
+        self.assertIn('FLAG_KEY_BY_ITEM_NAME', py_text)
+        self.assertIn('"Progressive Riding: Apprentice": "riding"', py_text)
+
+        cpp_text = emit_cpp(data)
+        self.assertIn("AP_ITEM_PROGRESSIVE_RIDING_APPRENTICE = 830000", cpp_text)
+        self.assertIn("ApItemToFlagKeyAndTier", cpp_text)
+        self.assertIn('{ 830000, { "riding", 1 } }', cpp_text)
+
+    def test_gates_family_rejects_unrecognized_delivery_kind(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: gates
+                locations: []
+                items:
+                  - name: Bad Gate
+                    item_id: 830099
+                    count: 1
+                    delivery: {kind: mail, wow_item_entry: 1}
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+
 class TestEmitCpp(unittest.TestCase):
     def test_quests_family_emits_cpp_maps(self) -> None:
         data = {

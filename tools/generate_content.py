@@ -78,11 +78,13 @@ def _validate_instance_unlock_references(locations: list, items: list, yaml_path
 _TRIGGER_KINDS_BY_FAMILY = {
     "quests": {"quest"},
     "core_loop": {"level_milestone", "instance_clear"},
+    "gates": set(),  # gates never have locations
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
     "quests": {"mail"},
     "core_loop": {"realm_state"},
+    "gates": {"flag"},
 }
 
 _REALM_STATE_EFFECTS = {
@@ -124,6 +126,17 @@ def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_p
                         f"delivery.effect {effect!r} "
                         f"(expected one of {sorted(_REALM_STATE_EFFECTS)})"
                     )
+            if kind == "flag":
+                if "flag_key" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'flag' but is missing required key 'flag_key'"
+                    )
+                if "tier" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'flag' but is missing required key 'tier'"
+                    )
 
 
 _GENERATED_HEADER_PY = (
@@ -138,6 +151,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_quests(data)
     if family == "core_loop":
         return _emit_python_core_loop(data)
+    if family == "gates":
+        return _emit_python_gates(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -183,6 +198,26 @@ def _emit_python_core_loop(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_gates(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/gates.yaml"), ""]
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("FLAG_KEY_BY_ITEM_NAME: dict[str, str] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": "{item["delivery"]["flag_key"]}",')
+    lines.append("}")
+    lines.append("")
+    lines.append("FLAG_TIER_BY_ITEM_NAME: dict[str, int] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": {item["delivery"]["tier"]},')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -195,6 +230,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_quests(data)
     if family == "core_loop":
         return _emit_cpp_core_loop(data)
+    if family == "gates":
+        return _emit_cpp_gates(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -269,6 +306,30 @@ def _emit_cpp_core_loop(data: dict) -> str:
     for loc in clear_locs:
         const_name = "INSTANCE_KEY_" + loc["trigger"]["instance_key"].upper()
         lines.append(f'        {{ {const_name}, {loc["location_id"]} }},')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_gates(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/gates.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <string>",
+        "#include <unordered_map>",
+        "#include <utility>", "",
+        "namespace Archipelago::Gates", "{",
+    ]
+    for item in data["items"]:
+        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
+    lines.append("")
+    lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {")
+    for item in data["items"]:
+        delivery = item["delivery"]
+        lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")
