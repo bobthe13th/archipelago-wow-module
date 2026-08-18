@@ -1,0 +1,26 @@
+// azerothcore-wotlk/modules/archipelago_wow/src/APGating.h
+#pragma once
+
+#include <cstdint>
+
+class Player;
+
+namespace Archipelago::Gating
+{
+    // Riding tiers, 1-5, matching content/gates.yaml's "riding" flag_key tiers:
+    // 1=Apprentice, 2=Journeyman, 3=Expert, 4=Artisan, 5=Cold Weather Flying.
+    inline constexpr uint32_t RIDING_TIER_APPRENTICE = 1;
+    inline constexpr uint32_t RIDING_TIER_JOURNEYMAN = 2;
+    inline constexpr uint32_t RIDING_TIER_EXPERT = 3;
+    inline constexpr uint32_t RIDING_TIER_ARTISAN = 4;
+    inline constexpr uint32_t RIDING_TIER_COLD_WEATHER_FLYING = 5;
+
+    // True if the realm has received a riding-tier item at least as high as
+    // requiredTier. When the module is disabled, callers must treat this as
+    // always-true themselves (matching every other gate's disabled-is-
+    // vanilla contract) -- this helper does not re-check IsEnabled() so it
+    // stays a pure state query, safe to call from any hook.
+    bool IsRidingTierUnlocked(uint32_t requiredTier);
+}
+
+void AddArchipelagoGatingScripts();

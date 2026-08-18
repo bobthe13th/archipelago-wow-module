@@ -15,6 +15,7 @@
 #include "APProtocol.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoRealmState.h"
 
 namespace
@@ -115,6 +116,15 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         if (received.item == Archipelago::CoreLoop::AP_ITEM_NORTHREND_PASSAGE)
         {
             sArchipelagoRealmState->UnlockNorthrendPassage();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        auto gateIt = Archipelago::Gates::ApItemToFlagKeyAndTier.find(received.item);
+        if (gateIt != Archipelago::Gates::ApItemToFlagKeyAndTier.end())
+        {
+            auto const& [flagKey, tier] = gateIt->second;
+            sArchipelagoRealmState->SetFlagTier(flagKey, tier);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
