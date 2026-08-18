@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 // Realm-wide Archipelago core-loop progression state. One realm = one AP
@@ -41,12 +42,19 @@ public:
     bool IsNorthrendPassageUnlocked() const { return _northrendPassageUnlocked; }
     void UnlockNorthrendPassage();
 
+    // Generic realm-wide unlock-flag store (M4 gate family). tier 0 means
+    // "not unlocked, not present". Boolean gates always use tier 1.
+    bool IsFlagUnlocked(std::string const& flagKey) const;
+    uint32_t GetFlagTier(std::string const& flagKey) const;
+    void SetFlagTier(std::string const& flagKey, uint32_t tier);
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
     bool _darkPortalUnlocked = false;
     bool _northrendPassageUnlocked = false;
     std::unordered_set<std::string> _unlockedInstances;
+    std::unordered_map<std::string, uint32_t> _flagTiers;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()
