@@ -14,12 +14,13 @@ ArchipelagoRealmState* ArchipelagoRealmState::instance()
 void ArchipelagoRealmState::Load()
 {
     if (QueryResult result = CharacterDatabase.Query(
-            "SELECT level_cap, dark_portal_unlocked, northrend_passage_unlocked FROM archipelago_realm_state WHERE id = 1"))
+            "SELECT level_cap, dark_portal_unlocked, northrend_passage_unlocked, goal_complete FROM archipelago_realm_state WHERE id = 1"))
     {
         Field* fields = result->Fetch();
         _levelCap = fields[0].Get<uint32_t>();
         _darkPortalUnlocked = fields[1].Get<uint8_t>() != 0;
         _northrendPassageUnlocked = fields[2].Get<uint8_t>() != 0;
+        _goalComplete = fields[3].Get<uint8_t>() != 0;
     }
     else
     {
@@ -46,8 +47,19 @@ void ArchipelagoRealmState::Load()
         } while (result->NextRow());
     }
 
-    LOG_INFO("module.archipelago_wow", "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, unlocked_instances={}, unlock_flags={})",
-        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _unlockedInstances.size(), _flagTiers.size());
+    _sentLocationChecks.clear();
+    if (QueryResult result = CharacterDatabase.Query("SELECT location_id FROM archipelago_checks"))
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            _sentLocationChecks.insert(fields[0].Get<uint64_t>());
+        } while (result->NextRow());
+    }
+
+    LOG_INFO("module.archipelago_wow",
+        "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, goal_complete={}, unlocked_instances={}, unlock_flags={}, sent_checks={})",
+        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _goalComplete, _unlockedInstances.size(), _flagTiers.size(), _sentLocationChecks.size());
 }
 
 void ArchipelagoRealmState::RaiseLevelCap(uint32_t newCap)
@@ -117,3 +129,28 @@ void ArchipelagoRealmState::SetFlagTier(std::string const& flagKey, uint32_t tie
         "ON DUPLICATE KEY UPDATE tier = {}", flagKey, tier, tier);
     LOG_INFO("module.archipelago_wow", "Archipelago: unlock flag '{}' set to tier {}", flagKey, tier);
 }
+
+bool ArchipelagoRealmState::HasSentLocationCheck(uint64_t locationId) const
+{
+    return _sentLocationChecks.find(locationId) != _sentLocationChecks.end();
+}
+
+void ArchipelagoRealmState::RecordLocationCheckSent(uint64_t locationId)
+{
+    if (_sentLocationChecks.insert(locationId).second)
+    {
+        CharacterDatabase.Execute("INSERT IGNORE INTO archipelago_checks (location_id) VALUES ({})", locationId);
+        LOG_INFO("module.archipelago_wow", "Archipelago: location check {} recorded durably", locationId);
+    }
+}
+
+void ArchipelagoRealmState::SetGoalComplete()
+{
+    if (_goalComplete)
+        return;
+
+    _goalComplete = true;
+    CharacterDatabase.Execute("UPDATE archipelago_realm_state SET goal_complete = 1 WHERE id = 1");
+    LOG_INFO("module.archipelago_wow", "Archipelago: goal complete recorded durably");
+}
+

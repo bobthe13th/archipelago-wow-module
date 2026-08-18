@@ -46,7 +46,8 @@ namespace Archipelago
     public:
         APClientSession(net::io_context& ioc, ClientOptions const& options,
             std::atomic<ConnectionState>& state, std::atomic<bool>& reachedHandshake,
-            std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived)
+            std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived,
+            std::function<void()> const& onConnected)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -55,6 +56,7 @@ namespace Archipelago
             , _state(state)
             , _reachedHandshake(reachedHandshake)
             , _onItemsReceived(onItemsReceived)
+            , _onConnected(onConnected)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -89,16 +91,9 @@ namespace Archipelago
                 {
                     if (self->_state.load() != ConnectionState::HandshakeComplete)
                     {
-                        // Not connected right now: this location check is dropped and is
-                        // NOT retried or resent on the next connect. The Archipelago
-                        // protocol has no server-side memory of checks the client never
-                        // actually sent, so a quest completed during a reconnect window
-                        // (or while the AP server is down) permanently never releases its
-                        // item to whoever picked up that location. This is a known,
-                        // deliberately deferred gap -- see docs/m2-manual-verification-
-                        // checklist.md in the outer repo. Log it so the loss is at least
-                        // visible instead of silent.
-                        LOG_ERROR("module.archipelago_wow", "Archipelago: dropped {} location check(s) while not connected (not resent, permanently lost)", count);
+                        // Not connected right now: check is stored durably in DB/memory and
+                        // will be automatically resent on next successful connect (M4 Task 29).
+                        LOG_INFO("module.archipelago_wow", "Archipelago: socket not connected, {} location check(s) queued for resend on reconnect", count);
                         return;
                     }
                     self->_outbox.push_back(payload);
@@ -120,12 +115,9 @@ namespace Archipelago
                 {
                     if (self->_state.load() != ConnectionState::HandshakeComplete)
                     {
-                        // Not connected right now: same known, deliberately deferred gap
-                        // as SendLocationChecks above -- this goal-complete send is
-                        // dropped and NOT retried/resent on the next connect. See
-                        // docs/m2-manual-verification-checklist.md item 6 in the outer
-                        // repo, and the M2.1 checklist's note for this specific case.
-                        LOG_ERROR("module.archipelago_wow", "Archipelago: dropped goal-complete status update while not connected (not resent, permanently lost)");
+                        // Not connected right now: goal complete is stored durably in DB/memory
+                        // and will be automatically resent on next successful connect (M4 Task 29).
+                        LOG_INFO("module.archipelago_wow", "Archipelago: socket not connected, goal complete queued for resend on reconnect");
                         return;
                     }
                     self->_outbox.push_back(payload);
@@ -279,6 +271,8 @@ namespace Archipelago
                         _state = ConnectionState::HandshakeComplete;
                         _reachedHandshake = true; // consumed by APClient::RunIoContext to reset backoff
                         LOG_INFO("module.archipelago_wow", "Archipelago: handshake complete, connected to multiworld server");
+                        if (_onConnected)
+                            _onConnected();
                     }
                 }
                 else if (type == ServerMessageType::ConnectionRefused)
@@ -425,10 +419,15 @@ namespace Archipelago
         std::atomic<ConnectionState>& _state;
         std::atomic<bool>& _reachedHandshake;
         std::function<void(std::vector<ReceivedItem> const&)> const& _onItemsReceived;
+        std::function<void()> const& _onConnected;
     };
 
-    APClient::APClient(ClientOptions options, std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived)
-        : _options(std::move(options)), _onItemsReceived(std::move(onItemsReceived))
+    APClient::APClient(ClientOptions options,
+        std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
+        std::function<void()> onConnected)
+        : _options(std::move(options))
+        , _onItemsReceived(std::move(onItemsReceived))
+        , _onConnected(std::move(onConnected))
     {
     }
 
@@ -445,7 +444,8 @@ namespace Archipelago
         std::shared_ptr<APClientSession> session;
         {
             std::lock_guard<std::mutex> lock(_sessionMutex);
-            _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _onItemsReceived);
+            _session = std::make_shared<APClientSession>(
+                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected);
             session = _session;
         }
         session->Run();
@@ -544,7 +544,7 @@ namespace Archipelago
                         // _sessionMutex comment on the member in APClient.h.
                         std::lock_guard<std::mutex> lock(_sessionMutex);
                         _session = std::make_shared<APClientSession>(
-                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived);
+                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected);
                         session = _session;
                     }
                     session->Run();

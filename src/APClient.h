@@ -43,7 +43,9 @@ namespace Archipelago
     class APClient
     {
     public:
-        APClient(ClientOptions options, std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived);
+        APClient(ClientOptions options,
+            std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
+            std::function<void()> onConnected = nullptr);
         ~APClient();
 
         void Start();
@@ -58,6 +60,7 @@ namespace Archipelago
 
         ClientOptions _options;
         std::function<void(std::vector<ReceivedItem> const&)> _onItemsReceived;
+        std::function<void()> _onConnected;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
         // Set by APClientSession the moment a session reaches HandshakeComplete, and

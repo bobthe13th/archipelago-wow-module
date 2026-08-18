@@ -48,13 +48,23 @@ public:
     uint32_t GetFlagTier(std::string const& flagKey) const;
     void SetFlagTier(std::string const& flagKey, uint32_t tier);
 
+    // Durable outbound location check persistence (M4, closes defect #1).
+    bool HasSentLocationCheck(uint64_t locationId) const;
+    void RecordLocationCheckSent(uint64_t locationId);
+    std::unordered_set<uint64_t> const& GetSentLocationChecks() const { return _sentLocationChecks; }
+
+    bool IsGoalComplete() const { return _goalComplete; }
+    void SetGoalComplete();
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
     bool _darkPortalUnlocked = false;
     bool _northrendPassageUnlocked = false;
+    bool _goalComplete = false;
     std::unordered_set<std::string> _unlockedInstances;
     std::unordered_map<std::string, uint32_t> _flagTiers;
+    std::unordered_set<uint64_t> _sentLocationChecks;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()
