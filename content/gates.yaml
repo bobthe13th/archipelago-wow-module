@@ -24,3 +24,12 @@ items:
     item_id: 830004
     count: 1
     delivery: {kind: flag, flag_key: riding, tier: 5}
+  - name: "Flight Unlock: Outland"
+    item_id: 830005
+    count: 1
+    delivery: {kind: flag, flag_key: flight, tier: 1}
+  - name: "Flight Unlock: Northrend"
+    item_id: 830006
+    count: 1
+    delivery: {kind: flag, flag_key: flight, tier: 2}
+

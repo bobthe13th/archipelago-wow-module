@@ -15,6 +15,8 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_RIDING_EXPERT = 830002;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_RIDING_ARTISAN = 830003;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_RIDING_COLD_WEATHER_FLYING = 830004;
+    inline constexpr int64_t AP_ITEM_FLIGHT_UNLOCK_OUTLAND = 830005;
+    inline constexpr int64_t AP_ITEM_FLIGHT_UNLOCK_NORTHREND = 830006;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -22,5 +24,7 @@ namespace Archipelago::Gates
         { 830002, { "riding", 3 } }, // Progressive Riding: Expert
         { 830003, { "riding", 4 } }, // Progressive Riding: Artisan
         { 830004, { "riding", 5 } }, // Progressive Riding: Cold Weather Flying
+        { 830005, { "flight", 1 } }, // Flight Unlock: Outland
+        { 830006, { "flight", 2 } }, // Flight Unlock: Northrend
     };
 }

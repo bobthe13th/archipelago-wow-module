@@ -10,11 +10,18 @@
 #include "SpellInfo.h"
 #include "SpellMgr.h"
 
+#include "AreaDefines.h"
+
 namespace Archipelago::Gating
 {
     bool IsRidingTierUnlocked(uint32_t requiredTier)
     {
         return sArchipelagoRealmState->GetFlagTier("riding") >= requiredTier;
+    }
+
+    bool IsFlightUnlocked(uint32_t requiredTier)
+    {
+        return sArchipelagoRealmState->GetFlagTier("flight") >= requiredTier;
     }
 }
 
@@ -83,8 +90,39 @@ public:
     }
 };
 
+class ArchipelagoFlightGateScript : public PlayerScript
+{
+public:
+    ArchipelagoFlightGateScript() : PlayerScript("ArchipelagoFlightGateScript", { PLAYERHOOK_ON_CAN_PLAYER_FLY_IN_ZONE }) { }
+
+    // Called by Player::IsKnownAreaFlyable(). Return false to deny flight in
+    // this zone/map. Core's own vanilla cold-weather-flying check runs BEFORE
+    // this script hook, so we only need to add our extra Archipelago check
+    // on top. Maps: 530=Outland, 571=Northrend.
+    bool OnPlayerCanFlyInZone(Player* player, uint32 mapId, uint32 /*zoneId*/, SpellInfo const* /*bySpell*/) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (mapId == MAP_OUTLAND && !Archipelago::Gating::IsFlightUnlocked(Archipelago::Gating::FLIGHT_TIER_OUTLAND))
+        {
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Flight Unlock: Outland to fly here.");
+            return false;
+        }
+
+        if (mapId == MAP_NORTHREND && !Archipelago::Gating::IsFlightUnlocked(Archipelago::Gating::FLIGHT_TIER_NORTHREND))
+        {
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Flight Unlock: Northrend to fly here.");
+            return false;
+        }
+
+        return true;
+    }
+};
+
 void AddArchipelagoGatingScripts()
 {
     new ArchipelagoRidingGateScript();
     new ArchipelagoMountSpellScript();
+    new ArchipelagoFlightGateScript();
 }

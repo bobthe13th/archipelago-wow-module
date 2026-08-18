@@ -15,12 +15,22 @@ namespace Archipelago::Gating
     inline constexpr uint32_t RIDING_TIER_ARTISAN = 4;
     inline constexpr uint32_t RIDING_TIER_COLD_WEATHER_FLYING = 5;
 
+    // Flight tiers, matching content/gates.yaml's "flight" flag_key tiers:
+    // 1=Outland flying, 2=Northrend (Cold Weather) flying.
+    inline constexpr uint32_t FLIGHT_TIER_OUTLAND = 1;
+    inline constexpr uint32_t FLIGHT_TIER_NORTHREND = 2;
+
     // True if the realm has received a riding-tier item at least as high as
     // requiredTier. When the module is disabled, callers must treat this as
     // always-true themselves (matching every other gate's disabled-is-
     // vanilla contract) -- this helper does not re-check IsEnabled() so it
     // stays a pure state query, safe to call from any hook.
     bool IsRidingTierUnlocked(uint32_t requiredTier);
+
+    // True if the realm has received a flight-tier item at least as high as
+    // requiredTier (1=Outland, 2=Northrend). Same disabled-is-vanilla contract.
+    bool IsFlightUnlocked(uint32_t requiredTier);
 }
 
 void AddArchipelagoGatingScripts();
+
