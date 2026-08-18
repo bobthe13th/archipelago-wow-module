@@ -11,6 +11,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSessionMgr.h"
+#include "APDelivery.h"
 #include "APProtocol.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
@@ -64,13 +65,6 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
     int64_t lastIndex = GetLastItemIndex();
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
     int64_t highestSeen = lastIndex;
-
-    ObjectGuid::LowType lowGuid = receiverGuid.GetCounter();
-    // Resolve the live player, if any, so a delivery character who is online
-    // right now gets the normal "new mail" notification / in-memory mail
-    // list update instead of only seeing the mail after a relog. See
-    // cs_send.cpp's MailReceiver(target->GetConnectedPlayer(), ...) precedent.
-    Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
 
     for (Archipelago::ReceivedItem const& received : items)
     {
@@ -135,11 +129,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
 
         if (Item* item = Item::CreateItem(entryIt->second, 1))
         {
-            item->SaveToDB(trans);
-            MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
-            draft.AddItem(item);
-            MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
-            draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+            Archipelago::Delivery::DeliverItem(Archipelago::Delivery::Policy::EveryoneReceives, item, deliveryCharacter, trans);
         }
         else
         {
