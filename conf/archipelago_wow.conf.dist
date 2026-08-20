@@ -75,4 +75,20 @@ Archipelago.ReconnectMaxSeconds = 60
 #        Default:     0 (disabled)
 
 Archipelago.ProficiencyGating = 0
+
+#    Archipelago.AccessGating
+#        Description: Enable Auction House / Hearthstone / mailbox-send
+#                      access suppression (M4 gate family). Only turn this
+#                      on when the connected seed's player YAML also has
+#                      access_gating enabled -- same manual-sync
+#                      requirement and same "off is the safe direction" as
+#                      Archipelago.ProficiencyGating above. Note this only
+#                      covers 3 of the design's 5 access types: bank access
+#                      and gathering (mining/herbalism/skinning) have no
+#                      suppression hook in this AzerothCore checkout and are
+#                      not gated by this module (see content/gates.yaml's
+#                      comment for the research behind that).
+#        Default:     0 (disabled)
+
+Archipelago.AccessGating = 0
 ###################################################################################################

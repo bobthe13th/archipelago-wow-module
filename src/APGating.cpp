@@ -4,12 +4,14 @@
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
 #include "ItemTemplate.h"
+#include "MiscScript.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
 #include "Spell.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
+#include "WorldSession.h"
 
 #include "AreaDefines.h"
 
@@ -31,6 +33,20 @@ namespace Archipelago::Gating
     {
         return sArchipelagoRealmState->IsFlagUnlocked(proficiencyFlagKey);
     }
+
+    bool IsAccessUnlocked(std::string const& accessFlagKey)
+    {
+        return sArchipelagoRealmState->IsFlagUnlocked(accessFlagKey);
+    }
+}
+
+namespace
+{
+    // Real Hearthstone item entry / spell id, confirmed directly against
+    // this checkout's src/server/game/Spells/SpellEffects.cpp (a spell
+    // effect that resets its cooldown looks it up via both: item 6948,
+    // spell 8690).
+    constexpr uint32_t ITEM_HEARTHSTONE = 6948;
 }
 
 class ArchipelagoRidingGateScript : public PlayerScript
@@ -183,10 +199,87 @@ private:
     }
 };
 
+class ArchipelagoHearthGateScript : public PlayerScript
+{
+public:
+    ArchipelagoHearthGateScript() : PlayerScript("ArchipelagoHearthGateScript", { PLAYERHOOK_CAN_USE_ITEM }) { }
+
+    bool OnPlayerCanUseItem(Player* player, ItemTemplate const* proto, InventoryResult& result) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
+            return true;
+
+        if (proto->ItemId != ITEM_HEARTHSTONE)
+            return true;
+
+        if (Archipelago::Gating::IsAccessUnlocked("access_hearth"))
+            return true;
+
+        result = EQUIP_ERR_CANT_DO_RIGHT_NOW;
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Hearthstone Access to use this.");
+        return false;
+    }
+};
+
+class ArchipelagoMailboxGateScript : public PlayerScript
+{
+public:
+    ArchipelagoMailboxGateScript() : PlayerScript("ArchipelagoMailboxGateScript", { PLAYERHOOK_CAN_SEND_MAIL }) { }
+
+    // Only fires from the player-initiated send-mail opcode path -- this
+    // module's own AP item delivery (APDelivery.cpp) builds a MailDraft and
+    // calls SendMailTo() directly, a separate server-side API that never
+    // reaches this hook, so gating it cannot block delivery mail. Reading/
+    // collecting mail is untouched (no hook exists on that path at all).
+    bool OnPlayerCanSendMail(Player* player, ObjectGuid /*receiverGuid*/, ObjectGuid /*mailbox*/,
+        std::string& /*subject*/, std::string& /*body*/, uint32 /*money*/, uint32 /*COD*/, Item* /*item*/) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
+            return true;
+
+        if (Archipelago::Gating::IsAccessUnlocked("access_mailbox"))
+            return true;
+
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Mailbox Access to send mail.");
+        return false;
+    }
+};
+
+class ArchipelagoAuctionHouseGateScript : public MiscScript
+{
+public:
+    ArchipelagoAuctionHouseGateScript() : MiscScript("ArchipelagoAuctionHouseGateScript", { MISCHOOK_CAN_SEND_AUCTIONHELLO }) { }
+
+    bool CanSendAuctionHello(WorldSession const* session, ObjectGuid /*guid*/, Creature* /*creature*/) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
+            return true;
+
+        if (Archipelago::Gating::IsAccessUnlocked("access_auction_house"))
+            return true;
+
+        if (Player* player = session->GetPlayer())
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Auction House Access to use this.");
+        return false;
+    }
+};
+
 void AddArchipelagoGatingScripts()
 {
     new ArchipelagoRidingGateScript();
     new ArchipelagoMountSpellScript();
     new ArchipelagoFlightGateScript();
     new ArchipelagoProficiencyGateScript();
+    new ArchipelagoHearthGateScript();
+    new ArchipelagoMailboxGateScript();
+    new ArchipelagoAuctionHouseGateScript();
 }

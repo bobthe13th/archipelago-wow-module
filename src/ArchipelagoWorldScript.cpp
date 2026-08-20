@@ -33,6 +33,7 @@ public:
         _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
         _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
+        _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
 
         // Mirror into ArchipelagoRealmState so the gating scripts (instance
         // entry, Dark Portal, Northrend transports), which only ever touch
@@ -50,6 +51,7 @@ public:
         // never rolled the gate item would still permanently suppress it,
         // since the flag would never reach tier 1.
         sArchipelagoRealmState->SetGateFamilyEnabled("proficiency", _proficiencyGating);
+        sArchipelagoRealmState->SetGateFamilyEnabled("access", _accessGating);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -133,6 +135,7 @@ private:
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
     bool _proficiencyGating = false;
+    bool _accessGating = false;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.

@@ -40,6 +40,13 @@ namespace Archipelago::Gating
     // (or rely on the suppression script, which already does), since this
     // family is optional per-seed and off by default.
     bool IsProficiencyUnlocked(std::string const& proficiencyFlagKey);
+
+    // True if the realm has received the Access item that sets this
+    // flag_key (content/gates.yaml's "access_*" flag_keys -- currently
+    // access_auction_house, access_hearth, access_mailbox; bank and
+    // gathering have no suppression hook and are not part of this family).
+    // Same disabled/family-off contract as IsProficiencyUnlocked.
+    bool IsAccessUnlocked(std::string const& accessFlagKey);
 }
 
 void AddArchipelagoGatingScripts();

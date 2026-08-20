@@ -78,3 +78,40 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: proficiency_weapon_wand, tier: 1}
 
+  # Access gating (Task 8, §5.1 -- optional, off by default; only pooled
+  # when the "access_gating" apworld option is on). Researched against this
+  # checkout's real hook surface before writing rows (per finding #10's
+  # precedent): only 3 of the 5 access types named in the design spec have
+  # an actual interception point --
+  #   - Auction House: WorldSession::HandleAuctionHelloOpcode calls
+  #     sScriptMgr->CanSendAuctionHello (MiscScript::CanSendAuctionHello) --
+  #     gates opening the AH window.
+  #   - Hearthstone: gated via the same PLAYERHOOK_CAN_USE_ITEM hook as
+  #     Tasks 5/7, keyed on the real Hearthstone item entry (6948, spell
+  #     8690 -- confirmed directly in src/server/game/Spells/SpellEffects.cpp).
+  #   - Mailbox: gated via PLAYERHOOK_CAN_SEND_MAIL (Player::CanSendMail),
+  #     which only fires from the player-initiated send-mail opcode path --
+  #     confirmed this module's own AP item delivery (APDelivery.cpp) builds
+  #     a MailDraft and calls SendMailTo() directly, a separate server-side
+  #     API that never touches this hook, so gating it cannot block AP's own
+  #     delivery mail. Only SENDING is gated; reading/collecting mail stays
+  #     open always (there is no hook on HandleGetMailList).
+  # Bank and gathering (mining/herbalism/skinning) have NO ScriptMgr hook
+  # anywhere in their interaction path (confirmed by grepping BankHandler.cpp,
+  # Player::GetNPCIfCanInteractWith, and GameObject.cpp's Use() path -- zero
+  # sScriptMgr calls in any of them). Adding one would mean patching
+  # AzerothCore core engine files, which is out of scope for this module-only
+  # plan; both are deferred as a named follow-on rather than invented here.
+  - name: "Auction House Access"
+    item_id: 830015
+    count: 1
+    delivery: {kind: flag, flag_key: access_auction_house, tier: 1}
+  - name: "Hearthstone Access"
+    item_id: 830016
+    count: 1
+    delivery: {kind: flag, flag_key: access_hearth, tier: 1}
+  - name: "Mailbox Access"
+    item_id: 830017
+    count: 1
+    delivery: {kind: flag, flag_key: access_mailbox, tier: 1}
+

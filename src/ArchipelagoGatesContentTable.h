@@ -25,6 +25,9 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_MACES = 830012;
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_STAVES = 830013;
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_WANDS = 830014;
+    inline constexpr int64_t AP_ITEM_AUCTION_HOUSE_ACCESS = 830015;
+    inline constexpr int64_t AP_ITEM_HEARTHSTONE_ACCESS = 830016;
+    inline constexpr int64_t AP_ITEM_MAILBOX_ACCESS = 830017;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -42,5 +45,8 @@ namespace Archipelago::Gates
         { 830012, { "proficiency_weapon_mace", 1 } }, // Weapon Proficiency: Maces
         { 830013, { "proficiency_weapon_staff", 1 } }, // Weapon Proficiency: Staves
         { 830014, { "proficiency_weapon_wand", 1 } }, // Weapon Proficiency: Wands
+        { 830015, { "access_auction_house", 1 } }, // Auction House Access
+        { 830016, { "access_hearth", 1 } }, // Hearthstone Access
+        { 830017, { "access_mailbox", 1 } }, // Mailbox Access
     };
 }
