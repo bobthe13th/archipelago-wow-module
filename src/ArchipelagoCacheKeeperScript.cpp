@@ -15,8 +15,10 @@
 //      else, including future personal-copy claims
 //      (archipelago_cache_realm_claimed).
 //
-// Also repurposed by Task 15 (Delivery::Policy::FirstToClaim) for its own
-// gossip option, rather than spawning a second NPC.
+// Task 15 (Delivery::Policy::FirstToClaim) repurposes the same NPC for a
+// third gossip option, rather than spawning a second NPC: drains every
+// row APDelivery.cpp queued into archipelago_first_to_claim_pending to
+// whoever picks that option first.
 #include "Chat.h"
 #include "CreatureScript.h"
 #include "DatabaseEnv.h"
@@ -31,6 +33,7 @@ namespace
 {
     constexpr uint32 GOSSIP_ACTION_CLAIM_PERSONAL = GOSSIP_ACTION_INFO_DEF + 1;
     constexpr uint32 GOSSIP_ACTION_CLAIM_REALM_PILE = GOSSIP_ACTION_INFO_DEF + 2;
+    constexpr uint32 GOSSIP_ACTION_CLAIM_FIRST_TO_CLAIM = GOSSIP_ACTION_INFO_DEF + 3;
 
     // Bags full at claim time: mail instead of blocking the claim, reusing
     // the same postmaster sender EveryoneReceives' mail path uses
@@ -120,6 +123,37 @@ namespace
 
         ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: took {} item(s) from the realm-wide pile -- no one else can claim them now.", grantedCount);
     }
+
+    // Task 15 (Delivery::Policy::FirstToClaim): drains the whole pending queue to
+    // whoever picks this option first, deleting each row as it's granted so a later
+    // claimer sees nothing left. NOTE: like ClaimPersonalCopies/ClaimRealmWidePile
+    // above, the initial SELECT and the granting transaction are not atomic with each
+    // other, so two players interacting within the same instant could theoretically
+    // both read the same still-pending rows before either commits -- an accepted,
+    // narrow race matching this NPC's existing claim paths, not a new gap.
+    void ClaimFirstToClaimQueue(Player* player)
+    {
+        QueryResult result = CharacterDatabase.Query("SELECT id, wow_item_entry FROM archipelago_first_to_claim_pending");
+        if (!result)
+        {
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: nothing is waiting to be claimed right now.");
+            return;
+        }
+
+        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+        uint32 grantedCount = 0;
+        do
+        {
+            uint32 id = (*result)[0].Get<uint32>();
+            uint32 entry = (*result)[1].Get<uint32>();
+            GrantOrMailItem(player, entry, trans);
+            trans->Append("DELETE FROM archipelago_first_to_claim_pending WHERE id = {}", id);
+            ++grantedCount;
+        } while (result->NextRow());
+        CharacterDatabase.CommitTransaction(trans);
+
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: claimed {} first-to-claim item(s) -- you got there first!", grantedCount);
+    }
 }
 
 class npc_archipelago_cache_keeper : public CreatureScript
@@ -135,6 +169,9 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_CHAT,
             "Take everything left in the realm-wide pile for good -- first come, first served, no one else will be able to claim it after me.",
             GOSSIP_SENDER_MAIN, GOSSIP_ACTION_CLAIM_REALM_PILE);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT,
+            "Claim whatever first-to-claim items are waiting -- first come, first served.",
+            GOSSIP_SENDER_MAIN, GOSSIP_ACTION_CLAIM_FIRST_TO_CLAIM);
         SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
         return true;
     }
@@ -148,6 +185,8 @@ public:
             ClaimPersonalCopies(player);
         else if (action == GOSSIP_ACTION_CLAIM_REALM_PILE)
             ClaimRealmWidePile(player);
+        else if (action == GOSSIP_ACTION_CLAIM_FIRST_TO_CLAIM)
+            ClaimFirstToClaimQueue(player);
 
         return true;
     }

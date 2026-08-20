@@ -6,6 +6,9 @@
 #include "Log.h"
 #include "Mail.h"
 #include "ObjectAccessor.h"
+#include "ObjectMgr.h"
+#include "StringFormat.h"
+#include "WorldSessionMgr.h"
 
 namespace
 {
@@ -54,10 +57,25 @@ namespace Archipelago::Delivery
                 trans->Append("INSERT IGNORE INTO archipelago_cache_items (wow_item_entry) VALUES ({})", wowItemEntry);
                 break;
 
+            case Policy::FirstToClaim:
+            {
+                // One row per delivery, not deduped by entry (see the table's own
+                // migration comment) -- each queued delivery gets its own announcement
+                // and is claimed independently by whoever gets to the NPC first.
+                trans->Append("INSERT INTO archipelago_first_to_claim_pending (wow_item_entry) VALUES ({})", wowItemEntry);
+
+                std::string itemName = Acore::StringFormat("item #{}", wowItemEntry);
+                if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(wowItemEntry))
+                    itemName = itemTemplate->Name1;
+                sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, Acore::StringFormat(
+                    "Archipelago: '{}' is up for grabs at the Archipelago Cache Keeper (Northshire Abbey) -- first come, first served!", itemName));
+                break;
+            }
+
             case Policy::EveryoneReceives:
             default:
-                // Every other enumerator falls through to this behavior until its own task
-                // (14, 15) implements a real branch here.
+                // Policy::AuctionHouse (Task 14) still falls through to this behavior
+                // until it implements its own branch here.
                 MailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
                 break;
         }

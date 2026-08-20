@@ -16,7 +16,11 @@ namespace Archipelago::Delivery
                           // npc_archipelago_cache_keeper.cpp hands each character their own
                           // unclaimed copies on interaction.
         AuctionHouse,     // Task 14
-        FirstToClaim,     // Task 15
+        FirstToClaim,     // Task 15: queued into archipelago_first_to_claim_pending
+                          // and announced realm-wide -- see npc_archipelago_cache_keeper
+                          // (ArchipelagoCacheKeeperScript.cpp), repurposed with a third
+                          // gossip option that drains the whole pending queue to whoever
+                          // interacts with it first.
     };
 
     // wowItemEntry is the WoW item_template entry to deliver. Policy::EveryoneReceives
