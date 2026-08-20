@@ -225,6 +225,15 @@ public:
 
     void OnAfterConfigLoad(bool reload) override
     {
+        // Guarded on _enabled (the freshly-reloaded value, since
+        // OnBeforeConfigLoad already re-read it above) so an operator
+        // disabling the module via reload doesn't re-push these overrides --
+        // matches OnStartup's own "disabled == full vanilla behavior"
+        // reasoning. Safe to call ApplyComboUnlockMasks() here even without
+        // re-running Load() first: OnStartup calls sArchipelagoRealmState->
+        // Load() unconditionally (outside its own _enabled check), so by the
+        // time any reload can happen, the persisted flags are already
+        // populated in memory regardless of what _enabled was at startup.
         if (_enabled && reload)
             ApplyRuntimeConfigOverrides();
     }
