@@ -118,3 +118,78 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: access_mailbox, tier: 1}
 
+  # Character-unlock gating (Task 10, §5.1 -- optional, off by default; only
+  # pooled when the "character_unlock_gating" apworld option is on). Unlike
+  # every gate above, these don't fit the pure "check a realm flag on every
+  # relevant action" pattern -- researched per-item against this checkout
+  # before assuming a shape (bank slots/dual spec turned out to need one
+  # shape, talent points another):
+  #   - Progressive Bank Bag Slot (flag_key bank_bag_slots, tiers 1-7,
+  #     matching Player.h:702's `enum BankBagSlots // 7 slots`): grant-based,
+  #     not suppression. DeliverArchipelagoItems applies
+  #     Player::SetBankBagSlotCount(max(current, tier)) to every online
+  #     character on receipt, and ArchipelagoPlayerScript's existing
+  #     PLAYERHOOK_ON_LOGIN sync-applies the same monotonic-max on login for
+  #     characters that were offline when the item arrived -- mirrors how
+  #     RaiseLevelCap already needs both an online-apply and a login-time
+  #     reapply, except level cap is a single global sWorld config value and
+  #     this is a genuinely per-character saved field (PLAYER_BYTES_2), the
+  #     first time this module has needed that.
+  #   - Dual Spec Unlock (flag_key dual_spec, tier 1 boolean): same
+  #     grant-based/login-synced shape, but calls the real
+  #     Player::UpdateSpecCount(2) API (confirmed at
+  #     PlayerUpdates.cpp:2198+2242) rather than the raw SetSpecsCount
+  #     setter directly -- that function also copies/clears per-spec action
+  #     bars and calls SendTalentsInfoData(false) to sync the client, which
+  #     a bare setter call would skip.
+  #   - Talent Point Access (flag_key access_talent_points, tier 1 boolean):
+  #     the one item in this family that IS continuous suppression, not a
+  #     grant -- named "Access" (not "Progressive"/"Unlock") to match that.
+  #     Gated via PLAYERHOOK_CAN_LEARN_TALENT (Player::LearnTalent, confirmed
+  #     real and boolean-returning at Player.cpp:14281), blocking every
+  #     talent point spend realm-wide until received.
+  # Glyph Slot: Major/Minor (also named in the design spec's example) is
+  # deferred, not shipped: PLAYER_FIELD_GLYPH_SLOTS_1 is a per-slot-index
+  # field but m_Glyphs is declared as [MAX_TALENT_SPECS][MAX_GLYPH_SLOT_INDEX]
+  # (Player.h:2880), and it wasn't verified in the time available whether
+  # slot *availability* is genuinely spec-independent or needs per-spec
+  # handling -- shipping an unverified per-character field mutation is the
+  # kind of invented behavior this plan avoids elsewhere (see Task 7's
+  # proficiency-data research standard).
+  - name: "Progressive Bank Bag Slot: Slot 1"
+    item_id: 830018
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 1}
+  - name: "Progressive Bank Bag Slot: Slot 2"
+    item_id: 830019
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 2}
+  - name: "Progressive Bank Bag Slot: Slot 3"
+    item_id: 830020
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 3}
+  - name: "Progressive Bank Bag Slot: Slot 4"
+    item_id: 830021
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 4}
+  - name: "Progressive Bank Bag Slot: Slot 5"
+    item_id: 830022
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 5}
+  - name: "Progressive Bank Bag Slot: Slot 6"
+    item_id: 830023
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 6}
+  - name: "Progressive Bank Bag Slot: Slot 7"
+    item_id: 830024
+    count: 1
+    delivery: {kind: flag, flag_key: bank_bag_slots, tier: 7}
+  - name: "Talent Point Access"
+    item_id: 830025
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 1}
+  - name: "Dual Spec Unlock"
+    item_id: 830026
+    count: 1
+    delivery: {kind: flag, flag_key: dual_spec, tier: 1}
+

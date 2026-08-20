@@ -91,4 +91,17 @@ Archipelago.ProficiencyGating = 0
 #        Default:     0 (disabled)
 
 Archipelago.AccessGating = 0
+
+#    Archipelago.CharacterUnlockGating
+#        Description: Enable bank bag slot / dual spec / talent point
+#                      suppression (M4 gate family). Only turn this on when
+#                      the connected seed's player YAML also has
+#                      character_unlock_gating enabled -- same manual-sync
+#                      requirement and same "off is the safe direction" as
+#                      the other gate toggles above. Glyph Slot gating
+#                      (named in the design spec) is not implemented by
+#                      this module -- see content/gates.yaml's comment.
+#        Default:     0 (disabled)
+
+Archipelago.CharacterUnlockGating = 0
 ###################################################################################################

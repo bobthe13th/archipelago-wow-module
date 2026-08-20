@@ -47,6 +47,19 @@ namespace Archipelago::Gating
     // gathering have no suppression hook and are not part of this family).
     // Same disabled/family-off contract as IsProficiencyUnlocked.
     bool IsAccessUnlocked(std::string const& accessFlagKey);
+
+    // Applies this realm's character-unlock grants (bank bag slots, dual
+    // spec -- content/gates.yaml's "bank_bag_slots"/"dual_spec" flag_keys)
+    // to one character, monotonic-max against whatever that character
+    // already has (never downgrades gold-purchased bank slots or an
+    // already-unlocked second spec). Safe to call repeatedly/idempotently:
+    // once on every login (ArchipelagoPlayerScript::OnPlayerLogin), and
+    // again for every already-online character whenever
+    // DeliverArchipelagoItems raises one of these two flags. No-op when the
+    // module or the "character_unlocks" gate family is disabled. Talent
+    // Point Access is NOT applied here -- it's continuous suppression via
+    // OnPlayerCanLearnTalent, not a character-field grant.
+    void SyncCharacterUnlocksToPlayer(Player* player);
 }
 
 void AddArchipelagoGatingScripts();

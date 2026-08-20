@@ -28,6 +28,15 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_AUCTION_HOUSE_ACCESS = 830015;
     inline constexpr int64_t AP_ITEM_HEARTHSTONE_ACCESS = 830016;
     inline constexpr int64_t AP_ITEM_MAILBOX_ACCESS = 830017;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_1 = 830018;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_2 = 830019;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_3 = 830020;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_4 = 830021;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_5 = 830022;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_6 = 830023;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_7 = 830024;
+    inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS = 830025;
+    inline constexpr int64_t AP_ITEM_DUAL_SPEC_UNLOCK = 830026;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -48,5 +57,14 @@ namespace Archipelago::Gates
         { 830015, { "access_auction_house", 1 } }, // Auction House Access
         { 830016, { "access_hearth", 1 } }, // Hearthstone Access
         { 830017, { "access_mailbox", 1 } }, // Mailbox Access
+        { 830018, { "bank_bag_slots", 1 } }, // Progressive Bank Bag Slot: Slot 1
+        { 830019, { "bank_bag_slots", 2 } }, // Progressive Bank Bag Slot: Slot 2
+        { 830020, { "bank_bag_slots", 3 } }, // Progressive Bank Bag Slot: Slot 3
+        { 830021, { "bank_bag_slots", 4 } }, // Progressive Bank Bag Slot: Slot 4
+        { 830022, { "bank_bag_slots", 5 } }, // Progressive Bank Bag Slot: Slot 5
+        { 830023, { "bank_bag_slots", 6 } }, // Progressive Bank Bag Slot: Slot 6
+        { 830024, { "bank_bag_slots", 7 } }, // Progressive Bank Bag Slot: Slot 7
+        { 830025, { "access_talent_points", 1 } }, // Talent Point Access
+        { 830026, { "dual_spec", 1 } }, // Dual Spec Unlock
     };
 }

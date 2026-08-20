@@ -12,6 +12,7 @@
 #include "World.h"
 #include "WorldSessionMgr.h"
 #include "APDelivery.h"
+#include "APGating.h"
 #include "APProtocol.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
@@ -125,6 +126,18 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             auto const& [flagKey, tier] = gateIt->second;
             sArchipelagoRealmState->SetFlagTier(flagKey, tier);
+            // bank_bag_slots/dual_spec (Task 10) are per-character saved
+            // fields, unlike every other gates-family flag_key -- apply the
+            // grant to everyone already online now (OnPlayerLogin handles
+            // anyone who logs in later, including characters who were
+            // offline for this exact delivery).
+            if (flagKey == "bank_bag_slots" || flagKey == "dual_spec")
+            {
+                sWorldSessionMgr->DoForAllOnlinePlayers([](Player* onlinePlayer)
+                {
+                    Archipelago::Gating::SyncCharacterUnlocksToPlayer(onlinePlayer);
+                });
+            }
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
@@ -170,6 +183,7 @@ public:
     void OnPlayerLogin(Player* player) override
     {
         LOG_INFO("module.archipelago_wow", "Archipelago: {} logged in, module is active", player->GetName());
+        Archipelago::Gating::SyncCharacterUnlocksToPlayer(player);
     }
 };
 

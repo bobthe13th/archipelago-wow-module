@@ -3,6 +3,7 @@
 
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
+#include "DBCStructure.h"
 #include "ItemTemplate.h"
 #include "MiscScript.h"
 #include "Player.h"
@@ -37,6 +38,22 @@ namespace Archipelago::Gating
     bool IsAccessUnlocked(std::string const& accessFlagKey)
     {
         return sArchipelagoRealmState->IsFlagUnlocked(accessFlagKey);
+    }
+
+    void SyncCharacterUnlocksToPlayer(Player* player)
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"))
+            return;
+
+        uint32_t bankTier = sArchipelagoRealmState->GetFlagTier("bank_bag_slots");
+        if (bankTier > player->GetBankBagSlotCount())
+            player->SetBankBagSlotCount(static_cast<uint8>(bankTier));
+
+        if (sArchipelagoRealmState->IsFlagUnlocked("dual_spec") && player->GetSpecsCount() < 2)
+            player->UpdateSpecCount(2);
     }
 }
 
@@ -274,6 +291,27 @@ public:
     }
 };
 
+class ArchipelagoTalentPointGateScript : public PlayerScript
+{
+public:
+    ArchipelagoTalentPointGateScript() : PlayerScript("ArchipelagoTalentPointGateScript", { PLAYERHOOK_CAN_LEARN_TALENT }) { }
+
+    bool OnPlayerCanLearnTalent(Player* player, TalentEntry const* /*talent*/, uint32 /*rank*/) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"))
+            return true;
+
+        if (sArchipelagoRealmState->IsFlagUnlocked("access_talent_points"))
+            return true;
+
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Talent Point Access to spend talent points.");
+        return false;
+    }
+};
+
 void AddArchipelagoGatingScripts()
 {
     new ArchipelagoRidingGateScript();
@@ -283,4 +321,5 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoHearthGateScript();
     new ArchipelagoMailboxGateScript();
     new ArchipelagoAuctionHouseGateScript();
+    new ArchipelagoTalentPointGateScript();
 }
