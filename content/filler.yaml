@@ -2,22 +2,32 @@
 family: filler
 
 # Sink locations restoring item=location parity after Group 1's gate items
-# (Task 11, §16's "gate-item sphere-0 test"). 27 rows -- the maximum
-# possible, len(gates_content_data.ITEMS) as of Tasks 5-10 -- but a single
-# generation only USES as many of these as items.py's
-# count_enabled_gates_items finds pooled for that generation's options
-# (locations.py's create_filler_locations slices this list to that count).
-# AP's generation pipeline has no generic step that pads a short itempool
-# to match location count (the only itempool<->create_filler() interaction
-# in Main.py is a fixed-size 1:1 swap for start_inventory_from_pool
-# removals, not padding), so every option combination needs true 1:1
-# item/location parity, confirmed empirically: distribute_items_restrictive
-# raises "Unable to fill all locations" just as readily when locations
-# exceed items as it does the reverse. A fixed "worst-case slack" location
-# count (every row always created) was tried first and was wrong for
-# exactly this reason. items: [] always for this family (a filler location
-# has no matching item of its own, by definition) -- kept for schema-shape
-# parity with gates.yaml's `locations: []`.
+# (Task 11, §16's "gate-item sphere-0 test") and Group 3's trap items (Task
+# 17). A single generation only USES as many of these rows as items.py's
+# count_enabled_gates_items + count_enabled_trap_items finds pooled for
+# that generation's options (locations.py's create_filler_locations slices
+# this list to that combined count). AP's generation pipeline has no
+# generic step that pads a short itempool to match location count (the
+# only itempool<->create_filler() interaction in Main.py is a fixed-size
+# 1:1 swap for start_inventory_from_pool removals, not padding), so every
+# option combination needs true 1:1 item/location parity, confirmed
+# empirically: distribute_items_restrictive raises "Unable to fill all
+# locations" just as readily when locations exceed items as it does the
+# reverse. A fixed "worst-case slack" location count (every row always
+# created) was tried first and was wrong for exactly this reason.
+#
+# Row count: 60 = 27 (len(gates_content_data.ITEMS) as of Tasks 5-10) + 33
+# (the absolute ceiling on count_enabled_trap_items -- Task 17's
+# trap_percentage_of_filler Range tops out at 100, and
+# _trap_baseline_location_count() is a fixed 33 quest+core-loop locations,
+# so 33 is the largest total items.py's create_trap_item_pool can ever
+# produce in one generation). Any future optional item family (Group 6's
+# new content, per Task 11's outcome note) must extend this ceiling by its
+# own worst-case count the same way, not assume 60 is permanent.
+#
+# items: [] always for this family (a filler location has no matching item
+# of its own, by definition) -- kept for schema-shape parity with
+# gates.yaml's `locations: []`.
 items: []
 
 locations:
@@ -101,4 +111,103 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 27"
     location_id: 740026
+    trigger: {kind: always_available}
+  - name: "Filler Check 28"
+    location_id: 740027
+    trigger: {kind: always_available}
+  - name: "Filler Check 29"
+    location_id: 740028
+    trigger: {kind: always_available}
+  - name: "Filler Check 30"
+    location_id: 740029
+    trigger: {kind: always_available}
+  - name: "Filler Check 31"
+    location_id: 740030
+    trigger: {kind: always_available}
+  - name: "Filler Check 32"
+    location_id: 740031
+    trigger: {kind: always_available}
+  - name: "Filler Check 33"
+    location_id: 740032
+    trigger: {kind: always_available}
+  - name: "Filler Check 34"
+    location_id: 740033
+    trigger: {kind: always_available}
+  - name: "Filler Check 35"
+    location_id: 740034
+    trigger: {kind: always_available}
+  - name: "Filler Check 36"
+    location_id: 740035
+    trigger: {kind: always_available}
+  - name: "Filler Check 37"
+    location_id: 740036
+    trigger: {kind: always_available}
+  - name: "Filler Check 38"
+    location_id: 740037
+    trigger: {kind: always_available}
+  - name: "Filler Check 39"
+    location_id: 740038
+    trigger: {kind: always_available}
+  - name: "Filler Check 40"
+    location_id: 740039
+    trigger: {kind: always_available}
+  - name: "Filler Check 41"
+    location_id: 740040
+    trigger: {kind: always_available}
+  - name: "Filler Check 42"
+    location_id: 740041
+    trigger: {kind: always_available}
+  - name: "Filler Check 43"
+    location_id: 740042
+    trigger: {kind: always_available}
+  - name: "Filler Check 44"
+    location_id: 740043
+    trigger: {kind: always_available}
+  - name: "Filler Check 45"
+    location_id: 740044
+    trigger: {kind: always_available}
+  - name: "Filler Check 46"
+    location_id: 740045
+    trigger: {kind: always_available}
+  - name: "Filler Check 47"
+    location_id: 740046
+    trigger: {kind: always_available}
+  - name: "Filler Check 48"
+    location_id: 740047
+    trigger: {kind: always_available}
+  - name: "Filler Check 49"
+    location_id: 740048
+    trigger: {kind: always_available}
+  - name: "Filler Check 50"
+    location_id: 740049
+    trigger: {kind: always_available}
+  - name: "Filler Check 51"
+    location_id: 740050
+    trigger: {kind: always_available}
+  - name: "Filler Check 52"
+    location_id: 740051
+    trigger: {kind: always_available}
+  - name: "Filler Check 53"
+    location_id: 740052
+    trigger: {kind: always_available}
+  - name: "Filler Check 54"
+    location_id: 740053
+    trigger: {kind: always_available}
+  - name: "Filler Check 55"
+    location_id: 740054
+    trigger: {kind: always_available}
+  - name: "Filler Check 56"
+    location_id: 740055
+    trigger: {kind: always_available}
+  - name: "Filler Check 57"
+    location_id: 740056
+    trigger: {kind: always_available}
+  - name: "Filler Check 58"
+    location_id: 740057
+    trigger: {kind: always_available}
+  - name: "Filler Check 59"
+    location_id: 740058
+    trigger: {kind: always_available}
+  - name: "Filler Check 60"
+    location_id: 740059
     trigger: {kind: always_available}

@@ -43,5 +43,38 @@ namespace Archipelago::Filler
         740024, // Filler Check 25
         740025, // Filler Check 26
         740026, // Filler Check 27
+        740027, // Filler Check 28
+        740028, // Filler Check 29
+        740029, // Filler Check 30
+        740030, // Filler Check 31
+        740031, // Filler Check 32
+        740032, // Filler Check 33
+        740033, // Filler Check 34
+        740034, // Filler Check 35
+        740035, // Filler Check 36
+        740036, // Filler Check 37
+        740037, // Filler Check 38
+        740038, // Filler Check 39
+        740039, // Filler Check 40
+        740040, // Filler Check 41
+        740041, // Filler Check 42
+        740042, // Filler Check 43
+        740043, // Filler Check 44
+        740044, // Filler Check 45
+        740045, // Filler Check 46
+        740046, // Filler Check 47
+        740047, // Filler Check 48
+        740048, // Filler Check 49
+        740049, // Filler Check 50
+        740050, // Filler Check 51
+        740051, // Filler Check 52
+        740052, // Filler Check 53
+        740053, // Filler Check 54
+        740054, // Filler Check 55
+        740055, // Filler Check 56
+        740056, // Filler Check 57
+        740057, // Filler Check 58
+        740058, // Filler Check 59
+        740059, // Filler Check 60
     };
 }

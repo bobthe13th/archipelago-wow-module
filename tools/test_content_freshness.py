@@ -25,6 +25,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerContentTable.h",
     },
+    "traps": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "traps_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoTrapsContentTable.h",
+    },
 }
 
 

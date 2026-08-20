@@ -4,6 +4,7 @@
 #include "CharacterCache.h"
 #include "DatabaseEnv.h"
 #include "Log.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "World.h"
@@ -12,10 +13,12 @@
 #include "APDelivery.h"
 #include "APGating.h"
 #include "APProtocol.h"
+#include "APTraps.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoRealmState.h"
+#include "ArchipelagoTrapsContentTable.h"
 
 namespace
 {
@@ -143,6 +146,29 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
                     Archipelago::Gating::SyncCharacterUnlocksToPlayer(onlinePlayer);
                 });
             }
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        auto trapIt = Archipelago::Traps::ApItemToEffectAndLethal.find(received.item);
+        if (trapIt != Archipelago::Traps::ApItemToEffectAndLethal.end())
+        {
+            auto const& [effect, lethal] = trapIt->second;
+            // Traps fire on receipt, targeting the same delivery character
+            // EveryoneReceives mails to -- there is no other single "the
+            // player" to target in this realm-as-slot architecture. Only
+            // fires if that character is online right now; an offline
+            // delivery character never gets a queued/retroactive trap (a
+            // deliberate, documented scope boundary -- traps are optional,
+            // off by default, flavor-only content, unlike the sphere-0
+            // deferral queue which DOES need to survive an online player
+            // briefly re-entering Northshire).
+            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+            Player* onlineReceiver = receiverGuid.IsEmpty() ? nullptr : ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+            if (onlineReceiver)
+                Archipelago::Traps::ApplyTrapEffect(onlineReceiver, effect, lethal);
+            else
+                LOG_INFO("module.archipelago_wow", "Archipelago: trap effect '{}' skipped, delivery character '{}' is offline", effect, deliveryCharacter);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

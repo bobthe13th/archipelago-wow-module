@@ -80,6 +80,7 @@ _TRIGGER_KINDS_BY_FAMILY = {
     "core_loop": {"level_milestone", "instance_clear"},
     "gates": set(),  # gates never have locations
     "filler": {"always_available"},
+    "traps": set(),  # traps never have locations, same shape as gates
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
@@ -87,6 +88,7 @@ _DELIVERY_KINDS_BY_FAMILY = {
     "core_loop": {"realm_state"},
     "gates": {"flag"},
     "filler": set(),  # filler never has items
+    "traps": {"trap"},
 }
 
 _REALM_STATE_EFFECTS = {
@@ -139,6 +141,17 @@ def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_p
                         f"{yaml_path}: item {item['name']!r} has delivery.kind "
                         f"'flag' but is missing required key 'tier'"
                     )
+            if kind == "trap":
+                if "effect" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'trap' but is missing required key 'effect'"
+                    )
+                if "lethal" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'trap' but is missing required key 'lethal'"
+                    )
 
 
 _GENERATED_HEADER_PY = (
@@ -157,6 +170,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_gates(data)
     if family == "filler":
         return _emit_python_filler(data)
+    if family == "traps":
+        return _emit_python_traps(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -232,6 +247,26 @@ def _emit_python_filler(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_traps(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/traps.yaml"), ""]
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("EFFECT_BY_ITEM_NAME: dict[str, str] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": "{item["delivery"]["effect"]}",')
+    lines.append("}")
+    lines.append("")
+    lines.append("LETHAL_BY_ITEM_NAME: dict[str, bool] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": {item["delivery"]["lethal"]},')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -248,6 +283,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_gates(data)
     if family == "filler":
         return _emit_cpp_filler(data)
+    if family == "traps":
+        return _emit_cpp_traps(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -370,6 +407,32 @@ def _emit_cpp_filler(data: dict) -> str:
     lines.append("    inline std::unordered_set<int64_t> const LocationIds = {")
     for loc in data["locations"]:
         lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_traps(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/traps.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <string>",
+        "#include <unordered_map>",
+        "#include <utility>", "",
+        "namespace Archipelago::Traps", "{",
+    ]
+    for item in data["items"]:
+        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
+    lines.append("")
+    lines.append("    // second = effect slug, third = lethal")
+    lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, bool>> const ApItemToEffectAndLethal = {")
+    for item in data["items"]:
+        delivery = item["delivery"]
+        lethal_cpp = "true" if delivery["lethal"] else "false"
+        lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["effect"]}", {lethal_cpp} }} }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")

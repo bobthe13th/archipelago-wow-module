@@ -1,0 +1,92 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/traps.yaml
+family: traps
+
+# Task 17 (design spec §8's trap menu). Items only, no locations -- a trap's
+# effect fires on receipt, not on a location check, matching gates.yaml's
+# shape. Each item's `delivery.effect` is a slug identifying which case
+# ApplyTrapEffect (APTraps.cpp) handles; `delivery.lethal` puts it in the
+# separate "lethal" weight bucket the design spec says defaults off
+# (§18#5). `count` here is a ceiling, exactly like gates.yaml's per-item
+# counts and filler.yaml's row count -- Archipelago/worlds/wow/items.py's
+# create_trap_item_pool decides how many of each are actually pooled for a
+# given generation's trap_percentage_of_filler/distribution_mode/
+# lethal_traps options, and locations.py's create_filler_locations sizes
+# its sink-location slice to match that count exactly (same item=location
+# parity discipline as Task 11 -- see that task's outcome note in
+# docs/m4-plan.md for why "worst-case slack" doesn't work).
+#
+# Only 5 of these 15 non-lethal + 2 lethal effects have a real,
+# API-verified ApplyTrapEffect case as of Task 17's initial landing
+# (durability_damage, buff_strip, polymorph, teleport_to_graveyard,
+# screen_drunk) -- the rest are cataloged here and dispatch to a logged,
+# safe no-op until their own research/implementation pass. See Task 17's
+# outcome note in docs/m4-plan.md for exactly which and why.
+items:
+  - name: "Trap: Random Debuff"
+    item_id: 850000
+    count: 5
+    delivery: {kind: trap, effect: random_debuff, lethal: false}
+  - name: "Trap: Random Mob Spawn"
+    item_id: 850001
+    count: 5
+    delivery: {kind: trap, effect: random_mob_spawn, lethal: false}
+  - name: "Trap: Polymorph"
+    item_id: 850002
+    count: 5
+    delivery: {kind: trap, effect: polymorph, lethal: false}
+  - name: "Trap: Haircut"
+    item_id: 850003
+    count: 5
+    delivery: {kind: trap, effect: haircut, lethal: false}
+  - name: "Trap: Grey Item Bag Fill"
+    item_id: 850004
+    count: 5
+    delivery: {kind: trap, effect: grey_item_bag_fill, lethal: false}
+  - name: "Trap: Durability Damage"
+    item_id: 850005
+    count: 5
+    delivery: {kind: trap, effect: durability_damage, lethal: false}
+  - name: "Trap: Random Weather Burst"
+    item_id: 850006
+    count: 5
+    delivery: {kind: trap, effect: random_weather_burst, lethal: false}
+  - name: "Trap: Random Transform"
+    item_id: 850007
+    count: 5
+    delivery: {kind: trap, effect: random_transform, lethal: false}
+  - name: "Trap: Teleport to Graveyard"
+    item_id: 850008
+    count: 5
+    delivery: {kind: trap, effect: teleport_to_graveyard, lethal: false}
+  - name: "Trap: Aggro Nearby"
+    item_id: 850009
+    count: 5
+    delivery: {kind: trap, effect: aggro_nearby, lethal: false}
+  - name: "Trap: Forced Dance"
+    item_id: 850010
+    count: 5
+    delivery: {kind: trap, effect: forced_dance, lethal: false}
+  - name: "Trap: Temporary PvP Flag"
+    item_id: 850011
+    count: 5
+    delivery: {kind: trap, effect: temporary_pvp_flag, lethal: false}
+  - name: "Trap: Screen Drunk"
+    item_id: 850012
+    count: 5
+    delivery: {kind: trap, effect: screen_drunk, lethal: false}
+  - name: "Trap: Disarm"
+    item_id: 850013
+    count: 5
+    delivery: {kind: trap, effect: disarm, lethal: false}
+  - name: "Trap: Buff Strip"
+    item_id: 850014
+    count: 5
+    delivery: {kind: trap, effect: buff_strip, lethal: false}
+  - name: "Trap: Spawn a Rare on You"
+    item_id: 850015
+    count: 3
+    delivery: {kind: trap, effect: spawn_rare_on_you, lethal: true}
+  - name: "Trap: Floor is Lava"
+    item_id: 850016
+    count: 3
+    delivery: {kind: trap, effect: floor_is_lava, lethal: true}
