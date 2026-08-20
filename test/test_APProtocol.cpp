@@ -135,6 +135,51 @@ TEST_CASE("BuildStatusUpdatePacket produces the real AP goal-complete wire forma
     CHECK(json.find("\"status\":30") != std::string::npos);
 }
 
+TEST_CASE("BuildDeathLinkPacket includes cause and source")
+{
+    std::string packet = BuildDeathLinkPacket("Tester died to Ragefire Chasm", "Tester");
+    CHECK(packet.find("\"cmd\":\"Bounce\"") != std::string::npos);
+    CHECK(packet.find("\"tags\":[\"DeathLink\"]") != std::string::npos);
+    CHECK(packet.find("\"cause\":\"Tester died to Ragefire Chasm\"") != std::string::npos);
+    CHECK(packet.find("\"source\":\"Tester\"") != std::string::npos);
+}
+
+TEST_CASE("ParseServerMessageType recognizes an incoming Bounce with DeathLink tag")
+{
+    std::string raw = R"([{"cmd": "Bounce", "tags": ["DeathLink"], "data": {"cause": "x", "source": "y"}}])";
+    CHECK(ParseServerMessageType(raw) == ServerMessageType::DeathLinkBounce);
+}
+
+TEST_CASE("ParseServerMessageType does not treat a tag-less Bounce as DeathLink")
+{
+    std::string raw = R"([{"cmd": "Bounce", "tags": ["SomeOtherTag"], "data": {}}])";
+    CHECK(ParseServerMessageType(raw) == ServerMessageType::Unknown);
+}
+
+TEST_CASE("ParseIncomingDeathLinks extracts cause and source")
+{
+    std::string raw = R"([{"cmd": "Bounce", "tags": ["DeathLink"], "data": {"cause": "Tester died to Ragefire Chasm", "source": "Tester", "time": 123.0}}])";
+    auto bounces = ParseIncomingDeathLinks(raw);
+    REQUIRE(bounces.size() == 1);
+    CHECK(bounces[0].cause == "Tester died to Ragefire Chasm");
+    CHECK(bounces[0].source == "Tester");
+}
+
+TEST_CASE("ParseIncomingDeathLinks finds a batched Bounce alongside other commands")
+{
+    std::string raw = R"([{"cmd":"PrintJSON","data":[]},{"cmd":"Bounce","tags":["DeathLink"],"data":{"cause":"c","source":"s"}}])";
+    auto bounces = ParseIncomingDeathLinks(raw);
+    REQUIRE(bounces.size() == 1);
+    CHECK(bounces[0].cause == "c");
+    CHECK(bounces[0].source == "s");
+}
+
+TEST_CASE("ParseIncomingDeathLinks ignores a Bounce without the DeathLink tag")
+{
+    std::string raw = R"([{"cmd": "Bounce", "tags": ["SomeOtherTag"], "data": {"cause": "c", "source": "s"}}])";
+    CHECK(ParseIncomingDeathLinks(raw).empty());
+}
+
 TEST_CASE("BuildConnectPacket still round-trips through the JSON library (M1 regression)")
 {
     Archipelago::ConnectPacketOptions options;

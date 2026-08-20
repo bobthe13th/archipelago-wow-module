@@ -10,7 +10,8 @@ ArchipelagoManager* ArchipelagoManager::instance()
 }
 
 void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
-    std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived)
+    std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
+    std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived)
 {
     if (_client)
         return;
@@ -18,7 +19,8 @@ void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
     _client = std::make_unique<Archipelago::APClient>(
         std::move(options),
         std::move(onItemsReceived),
-        [this]() { ResendAllChecksAndGoal(); });
+        [this]() { ResendAllChecksAndGoal(); },
+        std::move(onDeathLinkReceived));
     _client->Start();
 }
 
@@ -43,6 +45,12 @@ void ArchipelagoManager::SendGoalComplete()
 
     if (_client)
         _client->SendGoalComplete();
+}
+
+void ArchipelagoManager::SendDeathLink(std::string const& cause, std::string const& source)
+{
+    if (_client)
+        _client->SendDeathLink(cause, source);
 }
 
 void ArchipelagoManager::ResendAllChecksAndGoal()

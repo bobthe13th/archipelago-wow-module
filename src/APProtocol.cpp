@@ -1,6 +1,8 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APProtocol.cpp
 #include "APProtocol.h"
 
+#include <ctime>
+
 #include "vendor/json.hpp"
 
 using json = nlohmann::json;
@@ -41,8 +43,32 @@ namespace Archipelago
         return packet.dump();
     }
 
+    std::string BuildDeathLinkPacket(std::string const& cause, std::string const& source)
+    {
+        json packet = json::array({ json{
+            { "cmd", "Bounce" },
+            { "tags", json::array({ "DeathLink" }) },
+            { "data", {
+                { "time", static_cast<double>(std::time(nullptr)) },
+                { "cause", cause },
+                { "source", source }
+            } }
+        } });
+        return packet.dump();
+    }
+
     namespace
     {
+        bool HasDeathLinkTag(json const& element)
+        {
+            if (!element.contains("tags") || !element["tags"].is_array())
+                return false;
+            for (json const& tag : element["tags"])
+                if (tag.is_string() && tag.get<std::string>() == "DeathLink")
+                    return true;
+            return false;
+        }
+
         ServerMessageType TypeFromElement(json const& element)
         {
             if (!element.is_object())
@@ -54,6 +80,10 @@ namespace Archipelago
             if (cmd == "ConnectionRefused")  return ServerMessageType::ConnectionRefused;
             if (cmd == "ReceivedItems")      return ServerMessageType::ReceivedItems;
             if (cmd == "PrintJSON")          return ServerMessageType::PrintJSON;
+            // A Bounce without the DeathLink tag isn't a command this module
+            // consumes for anything, so it deliberately falls through to Unknown.
+            if (cmd == "Bounce" && HasDeathLinkTag(element))
+                return ServerMessageType::DeathLinkBounce;
             return ServerMessageType::Unknown;
         }
 
@@ -77,6 +107,19 @@ namespace Archipelago
                 out.push_back(item);
                 ++offset;
             }
+        }
+
+        void CollectIncomingDeathLinkFromElement(json const& element, std::vector<IncomingDeathLink>& out)
+        {
+            if (!element.is_object() || element.value("cmd", "") != "Bounce" || !HasDeathLinkTag(element))
+                return;
+            if (!element.contains("data") || !element["data"].is_object())
+                return;
+
+            IncomingDeathLink bounce;
+            bounce.cause = element["data"].value("cause", std::string());
+            bounce.source = element["data"].value("source", std::string());
+            out.push_back(std::move(bounce));
         }
     }
 
@@ -107,6 +150,18 @@ namespace Archipelago
 
         for (json const& element : parsed)
             CollectReceivedItemsFromElement(element, result);
+        return result;
+    }
+
+    std::vector<IncomingDeathLink> ParseIncomingDeathLinks(std::string const& raw)
+    {
+        std::vector<IncomingDeathLink> result;
+        json parsed = json::parse(raw, nullptr, false);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+            CollectIncomingDeathLinkFromElement(element, result);
         return result;
     }
 }

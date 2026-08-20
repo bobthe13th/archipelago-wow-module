@@ -2,6 +2,7 @@
 #include "ArchipelagoRealmState.h"
 
 #include "DatabaseEnv.h"
+#include "GameTime.h"
 #include "Log.h"
 #include "QueryResult.h"
 
@@ -163,5 +164,25 @@ bool ArchipelagoRealmState::IsGateFamilyEnabled(std::string const& familyKey) co
 void ArchipelagoRealmState::SetGateFamilyEnabled(std::string const& familyKey, bool enabled)
 {
     _gateFamiliesEnabled[familyKey] = enabled;
+}
+
+bool ArchipelagoRealmState::TryConsumeDeathLinkSendCooldown()
+{
+    int64_t now = GameTime::GetGameTime().count();
+    if (now - _lastDeathLinkSentAt < static_cast<int64_t>(_deathLinkSendCooldownSeconds))
+        return false;
+
+    _lastDeathLinkSentAt = now;
+    return true;
+}
+
+bool ArchipelagoRealmState::TryConsumeDeathLinkReceiveCooldown()
+{
+    int64_t now = GameTime::GetGameTime().count();
+    if (now - _lastDeathLinkReceivedAt < static_cast<int64_t>(_deathLinkReceiveCooldownSeconds))
+        return false;
+
+    _lastDeathLinkReceivedAt = now;
+    return true;
 }
 

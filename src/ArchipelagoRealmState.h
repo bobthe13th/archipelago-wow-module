@@ -82,6 +82,33 @@ public:
     uint32_t GetCatchUpPercentPerLevel() const { return _catchUpPercentPerLevel; }
     void SetCatchUpPercentPerLevel(uint32_t percent) { _catchUpPercentPerLevel = percent; }
 
+    // Cached mirrors of Archipelago.DeathLink{Send,Receive}Enabled /
+    // Archipelago.DeathLink{Send,Receive}CooldownSeconds (Task 19, design
+    // spec Sec11), same not-persisted worldserver.conf-mirror convention as
+    // CatchUpPolicy above -- consumed from ArchipelagoDeathLinkScript
+    // (OnPlayerJustDied for send, ArchipelagoWorldScript::OnUpdate's
+    // incoming-bounce drain for receive), classes ArchipelagoWorldScript
+    // cannot pass a parameter to directly.
+    bool GetDeathLinkSendEnabled() const { return _deathLinkSendEnabled; }
+    void SetDeathLinkSendEnabled(bool enabled) { _deathLinkSendEnabled = enabled; }
+    bool GetDeathLinkReceiveEnabled() const { return _deathLinkReceiveEnabled; }
+    void SetDeathLinkReceiveEnabled(bool enabled) { _deathLinkReceiveEnabled = enabled; }
+    void SetDeathLinkSendCooldownSeconds(uint32_t seconds) { _deathLinkSendCooldownSeconds = seconds; }
+    void SetDeathLinkReceiveCooldownSeconds(uint32_t seconds) { _deathLinkReceiveCooldownSeconds = seconds; }
+
+    // Sec11: "send-side prevents a raid wipe spamming the multiworld" /
+    // "receive-side prevents cascades". Each call either records "now" as the
+    // new last-fired time and returns true (caller may proceed), or returns
+    // false because the configured cooldown hasn't elapsed since the last
+    // permitted call (caller must log the suppression, not silently drop it
+    // -- see ArchipelagoDeathLinkScript.cpp). World-thread-only, like the
+    // rest of this class -- no locking needed. Not persisted: a worldserver
+    // restart resetting the cooldown clock is an accepted, low-stakes edge
+    // case (worst case, one extra DeathLink fires slightly early after a
+    // restart), unlike the durable state above.
+    bool TryConsumeDeathLinkSendCooldown();
+    bool TryConsumeDeathLinkReceiveCooldown();
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -94,6 +121,12 @@ private:
     std::unordered_map<std::string, bool> _gateFamiliesEnabled;
     std::string _catchUpPolicy = "Nothing";
     uint32_t _catchUpPercentPerLevel = 10;
+    bool _deathLinkSendEnabled = false;
+    bool _deathLinkReceiveEnabled = false;
+    uint32_t _deathLinkSendCooldownSeconds = 15;
+    uint32_t _deathLinkReceiveCooldownSeconds = 15;
+    int64_t _lastDeathLinkSentAt = 0;
+    int64_t _lastDeathLinkReceivedAt = 0;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

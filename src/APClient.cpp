@@ -47,7 +47,8 @@ namespace Archipelago
         APClientSession(net::io_context& ioc, ClientOptions const& options,
             std::atomic<ConnectionState>& state, std::atomic<bool>& reachedHandshake,
             std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived,
-            std::function<void()> const& onConnected)
+            std::function<void()> const& onConnected,
+            std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -57,6 +58,7 @@ namespace Archipelago
             , _reachedHandshake(reachedHandshake)
             , _onItemsReceived(onItemsReceived)
             , _onConnected(onConnected)
+            , _onDeathLinkReceived(onDeathLinkReceived)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -118,6 +120,30 @@ namespace Archipelago
                         // Not connected right now: goal complete is stored durably in DB/memory
                         // and will be automatically resent on next successful connect (M4 Task 29).
                         LOG_INFO("module.archipelago_wow", "Archipelago: socket not connected, goal complete queued for resend on reconnect");
+                        return;
+                    }
+                    self->_outbox.push_back(payload);
+                    if (self->_outbox.size() == 1)
+                        self->WriteNextQueued();
+                });
+        }
+
+        void SendDeathLink(std::string const& cause, std::string const& source)
+        {
+            // Same _outbox/WriteNextQueued serialization as SendLocationChecks/
+            // SendGoalComplete above. Deliberately NOT durably queued for
+            // reconnect-resend the way those two are (M4 Task 29 explicitly
+            // excludes DeathLink -- see docs/m4-plan.md's Decisions section,
+            // item 4: "DeathLink sends are explicitly excluded from this
+            // treatment (real-time/best-effort by nature)"): if the socket
+            // isn't connected right now, this send is simply dropped.
+            auto payload = std::make_shared<std::string>(BuildDeathLinkPacket(cause, source));
+            net::dispatch(_options.useTls ? _sslWs.get_executor() : _plainWs.get_executor(),
+                [self = shared_from_this(), payload]
+                {
+                    if (self->_state.load() != ConnectionState::HandshakeComplete)
+                    {
+                        LOG_INFO("module.archipelago_wow", "Archipelago: socket not connected, DeathLink dropped (not queued -- best-effort by design)");
                         return;
                     }
                     self->_outbox.push_back(payload);
@@ -301,6 +327,14 @@ namespace Archipelago
                     _onItemsReceived(items);
             }
 
+            if (std::any_of(types.begin(), types.end(),
+                    [](ServerMessageType type) { return type == ServerMessageType::DeathLinkBounce; }))
+            {
+                auto bounces = ParseIncomingDeathLinks(message);
+                if (!bounces.empty() && _onDeathLinkReceived)
+                    _onDeathLinkReceived(bounces);
+            }
+
             ReadNext(false);
         }
 
@@ -420,14 +454,17 @@ namespace Archipelago
         std::atomic<bool>& _reachedHandshake;
         std::function<void(std::vector<ReceivedItem> const&)> const& _onItemsReceived;
         std::function<void()> const& _onConnected;
+        std::function<void(std::vector<IncomingDeathLink> const&)> const& _onDeathLinkReceived;
     };
 
     APClient::APClient(ClientOptions options,
         std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
-        std::function<void()> onConnected)
+        std::function<void()> onConnected,
+        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived)
         : _options(std::move(options))
         , _onItemsReceived(std::move(onItemsReceived))
         , _onConnected(std::move(onConnected))
+        , _onDeathLinkReceived(std::move(onDeathLinkReceived))
     {
     }
 
@@ -445,7 +482,7 @@ namespace Archipelago
         {
             std::lock_guard<std::mutex> lock(_sessionMutex);
             _session = std::make_shared<APClientSession>(
-                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected);
+                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived);
             session = _session;
         }
         session->Run();
@@ -482,6 +519,13 @@ namespace Archipelago
         std::lock_guard<std::mutex> lock(_sessionMutex);
         if (_session)
             _session->SendGoalComplete();
+    }
+
+    void APClient::SendDeathLink(std::string const& cause, std::string const& source)
+    {
+        std::lock_guard<std::mutex> lock(_sessionMutex);
+        if (_session)
+            _session->SendDeathLink(cause, source);
     }
 
     void APClient::RunIoContext()
@@ -544,7 +588,7 @@ namespace Archipelago
                         // _sessionMutex comment on the member in APClient.h.
                         std::lock_guard<std::mutex> lock(_sessionMutex);
                         _session = std::make_shared<APClientSession>(
-                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected);
+                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived);
                         session = _session;
                     }
                     session->Run();

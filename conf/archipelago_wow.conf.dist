@@ -172,3 +172,47 @@ Archipelago.CatchUpPolicy = "Nothing"
 
 Archipelago.CatchUpPercentPerLevel = 10
 ###################################################################################################
+
+#    Archipelago.DeathLinkSendEnabled
+#        Description: When true, a genuinely player-caused death on this
+#                      realm broadcasts a DeathLink Bounce to the connected
+#                      multiworld (M4 Sec11). Independent of
+#                      Archipelago.DeathLinkReceiveEnabled -- a realm can
+#                      send without receiving, or vice versa. Only turn this
+#                      on when the connected seed's player YAML also has
+#                      death_link_send enabled -- same manual-sync
+#                      requirement as every other option above.
+#        Default:     false
+
+Archipelago.DeathLinkSendEnabled = 0
+
+#    Archipelago.DeathLinkReceiveEnabled
+#        Description: When true, an incoming DeathLink Bounce from the
+#                      multiworld kills every online player on this realm
+#                      (M4 Sec11). Same manual-sync requirement as
+#                      DeathLinkSendEnabled above -- must match the
+#                      connected seed's death_link_receive option.
+#        Default:     false
+
+Archipelago.DeathLinkReceiveEnabled = 0
+
+#    Archipelago.DeathLinkSendCooldownSeconds
+#        Description: Minimum seconds between two outgoing DeathLink sends --
+#                      prevents a raid wipe (many players dying within the
+#                      same few seconds) from spamming the multiworld with
+#                      one Bounce per player. Deaths suppressed by this
+#                      cooldown are logged, not silently dropped.
+#        Default:     15
+
+Archipelago.DeathLinkSendCooldownSeconds = 15
+
+#    Archipelago.DeathLinkReceiveCooldownSeconds
+#        Description: Minimum seconds between two incoming DeathLink kills
+#                      being applied -- prevents a cascade where several
+#                      other slots' deaths arrive in a burst and repeatedly
+#                      re-kill this realm's players. Bounces suppressed by
+#                      this cooldown are logged, not silently dropped.
+#        Default:     15
+
+Archipelago.DeathLinkReceiveCooldownSeconds = 15
+###################################################################################################

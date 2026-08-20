@@ -9,6 +9,7 @@ void AddArchipelagoNorthrendPassageScripts();
 void AddArchipelagoGatingScripts();
 void AddArchipelagoCacheKeeperScripts();
 void AddArchipelagoTrapScripts();
+void AddArchipelagoDeathLinkScripts();
 
 // Folder name is "archipelago_wow" (no dashes) -> loader function is Addarchipelago_wowScripts,
 // called automatically by the core's generated AddModulesScripts() wrapper.
@@ -25,5 +26,6 @@ void Addarchipelago_wowScripts()
     AddArchipelagoGatingScripts();
     AddArchipelagoCacheKeeperScripts();
     AddArchipelagoTrapScripts();
+    AddArchipelagoDeathLinkScripts();
 }
 

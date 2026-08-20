@@ -8,6 +8,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "APDelivery.h"
+#include "ArchipelagoDeathLink.h"
 #include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -86,6 +87,16 @@ public:
         // cannot pass a parameter to directly.
         sArchipelagoRealmState->SetCatchUpPolicy(sConfigMgr->GetOption<std::string>("Archipelago.CatchUpPolicy", "Nothing"));
         sArchipelagoRealmState->SetCatchUpPercentPerLevel(sConfigMgr->GetOption<uint32_t>("Archipelago.CatchUpPercentPerLevel", 10));
+
+        // Task 19 (DeathLink, design spec Sec11): same not-persisted mirror-toggle
+        // discipline as CatchUpPolicy above -- consumed from ArchipelagoDeathLinkScript
+        // (a different PlayerScript class) and from this class's own OnUpdate (incoming
+        // bounce processing), so both need to read the cached value from RealmState
+        // rather than a member here.
+        sArchipelagoRealmState->SetDeathLinkSendEnabled(sConfigMgr->GetOption<bool>("Archipelago.DeathLinkSendEnabled", false));
+        sArchipelagoRealmState->SetDeathLinkReceiveEnabled(sConfigMgr->GetOption<bool>("Archipelago.DeathLinkReceiveEnabled", false));
+        sArchipelagoRealmState->SetDeathLinkSendCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkSendCooldownSeconds", 15));
+        sArchipelagoRealmState->SetDeathLinkReceiveCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkReceiveCooldownSeconds", 15));
 
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
@@ -185,10 +196,15 @@ public:
         // only ever push the received items into this lock-guarded queue; the
         // actual mail/DB work happens in OnUpdate below, which always runs on
         // the world thread.
-        sArchipelagoMgr->Initialize(options, [this](std::vector<Archipelago::ReceivedItem> const& items) {
-            std::lock_guard<std::mutex> lock(_pendingItemsMutex);
-            _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
-        });
+        sArchipelagoMgr->Initialize(options,
+            [this](std::vector<Archipelago::ReceivedItem> const& items) {
+                std::lock_guard<std::mutex> lock(_pendingItemsMutex);
+                _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
+            },
+            [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
+                std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
+                _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
+            });
     }
 
     void OnShutdown() override
@@ -204,12 +220,18 @@ public:
         std::vector<Archipelago::ReceivedItem> items;
         {
             std::lock_guard<std::mutex> lock(_pendingItemsMutex);
-            if (_pendingItems.empty())
-                return;
             items.swap(_pendingItems);
         }
+        if (!items.empty())
+            DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier);
 
-        DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier);
+        std::vector<Archipelago::IncomingDeathLink> deathLinks;
+        {
+            std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
+            deathLinks.swap(_pendingDeathLinks);
+        }
+        if (!deathLinks.empty())
+            Archipelago::DeathLink::HandleIncomingDeathLinks(deathLinks);
     }
 
 private:
@@ -234,6 +256,14 @@ private:
     // vector concurrently.
     std::mutex _pendingItemsMutex;
     std::vector<Archipelago::ReceivedItem> _pendingItems;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingItems
+    // above, for incoming DeathLink Bounces (Task 19). A separate mutex/queue
+    // rather than sharing _pendingItemsMutex: the two are logically unrelated
+    // (different AP commands, different downstream handling) and keeping them
+    // separate avoids one queue's lock contention blocking the other's.
+    std::mutex _pendingDeathLinksMutex;
+    std::vector<Archipelago::IncomingDeathLink> _pendingDeathLinks;
 };
 
 void AddArchipelagoWorldScripts()

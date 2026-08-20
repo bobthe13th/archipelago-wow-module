@@ -14,7 +14,12 @@ namespace Archipelago
         Connected,
         ConnectionRefused,
         ReceivedItems,
-        PrintJSON
+        PrintJSON,
+        // A "Bounce" command carrying the "DeathLink" tag (Task 19, design
+        // spec Sec11). A Bounce without that tag is not a mechanism this
+        // module uses for anything else, so it maps to Unknown rather than
+        // getting its own value.
+        DeathLinkBounce
     };
 
     struct ConnectPacketOptions
@@ -35,6 +40,15 @@ namespace Archipelago
         int64_t index = 0; // absolute position in the server's item stream
     };
 
+    // One incoming "Bounce"+"DeathLink" event (Task 19). cause/source come
+    // straight from the other slot's outgoing packet's "data" object -- this
+    // module only ever displays/logs them, never parses them structurally.
+    struct IncomingDeathLink
+    {
+        std::string cause;
+        std::string source;
+    };
+
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
     // websocket protocol's JSON message arrays. M2: replaces M1's hand-rolled
     // string builder/scanner now that item/location traffic needs structured
@@ -48,6 +62,14 @@ namespace Archipelago
     // Archipelago/CommonClient.py's status-update send path for the wire
     // format this mirrors.
     std::string BuildStatusUpdatePacket(int32_t status);
+
+    // Builds a DeathLink "Bounce" command (Task 19, design spec Sec11): a
+    // JSON array containing one object with cmd="Bounce", tags=["DeathLink"],
+    // and a "data" object carrying cause/source (plus a "time" unix
+    // timestamp, matching the real AP DeathLink wire format used by other
+    // games' clients). Only ever sent for a PlayerCaused death -- the
+    // loop-guard predicate lives in ArchipelagoDeathLinkScript.cpp, not here.
+    std::string BuildDeathLinkPacket(std::string const& cause, std::string const& source);
 
     // A single websocket text frame from the Archipelago server may batch
     // multiple protocol commands into one JSON array (e.g.
@@ -68,4 +90,9 @@ namespace Archipelago
     // element -- so no items are dropped when ReceivedItems is batched
     // alongside other commands in the same frame.
     std::vector<ReceivedItem> ParseReceivedItems(std::string const& raw);
+
+    // Mirrors ParseReceivedItems' shape: scans every element of a (possibly
+    // batched) frame and collects one IncomingDeathLink per "Bounce"+
+    // "DeathLink" command found, in order.
+    std::vector<IncomingDeathLink> ParseIncomingDeathLinks(std::string const& raw);
 }

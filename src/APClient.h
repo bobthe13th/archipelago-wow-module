@@ -45,13 +45,15 @@ namespace Archipelago
     public:
         APClient(ClientOptions options,
             std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
-            std::function<void()> onConnected = nullptr);
+            std::function<void()> onConnected = nullptr,
+            std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr);
         ~APClient();
 
         void Start();
         void Stop();
         void SendLocationChecks(std::vector<int64_t> const& locationIds);
         void SendGoalComplete();
+        void SendDeathLink(std::string const& cause, std::string const& source);
 
         ConnectionState GetState() const { return _state.load(); }
 
@@ -61,6 +63,7 @@ namespace Archipelago
         ClientOptions _options;
         std::function<void(std::vector<ReceivedItem> const&)> _onItemsReceived;
         std::function<void()> _onConnected;
+        std::function<void(std::vector<IncomingDeathLink> const&)> _onDeathLinkReceived;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
         // Set by APClientSession the moment a session reaches HandshakeComplete, and
@@ -75,8 +78,8 @@ namespace Archipelago
         boost::asio::io_context _ioc;
         // _session is reassigned on the io thread (inside RunIoContext's reconnect-timer
         // handler) but read from the world thread (Stop(), SendLocationChecks(),
-        // SendGoalComplete()); guard every access with _sessionMutex so those two
-        // threads never race on the shared_ptr itself.
+        // SendGoalComplete(), SendDeathLink()); guard every access with _sessionMutex so
+        // those two threads never race on the shared_ptr itself.
         std::mutex _sessionMutex;
         std::shared_ptr<APClientSession> _session;
         std::thread _ioThread;
