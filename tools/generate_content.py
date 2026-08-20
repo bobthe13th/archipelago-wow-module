@@ -233,6 +233,21 @@ def _emit_python_core_loop(data: dict) -> str:
         lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
     lines.append("}")
     lines.append("")
+    lines.append("# Every item whose delivery is realm_state/unlock_instance, keyed by its")
+    lines.append("# own AP item id -- a generic map so a new instance_clear row's unlock item")
+    lines.append("# needs zero additional C++/Python code to actually unlock anything (found")
+    lines.append("# the hard way in Task 23: the 3 new raid unlock items were added to this")
+    lines.append("# content table but never wired into ArchipelagoPlayerScript.cpp's delivery")
+    lines.append("# dispatch, since that dispatch hardcoded only the original 2 dungeons'")
+    lines.append("# item ids -- receiving those items did nothing at all in real play until")
+    lines.append("# this generic map replaced the hardcoded blocks).")
+    lines.append("INSTANCE_UNLOCK_ITEM_TO_KEY: dict[int, str] = {")
+    for item in data["items"]:
+        delivery = item["delivery"]
+        if delivery["kind"] == "realm_state" and delivery["effect"] == "unlock_instance":
+            lines.append(f'    {item["item_id"]}: "{delivery["instance_key"]}",')
+    lines.append("}")
+    lines.append("")
     lines.append("LEVEL_LOCATIONS: dict[int, int] = {")
     milestone_locs = [loc for loc in data["locations"] if loc["trigger"]["kind"] == "level_milestone"]
     milestone_locs.sort(key=lambda loc: loc["trigger"]["level"])
@@ -418,6 +433,22 @@ def _emit_cpp_core_loop(data: dict) -> str:
         key = loc["trigger"]["instance_key"]
         const_name = "INSTANCE_KEY_" + key.upper()
         lines.append(f'    inline std::string const {const_name} = "{key}";')
+    lines.append("")
+    lines.append("    // Every item whose delivery is realm_state/unlock_instance, keyed by its")
+    lines.append("    // own AP item id -- a generic map so a new instance_clear row's unlock item")
+    lines.append("    // needs zero additional C++/Python code to actually unlock anything (found")
+    lines.append("    // the hard way in Task 23: the 3 new raid unlock items were added to this")
+    lines.append("    // content table but never wired into ArchipelagoPlayerScript.cpp's delivery")
+    lines.append("    // dispatch, since that dispatch hardcoded only the original 2 dungeons'")
+    lines.append("    // item ids -- receiving those items did nothing at all in real play until")
+    lines.append("    // this generic map replaced the hardcoded blocks).")
+    lines.append("    inline std::unordered_map<int64_t, std::string> const INSTANCE_UNLOCK_ITEM_TO_KEY = {")
+    for item in data["items"]:
+        delivery = item["delivery"]
+        if delivery["kind"] == "realm_state" and delivery["effect"] == "unlock_instance":
+            const_name = "INSTANCE_KEY_" + delivery["instance_key"].upper()
+            lines.append(f'        {{ {item["item_id"]}, {const_name} }},')
+    lines.append("    };")
     lines.append("")
     lines.append("    inline std::unordered_map<std::string, uint32_t> const INSTANCE_FINAL_BOSS_ENTRY = {")
     for loc in clear_locs:

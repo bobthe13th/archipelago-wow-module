@@ -141,6 +141,21 @@ public:
     std::string GetInstanceClearMode() const { return _instanceClearMode; }
     void SetInstanceClearMode(std::string const& mode) { _instanceClearMode = mode; }
 
+    // Cached mirror of Archipelago.GameMode/Archipelago.CompletionistExpansion
+    // (found needed during Task 23/24's own review -- this bespoke C++
+    // APClient has no embedded rules-evaluation engine, so it cannot derive
+    // "is the goal met" from anything the AP server sends; it must
+    // independently know which mode is active to report completion at all).
+    // Same not-persisted worldserver.conf-mirror convention as every other
+    // option above -- values are the bare GameMode option name (e.g.
+    // "sprint", "classic"), matching goals.py's own dispatch keys, not the
+    // "option_"-prefixed Choice attribute name. Consumed from
+    // ArchipelagoGoals.cpp's CheckAndSendGoalComplete.
+    std::string GetGameMode() const { return _gameMode; }
+    void SetGameMode(std::string const& mode) { _gameMode = mode; }
+    std::string GetCompletionistExpansion() const { return _completionistExpansion; }
+    void SetCompletionistExpansion(std::string const& expansion) { _completionistExpansion = expansion; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -163,6 +178,8 @@ private:
     bool _suppressDurabilityLossOnSpiritResurrect = false;
     std::unordered_set<std::string> _recordedBossKills; // "instanceKey|bossEntry" composite keys
     std::string _instanceClearMode = "all_bosses";
+    std::string _gameMode = "sprint";
+    std::string _completionistExpansion = "vanilla";
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

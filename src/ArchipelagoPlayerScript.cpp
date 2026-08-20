@@ -17,6 +17,7 @@
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
+#include "ArchipelagoGoals.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoTrapsContentTable.h"
 
@@ -104,15 +105,18 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
-        if (received.item == Archipelago::CoreLoop::AP_ITEM_INSTANCE_UNLOCK_RAGEFIRE_CHASM)
+        // Task 23 bugfix: this was previously two hardcoded if-blocks (one
+        // per M2.1 dungeon) -- Task 23 added 3 more Instance Unlock items to
+        // the content table without extending this dispatch, so receiving
+        // any of them did nothing at all in real play (fell through to the
+        // "unknown AP item id" error path below). Generic lookup means a
+        // future instance_clear row's unlock item needs zero additional
+        // code here.
+        auto instanceUnlockIt = Archipelago::CoreLoop::INSTANCE_UNLOCK_ITEM_TO_KEY.find(received.item);
+        if (instanceUnlockIt != Archipelago::CoreLoop::INSTANCE_UNLOCK_ITEM_TO_KEY.end())
         {
-            sArchipelagoRealmState->UnlockInstance(Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM);
-            highestSeen = std::max(highestSeen, received.index);
-            continue;
-        }
-        if (received.item == Archipelago::CoreLoop::AP_ITEM_INSTANCE_UNLOCK_DEADMINES)
-        {
-            sArchipelagoRealmState->UnlockInstance(Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES);
+            sArchipelagoRealmState->UnlockInstance(instanceUnlockIt->second);
+            Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

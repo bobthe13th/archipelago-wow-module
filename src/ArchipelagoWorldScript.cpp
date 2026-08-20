@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoWorldScript.cpp
 #include <algorithm>
 #include <mutex>
+#include <unordered_map>
 #include <vector>
 
 #include "Config.h"
@@ -98,6 +99,52 @@ namespace
         else if (value != "Off")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.ComboUnlocksScope '{}', falling back to Off", value);
     }
+
+    // Found needed during Task 23/24's own review: this bespoke C++ APClient
+    // has no embedded rules-evaluation engine (unlike the reference Python
+    // client), so it cannot independently derive "is the goal met" without
+    // knowing which GameMode is active -- ArchipelagoGoals.cpp's
+    // CheckAndSendGoalComplete dispatches on this. Values are PascalCase
+    // (this module's own conf convention), parsed into the bare snake_case
+    // strings goals.py's dispatch table itself uses as keys.
+    std::string ParseGameMode(std::string const& value)
+    {
+        static std::unordered_map<std::string, std::string> const modes = {
+            { "Sprint", "sprint" },
+            { "KeyHunt", "key_hunt" },
+            { "Classic", "classic" },
+            { "BurningCrusade", "burning_crusade" },
+            { "Wrath", "wrath" },
+            { "Completionist", "completionist" },
+            { "Artisan", "artisan" },
+            { "Collector", "collector" },
+            { "AchievementHunt", "achievement_hunt" },
+            { "Gladiator", "gladiator" },
+            { "Explorer", "explorer" },
+            { "FishingQuest", "fishing_quest" },
+        };
+        auto it = modes.find(value);
+        if (it != modes.end())
+            return it->second;
+
+        LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.GameMode '{}', falling back to Sprint", value);
+        return "sprint";
+    }
+
+    // Values are PascalCase (this module's own conf convention), parsed into
+    // the bare snake_case strings the apworld's CompletionistExpansion Choice
+    // itself uses as current_key (vanilla/tbc/wotlk) -- only meaningful when
+    // Archipelago.GameMode is Completionist.
+    std::string ParseCompletionistExpansion(std::string const& value)
+    {
+        if (value == "Tbc")
+            return "tbc";
+        if (value == "Wotlk")
+            return "wotlk";
+        if (value != "Vanilla")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.CompletionistExpansion '{}', falling back to Vanilla", value);
+        return "vanilla";
+    }
 }
 
 class ArchipelagoWorldScript : public WorldScript
@@ -179,6 +226,15 @@ public:
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.InstanceClearMode '{}', falling back to AllBosses", instanceClearMode);
             sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
         }
+
+        // Found needed during Task 23/24's own review, not originally planned
+        // for either task: ArchipelagoGoals.cpp's CheckAndSendGoalComplete
+        // needs to know which mode is active to report completion at all
+        // (see that file's header comment for why). Same manual-sync
+        // requirement as game_mode/completionist_expansion in the connected
+        // seed's own YAML.
+        sArchipelagoRealmState->SetGameMode(ParseGameMode(sConfigMgr->GetOption<std::string>("Archipelago.GameMode", "Sprint")));
+        sArchipelagoRealmState->SetCompletionistExpansion(ParseCompletionistExpansion(sConfigMgr->GetOption<std::string>("Archipelago.CompletionistExpansion", "Vanilla")));
 
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with

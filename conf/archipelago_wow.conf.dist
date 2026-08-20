@@ -290,3 +290,41 @@ Archipelago.ComboUnlocksScope = "Off"
 
 Archipelago.InstanceClearMode = "AllBosses"
 ###################################################################################################
+
+#    Archipelago.GameMode
+#        Description: Which goal-mode the connected AP seed is generated
+#                      for. Found necessary during Task 23/24's own review,
+#                      not originally planned for either task: this module's
+#                      bespoke C++ AP client has no embedded rules-evaluation
+#                      engine (unlike the reference Python client), so it
+#                      cannot derive "is the goal met" from anything the AP
+#                      server sends it -- it must independently know which
+#                      mode is active to ever report completion at all. Without
+#                      this set correctly, the worldserver will never send a
+#                      goal-complete status update for anything but Sprint,
+#                      even if the connected seed's own game_mode option (and
+#                      its completion_condition) says otherwise. Modes with
+#                      no real content yet (KeyHunt, Artisan, Collector,
+#                      AchievementHunt, Gladiator, Explorer, FishingQuest) are
+#                      accepted here without error but never report
+#                      completion, matching the apworld's own
+#                      goals.py deferral for those modes.
+#        Values:      "Sprint" (default) | "KeyHunt" | "Classic" |
+#                      "BurningCrusade" | "Wrath" | "Completionist" |
+#                      "Artisan" | "Collector" | "AchievementHunt" |
+#                      "Gladiator" | "Explorer" | "FishingQuest"
+#        Default:     "Sprint"
+
+Archipelago.GameMode = "Sprint"
+
+#    Archipelago.CompletionistExpansion
+#        Description: Only relevant when Archipelago.GameMode is
+#                      "Completionist" (Task 24) -- which expansion's
+#                      instance-clear locations must ALL be cleared to
+#                      complete the goal. Must match the connected seed's
+#                      own completionist_expansion option.
+#        Values:      "Vanilla" (default) | "Tbc" | "Wotlk"
+#        Default:     "Vanilla"
+
+Archipelago.CompletionistExpansion = "Vanilla"
+###################################################################################################
