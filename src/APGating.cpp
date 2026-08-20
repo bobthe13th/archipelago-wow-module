@@ -229,11 +229,12 @@ class ArchipelagoMailboxGateScript : public PlayerScript
 public:
     ArchipelagoMailboxGateScript() : PlayerScript("ArchipelagoMailboxGateScript", { PLAYERHOOK_CAN_SEND_MAIL }) { }
 
-    // Only fires from the player-initiated send-mail opcode path -- this
+    // Only fires from player-initiated opcode paths (composing new mail AND
+    // returning existing mail to its sender both call this) -- this
     // module's own AP item delivery (APDelivery.cpp) builds a MailDraft and
     // calls SendMailTo() directly, a separate server-side API that never
     // reaches this hook, so gating it cannot block delivery mail. Reading/
-    // collecting mail is untouched (no hook exists on that path at all).
+    // collecting mail into your inbox is untouched (no hook exists there).
     bool OnPlayerCanSendMail(Player* player, ObjectGuid /*receiverGuid*/, ObjectGuid /*mailbox*/,
         std::string& /*subject*/, std::string& /*body*/, uint32 /*money*/, uint32 /*COD*/, Item* /*item*/) override
     {

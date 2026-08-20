@@ -90,12 +90,15 @@ items:
   #     Tasks 5/7, keyed on the real Hearthstone item entry (6948, spell
   #     8690 -- confirmed directly in src/server/game/Spells/SpellEffects.cpp).
   #   - Mailbox: gated via PLAYERHOOK_CAN_SEND_MAIL (Player::CanSendMail),
-  #     which only fires from the player-initiated send-mail opcode path --
-  #     confirmed this module's own AP item delivery (APDelivery.cpp) builds
-  #     a MailDraft and calls SendMailTo() directly, a separate server-side
+  #     which only fires from player-initiated opcode paths -- confirmed
+  #     this module's own AP item delivery (APDelivery.cpp) builds a
+  #     MailDraft and calls SendMailTo() directly, a separate server-side
   #     API that never touches this hook, so gating it cannot block AP's own
-  #     delivery mail. Only SENDING is gated; reading/collecting mail stays
-  #     open always (there is no hook on HandleGetMailList).
+  #     delivery mail. Covers both composing new mail AND returning existing
+  #     mail to its sender (MailHandler.cpp's HandleReturnToSender also
+  #     calls this same hook) -- reading/collecting mail into your inbox is
+  #     the only mailbox action that stays open always (no hook exists on
+  #     HandleGetMailList).
   # Bank and gathering (mining/herbalism/skinning) have NO ScriptMgr hook
   # anywhere in their interaction path (confirmed by grepping BankHandler.cpp,
   # Player::GetNPCIfCanInteractWith, and GameObject.cpp's Use() path -- zero
