@@ -6,6 +6,13 @@ constants:
   LEVEL_CAP_STEP: 5
   SPRINT_GOAL_LEVEL: 60
 
+# Task 24 (Completionist mode, design spec Sec5.4): instance_clear rows now
+# carry an `expansion: vanilla|tbc|wotlk` field, driving
+# INSTANCES_BY_EXPANSION (generate_content.py) and goals.py's Completionist
+# validator/completion rule. Optional in the loader's schema (a soft
+# tightening, not a breaking change -- older rows just needed the field
+# added, not restructured), but every instance_clear row here has one in
+# practice as of this task.
 locations:
   - name: Reach Level 5
     location_id: 710000
@@ -45,10 +52,10 @@ locations:
     trigger: {kind: level_milestone, level: 60}
   - name: Clear Ragefire Chasm
     location_id: 720000
-    trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520}
+    trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520, expansion: vanilla}
   - name: Clear Deadmines
     location_id: 720001
-    trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639}
+    trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639, expansion: vanilla}
 
   # Task 23 (design spec Sec5.4, Tier 1: Classic/Burning Crusade/Wrath modes)
   # -- the first three rows to actually carry a `bosses:` sub-list, driving
@@ -105,6 +112,7 @@ locations:
       kind: instance_clear
       instance_key: molten_core
       final_boss_entry: 11502
+      expansion: vanilla
       bosses:
         - {name: "Lucifron", entry: 12118}
         - {name: "Magmadar", entry: 11982}
@@ -122,6 +130,7 @@ locations:
       kind: instance_clear
       instance_key: sunwell_plateau
       final_boss_entry: 25315
+      expansion: tbc
       bosses:
         - {name: "Kalecgos", entry: 24892}
         - {name: "Brutallus", entry: 24882}
@@ -136,6 +145,7 @@ locations:
       kind: instance_clear
       instance_key: icecrown_citadel
       final_boss_entry: 36597
+      expansion: wotlk
       bosses:
         - {name: "Lord Marrowgar", entry: 36612}
         - {name: "Lady Deathwhisper", entry: 36855}

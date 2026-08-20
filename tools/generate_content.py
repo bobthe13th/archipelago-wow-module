@@ -272,6 +272,22 @@ def _emit_python_core_loop(data: dict) -> str:
             lines.append(f'    "{trigger["instance_key"]}": [{entries}],')
     lines.append("}")
     lines.append("")
+    lines.append("# Task 24 (Completionist mode): every instance_key with an `expansion:`")
+    lines.append("# field on its location row, grouped by that expansion. A row with no")
+    lines.append("# `expansion:` field (none exist as of Task 24, but the loader's schema")
+    lines.append("# still treats it as optional -- see core_loop.yaml's own header comment)")
+    lines.append("# is simply absent from every list here, not present under a None/empty key.")
+    lines.append("INSTANCES_BY_EXPANSION: dict[str, list[str]] = {")
+    expansions: dict[str, list[str]] = {}
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        if trigger["kind"] == "instance_clear" and "expansion" in trigger:
+            expansions.setdefault(trigger["expansion"], []).append(trigger["instance_key"])
+    for expansion, instance_keys in expansions.items():
+        keys = ", ".join(f'"{k}"' for k in instance_keys)
+        lines.append(f'    "{expansion}": [{keys}],')
+    lines.append("}")
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -433,6 +449,22 @@ def _emit_cpp_core_loop(data: dict) -> str:
         const_name = "INSTANCE_KEY_" + trigger["instance_key"].upper()
         entries = ", ".join(str(b["entry"]) for b in trigger["bosses"])
         lines.append(f'        {{ {const_name}, {{ {entries} }} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // Task 24 (Completionist mode): every instance_key with an `expansion:`")
+    lines.append("    // field on its location row, grouped by that expansion. Not consumed")
+    lines.append("    // anywhere in the C++ module as of Task 24 (Completionist's validator/")
+    lines.append("    // completion rule are apworld-only, generation-time logic) -- emitted")
+    lines.append("    // for parity with the Python side per this task's own Files list.")
+    lines.append("    inline std::unordered_map<std::string, std::vector<std::string>> const INSTANCES_BY_EXPANSION = {")
+    cpp_expansions: dict[str, list[str]] = {}
+    for loc in clear_locs:
+        trigger = loc["trigger"]
+        if "expansion" in trigger:
+            cpp_expansions.setdefault(trigger["expansion"], []).append(trigger["instance_key"])
+    for expansion, instance_keys in cpp_expansions.items():
+        const_names = ", ".join("INSTANCE_KEY_" + k.upper() for k in instance_keys)
+        lines.append(f'        {{ "{expansion}", {{ {const_names} }} }},')
     lines.append("    };")
     lines.append("}")
     lines.append("")

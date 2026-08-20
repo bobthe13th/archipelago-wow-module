@@ -71,4 +71,15 @@ namespace Archipelago::CoreLoop
         { INSTANCE_KEY_SUNWELL_PLATEAU, { 24892, 24882, 25038, 25165, 25166, 25840, 25315 } },
         { INSTANCE_KEY_ICECROWN_CITADEL, { 36612, 36855, 37813, 36626, 36627, 36678, 37972, 37973, 37970, 37955, 36853, 36597 } },
     };
+
+    // Task 24 (Completionist mode): every instance_key with an `expansion:`
+    // field on its location row, grouped by that expansion. Not consumed
+    // anywhere in the C++ module as of Task 24 (Completionist's validator/
+    // completion rule are apworld-only, generation-time logic) -- emitted
+    // for parity with the Python side per this task's own Files list.
+    inline std::unordered_map<std::string, std::vector<std::string>> const INSTANCES_BY_EXPANSION = {
+        { "vanilla", { INSTANCE_KEY_RAGEFIRE_CHASM, INSTANCE_KEY_DEADMINES, INSTANCE_KEY_MOLTEN_CORE } },
+        { "tbc", { INSTANCE_KEY_SUNWELL_PLATEAU } },
+        { "wotlk", { INSTANCE_KEY_ICECROWN_CITADEL } },
+    };
 }
