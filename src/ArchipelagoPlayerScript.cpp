@@ -47,7 +47,7 @@ namespace
 // ArchipelagoWorldScript::OnUpdate, draining the io-thread-fed queue) -- it
 // touches Player/CharacterCache/CharacterDatabase, none of which are safe to
 // call from the APClient io thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy)
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier)
 {
     // Archipelago.DeliveryCharacter is only load-bearing for Policy::EveryoneReceives
     // (the only branch APDelivery::DeliverItem actually mails to it) -- Task 13's
@@ -155,7 +155,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        Archipelago::Delivery::DeliverItem(deliveryPolicy, entryIt->second, deliveryCharacter, trans);
+        Archipelago::Delivery::DeliverItem(deliveryPolicy, entryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
         // Logged unconditionally, regardless of deliveryPolicy -- Task 16's
         // new-character catch-up needs an authoritative record of every item
         // the realm has ever received, independent of which policy routed it.

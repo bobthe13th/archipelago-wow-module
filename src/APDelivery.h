@@ -17,12 +17,26 @@ namespace Archipelago::Delivery
                           // in the realm-wide cache instead (see archipelago_cache_items);
                           // npc_archipelago_cache_keeper.cpp hands each character their own
                           // unclaimed copies on interaction.
-        AuctionHouse,     // Task 14
+        AuctionHouse,     // Task 14: see CostTier below
         FirstToClaim,     // Task 15: queued into archipelago_first_to_claim_pending
                           // and announced realm-wide -- see npc_archipelago_cache_keeper
                           // (ArchipelagoCacheKeeperScript.cpp), repurposed with a third
                           // gossip option that drains the whole pending queue to whoever
                           // interacts with it first.
+    };
+
+    // Task 14: buyout price band for Policy::AuctionHouse listings, resolved once at
+    // generation (design spec Sec7.1: "Cost configurable: free / cheap / market /
+    // expensive / random") and mirrored via Archipelago.AuctionHouseCostTier, same
+    // manual-sync convention as everything else in this module. Random picks
+    // uniformly among the other four tiers, per listing.
+    enum class CostTier
+    {
+        Free,
+        Cheap,
+        Market,
+        Expensive,
+        Random,
     };
 
     // wowItemEntry is the WoW item_template entry to deliver. Policy::EveryoneReceives
@@ -32,8 +46,9 @@ namespace Archipelago::Delivery
     // Item* here; changed to a raw entry id in Task 13 once SharedCacheNpc showed that
     // "construct then hand off" doesn't fit every policy (there is no single owner to
     // construct an Item for at receive time), so construction is now each branch's own
-    // decision, made if and when it actually needs one.
-    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans);
+    // decision, made if and when it actually needs one. costTier is only consulted by
+    // Policy::AuctionHouse.
+    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, CharacterDatabaseTransaction trans);
 
     // Shared "give this online player one copy of wowItemEntry right now" primitive:
     // stores it directly into their bags if there's room, otherwise mails it (same

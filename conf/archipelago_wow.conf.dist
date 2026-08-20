@@ -128,6 +128,23 @@ Archipelago.CharacterUnlockGating = 0
 
 Archipelago.DeliveryPolicy = "EveryoneReceives"
 
+#    Archipelago.AuctionHouseCostTier
+#        Description: Only used when Archipelago.DeliveryPolicy is
+#                      "AuctionHouse" -- the buyout price band for listed
+#                      items (M4 Sec7.1). Base price is the item's vendor
+#                      BuyPrice if set, else 4x its SellPrice, else a 1
+#                      silver floor for zero-priced custom items. Cheap is
+#                      1/4 of base, Expensive is 4x base, Random picks
+#                      uniformly among Free/Cheap/Market/Expensive per
+#                      listing. Listings are system auctions (no real
+#                      seller) -- no deposit is charged and no gold payout
+#                      is owed to anyone on sale.
+#        Values:      "Free" | "Cheap" | "Market" (default) | "Expensive" |
+#                      "Random"
+#        Default:     "Market"
+
+Archipelago.AuctionHouseCostTier = "Market"
+
 #    Archipelago.CatchUpPolicy
 #        Description: How a brand-new character catches up on WoW items the
 #                      realm has already received (M4 Sec7.2) -- every

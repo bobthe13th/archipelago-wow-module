@@ -13,7 +13,7 @@
 
 // Defined in ArchipelagoPlayerScript.cpp. Touches Player/CharacterCache/
 // CharacterDatabase, so it must only ever be invoked from the world thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy);
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier);
 
 namespace
 {
@@ -34,6 +34,23 @@ namespace
         if (value != "EveryoneReceives")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.DeliveryPolicy '{}', falling back to EveryoneReceives", value);
         return Archipelago::Delivery::Policy::EveryoneReceives;
+    }
+
+    // Task 14: same manual-sync mirror as ParseDeliveryPolicy above, for the apworld's
+    // AuctionHouseCostTier Choice.
+    Archipelago::Delivery::CostTier ParseCostTier(std::string const& value)
+    {
+        if (value == "Free")
+            return Archipelago::Delivery::CostTier::Free;
+        if (value == "Cheap")
+            return Archipelago::Delivery::CostTier::Cheap;
+        if (value == "Expensive")
+            return Archipelago::Delivery::CostTier::Expensive;
+        if (value == "Random")
+            return Archipelago::Delivery::CostTier::Random;
+        if (value != "Market")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseCostTier '{}', falling back to Market", value);
+        return Archipelago::Delivery::CostTier::Market;
     }
 }
 
@@ -59,6 +76,7 @@ public:
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "EveryoneReceives"));
+        _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
 
         // Task 16 (design spec Sec7.2): same manual-sync mirror-toggle discipline as
         // every other option above -- mirrored into ArchipelagoRealmState rather than
@@ -169,7 +187,7 @@ public:
             items.swap(_pendingItems);
         }
 
-        DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy);
+        DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier);
     }
 
 private:
@@ -181,6 +199,7 @@ private:
     bool _useTls = false;
     std::string _deliveryCharacter;
     Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::EveryoneReceives;
+    Archipelago::Delivery::CostTier _auctionHouseCostTier = Archipelago::Delivery::CostTier::Market;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
     bool _proficiencyGating = false;
