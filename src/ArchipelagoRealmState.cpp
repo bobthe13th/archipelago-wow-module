@@ -154,3 +154,14 @@ void ArchipelagoRealmState::SetGoalComplete()
     LOG_INFO("module.archipelago_wow", "Archipelago: goal complete recorded durably");
 }
 
+bool ArchipelagoRealmState::IsGateFamilyEnabled(std::string const& familyKey) const
+{
+    auto it = _gateFamiliesEnabled.find(familyKey);
+    return it != _gateFamiliesEnabled.end() && it->second;
+}
+
+void ArchipelagoRealmState::SetGateFamilyEnabled(std::string const& familyKey, bool enabled)
+{
+    _gateFamiliesEnabled[familyKey] = enabled;
+}
+

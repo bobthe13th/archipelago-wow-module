@@ -33,3 +33,48 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: flight, tier: 2}
 
+  # Armor/weapon proficiency gating (Task 7, §5.1 -- optional, off by
+  # default; only pooled when the "proficiency_gating" apworld option is on,
+  # see items.py's create_gates_item_pool). Bounded to the classMask-only
+  # subset of real playercreateinfo_skills rows (verified against this
+  # checkout's data/sql/base/db_world/playercreateinfo_skills.sql) that
+  # don't also require a raceMask (Bows/Crossbows/Guns/Daggers/Two-Handed
+  # Maces are granted per race+class combos in vanilla and are explicitly
+  # deferred, along with Shield/Polearms/Swords/Two-Handed Axes/Thrown, as a
+  # follow-on rather than invented here). Cloth (free to every class) is
+  # never gated, so a fresh character can always equip something -- sphere-0
+  # content (the M2 quest set, early level milestones, Ragefire Chasm) never
+  # requires an armor/weapon type beyond what Cloth allows.
+  - name: "Armor Proficiency: Plate"
+    item_id: 830007
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_armor_plate, tier: 1}
+  - name: "Armor Proficiency: Mail"
+    item_id: 830008
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_armor_mail, tier: 1}
+  - name: "Armor Proficiency: Leather"
+    item_id: 830009
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_armor_leather, tier: 1}
+  - name: "Weapon Proficiency: Two-Handed Swords"
+    item_id: 830010
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_weapon_2h_sword, tier: 1}
+  - name: "Weapon Proficiency: Axes"
+    item_id: 830011
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_weapon_axe, tier: 1}
+  - name: "Weapon Proficiency: Maces"
+    item_id: 830012
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_weapon_mace, tier: 1}
+  - name: "Weapon Proficiency: Staves"
+    item_id: 830013
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_weapon_staff, tier: 1}
+  - name: "Weapon Proficiency: Wands"
+    item_id: 830014
+    count: 1
+    delivery: {kind: flag, flag_key: proficiency_weapon_wand, tier: 1}
+

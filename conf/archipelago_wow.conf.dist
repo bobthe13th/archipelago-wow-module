@@ -58,4 +58,21 @@ Archipelago.ReconnectMinSeconds = 2
 #        Default:     60
 
 Archipelago.ReconnectMaxSeconds = 60
+
+#    Archipelago.ProficiencyGating
+#        Description: Enable armor/weapon proficiency suppression (M4 gate
+#                      family). Only turn this on when the connected seed's
+#                      player YAML also has proficiency_gating enabled --
+#                      this module has no way to read that option from the
+#                      AP server itself, so the two must be set to match by
+#                      hand. Leaving this off while the seed has the option
+#                      on just means those items behave as filler; turning
+#                      this on for a seed that does NOT have the option is
+#                      the dangerous direction, since it will permanently
+#                      block equipping Plate/Mail/Leather/etc for every
+#                      character on the realm (the flag can never reach
+#                      tier 1 -- the item was never placed in that seed).
+#        Default:     0 (disabled)
+
+Archipelago.ProficiencyGating = 0
 ###################################################################################################

@@ -56,6 +56,18 @@ public:
     bool IsGoalComplete() const { return _goalComplete; }
     void SetGoalComplete();
 
+    // Cached mirror of optional-gate-family config toggles (e.g.
+    // Archipelago.ProficiencyGating), set once from
+    // ArchipelagoWorldScript::OnBeforeConfigLoad following the same
+    // read-once-and-cache convention as IsEnabled(). Not persisted to the
+    // database -- these mirror worldserver.conf, not seed-earned state, so
+    // they're recomputed fresh on every config load/reload. A family never
+    // set reads as disabled, matching every optional gate's off-by-default
+    // contract (an operator running an old .conf.dist without the new key
+    // gets vanilla behavior, not an accidental lockout).
+    bool IsGateFamilyEnabled(std::string const& familyKey) const;
+    void SetGateFamilyEnabled(std::string const& familyKey, bool enabled);
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -65,6 +77,7 @@ private:
     std::unordered_set<std::string> _unlockedInstances;
     std::unordered_map<std::string, uint32_t> _flagTiers;
     std::unordered_set<uint64_t> _sentLocationChecks;
+    std::unordered_map<std::string, bool> _gateFamiliesEnabled;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

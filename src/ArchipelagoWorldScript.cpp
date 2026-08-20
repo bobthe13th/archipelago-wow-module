@@ -32,6 +32,7 @@ public:
         _deliveryCharacter = sConfigMgr->GetOption<std::string>("Archipelago.DeliveryCharacter", "");
         _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
         _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
+        _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
 
         // Mirror into ArchipelagoRealmState so the gating scripts (instance
         // entry, Dark Portal, Northrend transports), which only ever touch
@@ -39,6 +40,16 @@ public:
         // cached enabled flag without each re-reading sConfigMgr on their own
         // per-call gating paths.
         sArchipelagoRealmState->SetEnabled(_enabled);
+
+        // Optional gate families (§5.1) are opted into per-seed via the
+        // player's AP YAML, but this module has no slot_data parsing yet
+        // (flagged as a known gap, see docs/m4-plan.md repo-state findings) --
+        // at worldserver startup there's no live AP connection to ask, so an
+        // operator running an optional-gate seed must also flip the matching
+        // worldserver.conf toggle by hand. Without this mirror, a seed that
+        // never rolled the gate item would still permanently suppress it,
+        // since the flag would never reach tier 1.
+        sArchipelagoRealmState->SetGateFamilyEnabled("proficiency", _proficiencyGating);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -121,6 +132,7 @@ private:
     std::string _deliveryCharacter;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
+    bool _proficiencyGating = false;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.

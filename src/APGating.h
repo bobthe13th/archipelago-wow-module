@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 class Player;
 
@@ -30,6 +31,15 @@ namespace Archipelago::Gating
     // True if the realm has received a flight-tier item at least as high as
     // requiredTier (1=Outland, 2=Northrend). Same disabled-is-vanilla contract.
     bool IsFlightUnlocked(uint32_t requiredTier);
+
+    // True if the realm has received the Armor/Weapon Proficiency item that
+    // sets this flag_key (content/gates.yaml's "proficiency_*" flag_keys,
+    // tier always 1 -- boolean gate). Same disabled-is-vanilla contract as
+    // the other Is*Unlocked helpers: callers must also check
+    // sArchipelagoRealmState->IsGateFamilyEnabled("proficiency") themselves
+    // (or rely on the suppression script, which already does), since this
+    // family is optional per-seed and off by default.
+    bool IsProficiencyUnlocked(std::string const& proficiencyFlagKey);
 }
 
 void AddArchipelagoGatingScripts();

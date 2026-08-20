@@ -6,11 +6,14 @@
 #include "ItemTemplate.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "SharedDefines.h"
 #include "Spell.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
 
 #include "AreaDefines.h"
+
+#include <unordered_map>
 
 namespace Archipelago::Gating
 {
@@ -22,6 +25,11 @@ namespace Archipelago::Gating
     bool IsFlightUnlocked(uint32_t requiredTier)
     {
         return sArchipelagoRealmState->GetFlagTier("flight") >= requiredTier;
+    }
+
+    bool IsProficiencyUnlocked(std::string const& proficiencyFlagKey)
+    {
+        return sArchipelagoRealmState->IsFlagUnlocked(proficiencyFlagKey);
     }
 }
 
@@ -120,9 +128,65 @@ public:
     }
 };
 
+class ArchipelagoProficiencyGateScript : public PlayerScript
+{
+public:
+    ArchipelagoProficiencyGateScript() : PlayerScript("ArchipelagoProficiencyGateScript", { PLAYERHOOK_CAN_USE_ITEM }) { }
+
+    // Same hook Task 5 uses for the riding-item check: OnPlayerCanUseItem
+    // fires from the tail of Player::CanUseItem(ItemTemplate const*), which
+    // is itself reached both from CanEquipItem (the actual equip attempt)
+    // and from a couple of other CanUseItem(ItemTemplate const*) callers
+    // (NeedBeforeGreed group-loot rolls, the auction-house "usable only"
+    // filter) -- gating those the same way as equip is an accepted,
+    // deliberate side effect of reusing this hook, not an oversight.
+    bool OnPlayerCanUseItem(Player* player, ItemTemplate const* proto, InventoryResult& result) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("proficiency"))
+            return true;
+
+        std::string const* flagKey = ProficiencyFlagKeyForSkill(proto->GetSkill());
+        if (!flagKey)
+            return true;
+
+        if (Archipelago::Gating::IsProficiencyUnlocked(*flagKey))
+            return true;
+
+        result = EQUIP_ERR_NO_REQUIRED_PROFICIENCY;
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need the matching Proficiency item to use this.");
+        return false;
+    }
+
+private:
+    // Bounded to the classMask-only subset of real playercreateinfo_skills
+    // rows (see content/gates.yaml's comment) -- a skill not in this map is
+    // never gated (Cloth, Unarmed, and every race-gated ranged weapon skill
+    // deferred to a follow-on all fall through here and stay vanilla-free).
+    static std::string const* ProficiencyFlagKeyForSkill(uint32_t skill)
+    {
+        static std::unordered_map<uint32_t, std::string> const flagKeyBySkill = {
+            { SKILL_PLATE_MAIL, "proficiency_armor_plate" },
+            { SKILL_MAIL,       "proficiency_armor_mail" },
+            { SKILL_LEATHER,    "proficiency_armor_leather" },
+            { SKILL_2H_SWORDS,  "proficiency_weapon_2h_sword" },
+            { SKILL_AXES,       "proficiency_weapon_axe" },
+            { SKILL_MACES,      "proficiency_weapon_mace" },
+            { SKILL_STAVES,     "proficiency_weapon_staff" },
+            { SKILL_WANDS,      "proficiency_weapon_wand" },
+        };
+
+        auto it = flagKeyBySkill.find(skill);
+        return it != flagKeyBySkill.end() ? &it->second : nullptr;
+    }
+};
+
 void AddArchipelagoGatingScripts()
 {
     new ArchipelagoRidingGateScript();
     new ArchipelagoMountSpellScript();
     new ArchipelagoFlightGateScript();
+    new ArchipelagoProficiencyGateScript();
 }
