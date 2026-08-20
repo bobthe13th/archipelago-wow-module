@@ -1,0 +1,104 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/filler.yaml
+family: filler
+
+# Sink locations restoring item=location parity after Group 1's gate items
+# (Task 11, §16's "gate-item sphere-0 test"). 27 rows -- the maximum
+# possible, len(gates_content_data.ITEMS) as of Tasks 5-10 -- but a single
+# generation only USES as many of these as items.py's
+# count_enabled_gates_items finds pooled for that generation's options
+# (locations.py's create_filler_locations slices this list to that count).
+# AP's generation pipeline has no generic step that pads a short itempool
+# to match location count (the only itempool<->create_filler() interaction
+# in Main.py is a fixed-size 1:1 swap for start_inventory_from_pool
+# removals, not padding), so every option combination needs true 1:1
+# item/location parity, confirmed empirically: distribute_items_restrictive
+# raises "Unable to fill all locations" just as readily when locations
+# exceed items as it does the reverse. A fixed "worst-case slack" location
+# count (every row always created) was tried first and was wrong for
+# exactly this reason. items: [] always for this family (a filler location
+# has no matching item of its own, by definition) -- kept for schema-shape
+# parity with gates.yaml's `locations: []`.
+items: []
+
+locations:
+  - name: "Filler Check 1"
+    location_id: 740000
+    trigger: {kind: always_available}
+  - name: "Filler Check 2"
+    location_id: 740001
+    trigger: {kind: always_available}
+  - name: "Filler Check 3"
+    location_id: 740002
+    trigger: {kind: always_available}
+  - name: "Filler Check 4"
+    location_id: 740003
+    trigger: {kind: always_available}
+  - name: "Filler Check 5"
+    location_id: 740004
+    trigger: {kind: always_available}
+  - name: "Filler Check 6"
+    location_id: 740005
+    trigger: {kind: always_available}
+  - name: "Filler Check 7"
+    location_id: 740006
+    trigger: {kind: always_available}
+  - name: "Filler Check 8"
+    location_id: 740007
+    trigger: {kind: always_available}
+  - name: "Filler Check 9"
+    location_id: 740008
+    trigger: {kind: always_available}
+  - name: "Filler Check 10"
+    location_id: 740009
+    trigger: {kind: always_available}
+  - name: "Filler Check 11"
+    location_id: 740010
+    trigger: {kind: always_available}
+  - name: "Filler Check 12"
+    location_id: 740011
+    trigger: {kind: always_available}
+  - name: "Filler Check 13"
+    location_id: 740012
+    trigger: {kind: always_available}
+  - name: "Filler Check 14"
+    location_id: 740013
+    trigger: {kind: always_available}
+  - name: "Filler Check 15"
+    location_id: 740014
+    trigger: {kind: always_available}
+  - name: "Filler Check 16"
+    location_id: 740015
+    trigger: {kind: always_available}
+  - name: "Filler Check 17"
+    location_id: 740016
+    trigger: {kind: always_available}
+  - name: "Filler Check 18"
+    location_id: 740017
+    trigger: {kind: always_available}
+  - name: "Filler Check 19"
+    location_id: 740018
+    trigger: {kind: always_available}
+  - name: "Filler Check 20"
+    location_id: 740019
+    trigger: {kind: always_available}
+  - name: "Filler Check 21"
+    location_id: 740020
+    trigger: {kind: always_available}
+  - name: "Filler Check 22"
+    location_id: 740021
+    trigger: {kind: always_available}
+  - name: "Filler Check 23"
+    location_id: 740022
+    trigger: {kind: always_available}
+  - name: "Filler Check 24"
+    location_id: 740023
+    trigger: {kind: always_available}
+  - name: "Filler Check 25"
+    location_id: 740024
+    trigger: {kind: always_available}
+  - name: "Filler Check 26"
+    location_id: 740025
+    trigger: {kind: always_available}
+  - name: "Filler Check 27"
+    location_id: 740026
+    trigger: {kind: always_available}

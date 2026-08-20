@@ -79,12 +79,14 @@ _TRIGGER_KINDS_BY_FAMILY = {
     "quests": {"quest"},
     "core_loop": {"level_milestone", "instance_clear"},
     "gates": set(),  # gates never have locations
+    "filler": {"always_available"},
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
     "quests": {"mail"},
     "core_loop": {"realm_state"},
     "gates": {"flag"},
+    "filler": set(),  # filler never has items
 }
 
 _REALM_STATE_EFFECTS = {
@@ -153,6 +155,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_core_loop(data)
     if family == "gates":
         return _emit_python_gates(data)
+    if family == "filler":
+        return _emit_python_filler(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -218,6 +222,16 @@ def _emit_python_gates(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_filler(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/filler.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -232,6 +246,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_core_loop(data)
     if family == "gates":
         return _emit_cpp_gates(data)
+    if family == "filler":
+        return _emit_cpp_filler(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -330,6 +346,30 @@ def _emit_cpp_gates(data: dict) -> str:
     for item in data["items"]:
         delivery = item["delivery"]
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_filler(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/filler.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_set>", "",
+        "namespace Archipelago::Filler", "{",
+        "    // Sink locations with no real in-game trigger -- they exist only",
+        "    // to keep the AP fill algorithm's location count >= the worst-case",
+        "    // (all optional gate families on) item count (see docs/m4-plan.md's",
+        "    // Task 11 section). Not auto-completed by this module in M4; a real",
+        "    // player's server session will never send these checks, which is an",
+        "    // accepted scope boundary, not a bug -- they never hold anything",
+        "    // required to win a seed.",
+    ]
+    lines.append("    inline std::unordered_set<int64_t> const LocationIds = {")
+    for loc in data["locations"]:
+        lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")
