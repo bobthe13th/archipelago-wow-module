@@ -60,6 +60,32 @@ namespace Archipelago::Gating
     // Point Access is NOT applied here -- it's continuous suppression via
     // OnPlayerCanLearnTalent, not a character-field grant.
     void SyncCharacterUnlocksToPlayer(Player* player);
+
+    // Task 21 (design spec Sec5.5): pushes CONFIG_CHARACTER_CREATING_DISABLED_
+    // RACEMASK/_CLASSMASK to block or allow Blood Elf/Draenei (content/gates.yaml's
+    // "combo_unlock_tbc" flag_key) and Death Knight (its "combo_unlock_wotlk"
+    // flag_key) character creation, based on content/gates.yaml's flag store --
+    // unlike SyncCharacterUnlocksToPlayer above, this touches no Player at all,
+    // since race/class creation eligibility is realm-wide server config, not
+    // per-character state. Re-derives BOTH masks from scratch every call rather
+    // than incrementally flipping a bit, so it's safe/idempotent to call from
+    // both ArchipelagoWorldScript::OnStartup (restart-safety -- the masks
+    // themselves are not separately persisted, only the earned flags are) and
+    // DeliverArchipelagoItems (instant effect the moment either item is
+    // received: CharacterHandler.cpp's HandleCharCreateOpcode reads these two
+    // config values fresh on every character-creation attempt, not cached, so
+    // no restart or re-login is needed). Only touches the specific bits this
+    // module owns (Blood Elf/Draenei/Death Knight); any other race/class bit an
+    // operator has independently disabled in their own worldserver.conf is left
+    // untouched. Callers must ensure the module itself is enabled before
+    // calling -- unlike the other helpers in this file, this one is only ever
+    // called from within an already-IsEnabled()-gated context (ArchipelagoWorldScript
+    // and the delivery dispatch), so it does not re-check IsEnabled() itself. It
+    // DOES check two separate gate-family flags ("combo_unlock_tbc"/
+    // "combo_unlock_wotlk", mirroring the apworld's 4-way ComboUnlocksScope
+    // option) itself, since each needs its own "scope not active -> fully
+    // vanilla (unlocked)" branch, not one combined toggle -- see the .cpp for why.
+    void ApplyComboUnlockMasks();
 }
 
 void AddArchipelagoGatingScripts();

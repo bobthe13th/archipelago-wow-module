@@ -12,6 +12,7 @@
 #include "Spell.h"
 #include "SpellInfo.h"
 #include "SpellMgr.h"
+#include "World.h"
 #include "WorldSession.h"
 
 #include "AreaDefines.h"
@@ -54,6 +55,45 @@ namespace Archipelago::Gating
 
         if (sArchipelagoRealmState->IsFlagUnlocked("dual_spec") && player->GetSpecsCount() < 2)
             player->UpdateSpecCount(2);
+    }
+
+    void ApplyComboUnlockMasks()
+    {
+        // Bit positions confirmed against src/server/shared/SharedDefines.h in
+        // this checkout: RACE_BLOODELF = 10, RACE_DRAENEI = 11,
+        // CLASS_DEATH_KNIGHT = 6. CharacterHandler.cpp's HandleCharCreateOpcode
+        // checks (1 << (Race - 1)) / (1 << (Class - 1)) against these two
+        // config values, so these are 1-offset bit positions, not the raw enum
+        // values themselves.
+        constexpr uint32_t RACEMASK_BLOOD_ELF = 1u << (10 - 1);
+        constexpr uint32_t RACEMASK_DRAENEI = 1u << (11 - 1);
+        constexpr uint32_t CLASSMASK_DEATH_KNIGHT = 1u << (6 - 1);
+
+        // Each half of the apworld's 4-way ComboUnlocksScope (off/tbc/wotlk/both)
+        // is mirrored into its own gate-family flag, not one combined
+        // "combo_unlocks" toggle -- a seed that only scoped in "tbc" never pools
+        // a combo_unlock_wotlk item at all, so gating Death Knight on that
+        // item's flag would permanently lock it for a seed that never intended
+        // to touch it, the same "seed never rolled the gate item" gap already
+        // handled the same way for proficiency/access/character_unlocks.
+        bool tbcScopeActive = sArchipelagoRealmState->IsGateFamilyEnabled("combo_unlock_tbc");
+        bool wotlkScopeActive = sArchipelagoRealmState->IsGateFamilyEnabled("combo_unlock_wotlk");
+        bool tbcUnlocked = !tbcScopeActive || sArchipelagoRealmState->IsFlagUnlocked("combo_unlock_tbc");
+        bool wotlkUnlocked = !wotlkScopeActive || sArchipelagoRealmState->IsFlagUnlocked("combo_unlock_wotlk");
+
+        uint32_t raceMaskDisabled = sWorld->getIntConfig(CONFIG_CHARACTER_CREATING_DISABLED_RACEMASK);
+        if (tbcUnlocked)
+            raceMaskDisabled &= ~(RACEMASK_BLOOD_ELF | RACEMASK_DRAENEI);
+        else
+            raceMaskDisabled |= (RACEMASK_BLOOD_ELF | RACEMASK_DRAENEI);
+        sWorld->setIntConfig(CONFIG_CHARACTER_CREATING_DISABLED_RACEMASK, raceMaskDisabled);
+
+        uint32_t classMaskDisabled = sWorld->getIntConfig(CONFIG_CHARACTER_CREATING_DISABLED_CLASSMASK);
+        if (wotlkUnlocked)
+            classMaskDisabled &= ~CLASSMASK_DEATH_KNIGHT;
+        else
+            classMaskDisabled |= CLASSMASK_DEATH_KNIGHT;
+        sWorld->setIntConfig(CONFIG_CHARACTER_CREATING_DISABLED_CLASSMASK, classMaskDisabled);
     }
 }
 

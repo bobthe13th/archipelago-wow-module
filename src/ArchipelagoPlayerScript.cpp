@@ -146,6 +146,14 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
                     Archipelago::Gating::SyncCharacterUnlocksToPlayer(onlinePlayer);
                 });
             }
+            // Task 21: combo_unlock_tbc/combo_unlock_wotlk touch no Player at
+            // all -- they're realm-wide character-creation config, not
+            // per-character state -- so push the recomputed masks immediately
+            // instead of iterating online players.
+            else if (flagKey == "combo_unlock_tbc" || flagKey == "combo_unlock_wotlk")
+            {
+                Archipelago::Gating::ApplyComboUnlockMasks();
+            }
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

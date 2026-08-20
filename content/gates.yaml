@@ -192,4 +192,19 @@ items:
     item_id: 830026
     count: 1
     delivery: {kind: flag, flag_key: dual_spec, tier: 1}
+  # Task 21 (design spec Sec5.5): expansion-tier combo unlocks. Gates the
+  # whole race (TBC: Blood Elf/Draenei) or class (WotLK: Death Knight), not
+  # every individual race/class pairing -- see the module's
+  # ApplyComboUnlockMasks (APGating.h/.cpp) for the real
+  # CONFIG_CHARACTER_CREATING_DISABLED_RACEMASK/_CLASSMASK mechanism this
+  # drives, and the apworld's ComboUnlocksScope option for why per-combo
+  # granularity is out of scope (needs the MPQ client patch, §5.5/§20.1).
+  - name: "TBC Combo Unlock"
+    item_id: 830027
+    count: 1
+    delivery: {kind: flag, flag_key: combo_unlock_tbc, tier: 1}
+  - name: "WotLK Combo Unlock"
+    item_id: 830028
+    count: 1
+    delivery: {kind: flag, flag_key: combo_unlock_wotlk, tier: 1}
 

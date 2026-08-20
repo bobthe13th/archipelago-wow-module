@@ -8,6 +8,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "APDelivery.h"
+#include "APGating.h"
 #include "ArchipelagoDeathLink.h"
 #include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
@@ -76,13 +77,34 @@ namespace
         else if (value != "Vanilla")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.SpiritHealerVariant '{}', falling back to Vanilla", value);
     }
+
+    // Task 21: parses the apworld's ComboUnlocksScope Choice (off/tbc/wotlk/both)
+    // into its two independent scope flags -- see APGating.cpp's
+    // ApplyComboUnlockMasks for why each combo needs its own flag rather than one
+    // combined toggle.
+    void ParseComboUnlocksScope(std::string const& value, bool& tbcScopeActive, bool& wotlkScopeActive)
+    {
+        tbcScopeActive = false;
+        wotlkScopeActive = false;
+        if (value == "Tbc")
+            tbcScopeActive = true;
+        else if (value == "Wotlk")
+            wotlkScopeActive = true;
+        else if (value == "Both")
+        {
+            tbcScopeActive = true;
+            wotlkScopeActive = true;
+        }
+        else if (value != "Off")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.ComboUnlocksScope '{}', falling back to Off", value);
+    }
 }
 
 class ArchipelagoWorldScript : public WorldScript
 {
 public:
     ArchipelagoWorldScript()
-        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE })
+        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_AFTER_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE })
     { }
 
     void OnBeforeConfigLoad(bool /*reload*/) override
@@ -130,6 +152,17 @@ public:
         sArchipelagoRealmState->SetSuppressResSickness(suppressResSickness);
         sArchipelagoRealmState->SetSuppressDurabilityLossOnSpiritResurrect(suppressDurabilityLoss);
 
+        // Task 21 (design spec Sec5.5): reuses the existing generic gate-family
+        // flag store (SetGateFamilyEnabled) rather than adding two new dedicated
+        // RealmState fields -- combo_unlock_tbc/combo_unlock_wotlk behave exactly
+        // like proficiency/access/character_unlocks (a per-seed opt-in family,
+        // off/vanilla by default), just two independent ones instead of one.
+        bool tbcScopeActive = false;
+        bool wotlkScopeActive = false;
+        ParseComboUnlocksScope(sConfigMgr->GetOption<std::string>("Archipelago.ComboUnlocksScope", "Off"), tbcScopeActive, wotlkScopeActive);
+        sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_tbc", tbcScopeActive);
+        sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_wotlk", wotlkScopeActive);
+
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
         // Policy::AuctionHouse could list an AP-earned item on the AH a player is then
@@ -167,6 +200,35 @@ public:
             _enabled, _serverAddress, _serverPort);
     }
 
+    // Re-derives every live sWorld config value this module overrides
+    // (durability-loss rate, combo-unlock race/class masks) from the
+    // currently-cached ArchipelagoRealmState flags. None of these are
+    // sWorld config values this module persists of its own -- they're
+    // re-pushed on top of whatever worldserver.conf/the operator's reload
+    // just set, so this must run both at startup AND after every
+    // `.reload config` (OnAfterConfigLoad fires for both, confirmed at
+    // World.cpp's LoadConfigSettings -- reload=true only skips a handful of
+    // unrelated settings like DataDir, not this call). Before this was
+    // wired into OnAfterConfigLoad, a `.reload config` would silently
+    // revert both overrides to the operator's raw conf value until the next
+    // full restart -- for the durability rate that's just an annoyance, but
+    // for the combo-unlock masks it's a progression-integrity bug: it would
+    // make Death Knight/Blood Elf/Draenei creatable again even though the
+    // AP seed never delivered that unlock item.
+    void ApplyRuntimeConfigOverrides()
+    {
+        if (sArchipelagoRealmState->GetSuppressDurabilityLossOnSpiritResurrect())
+            sWorld->setRate(RATE_DURABILITY_LOSS_ON_SPIRIT_RESURRECT, 0.0f);
+
+        Archipelago::Gating::ApplyComboUnlockMasks();
+    }
+
+    void OnAfterConfigLoad(bool reload) override
+    {
+        if (_enabled && reload)
+            ApplyRuntimeConfigOverrides();
+    }
+
     void OnStartup() override
     {
         // Realm state (including the persisted level cap) must load
@@ -184,19 +246,7 @@ public:
         if (_enabled)
         {
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
-
-            // Task 20: RATE_DURABILITY_LOSS_ON_SPIRIT_RESURRECT is the real (and only)
-            // lever for the spirit-healer durability-loss penalty -- NPCHandler.cpp's
-            // SendSpiritResurrect() calls Player::DurabilityLossAll directly with no
-            // script hook wrapping it, so a worldserver-wide rate override pushed here
-            // (same "push a config value at startup" pattern as the level cap above) is
-            // the only module-only mechanism available. Realm-wide is the correct scope
-            // for this architecture anyway: one WoW realm is one AP slot, not a
-            // per-character choice. NOTE: `.reload config` reverts this override back to
-            // the operator's own worldserver.conf value until the next OnBeforeConfigLoad
-            // re-applies it -- flagged in the manual-verification checklist.
-            if (sArchipelagoRealmState->GetSuppressDurabilityLossOnSpiritResurrect())
-                sWorld->setRate(RATE_DURABILITY_LOSS_ON_SPIRIT_RESURRECT, 0.0f);
+            ApplyRuntimeConfigOverrides();
         }
 
         if (!_enabled)

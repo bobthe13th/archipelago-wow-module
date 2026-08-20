@@ -37,6 +37,8 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_7 = 830024;
     inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS = 830025;
     inline constexpr int64_t AP_ITEM_DUAL_SPEC_UNLOCK = 830026;
+    inline constexpr int64_t AP_ITEM_TBC_COMBO_UNLOCK = 830027;
+    inline constexpr int64_t AP_ITEM_WOTLK_COMBO_UNLOCK = 830028;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -66,5 +68,7 @@ namespace Archipelago::Gates
         { 830024, { "bank_bag_slots", 7 } }, // Progressive Bank Bag Slot: Slot 7
         { 830025, { "access_talent_points", 1 } }, // Talent Point Access
         { 830026, { "dual_spec", 1 } }, // Dual Spec Unlock
+        { 830027, { "combo_unlock_tbc", 1 } }, // TBC Combo Unlock
+        { 830028, { "combo_unlock_wotlk", 1 } }, // WotLK Combo Unlock
     };
 }

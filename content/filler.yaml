@@ -16,14 +16,14 @@ family: filler
 # reverse. A fixed "worst-case slack" location count (every row always
 # created) was tried first and was wrong for exactly this reason.
 #
-# Row count: 60 = 27 (len(gates_content_data.ITEMS) as of Tasks 5-10) + 33
-# (the absolute ceiling on count_enabled_trap_items -- Task 17's
-# trap_percentage_of_filler Range tops out at 100, and
-# _trap_baseline_location_count() is a fixed 33 quest+core-loop locations,
-# so 33 is the largest total items.py's create_trap_item_pool can ever
-# produce in one generation). Any future optional item family (Group 6's
+# Row count: 62 = 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task
+# 21's 2 combo-unlock items) + 33 (the absolute ceiling on
+# count_enabled_trap_items -- Task 17's trap_percentage_of_filler Range tops
+# out at 100, and _trap_baseline_location_count() is a fixed 33 quest+core-loop
+# locations, so 33 is the largest total items.py's create_trap_item_pool can
+# ever produce in one generation). Any future optional item family (Group 6's
 # new content, per Task 11's outcome note) must extend this ceiling by its
-# own worst-case count the same way, not assume 60 is permanent.
+# own worst-case count the same way, not assume 62 is permanent.
 #
 # items: [] always for this family (a filler location has no matching item
 # of its own, by definition) -- kept for schema-shape parity with
@@ -210,4 +210,14 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 60"
     location_id: 740059
+    trigger: {kind: always_available}
+  # Task 21 grew gates.yaml by 2 items (combo_unlock_tbc/combo_unlock_wotlk),
+  # raising the worst-case gates count from 27 to 29 -- the ceiling here must
+  # grow to match (29 + 33 trap worst-case = 62), per the warning left in
+  # this file's own header and Task 17's outcome note.
+  - name: "Filler Check 61"
+    location_id: 740060
+    trigger: {kind: always_available}
+  - name: "Filler Check 62"
+    location_id: 740061
     trigger: {kind: always_available}

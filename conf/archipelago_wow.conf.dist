@@ -226,9 +226,8 @@ Archipelago.DeathLinkReceiveCooldownSeconds = 15
 #                      suppression applies to every resurrection source,
 #                      not just the spirit healer -- see the module's
 #                      ArchipelagoDeathLinkScript.cpp for why. Durability
-#                      suppression is a realm-wide rate override applied at
-#                      startup; a `.reload config` reverts it until the
-#                      worldserver restarts or is reloaded again. Only turn
+#                      suppression is a realm-wide rate override, re-applied
+#                      on both startup and `.reload config`. Only turn
 #                      this away from the default when the connected seed's
 #                      player YAML also has a matching SpiritHealerVariant
 #                      option -- same manual-sync requirement as every
@@ -238,4 +237,28 @@ Archipelago.DeathLinkReceiveCooldownSeconds = 15
 #        Default:     "Vanilla"
 
 Archipelago.SpiritHealerVariant = "Vanilla"
+###################################################################################################
+
+#    Archipelago.ComboUnlocksScope
+#        Description: Which expansion-tier race/class combo unlocks (M4
+#                      Sec5.5) are gated behind their own AP item, instead of
+#                      being creatable from a fresh realm. "Tbc" gates Blood
+#                      Elf and Draenei (the two TBC-added races, playable as
+#                      any pre-existing class); "Wotlk" gates the Death
+#                      Knight class (WotLK's one new class, playable as any
+#                      pre-existing race); "Both" gates both independently.
+#                      This is expansion-tier gating only, not full
+#                      per-race+class combo granularity -- see the apworld's
+#                      ComboUnlocksScope option docstring for why finer
+#                      granularity is out of scope for a module-only
+#                      (non-MPQ-patching) implementation. Realm-wide
+#                      character-creation config, re-applied on both startup
+#                      and `.reload config`. Only turn this away from the
+#                      default when the connected seed's player YAML also
+#                      has a matching combo_unlocks_scope option -- same
+#                      manual-sync requirement as every other option above.
+#        Values:      "Off" (default) | "Tbc" | "Wotlk" | "Both"
+#        Default:     "Off"
+
+Archipelago.ComboUnlocksScope = "Off"
 ###################################################################################################
