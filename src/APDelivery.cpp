@@ -87,7 +87,16 @@ namespace
         auction->bidder = ObjectGuid::Empty;
         auction->bid = 0;
         auction->buyout = buyout;
-        auction->expire_time = GameTime::GetGameTime().count() + 2 * DAY; // generous fixed listing window
+        // NOT a short listing window: AuctionHouseObject::Update()'s expiry path
+        // (AuctionHouseMgr.cpp) calls SendAuctionExpiredMail for any unbidded auction
+        // past expire_time, and that function's "owner doesn't exist" branch --
+        // exactly our case, owner is ObjectGuid::Empty -- permanently deletes the
+        // item via RemoveAItem(..., true, ...) instead of mailing it back to anyone.
+        // A real player's listing expiring back to their own mailbox is normal; an
+        // AP-earned progression item silently vanishing because nobody bought it in
+        // 48 hours is not acceptable. 10 years effectively never expires under normal
+        // server operation, so the item just waits indefinitely to be bought instead.
+        auction->expire_time = GameTime::GetGameTime().count() + 10 * YEAR;
         auction->deposit = 0; // no real seller to charge
         auction->auctionHouseEntry = auctionHouseEntry;
 
