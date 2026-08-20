@@ -58,9 +58,19 @@ void ArchipelagoRealmState::Load()
         } while (result->NextRow());
     }
 
+    _recordedBossKills.clear();
+    if (QueryResult result = CharacterDatabase.Query("SELECT instance_key, boss_entry FROM archipelago_boss_kills"))
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            _recordedBossKills.insert(fields[0].Get<std::string>() + "|" + std::to_string(fields[1].Get<uint32_t>()));
+        } while (result->NextRow());
+    }
+
     LOG_INFO("module.archipelago_wow",
-        "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, goal_complete={}, unlocked_instances={}, unlock_flags={}, sent_checks={})",
-        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _goalComplete, _unlockedInstances.size(), _flagTiers.size(), _sentLocationChecks.size());
+        "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, goal_complete={}, unlocked_instances={}, unlock_flags={}, sent_checks={}, recorded_boss_kills={})",
+        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _goalComplete, _unlockedInstances.size(), _flagTiers.size(), _sentLocationChecks.size(), _recordedBossKills.size());
 }
 
 void ArchipelagoRealmState::RaiseLevelCap(uint32_t newCap)
@@ -164,6 +174,22 @@ bool ArchipelagoRealmState::IsGateFamilyEnabled(std::string const& familyKey) co
 void ArchipelagoRealmState::SetGateFamilyEnabled(std::string const& familyKey, bool enabled)
 {
     _gateFamiliesEnabled[familyKey] = enabled;
+}
+
+bool ArchipelagoRealmState::IsBossKillRecorded(std::string const& instanceKey, uint32_t bossEntry) const
+{
+    return _recordedBossKills.find(instanceKey + "|" + std::to_string(bossEntry)) != _recordedBossKills.end();
+}
+
+void ArchipelagoRealmState::RecordBossKill(std::string const& instanceKey, uint32_t bossEntry)
+{
+    if (_recordedBossKills.insert(instanceKey + "|" + std::to_string(bossEntry)).second)
+    {
+        CharacterDatabase.Execute(
+            "INSERT IGNORE INTO archipelago_boss_kills (instance_key, boss_entry) VALUES (\"{}\", {})",
+            instanceKey, bossEntry);
+        LOG_INFO("module.archipelago_wow", "Archipelago: boss kill recorded: instance={} boss_entry={}", instanceKey, bossEntry);
+    }
 }
 
 bool ArchipelagoRealmState::TryConsumeDeathLinkSendCooldown()

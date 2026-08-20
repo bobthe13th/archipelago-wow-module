@@ -163,6 +163,23 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_tbc", tbcScopeActive);
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_wotlk", wotlkScopeActive);
 
+        // Task 23: consumed directly as a string by
+        // ArchipelagoInstanceScript.cpp's kill hook -- unlike DeliveryPolicy/
+        // CostTier, there is no C++ enum for this value anywhere else in the
+        // module, so no Parse* helper is needed, just validate it and warn on
+        // an unrecognized value the same way every Parse* helper's fallback
+        // branch does.
+        std::string instanceClearMode = sConfigMgr->GetOption<std::string>("Archipelago.InstanceClearMode", "AllBosses");
+        if (instanceClearMode == "AllBosses")
+            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
+        else if (instanceClearMode == "FinalBossOnly")
+            sArchipelagoRealmState->SetInstanceClearMode("final_boss_only");
+        else
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.InstanceClearMode '{}', falling back to AllBosses", instanceClearMode);
+            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
+        }
+
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
         // Policy::AuctionHouse could list an AP-earned item on the AH a player is then

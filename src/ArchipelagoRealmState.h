@@ -121,6 +121,26 @@ public:
     bool GetSuppressDurabilityLossOnSpiritResurrect() const { return _suppressDurabilityLossOnSpiritResurrect; }
     void SetSuppressDurabilityLossOnSpiritResurrect(bool suppress) { _suppressDurabilityLossOnSpiritResurrect = suppress; }
 
+    // Task 23 (design spec Sec5.4): realm-wide "has this boss ever been
+    // recorded dead in this instance" tracking, backing all_bosses
+    // InstanceClearMode -- same insert-only/idempotent/cached-then-persisted
+    // shape as UnlockInstance above. Composite-keyed by instanceKey+bossEntry
+    // rather than a nested map, matching how _flagTiers/_sentLocationChecks
+    // are flat containers too; ArchipelagoInstanceScript.cpp is the only
+    // caller and always has both values on hand together. The "has the
+    // instance-clear check already been sent for this instance_key" guard
+    // (avoiding a duplicate send once the full roster is recorded) reuses
+    // the existing generic flag store above (SetFlagTier("instance_clear_sent_"
+    // + instanceKey, 1)) rather than a third dedicated mechanism.
+    bool IsBossKillRecorded(std::string const& instanceKey, uint32_t bossEntry) const;
+    void RecordBossKill(std::string const& instanceKey, uint32_t bossEntry);
+
+    // Cached mirror of Archipelago.InstanceClearMode (Task 23), same
+    // not-persisted worldserver.conf-mirror convention as CatchUpPolicy
+    // above -- consumed from ArchipelagoInstanceScript.cpp's kill hook.
+    std::string GetInstanceClearMode() const { return _instanceClearMode; }
+    void SetInstanceClearMode(std::string const& mode) { _instanceClearMode = mode; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -141,6 +161,8 @@ private:
     int64_t _lastDeathLinkReceivedAt = 0;
     bool _suppressResSickness = false;
     bool _suppressDurabilityLossOnSpiritResurrect = false;
+    std::unordered_set<std::string> _recordedBossKills; // "instanceKey|bossEntry" composite keys
+    std::string _instanceClearMode = "all_bosses";
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

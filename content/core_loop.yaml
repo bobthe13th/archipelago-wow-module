@@ -50,6 +50,106 @@ locations:
     location_id: 720001
     trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639}
 
+  # Task 23 (design spec Sec5.4, Tier 1: Classic/Burning Crusade/Wrath modes)
+  # -- the first three rows to actually carry a `bosses:` sub-list, driving
+  # the player-configurable InstanceClearMode (all_bosses default /
+  # final_boss_only). Every creature_entry below is sourced directly from
+  # this checkout's own real encounter scripts
+  # (src/server/scripts/EasternKingdoms/BlackrockMountain/MoltenCore/,
+  # .../SunwellPlateau/, src/server/scripts/Northrend/IcecrownCitadel/), not
+  # assumed from upstream wiki data -- same "verify against this specific
+  # checkout" discipline as every other hook/id in this plan.
+  #
+  # Two encounters use a phase-transition creature as their real kill entry,
+  # not the NPC a player first sees, confirmed by reading each fight's
+  # JustDied/DamageTaken logic:
+  #   - Sunwell Plateau's "Kalecgos" encounter: the friendly dragon Kalecgos
+  #     (24850) never fights you -- the actual attackable enemy, with a real
+  #     player-damage-driven JustDied, is his corrupted shadow Sathrovarr
+  #     (24892) (boss_kalecgos.cpp:320-394).
+  #   - Sunwell Plateau's "M'uru" encounter: M'uru (25741) is scripted to
+  #     never drop below 1 HP (boss_muru.cpp's DamageTaken clamp) and has no
+  #     JustDied of its own -- the real kill is on the phase-2 form it
+  #     summons, Entropius (25840), whose JustDied is player-damage-driven
+  #     and explicitly kills M'uru afterward (boss_muru.cpp:139-184).
+  # Eredar Twins is a genuine two-creature encounter (Lady Sacrolash 25165 +
+  # Grand Warlock Alythess 25166, both independently killable, matching the
+  # live fight's "kill both, they can resurrect each other if not killed
+  # close together" mechanic) -- listing both as required boss rows is
+  # correct regardless of resurrection order, since the all_bosses tracker
+  # only needs each entry recorded dead at least once, not simultaneously.
+  #
+  # Icecrown Citadel ships 12 of its own boss encounter scripts in this
+  # checkout, but only 12 real creature-entry rows across 10 of those
+  # encounters are trackable here -- Icecrown Gunship Battle and Valithria
+  # Dreamwalker are deliberately EXCLUDED from this instance's `bosses:`
+  # list, verified, not assumed:
+  #   - Icecrown Gunship Battle's win condition calls the losing captain's
+  #     AI->JustDied(nullptr) DIRECTLY from script code
+  #     (boss_icecrown_gunship_battle.cpp:564), bypassing the real
+  #     Unit::Kill()/creature-death pipeline PLAYERHOOK_ON_CREATURE_KILL
+  #     dispatches from -- there is no real player-credited kill event to
+  #     hook here at all.
+  #   - Valithria Dreamwalker is a "heal the dragon to full, don't let her
+  #     die" encounter (boss_valithria_dreamwalker.cpp) -- success is a
+  #     SetBossState(DONE) transition triggered by a heal threshold, not a
+  #     boss death; there is no enemy creature to kill.
+  # Both are real, verified structural mismatches with this content family's
+  # "boss = a creature a player kills" model, not an oversight -- a future
+  # task could track them via a different mechanism (e.g. instance
+  # SetBossState polling) if this instance's all_bosses mode should ever
+  # require them; out of scope for Task 23's Tier-1 budget.
+  - name: Clear Molten Core
+    location_id: 720002
+    trigger:
+      kind: instance_clear
+      instance_key: molten_core
+      final_boss_entry: 11502
+      bosses:
+        - {name: "Lucifron", entry: 12118}
+        - {name: "Magmadar", entry: 11982}
+        - {name: "Gehennas", entry: 12259}
+        - {name: "Garr", entry: 12057}
+        - {name: "Shazzrah", entry: 12264}
+        - {name: "Baron Geddon", entry: 12056}
+        - {name: "Sulfuron Harbinger", entry: 12098}
+        - {name: "Golemagg the Incinerator", entry: 11988}
+        - {name: "Majordomo Executus", entry: 12018}
+        - {name: "Ragnaros", entry: 11502, final: true}
+  - name: Clear Sunwell Plateau
+    location_id: 720003
+    trigger:
+      kind: instance_clear
+      instance_key: sunwell_plateau
+      final_boss_entry: 25315
+      bosses:
+        - {name: "Kalecgos", entry: 24892}
+        - {name: "Brutallus", entry: 24882}
+        - {name: "Felmyst", entry: 25038}
+        - {name: "Lady Sacrolash", entry: 25165}
+        - {name: "Grand Warlock Alythess", entry: 25166}
+        - {name: "M'uru", entry: 25840}
+        - {name: "Kil'jaeden", entry: 25315, final: true}
+  - name: Clear Icecrown Citadel
+    location_id: 720004
+    trigger:
+      kind: instance_clear
+      instance_key: icecrown_citadel
+      final_boss_entry: 36597
+      bosses:
+        - {name: "Lord Marrowgar", entry: 36612}
+        - {name: "Lady Deathwhisper", entry: 36855}
+        - {name: "Deathbringer Saurfang", entry: 37813}
+        - {name: "Festergut", entry: 36626}
+        - {name: "Rotface", entry: 36627}
+        - {name: "Professor Putricide", entry: 36678}
+        - {name: "Prince Keleseth", entry: 37972}
+        - {name: "Prince Taldaram", entry: 37973}
+        - {name: "Prince Valanar", entry: 37970}
+        - {name: "Blood-Queen Lana'thel", entry: 37955}
+        - {name: "Sindragosa", entry: 36853}
+        - {name: "The Lich King", entry: 36597, final: true}
+
 items:
   - name: Progressive Level Cap
     item_id: 810000
@@ -71,3 +171,15 @@ items:
     item_id: 810004
     count: 1
     delivery: {kind: realm_state, effect: unlock_northrend_passage}
+  - name: "Instance Unlock: Molten Core"
+    item_id: 810005
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: molten_core}
+  - name: "Instance Unlock: Sunwell Plateau"
+    item_id: 810006
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: sunwell_plateau}
+  - name: "Instance Unlock: Icecrown Citadel"
+    item_id: 810007
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: icecrown_citadel}

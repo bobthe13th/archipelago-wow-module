@@ -16,14 +16,21 @@ family: filler
 # reverse. A fixed "worst-case slack" location count (every row always
 # created) was tried first and was wrong for exactly this reason.
 #
-# Row count: 62 = 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task
-# 21's 2 combo-unlock items) + 33 (the absolute ceiling on
+# Row count: 65 = 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task
+# 21's 2 combo-unlock items) + 36 (the absolute ceiling on
 # count_enabled_trap_items -- Task 17's trap_percentage_of_filler Range tops
-# out at 100, and _trap_baseline_location_count() is a fixed 33 quest+core-loop
-# locations, so 33 is the largest total items.py's create_trap_item_pool can
-# ever produce in one generation). Any future optional item family (Group 6's
-# new content, per Task 11's outcome note) must extend this ceiling by its
-# own worst-case count the same way, not assume 62 is permanent.
+# out at 100, and _trap_baseline_location_count() sums
+# len(content_data.LOCATIONS) [19 quest locations] +
+# len(core_loop_content_data.LEVEL_LOCATIONS) [12] +
+# len(core_loop_content_data.INSTANCE_CLEAR_LOCATIONS) [5, grown from 2 by
+# Task 23's three new raid instance-clear rows -- this baseline is NOT fixed,
+# it grows whenever core_loop.yaml gains an instance_clear row, so 36 is not
+# the last time this needs to move either], so 36 is the largest total
+# items.py's create_trap_item_pool can produce in one generation today. Any
+# future optional item family, OR any future core_loop.yaml growth (Group 6's
+# new content, per Task 11's outcome note and Task 23's real discovery of
+# this cross-family coupling), must extend this ceiling by its own worst-case
+# count the same way, not assume 65 is permanent.
 #
 # items: [] always for this family (a filler location has no matching item
 # of its own, by definition) -- kept for schema-shape parity with
@@ -220,4 +227,22 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 62"
     location_id: 740061
+    trigger: {kind: always_available}
+  # Task 23: adding Molten Core/Sunwell Plateau/Icecrown Citadel to
+  # core_loop.yaml grew _trap_baseline_location_count() (items.py) by 3 --
+  # that function sums in len(core_loop_content_data.INSTANCE_CLEAR_LOCATIONS),
+  # which went from 2 to 5 -- so the trap worst-case at trap_percentage_of_filler:100
+  # grew from 33 to 36, and this ceiling must grow to match (29 + 36 = 65).
+  # Caught by TestTrapsAndGatesCombinedParity failing after this task's
+  # content changes, not anticipated in Task 23's own planning -- a real
+  # cross-family coupling between core_loop.yaml's location count and the
+  # traps family's sizing formula.
+  - name: "Filler Check 63"
+    location_id: 740062
+    trigger: {kind: always_available}
+  - name: "Filler Check 64"
+    location_id: 740063
+    trigger: {kind: always_available}
+  - name: "Filler Check 65"
+    location_id: 740064
     trigger: {kind: always_available}

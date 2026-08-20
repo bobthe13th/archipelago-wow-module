@@ -26,6 +26,9 @@
 // OnPlayerCanEnterMap is therefore the sole (and, per the brief, acceptable)
 // gating mechanism for M2.1; a door visual remains a documented follow-up
 // if a suitable GameObject is ever added to the map data.
+#include <algorithm>
+#include <unordered_map>
+
 #include "Chat.h"
 #include "Creature.h"
 #include "Player.h"
@@ -45,11 +48,56 @@ public:
     // edge case: if a pet/guardian lands the final blow, this hook does not
     // fire for the owner, so a pet-tanked/pet-finished final boss kill will
     // not send the instance-clear location check.
+    //
+    // Task 23: Archipelago.InstanceClearMode splits behavior in two.
+    // final_boss_only (and every instance with no `bosses:` list at all --
+    // Ragefire Chasm/Deadmines, unconditionally, regardless of the operator's
+    // InstanceClearMode setting) keeps the original M2.1 behavior below:
+    // fire immediately the instant the configured final-boss entry dies, no
+    // other boss kill matters. all_bosses instead records every recognized
+    // boss kill into archipelago_boss_kills (realm-wide, survives restarts)
+    // and only fires once every entry configured for that instance has been
+    // recorded at least once -- resurrection-prone fights (Sunwell's Eredar
+    // Twins) or scripted multi-phase kills (Kalecgos's Sathrovarr, M'uru's
+    // Entropius phase -- see core_loop.yaml's own header comment for why
+    // those specific entries were chosen) are all handled correctly by this
+    // "recorded at least once, order doesn't matter" model.
     void OnPlayerCreatureKill(Player* /*killer*/, Creature* killed) override
     {
+        uint32_t entry = killed->GetEntry();
+
+        if (sArchipelagoRealmState->GetInstanceClearMode() == "all_bosses")
+        {
+            for (auto const& [instanceKey, bossEntries] : Archipelago::CoreLoop::INSTANCE_BOSS_ENTRIES)
+            {
+                if (std::find(bossEntries.begin(), bossEntries.end(), entry) == bossEntries.end())
+                    continue;
+
+                sArchipelagoRealmState->RecordBossKill(instanceKey, entry);
+
+                std::string sentFlagKey = "instance_clear_sent_" + instanceKey;
+                if (sArchipelagoRealmState->IsFlagUnlocked(sentFlagKey))
+                    return; // already sent for this instance
+
+                bool allRecorded = std::all_of(bossEntries.begin(), bossEntries.end(),
+                    [&](uint32_t bossEntry) { return sArchipelagoRealmState->IsBossKillRecorded(instanceKey, bossEntry); });
+                if (!allRecorded)
+                    return;
+
+                sArchipelagoRealmState->SetFlagTier(sentFlagKey, 1);
+                auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
+                if (locIt != Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.end())
+                    sArchipelagoMgr->SendLocationChecks({ locIt->second });
+                return;
+            }
+            // entry matched no all_bosses-tracked roster -- fall through to
+            // the final_boss_only path below, which also covers Ragefire
+            // Chasm/Deadmines (never present in INSTANCE_BOSS_ENTRIES).
+        }
+
         for (auto const& [instanceKey, bossEntry] : Archipelago::CoreLoop::INSTANCE_FINAL_BOSS_ENTRY)
         {
-            if (killed->GetEntry() != bossEntry)
+            if (entry != bossEntry)
                 continue;
 
             auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
@@ -68,6 +116,14 @@ public:
     // Hard-enforcement fallback behind the (non-existent, see file header)
     // door: a determined player summoned into the instance by someone else
     // would bypass a closed door, but not this map-entry gate.
+    //
+    // Task 23: extended from a 2-way if/else to a data-driven map covering
+    // all 5 gated instances -- Molten Core/Sunwell Plateau/Icecrown Citadel
+    // get the same hard entry gate Ragefire Chasm/Deadmines already had,
+    // unconditionally regardless of InstanceClearMode (a raid group could
+    // otherwise physically clear a raid before its Instance Unlock item was
+    // ever delivered, which the kill-recording hook alone doesn't prevent --
+    // it only tracks/reports kills, it never blocks entry).
     bool OnPlayerCanEnterMap(Player* player, MapEntry const* entry, InstanceTemplate const* /*instance*/, MapDifficulty const* /*mapDiff*/, bool /*loginCheck*/) override
     {
         // When the module is disabled, this must be full vanilla behavior:
@@ -76,16 +132,21 @@ public:
             return true;
 
         // Map ids verified against AreaDefines.h in this checkout:
-        // MAP_RAGEFIRE_CHASM = 389, MAP_DEADMINES = 36.
-        std::string instanceKey;
-        if (entry->MapID == 389)
-            instanceKey = Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM;
-        else if (entry->MapID == 36)
-            instanceKey = Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES;
-        else
+        // MAP_RAGEFIRE_CHASM = 389, MAP_DEADMINES = 36, MAP_MOLTEN_CORE = 409,
+        // MAP_THE_SUNWELL = 580, MAP_ICECROWN_CITADEL = 631.
+        static std::unordered_map<uint32_t, std::string> const mapIdToInstanceKey = {
+            { 389, Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM },
+            { 36, Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES },
+            { 409, Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE },
+            { 580, Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL_PLATEAU },
+            { 631, Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL },
+        };
+
+        auto it = mapIdToInstanceKey.find(entry->MapID);
+        if (it == mapIdToInstanceKey.end())
             return true; // not a gated instance
 
-        if (sArchipelagoRealmState->IsInstanceUnlocked(instanceKey))
+        if (sArchipelagoRealmState->IsInstanceUnlocked(it->second))
             return true;
 
         ChatHandler(player->GetSession()).PSendSysMessage("This instance is locked. Find its Archipelago unlock item first.");

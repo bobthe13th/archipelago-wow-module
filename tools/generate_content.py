@@ -34,6 +34,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_unique_names(data["locations"], data["items"], yaml_path)
     _validate_instance_unlock_references(data["locations"], data["items"], yaml_path)
     _validate_recognized_kinds(data["family"], data["locations"], data["items"], yaml_path)
+    _validate_boss_lists(data["locations"], yaml_path)
 
     return data
 
@@ -73,6 +74,37 @@ def _validate_instance_unlock_references(locations: list, items: list, yaml_path
                     f"{instance_key!r} but no location row has a matching "
                     f"instance_clear trigger"
                 )
+
+
+def _validate_boss_lists(locations: list, yaml_path: pathlib.Path) -> None:
+    # Task 23: an instance_clear row's optional `bosses:` sub-list drives
+    # all_bosses InstanceClearMode -- exactly one row must be marked
+    # `final: true`, and its entry must match the trigger's own
+    # final_boss_entry (the single field final_boss_only mode reads), so the
+    # two modes can never disagree about which creature is "the" final boss.
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "instance_clear" or "bosses" not in trigger:
+            continue
+        bosses = trigger["bosses"]
+        final_bosses = [b for b in bosses if b.get("final")]
+        if len(final_bosses) != 1:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} bosses list must have "
+                f"exactly one entry marked final: true, found {len(final_bosses)}"
+            )
+        if final_bosses[0]["entry"] != trigger["final_boss_entry"]:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} bosses list's final "
+                f"entry ({final_bosses[0]['entry']}) does not match "
+                f"trigger.final_boss_entry ({trigger['final_boss_entry']})"
+            )
+        entries = [b["entry"] for b in bosses]
+        if len(entries) != len(set(entries)):
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} bosses list has "
+                f"duplicate creature entries: {entries}"
+            )
 
 
 _TRIGGER_KINDS_BY_FAMILY = {
@@ -214,6 +246,32 @@ def _emit_python_core_loop(data: dict) -> str:
             lines.append(f'    "{loc["trigger"]["instance_key"]}": {loc["location_id"]},')
     lines.append("}")
     lines.append("")
+    lines.append("# Task 23 bugfix: locations.py's create_core_loop_locations previously")
+    lines.append("# hardcoded a 2-way name ternary over INSTANCE_CLEAR_LOCATIONS' keys --")
+    lines.append("# adding this family's 3rd+ instance_key broke it (every non-Ragefire key")
+    lines.append("# collided on the literal string \"Clear Deadmines\", a real duplicate-")
+    lines.append("# location crash caught by this task's own apworld test run). This map,")
+    lines.append("# generated directly from each location row's own `name` field, replaces")
+    lines.append("# that ternary generically for any future instance_clear row.")
+    lines.append("INSTANCE_CLEAR_LOCATION_NAMES: dict[str, str] = {")
+    for loc in data["locations"]:
+        if loc["trigger"]["kind"] == "instance_clear":
+            lines.append(f'    "{loc["trigger"]["instance_key"]}": "{loc["name"]}",')
+    lines.append("}")
+    lines.append("")
+    lines.append("# Task 23: only instances whose YAML row carries a `bosses:` sub-list")
+    lines.append("# appear here -- Ragefire Chasm/Deadmines (no bosses: list) are absent,")
+    lines.append("# not present with a single-entry list. Not consumed by the apworld as")
+    lines.append("# of Task 23 (no rules.py/goals.py logic needs per-boss creature ids),")
+    lines.append("# emitted for parity with the C++ side per this task's own Files list.")
+    lines.append("INSTANCE_BOSS_ENTRIES: dict[str, list[int]] = {")
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        if trigger["kind"] == "instance_clear" and "bosses" in trigger:
+            entries = ", ".join(str(b["entry"]) for b in trigger["bosses"])
+            lines.append(f'    "{trigger["instance_key"]}": [{entries}],')
+    lines.append("}")
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -328,7 +386,8 @@ def _emit_cpp_core_loop(data: dict) -> str:
         "#pragma once", "",
         "#include <cstdint>",
         "#include <string>",
-        "#include <unordered_map>", "",
+        "#include <unordered_map>",
+        "#include <vector>", "",
         "namespace Archipelago::CoreLoop", "{",
     ]
     lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
@@ -359,6 +418,21 @@ def _emit_cpp_core_loop(data: dict) -> str:
     for loc in clear_locs:
         const_name = "INSTANCE_KEY_" + loc["trigger"]["instance_key"].upper()
         lines.append(f'        {{ {const_name}, {loc["location_id"]} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // Task 23: only instances whose YAML row carries a `bosses:` sub-list")
+    lines.append("    // appear here -- Ragefire Chasm/Deadmines are absent, not present with a")
+    lines.append("    // single-entry vector. Drives all_bosses InstanceClearMode; instances")
+    lines.append("    // absent from this map always behave as final_boss_only, regardless of")
+    lines.append("    // the operator's InstanceClearMode setting (see ArchipelagoInstanceScript.cpp).")
+    lines.append("    inline std::unordered_map<std::string, std::vector<uint32_t>> const INSTANCE_BOSS_ENTRIES = {")
+    for loc in clear_locs:
+        trigger = loc["trigger"]
+        if "bosses" not in trigger:
+            continue
+        const_name = "INSTANCE_KEY_" + trigger["instance_key"].upper()
+        entries = ", ".join(str(b["entry"]) for b in trigger["bosses"])
+        lines.append(f'        {{ {const_name}, {{ {entries} }} }},')
     lines.append("    };")
     lines.append("}")
     lines.append("")
