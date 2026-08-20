@@ -22,45 +22,16 @@
 #include "Chat.h"
 #include "CreatureScript.h"
 #include "DatabaseEnv.h"
-#include "Item.h"
-#include "Log.h"
-#include "Mail.h"
 #include "Player.h"
 #include "ScriptedGossip.h"
 #include "WorldSession.h"
+#include "APDelivery.h"
 
 namespace
 {
     constexpr uint32 GOSSIP_ACTION_CLAIM_PERSONAL = GOSSIP_ACTION_INFO_DEF + 1;
     constexpr uint32 GOSSIP_ACTION_CLAIM_REALM_PILE = GOSSIP_ACTION_INFO_DEF + 2;
     constexpr uint32 GOSSIP_ACTION_CLAIM_FIRST_TO_CLAIM = GOSSIP_ACTION_INFO_DEF + 3;
-
-    // Bags full at claim time: mail instead of blocking the claim, reusing
-    // the same postmaster sender EveryoneReceives' mail path uses
-    // (APDelivery.cpp), so a claimed item is never silently lost.
-    void GrantOrMailItem(Player* player, uint32 entry, CharacterDatabaseTransaction trans)
-    {
-        ItemPosCountVec dest;
-        InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, entry, 1);
-        if (msg == EQUIP_ERR_OK)
-        {
-            if (Item* item = player->StoreNewItem(dest, entry, true))
-                player->SendNewItem(item, 1, true, false);
-            return;
-        }
-
-        Item* item = Item::CreateItem(entry, 1);
-        if (!item)
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for cached WoW item entry {}, claim lost for this entry", entry);
-            return;
-        }
-        item->SaveToDB(trans);
-        MailDraft draft("Archipelago", "An item from the shared cache has arrived (your bags were full).");
-        draft.AddItem(item);
-        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches APDelivery.cpp's precedent */);
-        draft.SendMailTo(trans, MailReceiver(player, player->GetGUID().GetCounter()), sender);
-    }
 
     void ClaimPersonalCopies(Player* player)
     {
@@ -85,7 +56,7 @@ namespace
         do
         {
             uint32 entry = (*result)[0].Get<uint32>();
-            GrantOrMailItem(player, entry, trans);
+            Archipelago::Delivery::GiveOrMailItem(player, entry, trans);
             trans->Append("INSERT IGNORE INTO archipelago_cache_claims (character_guid, wow_item_entry) VALUES ({}, {})", guid, entry);
             ++grantedCount;
         } while (result->NextRow());
@@ -111,7 +82,7 @@ namespace
         do
         {
             uint32 entry = (*result)[0].Get<uint32>();
-            GrantOrMailItem(player, entry, trans);
+            Archipelago::Delivery::GiveOrMailItem(player, entry, trans);
             // Marking this entry realm-claimed (not just per-character) is what makes
             // this option a single shared pile instead of another personal copy: once
             // taken here, it is gone from both this option and ClaimPersonalCopies for
@@ -146,7 +117,7 @@ namespace
         {
             uint32 id = (*result)[0].Get<uint32>();
             uint32 entry = (*result)[1].Get<uint32>();
-            GrantOrMailItem(player, entry, trans);
+            Archipelago::Delivery::GiveOrMailItem(player, entry, trans);
             trans->Append("DELETE FROM archipelago_first_to_claim_pending WHERE id = {}", id);
             ++grantedCount;
         } while (result->NextRow());

@@ -8,6 +8,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSessionMgr.h"
+#include "APCatchUp.h"
 #include "APDelivery.h"
 #include "APGating.h"
 #include "APProtocol.h"
@@ -155,6 +156,10 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         }
 
         Archipelago::Delivery::DeliverItem(deliveryPolicy, entryIt->second, deliveryCharacter, trans);
+        // Logged unconditionally, regardless of deliveryPolicy -- Task 16's
+        // new-character catch-up needs an authoritative record of every item
+        // the realm has ever received, independent of which policy routed it.
+        trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", entryIt->second);
 
         highestSeen = std::max(highestSeen, received.index);
     }
@@ -181,6 +186,10 @@ public:
     {
         LOG_INFO("module.archipelago_wow", "Archipelago: {} logged in, module is active", player->GetName());
         Archipelago::Gating::SyncCharacterUnlocksToPlayer(player);
+        // AT_LOGIN_FIRST is still set here (CharacterHandler.cpp clears it and fires
+        // OnPlayerFirstLogin only after every OnPlayerLogin hook returns), so this is
+        // the correct in-hook test for "this character's very first login ever".
+        Archipelago::CatchUp::OnPlayerLogin(player, player->HasAtLoginFlag(AT_LOGIN_FIRST));
     }
 };
 

@@ -127,4 +127,31 @@ Archipelago.CharacterUnlockGating = 0
 #        Default:     "EveryoneReceives"
 
 Archipelago.DeliveryPolicy = "EveryoneReceives"
+
+#    Archipelago.CatchUpPolicy
+#        Description: How a brand-new character catches up on WoW items the
+#                      realm has already received (M4 Sec7.2) -- every
+#                      delivered item is logged once, regardless of
+#                      DeliveryPolicy, but historically only reached one
+#                      designated character (EveryoneReceives'
+#                      DeliveryCharacter); every other character starts with
+#                      none of it. Only turn this away from the default when
+#                      the connected seed's player YAML also has a matching
+#                      CatchUpPolicy option -- same manual-sync requirement
+#                      as every other option above. "Nothing" is the safe
+#                      default (no behavior change from pre-Task-16).
+#        Values:      "AllMailedOnLogin" | "Nothing" (default) |
+#                      "PercentPerLevel" | "LevelScaledBundle"
+#        Default:     "Nothing"
+
+Archipelago.CatchUpPolicy = "Nothing"
+
+#    Archipelago.CatchUpPercentPerLevel
+#        Description: Only used when Archipelago.CatchUpPolicy is
+#                      "PercentPerLevel" -- what percentage of the realm's
+#                      total delivery history is granted to a character on
+#                      each level-up, until they're fully caught up.
+#        Default:     10
+
+Archipelago.CatchUpPercentPerLevel = 10
 ###################################################################################################

@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <string>
 
+class Player;
+
 namespace Archipelago::Delivery
 {
     enum class Policy
@@ -32,4 +34,14 @@ namespace Archipelago::Delivery
     // construct an Item for at receive time), so construction is now each branch's own
     // decision, made if and when it actually needs one.
     void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans);
+
+    // Shared "give this online player one copy of wowItemEntry right now" primitive:
+    // stores it directly into their bags if there's room, otherwise mails it (same
+    // postmaster sender DeliverItem's EveryoneReceives branch uses) so it's never
+    // silently lost. Used by anything that grants an item to an already-identified,
+    // online Player* -- the Archipelago Cache Keeper's claim options (Tasks 13/15)
+    // and new-character catch-up (Task 16) -- as opposed to DeliverItem above, which
+    // routes a freshly-received AP item according to the realm's configured policy
+    // and doesn't assume a specific online recipient.
+    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans);
 }

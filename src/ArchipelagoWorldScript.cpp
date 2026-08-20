@@ -60,6 +60,14 @@ public:
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "EveryoneReceives"));
 
+        // Task 16 (design spec Sec7.2): same manual-sync mirror-toggle discipline as
+        // every other option above -- mirrored into ArchipelagoRealmState rather than
+        // kept as a member here, since the consuming hooks (OnPlayerLogin,
+        // OnPlayerLevelChanged) live in different PlayerScript classes this class
+        // cannot pass a parameter to directly.
+        sArchipelagoRealmState->SetCatchUpPolicy(sConfigMgr->GetOption<std::string>("Archipelago.CatchUpPolicy", "Nothing"));
+        sArchipelagoRealmState->SetCatchUpPercentPerLevel(sConfigMgr->GetOption<uint32_t>("Archipelago.CatchUpPercentPerLevel", 10));
+
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
         // Policy::AuctionHouse could list an AP-earned item on the AH a player is then

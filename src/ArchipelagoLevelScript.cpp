@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoLevelScript.cpp
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APCatchUp.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 
@@ -29,6 +30,8 @@ public:
 
         if (oldLevel < Archipelago::CoreLoop::SPRINT_GOAL_LEVEL && newLevel >= Archipelago::CoreLoop::SPRINT_GOAL_LEVEL)
             sArchipelagoMgr->SendGoalComplete();
+
+        Archipelago::CatchUp::OnPlayerLevelChanged(player, oldLevel, newLevel);
     }
 };
 

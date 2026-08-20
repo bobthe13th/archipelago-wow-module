@@ -7,6 +7,7 @@
 #include "Mail.h"
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
+#include "Player.h"
 #include "StringFormat.h"
 #include "WorldSessionMgr.h"
 
@@ -79,5 +80,29 @@ namespace Archipelago::Delivery
                 MailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
                 break;
         }
+    }
+
+    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans)
+    {
+        ItemPosCountVec dest;
+        InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, wowItemEntry, 1);
+        if (msg == EQUIP_ERR_OK)
+        {
+            if (Item* item = player->StoreNewItem(dest, wowItemEntry, true))
+                player->SendNewItem(item, 1, true, false);
+            return;
+        }
+
+        Item* item = Item::CreateItem(wowItemEntry, 1);
+        if (!item)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {}, item is lost", wowItemEntry);
+            return;
+        }
+        item->SaveToDB(trans);
+        MailDraft draft("Archipelago", "An item from Archipelago has arrived (your bags were full).");
+        draft.AddItem(item);
+        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches MailToDeliveryCharacter's precedent above */);
+        draft.SendMailTo(trans, MailReceiver(player, player->GetGUID().GetCounter()), sender);
     }
 }

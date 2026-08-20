@@ -68,6 +68,20 @@ public:
     bool IsGateFamilyEnabled(std::string const& familyKey) const;
     void SetGateFamilyEnabled(std::string const& familyKey, bool enabled);
 
+    // Cached mirror of Archipelago.CatchUpPolicy / Archipelago.CatchUpPercentPerLevel
+    // (Task 16, design spec Sec7.2), same not-persisted worldserver.conf-mirror
+    // convention as the gate-family flags above. Stored as a raw string rather than
+    // an enum so this header doesn't need to depend on APCatchUp.h's Policy type --
+    // APCatchUp.cpp (the only reader) parses it. Consumed from ArchipelagoPlayerScript
+    // (OnPlayerLogin) and ArchipelagoLevelScript (OnPlayerLevelChanged), two different
+    // PlayerScript classes that ArchipelagoWorldScript cannot pass a parameter to
+    // directly -- unlike DeliveryPolicy, which only has one call site
+    // (ArchipelagoWorldScript::OnUpdate) and so didn't need this indirection.
+    std::string GetCatchUpPolicy() const { return _catchUpPolicy; }
+    void SetCatchUpPolicy(std::string const& policy) { _catchUpPolicy = policy; }
+    uint32_t GetCatchUpPercentPerLevel() const { return _catchUpPercentPerLevel; }
+    void SetCatchUpPercentPerLevel(uint32_t percent) { _catchUpPercentPerLevel = percent; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -78,6 +92,8 @@ private:
     std::unordered_map<std::string, uint32_t> _flagTiers;
     std::unordered_set<uint64_t> _sentLocationChecks;
     std::unordered_map<std::string, bool> _gateFamiliesEnabled;
+    std::string _catchUpPolicy = "Nothing";
+    uint32_t _catchUpPercentPerLevel = 10;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()
