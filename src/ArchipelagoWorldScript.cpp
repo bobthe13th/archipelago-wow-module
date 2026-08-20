@@ -54,6 +54,28 @@ namespace
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseCostTier '{}', falling back to Market", value);
         return Archipelago::Delivery::CostTier::Market;
     }
+
+    // Task 20: parses the apworld's SpiritHealerVariant Choice into its two
+    // independent halves. "Neither" is read as "neither penalty applies" (both
+    // suppressed), not "neither is suppressed" -- the design spec names this
+    // option "neither" without pinning the reading; see the apworld's
+    // options.py docstring for the same resolved interpretation.
+    void ParseSpiritHealerVariant(std::string const& value, bool& suppressResSickness, bool& suppressDurabilityLoss)
+    {
+        suppressResSickness = false;
+        suppressDurabilityLoss = false;
+        if (value == "NoResSickness")
+            suppressResSickness = true;
+        else if (value == "NoDurabilityLoss")
+            suppressDurabilityLoss = true;
+        else if (value == "Neither")
+        {
+            suppressResSickness = true;
+            suppressDurabilityLoss = true;
+        }
+        else if (value != "Vanilla")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.SpiritHealerVariant '{}', falling back to Vanilla", value);
+    }
 }
 
 class ArchipelagoWorldScript : public WorldScript
@@ -97,6 +119,16 @@ public:
         sArchipelagoRealmState->SetDeathLinkReceiveEnabled(sConfigMgr->GetOption<bool>("Archipelago.DeathLinkReceiveEnabled", false));
         sArchipelagoRealmState->SetDeathLinkSendCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkSendCooldownSeconds", 15));
         sArchipelagoRealmState->SetDeathLinkReceiveCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkReceiveCooldownSeconds", 15));
+
+        // Task 20: same not-persisted mirror-toggle discipline as DeathLink above.
+        // suppressResSickness feeds ArchipelagoDeathLinkScript's OnPlayerResurrect
+        // veto hook; suppressDurabilityLoss feeds this class's own OnStartup rate
+        // override below.
+        bool suppressResSickness = false;
+        bool suppressDurabilityLoss = false;
+        ParseSpiritHealerVariant(sConfigMgr->GetOption<std::string>("Archipelago.SpiritHealerVariant", "Vanilla"), suppressResSickness, suppressDurabilityLoss);
+        sArchipelagoRealmState->SetSuppressResSickness(suppressResSickness);
+        sArchipelagoRealmState->SetSuppressDurabilityLossOnSpiritResurrect(suppressDurabilityLoss);
 
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
@@ -150,7 +182,22 @@ public:
         // when disabled, matching every gating script below.
         sArchipelagoRealmState->Load();
         if (_enabled)
+        {
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
+
+            // Task 20: RATE_DURABILITY_LOSS_ON_SPIRIT_RESURRECT is the real (and only)
+            // lever for the spirit-healer durability-loss penalty -- NPCHandler.cpp's
+            // SendSpiritResurrect() calls Player::DurabilityLossAll directly with no
+            // script hook wrapping it, so a worldserver-wide rate override pushed here
+            // (same "push a config value at startup" pattern as the level cap above) is
+            // the only module-only mechanism available. Realm-wide is the correct scope
+            // for this architecture anyway: one WoW realm is one AP slot, not a
+            // per-character choice. NOTE: `.reload config` reverts this override back to
+            // the operator's own worldserver.conf value until the next OnBeforeConfigLoad
+            // re-applies it -- flagged in the manual-verification checklist.
+            if (sArchipelagoRealmState->GetSuppressDurabilityLossOnSpiritResurrect())
+                sWorld->setRate(RATE_DURABILITY_LOSS_ON_SPIRIT_RESURRECT, 0.0f);
+        }
 
         if (!_enabled)
             return;

@@ -216,3 +216,26 @@ Archipelago.DeathLinkSendCooldownSeconds = 15
 
 Archipelago.DeathLinkReceiveCooldownSeconds = 15
 ###################################################################################################
+
+#    Archipelago.SpiritHealerVariant
+#        Description: Which of resurrection sickness and spirit-healer
+#                      durability loss are suppressed on resurrection (M4
+#                      Sec11). "NoResSickness"/"NoDurabilityLoss" each
+#                      suppress exactly one; "Neither" suppresses both
+#                      (read as "neither penalty applies"). Sickness
+#                      suppression applies to every resurrection source,
+#                      not just the spirit healer -- see the module's
+#                      ArchipelagoDeathLinkScript.cpp for why. Durability
+#                      suppression is a realm-wide rate override applied at
+#                      startup; a `.reload config` reverts it until the
+#                      worldserver restarts or is reloaded again. Only turn
+#                      this away from the default when the connected seed's
+#                      player YAML also has a matching SpiritHealerVariant
+#                      option -- same manual-sync requirement as every
+#                      other option above.
+#        Values:      "Vanilla" (default) | "NoResSickness" |
+#                      "NoDurabilityLoss" | "Neither"
+#        Default:     "Vanilla"
+
+Archipelago.SpiritHealerVariant = "Vanilla"
+###################################################################################################

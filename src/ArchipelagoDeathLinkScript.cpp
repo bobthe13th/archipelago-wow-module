@@ -158,7 +158,40 @@ public:
     }
 };
 
+// Task 20: resurrection-sickness suppression, for the apworld's
+// SpiritHealerVariant option's "no_res_sickness"/"neither" cases. Confirmed
+// against this checkout: PlayerScript::OnPlayerResurrect(Player*, float,
+// bool& applySickness) (PlayerScript.h:637) is dispatched by
+// ScriptMgr::OnPlayerResurrect(Player*, float, bool&) (ScriptMgr.h:447) --
+// both take applySickness BY REFERENCE, and the call site
+// (Player::ResurrectPlayer, Player.cpp:4597) invokes it immediately before
+// "if (!applySickness) return;" gates the actual sickness-casting code
+// below it. Setting applySickness = false here is therefore a real veto,
+// not a notification-only hook -- confirmed by reading the call site, not
+// assumed from the parameter name. This fires for every ResurrectPlayer
+// call (spirit healer, resurrection spells, everything) -- there is no
+// signal in this hook distinguishing which resurrection source triggered
+// it, so suppression is realm-wide across all sources, not narrowly
+// scoped to the spirit healer. That is the correct scope for this
+// architecture anyway (one WoW realm is one AP slot), not a limitation
+// being worked around; see the apworld's options.py docstring for the
+// same documented boundary.
+class ArchipelagoSpiritHealerScript : public PlayerScript
+{
+public:
+    ArchipelagoSpiritHealerScript() : PlayerScript("ArchipelagoSpiritHealerScript", { PLAYERHOOK_ON_PLAYER_RESURRECT }) { }
+
+    void OnPlayerResurrect(Player* /*player*/, float /*restorePercent*/, bool& applySickness) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return;
+        if (sArchipelagoRealmState->GetSuppressResSickness())
+            applySickness = false;
+    }
+};
+
 void AddArchipelagoDeathLinkScripts()
 {
     new ArchipelagoDeathLinkScript();
+    new ArchipelagoSpiritHealerScript();
 }

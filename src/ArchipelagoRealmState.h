@@ -109,6 +109,18 @@ public:
     bool TryConsumeDeathLinkSendCooldown();
     bool TryConsumeDeathLinkReceiveCooldown();
 
+    // Cached mirrors of the two independent halves of Archipelago.SpiritHealerVariant
+    // (Task 20, design spec Sec11), same not-persisted worldserver.conf-mirror
+    // convention as the DeathLink toggles above. Parsed once from the single conf
+    // string in ArchipelagoWorldScript::OnBeforeConfigLoad into these two booleans,
+    // since there are two independent consumers (this class's own OnStartup, which
+    // pushes the durability-loss rate override, and ArchipelagoDeathLinkScript's
+    // resurrection-sickness veto hook) rather than one.
+    bool GetSuppressResSickness() const { return _suppressResSickness; }
+    void SetSuppressResSickness(bool suppress) { _suppressResSickness = suppress; }
+    bool GetSuppressDurabilityLossOnSpiritResurrect() const { return _suppressDurabilityLossOnSpiritResurrect; }
+    void SetSuppressDurabilityLossOnSpiritResurrect(bool suppress) { _suppressDurabilityLossOnSpiritResurrect = suppress; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -127,6 +139,8 @@ private:
     uint32_t _deathLinkReceiveCooldownSeconds = 15;
     int64_t _lastDeathLinkSentAt = 0;
     int64_t _lastDeathLinkReceivedAt = 0;
+    bool _suppressResSickness = false;
+    bool _suppressDurabilityLossOnSpiritResurrect = false;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()
