@@ -3,10 +3,7 @@
 
 #include "CharacterCache.h"
 #include "DatabaseEnv.h"
-#include "Item.h"
 #include "Log.h"
-#include "Mail.h"
-#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "World.h"
@@ -49,19 +46,26 @@ namespace
 // ArchipelagoWorldScript::OnUpdate, draining the io-thread-fed queue) -- it
 // touches Player/CharacterCache/CharacterDatabase, none of which are safe to
 // call from the APClient io thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter)
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy)
 {
-    if (deliveryCharacter.empty())
+    // Archipelago.DeliveryCharacter is only load-bearing for Policy::EveryoneReceives
+    // (the only branch APDelivery::DeliverItem actually mails to it) -- Task 13's
+    // SharedCacheNpc, and Task 14/15's AuctionHouse/FirstToClaim, have no single
+    // recipient at all, so an operator running one of those policies should not be
+    // forced to also configure a delivery character that nothing here will use.
+    if (deliveryPolicy == Archipelago::Delivery::Policy::EveryoneReceives)
     {
-        LOG_ERROR("module.archipelago_wow", "Archipelago: received {} item(s) but Archipelago.DeliveryCharacter is unset, dropping", items.size());
-        return;
-    }
+        if (deliveryCharacter.empty())
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: received {} item(s) but Archipelago.DeliveryCharacter is unset, dropping", items.size());
+            return;
+        }
 
-    ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
-    if (receiverGuid.IsEmpty())
-    {
-        LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, dropping {} item(s)", deliveryCharacter, items.size());
-        return;
+        if (sCharacterCache->GetCharacterGuidByName(deliveryCharacter).IsEmpty())
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, dropping {} item(s)", deliveryCharacter, items.size());
+            return;
+        }
     }
 
     int64_t lastIndex = GetLastItemIndex();
@@ -150,14 +154,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        if (Item* item = Item::CreateItem(entryIt->second, 1))
-        {
-            Archipelago::Delivery::DeliverItem(Archipelago::Delivery::Policy::EveryoneReceives, item, deliveryCharacter, trans);
-        }
-        else
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for AP item id {} (WoW item entry {}), item is lost", received.item, entryIt->second);
-        }
+        Archipelago::Delivery::DeliverItem(deliveryPolicy, entryIt->second, deliveryCharacter, trans);
 
         highestSeen = std::max(highestSeen, received.index);
     }

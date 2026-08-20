@@ -7,12 +7,35 @@
 #include "Log.h"
 #include "ScriptMgr.h"
 #include "World.h"
+#include "APDelivery.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 
 // Defined in ArchipelagoPlayerScript.cpp. Touches Player/CharacterCache/
 // CharacterDatabase, so it must only ever be invoked from the world thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter);
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy);
+
+namespace
+{
+    // The apworld's DeliveryPolicy Choice (Task 12 Step 4) is resolved into
+    // slot_data at generation, but this module has no slot_data parsing (the
+    // same known gap Finding #10 documents for the gate-family toggles) --
+    // an operator running a non-default delivery policy must mirror it here
+    // by hand via Archipelago.DeliveryPolicy, same discipline as
+    // Archipelago.ProficiencyGating/AccessGating/CharacterUnlockGating.
+    Archipelago::Delivery::Policy ParseDeliveryPolicy(std::string const& value)
+    {
+        if (value == "SharedCacheNpc")
+            return Archipelago::Delivery::Policy::SharedCacheNpc;
+        if (value == "AuctionHouse")
+            return Archipelago::Delivery::Policy::AuctionHouse;
+        if (value == "FirstToClaim")
+            return Archipelago::Delivery::Policy::FirstToClaim;
+        if (value != "EveryoneReceives")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.DeliveryPolicy '{}', falling back to EveryoneReceives", value);
+        return Archipelago::Delivery::Policy::EveryoneReceives;
+    }
+}
 
 class ArchipelagoWorldScript : public WorldScript
 {
@@ -35,6 +58,21 @@ public:
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
+        _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "EveryoneReceives"));
+
+        // Task 14's known collision (flagged during Task 8): AccessGating can suppress
+        // a player's ability to even open the Auction House window, so combining it with
+        // Policy::AuctionHouse could list an AP-earned item on the AH a player is then
+        // unable to retrieve -- a real softlock. Resolved with the same fail-safe every
+        // other optional-feature combination in this module uses: refuse the risky
+        // combination at config load and fall back to the always-safe default rather
+        // than trying to special-case the suppression hook to let a player through for
+        // "just their own" AH listings.
+        if (_deliveryPolicy == Archipelago::Delivery::Policy::AuctionHouse && _accessGating)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryPolicy=AuctionHouse with AccessGating=1 can softlock a player's own AP-earned items (they could be listed before Auction House Access is granted) -- falling back to EveryoneReceives");
+            _deliveryPolicy = Archipelago::Delivery::Policy::EveryoneReceives;
+        }
 
         // Mirror into ArchipelagoRealmState so the gating scripts (instance
         // entry, Dark Portal, Northrend transports), which only ever touch
@@ -123,7 +161,7 @@ public:
             items.swap(_pendingItems);
         }
 
-        DeliverArchipelagoItems(items, _deliveryCharacter);
+        DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy);
     }
 
 private:
@@ -134,6 +172,7 @@ private:
     std::string _password;
     bool _useTls = false;
     std::string _deliveryCharacter;
+    Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::EveryoneReceives;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
     bool _proficiencyGating = false;

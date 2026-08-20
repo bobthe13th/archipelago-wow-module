@@ -104,4 +104,27 @@ Archipelago.AccessGating = 0
 #        Default:     0 (disabled)
 
 Archipelago.CharacterUnlockGating = 0
+
+#    Archipelago.DeliveryPolicy
+#        Description: How Archipelago-granted items reach players (M4 Sec7).
+#                      Only turn this away from the default when the
+#                      connected seed's player YAML also has a matching
+#                      DeliveryPolicy option -- this module has no way to
+#                      read that option from the AP server itself, same
+#                      manual-sync requirement as the gate-family toggles
+#                      above. Unlike those toggles, there is no "safe
+#                      direction" here (delivery policy never blocks
+#                      progression), so a mismatch just means items don't
+#                      arrive the way the seed's players expect, not a
+#                      softlock. AuctionHouse is refused (falls back to
+#                      EveryoneReceives, logged as an error) whenever
+#                      Archipelago.AccessGating is also on, since it can
+#                      list a player's own AP-earned item on the Auction
+#                      House before Auction House Access is granted -- a
+#                      real softlock, not just a mismatch.
+#        Values:      "EveryoneReceives" (default) | "SharedCacheNpc" |
+#                      "AuctionHouse" | "FirstToClaim"
+#        Default:     "EveryoneReceives"
+
+Archipelago.DeliveryPolicy = "EveryoneReceives"
 ###################################################################################################
