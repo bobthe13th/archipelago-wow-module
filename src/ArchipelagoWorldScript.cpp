@@ -8,6 +8,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "APDelivery.h"
+#include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 
@@ -142,6 +143,27 @@ public:
 
         if (!_enabled)
             return;
+
+        // Fix (post-Task 17 review): Task 11's filler locations carry no access
+        // rule, so distribute_items_restrictive can and does place progression
+        // items on them (a Progressive Level Cap copy included) -- nothing in
+        // this module ever sent these checks, so any progression item that
+        // landed on one would be permanently unobtainable in real play, a live
+        // softlock. Since these locations have no real in-game trigger by
+        // design, the correct trigger is "this realm exists" -- send every
+        // filler location id, unconditionally, once per startup.
+        // ArchipelagoManager::SendLocationChecks only *inserts* new ids into
+        // ArchipelagoRealmState's persisted sent-check set (already-sent ids
+        // are a no-op), and the AP server silently ignores any id that isn't
+        // part of this slot's actual location table (MultiServer.py's
+        // register_location_checks: "ignore location IDs unknown to this
+        // multidata") -- so sending the full worst-case id set here is safe
+        // regardless of how many this seed's options actually used, and the
+        // Initialize() callback below (ResendAllChecksAndGoal) will redeliver
+        // them once the AP session actually connects, exactly like every
+        // other check recorded before a (re)connect completes.
+        sArchipelagoMgr->SendLocationChecks(std::vector<int64_t>(
+            Archipelago::Filler::LocationIds.begin(), Archipelago::Filler::LocationIds.end()));
 
         Archipelago::ClientOptions options;
         options.host = _serverAddress;

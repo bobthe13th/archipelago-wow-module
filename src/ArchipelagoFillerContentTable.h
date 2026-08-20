@@ -11,10 +11,11 @@ namespace Archipelago::Filler
     // Sink locations with no real in-game trigger -- they exist only
     // to keep the AP fill algorithm's location count >= the worst-case
     // (all optional gate families on) item count (see docs/m4-plan.md's
-    // Task 11 section). Not auto-completed by this module in M4; a real
-    // player's server session will never send these checks, which is an
-    // accepted scope boundary, not a bug -- they never hold anything
-    // required to win a seed.
+    // Task 11 section). They carry no access rule, so the fill algorithm
+    // can and does place progression items on them (Progressive Level Cap
+    // included) -- ArchipelagoWorldScript::OnStartup sends every id here as
+    // a location check unconditionally on realm startup (see docs/m4-plan.md's
+    // Task 17 follow-up fix note) so whatever landed on one is never stranded.
     inline std::unordered_set<int64_t> const LocationIds = {
         740000, // Filler Check 1
         740001, // Filler Check 2
