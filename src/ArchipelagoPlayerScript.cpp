@@ -18,6 +18,7 @@
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGoals.h"
+#include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoTrapsContentTable.h"
 
@@ -129,6 +130,13 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         if (received.item == Archipelago::CoreLoop::AP_ITEM_NORTHREND_PASSAGE)
         {
             sArchipelagoRealmState->UnlockNorthrendPassage();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        if (received.item == Archipelago::Rares::AP_ITEM_KEY_HUNT_KEY)
+        {
+            sArchipelagoRealmState->GrantKey();
+            Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

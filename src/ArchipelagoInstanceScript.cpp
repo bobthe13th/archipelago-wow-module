@@ -36,6 +36,7 @@
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoRaresContentTable.h"
 
 class ArchipelagoInstanceKillScript : public PlayerScript
 {
@@ -105,6 +106,18 @@ public:
                 sArchipelagoMgr->SendLocationChecks({ locIt->second });
             return;
         }
+
+        // Task 25 (Key Hunt): reuses this exact hook rather than registering
+        // a second PLAYERHOOK_ON_CREATURE_KILL script -- AzerothCore
+        // dispatches every registered script for a hook, so a second
+        // registration would be redundant, not additive. Sent unconditionally
+        // on a matching kill regardless of Archipelago.GameMode/whether this
+        // generation actually sampled the location into its pool -- see
+        // ArchipelagoRaresContentTable.h's own header comment for why that's
+        // safe (the AP server silently ignores an unrecognized location id).
+        auto rareIt = Archipelago::Rares::CreatureEntryToLocationId.find(entry);
+        if (rareIt != Archipelago::Rares::CreatureEntryToLocationId.end())
+            sArchipelagoMgr->SendLocationChecks({ rareIt->second });
     }
 };
 

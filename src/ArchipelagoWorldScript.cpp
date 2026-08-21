@@ -236,6 +236,12 @@ public:
         sArchipelagoRealmState->SetGameMode(ParseGameMode(sConfigMgr->GetOption<std::string>("Archipelago.GameMode", "Sprint")));
         sArchipelagoRealmState->SetCompletionistExpansion(ParseCompletionistExpansion(sConfigMgr->GetOption<std::string>("Archipelago.CompletionistExpansion", "Vanilla")));
 
+        // Task 25 (Key Hunt): must match the connected seed's own
+        // key_hunt_keys_required/key_hunt_instances_required options -- same
+        // manual-sync requirement as GameMode/CompletionistExpansion above.
+        sArchipelagoRealmState->SetKeyHuntKeysRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.KeyHuntKeysRequired", 10));
+        sArchipelagoRealmState->SetKeyHuntInstancesRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.KeyHuntInstancesRequired", 1));
+
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
         // Policy::AuctionHouse could list an AP-earned item on the AH a player is then

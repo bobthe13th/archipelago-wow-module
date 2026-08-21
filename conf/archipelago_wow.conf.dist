@@ -328,3 +328,27 @@ Archipelago.GameMode = "Sprint"
 
 Archipelago.CompletionistExpansion = "Vanilla"
 ###################################################################################################
+
+#    Archipelago.KeyHuntKeysRequired
+#        Description: Only relevant when Archipelago.GameMode is "KeyHunt"
+#                      (Task 25) -- how many "Key Hunt: Key" items must be
+#                      received to complete the goal, alongside
+#                      KeyHuntInstancesRequired raids/dungeons also being
+#                      cleared. Must match the connected seed's own
+#                      key_hunt_keys_required option.
+#        Default:     10
+
+Archipelago.KeyHuntKeysRequired = 10
+
+#    Archipelago.KeyHuntInstancesRequired
+#        Description: Only relevant when Archipelago.GameMode is "KeyHunt"
+#                      (Task 25) -- how many of the 5 existing instance-clear
+#                      raids/dungeons (Ragefire Chasm, Deadmines, Molten
+#                      Core, Sunwell Plateau, Icecrown Citadel) must also be
+#                      cleared, alongside KeyHuntKeysRequired keys. Must
+#                      match the connected seed's own
+#                      key_hunt_instances_required option.
+#        Default:     1
+
+Archipelago.KeyHuntInstancesRequired = 1
+###################################################################################################

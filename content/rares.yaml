@@ -1,0 +1,182 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/rares.yaml
+family: rares
+
+# Task 25 (design spec Sec5.4/Sec5.2.1, Tier 2: Key Hunt mode). Only relevant
+# when game_mode is key_hunt -- both this family's locations AND its "Key
+# Hunt: Key" item are pooled conditionally in the apworld (locations.py's
+# create_rares_locations / items.py's create_key_hunt_item_pool both check
+# world.options.game_mode before doing anything), unlike every other content
+# family in this module, which is either always-pooled (core_loop, quests) or
+# gated by an independent toggle option that can coexist with any game_mode
+# (proficiency_gating, traps_enabled). This is the first content family whose
+# existence is gated on which GameMode is active, not a separate toggle.
+#
+# The 40 rows below are a curated subset of this checkout's real rare-mob
+# roster, not the full set -- researched directly against
+# data/sql/base/db_world/creature_template.sql (rank IN (2, 4), i.e.
+# CREATURE_ELITE_RAREELITE/CREATURE_ELITE_RARE, the same two ranks the game
+# client uses to show the silver-dashed "Rare"/"Rare Elite" nameplate),
+# cross-referenced against data/sql/base/db_world/creature.sql to confirm
+# each entry has at least one real overworld spawn (map 0/1/530/571 --
+# Eastern Kingdoms/Kalimdor/Outland/Northrend), and stratified-sampled by
+# minlevel to spread evenly across the full level range and all four
+# continents. This produced 40 of 360 real, spawned rank-2/4 rares.
+#
+# IMPORTANT, documented explicitly rather than silently: "notable"/"famous"
+# was NOT used as a selection criterion, because a spot-check during
+# curation showed this checkout's data does not reliably match live-retail
+# fame -- e.g. Time-Lost Proto-Drake (entry 32153) is rank=1 (plain elite,
+# not rank 2/4) in this dataset, and several other well-known Northrend
+# rares are rank=2 rather than rank=4. Trusting memory of what's "famous"
+# against data that doesn't match memory would have been unverified
+# guessing, the exact mistake this project's research discipline exists to
+# avoid. The 40 below are therefore an objectively-reproducible sample
+# (rank + real spawn existence + even level/continent spread), not a
+# hand-picked "greatest hits" list -- a fine substitute for Key Hunt's
+# purposes (spec's own framing: "a few dozen rows is enough to prove the
+# mode, not an exhaustive server-wide sweep"), but a future task is free to
+# replace individual rows with more iconic picks if that's ever desired.
+#
+# Density-sampled, not always-pooled: locations.py's create_rares_locations
+# calls density.sample_category against this full 40-row list (weight 100,
+# so only the global check_density and the shared MaxOptionalLocations
+# ceiling constrain how many of these 40 are actually used in one
+# generation) -- per the plan's own Interfaces note for this task ("Key
+# Hunt's rares are sampled through sample_category like any other optional
+# category, not hand-picked"). This is the FIRST real caller of Task 2's
+# density.py module anywhere in this codebase.
+locations:
+  - name: "Rare Kill: Lost Soul"
+    location_id: 730000
+    trigger: {kind: rare_kill, creature_entry: 1531}  # level 6-7, Eastern Kingdoms
+  - name: "Rare Kill: Snagglespear"
+    location_id: 730001
+    trigger: {kind: rare_kill, creature_entry: 5786}  # level 9, Kalimdor
+  - name: "Rare Kill: Morgaine the Sly"
+    location_id: 730002
+    trigger: {kind: rare_kill, creature_entry: 99}  # level 10, Eastern Kingdoms
+  - name: "Rare Kill: Sister Hatelash"
+    location_id: 730003
+    trigger: {kind: rare_kill, creature_entry: 5785}  # level 11, Kalimdor
+  - name: "Rare Kill: Bjarn"
+    location_id: 730004
+    trigger: {kind: rare_kill, creature_entry: 1130}  # level 12, Eastern Kingdoms
+  - name: "Rare Kill: Grizlak"
+    location_id: 730005
+    trigger: {kind: rare_kill, creature_entry: 1425}  # level 15, Eastern Kingdoms
+  - name: "Rare Kill: Carnivous the Breaker"
+    location_id: 730006
+    trigger: {kind: rare_kill, creature_entry: 2186}  # level 16, Kalimdor
+  - name: "Rare Kill: Dr. Whitherlimb"
+    location_id: 730007
+    trigger: {kind: rare_kill, creature_entry: 22062}  # level 18, Outland
+  - name: "Rare Kill: Engineer Whirleygig"
+    location_id: 730008
+    trigger: {kind: rare_kill, creature_entry: 5836}  # level 19, Kalimdor
+  - name: "Rare Kill: Magosh"
+    location_id: 730009
+    trigger: {kind: rare_kill, creature_entry: 1399}  # level 21, Eastern Kingdoms
+  - name: "Rare Kill: Taskmaster Whipfang"
+    location_id: 730010
+    trigger: {kind: rare_kill, creature_entry: 5932}  # level 22, Kalimdor
+  - name: "Rare Kill: Chatter"
+    location_id: 730011
+    trigger: {kind: rare_kill, creature_entry: 616}  # level 23, Eastern Kingdoms
+  - name: "Rare Kill: Leech Widow"
+    location_id: 730012
+    trigger: {kind: rare_kill, creature_entry: 1112}  # level 24, Eastern Kingdoms
+  - name: "Rare Kill: Branch Snapper"
+    location_id: 730013
+    trigger: {kind: rare_kill, creature_entry: 10641}  # level 25, Kalimdor
+  - name: "Rare Kill: Kazon"
+    location_id: 730014
+    trigger: {kind: rare_kill, creature_entry: 584}  # level 27, Eastern Kingdoms
+  - name: "Rare Kill: Brother Ravenoak"
+    location_id: 730015
+    trigger: {kind: rare_kill, creature_entry: 5915}  # level 29, Kalimdor
+  - name: "Rare Kill: Commander Felstrom"
+    location_id: 730016
+    trigger: {kind: rare_kill, creature_entry: 771}  # level 32, Eastern Kingdoms
+  - name: "Rare Kill: Giggler"
+    location_id: 730017
+    trigger: {kind: rare_kill, creature_entry: 14228}  # level 34, Kalimdor
+  - name: "Rare Kill: Kovork"
+    location_id: 730018
+    trigger: {kind: rare_kill, creature_entry: 2603}  # level 36, Eastern Kingdoms
+  - name: "Rare Kill: Drogoth the Roamer"
+    location_id: 730019
+    trigger: {kind: rare_kill, creature_entry: 14231}  # level 37, Kalimdor
+  - name: "Rare Kill: Hayoc"
+    location_id: 730020
+    trigger: {kind: rare_kill, creature_entry: 14234}  # level 39, Kalimdor
+  - name: "Rare Kill: Brimgore"
+    location_id: 730021
+    trigger: {kind: rare_kill, creature_entry: 4339}  # level 41, Kalimdor
+  - name: "Rare Kill: Gilmorian"
+    location_id: 730022
+    trigger: {kind: rare_kill, creature_entry: 14447}  # level 43, Eastern Kingdoms
+  - name: "Rare Kill: Rumbler"
+    location_id: 730023
+    trigger: {kind: rare_kill, creature_entry: 2752}  # level 45, Eastern Kingdoms
+  - name: "Rare Kill: Faulty War Golem"
+    location_id: 730024
+    trigger: {kind: rare_kill, creature_entry: 8279}  # level 46, Eastern Kingdoms
+  - name: "Rare Kill: Antilus the Soarer"
+    location_id: 730025
+    trigger: {kind: rare_kill, creature_entry: 5347}  # level 48, Kalimdor
+  - name: "Rare Kill: Jalinde Summerdrake"
+    location_id: 730026
+    trigger: {kind: rare_kill, creature_entry: 8214}  # level 49, Eastern Kingdoms
+  - name: "Rare Kill: Antilos"
+    location_id: 730027
+    trigger: {kind: rare_kill, creature_entry: 6648}  # level 50, Kalimdor
+  - name: "Rare Kill: Lady Sesspira"
+    location_id: 730028
+    trigger: {kind: rare_kill, creature_entry: 6649}  # level 51, Kalimdor
+  - name: "Rare Kill: Olm the Wise"
+    location_id: 730029
+    trigger: {kind: rare_kill, creature_entry: 14343}  # level 52, Kalimdor
+  - name: "Rare Kill: Mezzir the Howler"
+    location_id: 730030
+    trigger: {kind: rare_kill, creature_entry: 10197}  # level 55, Kalimdor
+  - name: "Rare Kill: Gish the Unmoving"
+    location_id: 730031
+    trigger: {kind: rare_kill, creature_entry: 10825}  # level 56, Eastern Kingdoms
+  - name: "Rare Kill: Grubthor"
+    location_id: 730032
+    trigger: {kind: rare_kill, creature_entry: 14477}  # level 58, Kalimdor
+  - name: "Rare Kill: High General Abbendis"
+    location_id: 730033
+    trigger: {kind: rare_kill, creature_entry: 10828}  # level 59, Eastern Kingdoms
+  - name: "Rare Kill: Scarlet Executioner"
+    location_id: 730034
+    trigger: {kind: rare_kill, creature_entry: 1841}  # level 60, Eastern Kingdoms
+  - name: "Rare Kill: Foreman Jerris"
+    location_id: 730035
+    trigger: {kind: rare_kill, creature_entry: 1843}  # level 62, Eastern Kingdoms
+  - name: "Rare Kill: Goretooth"
+    location_id: 730036
+    trigger: {kind: rare_kill, creature_entry: 17144}  # level 65, Outland
+  - name: "Rare Kill: Ambassador Jerrikar"
+    location_id: 730037
+    trigger: {kind: rare_kill, creature_entry: 18695}  # level 69, Outland
+  - name: "Rare Kill: Tukemuth"
+    location_id: 730038
+    trigger: {kind: rare_kill, creature_entry: 32400}  # level 73, Northrend
+  - name: "Rare Kill: Gondria"
+    location_id: 730039
+    trigger: {kind: rare_kill, creature_entry: 33776}  # level 77, Northrend
+
+# One item definition, ceiling count 40 matching the location list above --
+# NOT always pooled at 40; items.py's create_key_hunt_item_pool pools exactly
+# as many copies as create_rares_locations sampled (same density.sample_category
+# call, cached on the World instance so both sides agree on the count without
+# re-sampling). Uses the realm_state delivery kind (like Progressive Level
+# Cap/Instance Unlock), not gates.yaml's flag kind -- a key is a countable
+# progression item, tracked by ArchipelagoRealmState::GetKeyCount()/GrantKey(),
+# not a boolean.
+items:
+  - name: "Key Hunt: Key"
+    item_id: 830029
+    count: 40
+    delivery: {kind: realm_state, effect: grant_key, step: 1}

@@ -113,6 +113,7 @@ _TRIGGER_KINDS_BY_FAMILY = {
     "gates": set(),  # gates never have locations
     "filler": {"always_available"},
     "traps": set(),  # traps never have locations, same shape as gates
+    "rares": {"rare_kill"},
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
@@ -121,6 +122,7 @@ _DELIVERY_KINDS_BY_FAMILY = {
     "gates": {"flag"},
     "filler": set(),  # filler never has items
     "traps": {"trap"},
+    "rares": {"realm_state"},
 }
 
 _REALM_STATE_EFFECTS = {
@@ -128,6 +130,7 @@ _REALM_STATE_EFFECTS = {
     "unlock_instance",
     "unlock_dark_portal",
     "unlock_northrend_passage",
+    "grant_key",
 }
 
 
@@ -204,6 +207,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_filler(data)
     if family == "traps":
         return _emit_python_traps(data)
+    if family == "rares":
+        return _emit_python_rares(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -356,6 +361,21 @@ def _emit_python_traps(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_rares(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/rares.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -374,6 +394,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_filler(data)
     if family == "traps":
         return _emit_cpp_traps(data)
+    if family == "rares":
+        return _emit_cpp_rares(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -571,6 +593,36 @@ def _emit_cpp_traps(data: dict) -> str:
         delivery = item["delivery"]
         lethal_cpp = "true" if delivery["lethal"] else "false"
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["effect"]}", {lethal_cpp} }} }}, // {item["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_rares(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/rares.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::Rares", "{",
+    ]
+    lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
+    for item in data["items"]:
+        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
+    lines.append("")
+    lines.append("    // Every curated rare's real creature entry -> its own location id.")
+    lines.append("    // Sent unconditionally on a matching kill, same as every other")
+    lines.append("    // location-check table in this module -- a given generation may not")
+    lines.append("    // have sampled every one of these 40 into its actual location pool")
+    lines.append("    // (see rares.yaml's own header comment on density sampling), but the")
+    lines.append("    // AP server silently ignores a location id outside a slot's actual")
+    lines.append("    // location table (the same MultiServer.py behavior Task 11's filler")
+    lines.append("    // fix already relies on), so sending the full set is safe regardless.")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const CreatureEntryToLocationId = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["trigger"]["creature_entry"]}, {loc["location_id"]} }}, // {loc["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")

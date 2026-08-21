@@ -23,6 +23,30 @@ namespace Archipelago::Goals
 
             return true;
         }
+
+        // Task 25 (Key Hunt): needs BOTH enough keys AND enough distinct
+        // raids/dungeons cleared -- mirrors goals.py's
+        // _set_completion_rule_key_hunt (state.has(...) AND
+        // state.has_from_list_unique(...)) in C++ terms. Counts unlocked
+        // instances across ALL 5 keys in INSTANCE_CLEAR_LOCATIONS (every
+        // core_loop.yaml instance_clear row), not just the 3 with a
+        // `bosses:` list -- Key Hunt's own completion condition doesn't
+        // distinguish which InstanceClearMode granularity unlocked each one.
+        bool IsKeyHuntComplete()
+        {
+            if (sArchipelagoRealmState->GetKeyCount() < sArchipelagoRealmState->GetKeyHuntKeysRequired())
+                return false;
+
+            uint32_t unlockedCount = 0;
+            for (auto const& [instanceKey, locationId] : Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS)
+            {
+                (void)locationId;
+                if (sArchipelagoRealmState->IsInstanceUnlocked(instanceKey))
+                    ++unlockedCount;
+            }
+
+            return unlockedCount >= sArchipelagoRealmState->GetKeyHuntInstancesRequired();
+        }
     }
 
     void CheckAndSendGoalComplete()
@@ -40,7 +64,9 @@ namespace Archipelago::Goals
         // has actually ground the XP to reach it, which would report the goal
         // complete too early.
         bool complete = false;
-        if (mode == "classic")
+        if (mode == "key_hunt")
+            complete = IsKeyHuntComplete();
+        else if (mode == "classic")
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE);
         else if (mode == "burning_crusade")
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL_PLATEAU);

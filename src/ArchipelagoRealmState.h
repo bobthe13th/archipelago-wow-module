@@ -156,6 +156,26 @@ public:
     std::string GetCompletionistExpansion() const { return _completionistExpansion; }
     void SetCompletionistExpansion(std::string const& expansion) { _completionistExpansion = expansion; }
 
+    // Task 25 (Key Hunt): realm-wide count of "Key Hunt: Key" items ever
+    // received. Reuses the existing generic flag store (GetFlagTier/
+    // SetFlagTier) under a dedicated key rather than adding a new
+    // archipelago_realm_state column/migration -- a "tier" and a "count" are
+    // both just a monotonically-increasing uint32_t, and this family's flag
+    // key ("key_hunt_key_count") is namespaced clearly enough not to collide
+    // with any real gate flag_key (those are all named after a specific
+    // gated feature, e.g. "proficiency_armor_plate", never a generic noun).
+    uint32_t GetKeyCount() const { return GetFlagTier("key_hunt_key_count"); }
+    void GrantKey() { SetFlagTier("key_hunt_key_count", GetFlagTier("key_hunt_key_count") + 1); }
+
+    // Cached mirrors of Archipelago.KeyHuntKeysRequired/InstancesRequired
+    // (Task 25), same not-persisted worldserver.conf-mirror convention as
+    // GameMode/CompletionistExpansion above -- consumed from
+    // ArchipelagoGoals.cpp's CheckAndSendGoalComplete.
+    uint32_t GetKeyHuntKeysRequired() const { return _keyHuntKeysRequired; }
+    void SetKeyHuntKeysRequired(uint32_t required) { _keyHuntKeysRequired = required; }
+    uint32_t GetKeyHuntInstancesRequired() const { return _keyHuntInstancesRequired; }
+    void SetKeyHuntInstancesRequired(uint32_t required) { _keyHuntInstancesRequired = required; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -180,6 +200,8 @@ private:
     std::string _instanceClearMode = "all_bosses";
     std::string _gameMode = "sprint";
     std::string _completionistExpansion = "vanilla";
+    uint32_t _keyHuntKeysRequired = 10;
+    uint32_t _keyHuntInstancesRequired = 1;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()
