@@ -20,7 +20,7 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_ARMOR_PROFICIENCY_PLATE = 830007;
     inline constexpr int64_t AP_ITEM_ARMOR_PROFICIENCY_MAIL = 830008;
     inline constexpr int64_t AP_ITEM_ARMOR_PROFICIENCY_LEATHER = 830009;
-    inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_TWO-HANDED_SWORDS = 830010;
+    inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_TWO_HANDED_SWORDS = 830010;
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_AXES = 830011;
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_MACES = 830012;
     inline constexpr int64_t AP_ITEM_WEAPON_PROFICIENCY_STAVES = 830013;

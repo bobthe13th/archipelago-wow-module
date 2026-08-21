@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import pathlib
+import re
 import sys
 
 import yaml
@@ -16,6 +17,18 @@ import yaml
 
 class ValidationError(ValueError):
     """A content YAML file violates a schema/cross-reference constraint."""
+
+
+def _cpp_const_name(name: str) -> str:
+    """AP_ITEM_<NAME> constant identifier from a content item's display name.
+
+    Replaces any run of characters that isn't [A-Za-z0-9] with a single
+    underscore (not just space/colon) -- a real MSVC compile failure, caught
+    only once this module was actually compiled for the first time, showed
+    the narrower space/colon-only version left a literal '-' in "Weapon
+    Proficiency: Two-Handed Swords", producing an illegal C++ identifier.
+    """
+    return "AP_ITEM_" + re.sub(r"[^A-Za-z0-9]+", "_", name.upper()).strip("_")
 
 
 def load_family(yaml_path: pathlib.Path) -> dict:
@@ -543,7 +556,7 @@ def _emit_cpp_core_loop(data: dict) -> str:
     ]
     lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
     for item in data["items"]:
-        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
     for key in ("STARTING_LEVEL_CAP", "LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
@@ -633,7 +646,7 @@ def _emit_cpp_gates(data: dict) -> str:
         "namespace Archipelago::Gates", "{",
     ]
     for item in data["items"]:
-        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
     lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {")
@@ -682,7 +695,7 @@ def _emit_cpp_traps(data: dict) -> str:
         "namespace Archipelago::Traps", "{",
     ]
     for item in data["items"]:
-        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
     lines.append("    // second = effect slug, third = lethal")
@@ -707,7 +720,7 @@ def _emit_cpp_rares(data: dict) -> str:
     ]
     lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
     for item in data["items"]:
-        const_name = "AP_ITEM_" + item["name"].upper().replace(" ", "_").replace(":", "").replace("__", "_")
+        const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
     lines.append("    // Every curated rare's real creature entry -> its own location id.")
