@@ -49,6 +49,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_instance_unlock_references(data["locations"], data["items"], yaml_path)
     _validate_recognized_kinds(data["family"], data["locations"], data["items"], yaml_path)
     _validate_boss_lists(data["locations"], yaml_path)
+    _validate_quest_reward_rows(data["locations"], yaml_path)
 
     return data
 
@@ -121,6 +122,23 @@ def _validate_boss_lists(locations: list, yaml_path: pathlib.Path) -> None:
             )
 
 
+def _validate_quest_reward_rows(locations: list, yaml_path: pathlib.Path) -> None:
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "quest_reward":
+            continue
+        missing_keys = []
+        if "quest_id" not in trigger:
+            missing_keys.append("quest_id")
+        if "min_level" not in trigger:
+            missing_keys.append("min_level")
+        if missing_keys:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has quest_reward trigger "
+                f"but is missing required key(s): {missing_keys}"
+            )
+
+
 @dataclass
 class FamilySchema:
     valid_trigger_kinds: set[str]
@@ -142,6 +160,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "fish": FamilySchema(valid_trigger_kinds={"fish_catch"}, valid_delivery_kinds={"mail"}),
     "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
+    "quest_rewards": FamilySchema(valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True),
 }
 
 _REALM_STATE_EFFECTS = {
