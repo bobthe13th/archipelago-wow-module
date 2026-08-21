@@ -4,6 +4,7 @@
 #include <string>
 
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 
@@ -47,6 +48,25 @@ namespace Archipelago::Goals
 
             return unlockedCount >= sArchipelagoRealmState->GetKeyHuntInstancesRequired();
         }
+
+        // Task 26 (Fishing Quest): complete once every one of the 46
+        // curated fish species has been received at least once -- "has this
+        // exact AP item id's fish_received_ flag been set", recorded at the
+        // point of delivery (ArchipelagoPlayerScript.cpp's fish-item
+        // dispatch block), not "has this species been caught" (a species
+        // could be received via any location's fill placement, not
+        // necessarily its own -- see fish.yaml's own header comment on why
+        // item/location identity is decoupled in AP).
+        bool IsFishingQuestComplete()
+        {
+            for (auto const& [apItemId, wowItemEntry] : Archipelago::Fish::ApItemIdToWowItemEntry)
+            {
+                (void)wowItemEntry;
+                if (!sArchipelagoRealmState->IsFlagUnlocked("fish_received_" + std::to_string(apItemId)))
+                    return false;
+            }
+            return true;
+        }
     }
 
     void CheckAndSendGoalComplete()
@@ -66,6 +86,8 @@ namespace Archipelago::Goals
         bool complete = false;
         if (mode == "key_hunt")
             complete = IsKeyHuntComplete();
+        else if (mode == "fishing_quest")
+            complete = IsFishingQuestComplete();
         else if (mode == "classic")
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE);
         else if (mode == "burning_crusade")
@@ -74,10 +96,11 @@ namespace Archipelago::Goals
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL);
         else if (mode == "completionist")
             complete = IsCompletionistComplete();
-        // Every other GameMode value (key_hunt, artisan, collector, ...) has
-        // no C++-side completion check yet, matching goals.py's own
-        // _not_yet_implemented deferral for those modes -- this function
-        // simply never reports completion for them, rather than guessing.
+        // Every other GameMode value (artisan, collector, achievement_hunt,
+        // gladiator, explorer) has no C++-side completion check yet,
+        // matching goals.py's own _not_yet_implemented deferral for those
+        // modes -- this function simply never reports completion for them,
+        // rather than guessing.
 
         if (complete)
             sArchipelagoMgr->SendGoalComplete();

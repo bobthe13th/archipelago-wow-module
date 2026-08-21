@@ -1,0 +1,389 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/fish.yaml
+family: fish
+
+# Task 26 (design spec Sec5.4, Tier 2: Fishing Quest mode). Unlike Key Hunt's
+# rares.yaml (Task 25), this family's locations/items are NOT density-sampled
+# -- spec Sec5.4: "the set is bounded and discrete... which makes it a
+# tractable completion goal" -- sampling it would break the completion
+# condition (you can't be asked to catch a fish that was never in the pool).
+# Both this family's locations AND items are unconditionally created
+# whenever game_mode is fishing_quest, same "gated on game_mode itself, not
+# an independent toggle" shape rares.yaml established, just without the
+# density step.
+#
+# The 46 rows below are the FULL real "normally obtainable via open-water/
+# pool fishing" fish set for this checkout, not a representative subset --
+# per spec Sec5.4's own definition. Researched directly against this
+# checkout's own data, not assumed:
+#   1. Parsed every row of data/sql/base/db_world/fishing_loot_template.sql
+#      (251 rows across every zone's fishing pool), resolving each
+#      Reference-table indirection through reference_loot_template.sql (the
+#      Item column of a reference row IS a real item entry; the Comment
+#      column even carries the real display name directly) to a flat set of
+#      249 distinct real item entries reachable via fishing anywhere on this
+#      realm.
+#   2. Cross-referenced every one of those 249 entries against
+#      item_template.sql, keeping only class=7 (ITEM_CLASS_TRADE_GOODS)
+#      subclass=8 rows -- empirically confirmed as the real classification
+#      for genuine fish species (e.g. entry 6289 "Raw Longjaw Mud Snapper",
+#      6291 "Raw Brilliant Smallfish"), which excludes non-fish "junk"
+#      catches also reachable via the same loot tables (potions, Driftwood,
+#      Empty Clam, and the class=15 quest-only weight-tracked variants like
+#      "10 Pound Mud Snapper" used for a specific quest's turn-in counting,
+#      not a real collectible species). This yielded exactly 46 real fish
+#      species, cleanly within the "20-40+" the plan itself expected.
+#
+# `region: northrend` (13 of the 46 rows) marks entries introduced in this
+# checkout's WotLK item-id range (41800-41814) -- item ids in WoW are
+# allocated in expansion-contiguous blocks, and this block is the one
+# genuinely new fishing-catch range added for Northrend content, distinct
+# from the pre-existing vanilla/TBC-era entries (4603-35285) below it.
+# FLAG, HONEST ABOUT CONFIDENCE: this is a verified item-id-range heuristic,
+# not an exhaustively zone-verified per-fish mapping (tracing each fish to
+# its exact spawning area's AreaTable.dbc entry would need DBC-parsing
+# tooling this checkout's SQL dumps don't expose) -- five additional WotLK-
+# era entries (43571-43652: Sewer Carp, Magic Eater, Fountain Goldfish,
+# Shimmering Minnow, Slippery Eel, from patch 3.1's "Whimsical" fishing
+# tournament content) are deliberately left untagged rather than guessed,
+# since their real catch locations are not confidently Northrend-exclusive
+# from the data available. rules.py's Northrend Passage gate is only ever
+# too permissive here (an ungated fish that's actually Northrend-only would
+# be a minor logic-softness, not a hard-unreachable-goal bug), never too
+# restrictive -- the safer direction to err given the uncertainty.
+locations:
+  - name: "Fish Catch: Barbed Gill Trout"
+    location_id: 760000
+    trigger: {kind: fish_catch, item_entry: 27422}
+  - name: "Fish Catch: Barrelhead Goby"
+    location_id: 760001
+    trigger: {kind: fish_catch, item_entry: 41812, region: northrend}
+  - name: "Fish Catch: Bloodfin Catfish"
+    location_id: 760002
+    trigger: {kind: fish_catch, item_entry: 33823}
+  - name: "Fish Catch: Bonescale Snapper"
+    location_id: 760003
+    trigger: {kind: fish_catch, item_entry: 41808, region: northrend}
+  - name: "Fish Catch: Borean Man O' War"
+    location_id: 760004
+    trigger: {kind: fish_catch, item_entry: 41805, region: northrend}
+  - name: "Fish Catch: Crescent-Tail Skullfish"
+    location_id: 760005
+    trigger: {kind: fish_catch, item_entry: 33824}
+  - name: "Fish Catch: Darkclaw Lobster"
+    location_id: 760006
+    trigger: {kind: fish_catch, item_entry: 13888}
+  - name: "Fish Catch: Deep Sea Monsterbelly"
+    location_id: 760007
+    trigger: {kind: fish_catch, item_entry: 41800, region: northrend}
+  - name: "Fish Catch: Dragonfin Angelfish"
+    location_id: 760008
+    trigger: {kind: fish_catch, item_entry: 41807, region: northrend}
+  - name: "Fish Catch: Enormous Barbed Gill Trout"
+    location_id: 760009
+    trigger: {kind: fish_catch, item_entry: 27516}
+  - name: "Fish Catch: Fangtooth Herring"
+    location_id: 760010
+    trigger: {kind: fish_catch, item_entry: 41810, region: northrend}
+  - name: "Fish Catch: Figluster's Mudfish"
+    location_id: 760011
+    trigger: {kind: fish_catch, item_entry: 27435}
+  - name: "Fish Catch: Fountain Goldfish"
+    location_id: 760012
+    trigger: {kind: fish_catch, item_entry: 43646}
+  - name: "Fish Catch: Giant Sunfish"
+    location_id: 760013
+    trigger: {kind: fish_catch, item_entry: 35285}
+  - name: "Fish Catch: Glacial Salmon"
+    location_id: 760014
+    trigger: {kind: fish_catch, item_entry: 41809, region: northrend}
+  - name: "Fish Catch: Glassfin Minnow"
+    location_id: 760015
+    trigger: {kind: fish_catch, item_entry: 41814, region: northrend}
+  - name: "Fish Catch: Golden Darter"
+    location_id: 760016
+    trigger: {kind: fish_catch, item_entry: 27438}
+  - name: "Fish Catch: Huge Spotted Feltail"
+    location_id: 760017
+    trigger: {kind: fish_catch, item_entry: 27515}
+  - name: "Fish Catch: Icefin Bluefish"
+    location_id: 760018
+    trigger: {kind: fish_catch, item_entry: 27437}
+  - name: "Fish Catch: Imperial Manta Ray"
+    location_id: 760019
+    trigger: {kind: fish_catch, item_entry: 41802, region: northrend}
+  - name: "Fish Catch: Magic Eater"
+    location_id: 760020
+    trigger: {kind: fish_catch, item_entry: 43572}
+  - name: "Fish Catch: Moonglow Cuttlefish"
+    location_id: 760021
+    trigger: {kind: fish_catch, item_entry: 41801, region: northrend}
+  - name: "Fish Catch: Musselback Sculpin"
+    location_id: 760022
+    trigger: {kind: fish_catch, item_entry: 41806, region: northrend}
+  - name: "Fish Catch: Nettlefish"
+    location_id: 760023
+    trigger: {kind: fish_catch, item_entry: 41813, region: northrend}
+  - name: "Fish Catch: Plated Armorfish"
+    location_id: 760024
+    trigger: {kind: fish_catch, item_entry: 13890}
+  - name: "Fish Catch: Raw Brilliant Smallfish"
+    location_id: 760025
+    trigger: {kind: fish_catch, item_entry: 6291}
+  - name: "Fish Catch: Raw Bristle Whisker Catfish"
+    location_id: 760026
+    trigger: {kind: fish_catch, item_entry: 6308}
+  - name: "Fish Catch: Raw Glossy Mightfish"
+    location_id: 760027
+    trigger: {kind: fish_catch, item_entry: 13754}
+  - name: "Fish Catch: Raw Loch Frenzy"
+    location_id: 760028
+    trigger: {kind: fish_catch, item_entry: 6317}
+  - name: "Fish Catch: Raw Longjaw Mud Snapper"
+    location_id: 760029
+    trigger: {kind: fish_catch, item_entry: 6289}
+  - name: "Fish Catch: Raw Mithril Head Trout"
+    location_id: 760030
+    trigger: {kind: fish_catch, item_entry: 8365}
+  - name: "Fish Catch: Raw Nightfin Snapper"
+    location_id: 760031
+    trigger: {kind: fish_catch, item_entry: 13759}
+  - name: "Fish Catch: Raw Rainbow Fin Albacore"
+    location_id: 760032
+    trigger: {kind: fish_catch, item_entry: 6361}
+  - name: "Fish Catch: Raw Redgill"
+    location_id: 760033
+    trigger: {kind: fish_catch, item_entry: 13758}
+  - name: "Fish Catch: Raw Rockscale Cod"
+    location_id: 760034
+    trigger: {kind: fish_catch, item_entry: 6362}
+  - name: "Fish Catch: Raw Slitherskin Mackerel"
+    location_id: 760035
+    trigger: {kind: fish_catch, item_entry: 6303}
+  - name: "Fish Catch: Raw Spotted Yellowtail"
+    location_id: 760036
+    trigger: {kind: fish_catch, item_entry: 4603}
+  - name: "Fish Catch: Raw Summer Bass"
+    location_id: 760037
+    trigger: {kind: fish_catch, item_entry: 13756}
+  - name: "Fish Catch: Raw Sunscale Salmon"
+    location_id: 760038
+    trigger: {kind: fish_catch, item_entry: 13760}
+  - name: "Fish Catch: Raw Whitescale Salmon"
+    location_id: 760039
+    trigger: {kind: fish_catch, item_entry: 13889}
+  - name: "Fish Catch: Rockfin Grouper"
+    location_id: 760040
+    trigger: {kind: fish_catch, item_entry: 41803, region: northrend}
+  - name: "Fish Catch: Sewer Carp"
+    location_id: 760041
+    trigger: {kind: fish_catch, item_entry: 43571}
+  - name: "Fish Catch: Shimmering Minnow"
+    location_id: 760042
+    trigger: {kind: fish_catch, item_entry: 43647}
+  - name: "Fish Catch: Slippery Eel"
+    location_id: 760043
+    trigger: {kind: fish_catch, item_entry: 43652}
+  - name: "Fish Catch: Spotted Feltail"
+    location_id: 760044
+    trigger: {kind: fish_catch, item_entry: 27425}
+  - name: "Fish Catch: Zangarian Sporefish"
+    location_id: 760045
+    trigger: {kind: fish_catch, item_entry: 27429}
+
+# One "Fish: <name>" item per location, mirroring quests.yaml's exact
+# 1:1-within-family shape (not gates.yaml's zero-locations shape) -- reuses
+# the `mail` delivery kind quests.yaml already established (APDelivery.cpp's
+# existing DeliverItem), mailing the player a real copy of that species'
+# actual WoW item (wow_item_entry) when the AP item is received. As in every
+# other AP world, this item is NOT necessarily received at the location
+# named after the same fish -- the fill algorithm places items independently
+# of which location's check revealed them; "Fish Catch: X" is only the
+# in-game TRIGGER that sends location X's check, "Fish: X" is a separate
+# collectible the fill algorithm can place anywhere in the pool. Fishing
+# Quest's completion rule (goals.py) requires ALL 46 "Fish: <name>" items
+# collected, regardless of which locations revealed them.
+items:
+  - name: "Fish: Barbed Gill Trout"
+    item_id: 860000
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27422}
+  - name: "Fish: Barrelhead Goby"
+    item_id: 860001
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41812}
+  - name: "Fish: Bloodfin Catfish"
+    item_id: 860002
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 33823}
+  - name: "Fish: Bonescale Snapper"
+    item_id: 860003
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41808}
+  - name: "Fish: Borean Man O' War"
+    item_id: 860004
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41805}
+  - name: "Fish: Crescent-Tail Skullfish"
+    item_id: 860005
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 33824}
+  - name: "Fish: Darkclaw Lobster"
+    item_id: 860006
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13888}
+  - name: "Fish: Deep Sea Monsterbelly"
+    item_id: 860007
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41800}
+  - name: "Fish: Dragonfin Angelfish"
+    item_id: 860008
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41807}
+  - name: "Fish: Enormous Barbed Gill Trout"
+    item_id: 860009
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27516}
+  - name: "Fish: Fangtooth Herring"
+    item_id: 860010
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41810}
+  - name: "Fish: Figluster's Mudfish"
+    item_id: 860011
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27435}
+  - name: "Fish: Fountain Goldfish"
+    item_id: 860012
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43646}
+  - name: "Fish: Giant Sunfish"
+    item_id: 860013
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 35285}
+  - name: "Fish: Glacial Salmon"
+    item_id: 860014
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41809}
+  - name: "Fish: Glassfin Minnow"
+    item_id: 860015
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41814}
+  - name: "Fish: Golden Darter"
+    item_id: 860016
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27438}
+  - name: "Fish: Huge Spotted Feltail"
+    item_id: 860017
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27515}
+  - name: "Fish: Icefin Bluefish"
+    item_id: 860018
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27437}
+  - name: "Fish: Imperial Manta Ray"
+    item_id: 860019
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41802}
+  - name: "Fish: Magic Eater"
+    item_id: 860020
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43572}
+  - name: "Fish: Moonglow Cuttlefish"
+    item_id: 860021
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41801}
+  - name: "Fish: Musselback Sculpin"
+    item_id: 860022
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41806}
+  - name: "Fish: Nettlefish"
+    item_id: 860023
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41813}
+  - name: "Fish: Plated Armorfish"
+    item_id: 860024
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13890}
+  - name: "Fish: Raw Brilliant Smallfish"
+    item_id: 860025
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6291}
+  - name: "Fish: Raw Bristle Whisker Catfish"
+    item_id: 860026
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6308}
+  - name: "Fish: Raw Glossy Mightfish"
+    item_id: 860027
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13754}
+  - name: "Fish: Raw Loch Frenzy"
+    item_id: 860028
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6317}
+  - name: "Fish: Raw Longjaw Mud Snapper"
+    item_id: 860029
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6289}
+  - name: "Fish: Raw Mithril Head Trout"
+    item_id: 860030
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8365}
+  - name: "Fish: Raw Nightfin Snapper"
+    item_id: 860031
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13759}
+  - name: "Fish: Raw Rainbow Fin Albacore"
+    item_id: 860032
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6361}
+  - name: "Fish: Raw Redgill"
+    item_id: 860033
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13758}
+  - name: "Fish: Raw Rockscale Cod"
+    item_id: 860034
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6362}
+  - name: "Fish: Raw Slitherskin Mackerel"
+    item_id: 860035
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 6303}
+  - name: "Fish: Raw Spotted Yellowtail"
+    item_id: 860036
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 4603}
+  - name: "Fish: Raw Summer Bass"
+    item_id: 860037
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13756}
+  - name: "Fish: Raw Sunscale Salmon"
+    item_id: 860038
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13760}
+  - name: "Fish: Raw Whitescale Salmon"
+    item_id: 860039
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13889}
+  - name: "Fish: Rockfin Grouper"
+    item_id: 860040
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 41803}
+  - name: "Fish: Sewer Carp"
+    item_id: 860041
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43571}
+  - name: "Fish: Shimmering Minnow"
+    item_id: 860042
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43647}
+  - name: "Fish: Slippery Eel"
+    item_id: 860043
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43652}
+  - name: "Fish: Spotted Feltail"
+    item_id: 860044
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27425}
+  - name: "Fish: Zangarian Sporefish"
+    item_id: 860045
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 27429}

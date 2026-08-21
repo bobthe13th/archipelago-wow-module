@@ -114,6 +114,7 @@ _TRIGGER_KINDS_BY_FAMILY = {
     "filler": {"always_available"},
     "traps": set(),  # traps never have locations, same shape as gates
     "rares": {"rare_kill"},
+    "fish": {"fish_catch"},
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
@@ -123,6 +124,7 @@ _DELIVERY_KINDS_BY_FAMILY = {
     "filler": set(),  # filler never has items
     "traps": {"trap"},
     "rares": {"realm_state"},
+    "fish": {"mail"},
 }
 
 _REALM_STATE_EFFECTS = {
@@ -209,6 +211,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_traps(data)
     if family == "rares":
         return _emit_python_rares(data)
+    if family == "fish":
+        return _emit_python_fish(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -376,6 +380,31 @@ def _emit_python_rares(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_fish(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/fish.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("# Location names whose trigger carries `region: northrend` -- rules.py")
+    lines.append("# attaches a state.has(\"Northrend Passage\", ...) rule to exactly these,")
+    lines.append("# per spec Sec5.4: \"fish-catch locations inherit normal regional access")
+    lines.append("# logic\". See fish.yaml's own header comment for how this was decided.")
+    lines.append("NORTHREND_LOCATION_NAMES: frozenset[str] = frozenset({")
+    for loc in data["locations"]:
+        if loc["trigger"].get("region") == "northrend":
+            lines.append(f'    "{loc["name"]}",')
+    lines.append("})")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -396,6 +425,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_traps(data)
     if family == "rares":
         return _emit_cpp_rares(data)
+    if family == "fish":
+        return _emit_cpp_fish(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -623,6 +654,36 @@ def _emit_cpp_rares(data: dict) -> str:
     lines.append("    inline std::unordered_map<uint32_t, int64_t> const CreatureEntryToLocationId = {")
     for loc in data["locations"]:
         lines.append(f'        {{ {loc["trigger"]["creature_entry"]}, {loc["location_id"]} }}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_fish(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/fish.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::Fish", "{",
+    ]
+    lines.append("    // wow_item_entry (the real item a catch produces) -> its own location id.")
+    lines.append("    // Consumed by the loot hook (ArchipelagoLootScript.cpp) to detect a catch.")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const ItemEntryToLocationId = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["trigger"]["item_entry"]}, {loc["location_id"]} }}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // AP item id -> the real wow_item_entry to mail -- mirrors")
+    lines.append("    // Archipelago::Content::ApItemIdToWowItemEntry's exact shape (both use the")
+    lines.append("    // `mail` delivery kind), kept as this family's own table rather than")
+    lines.append("    // merged into the quests-family one so each compiled family stays")
+    lines.append("    // self-contained; ArchipelagoPlayerScript.cpp checks this table explicitly")
+    lines.append("    // before falling through to the quests-family one.")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')
     lines.append("    };")
     lines.append("}")
     lines.append("")

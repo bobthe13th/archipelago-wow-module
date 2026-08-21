@@ -16,6 +16,7 @@
 #include "APTraps.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGoals.h"
 #include "ArchipelagoRaresContentTable.h"
@@ -189,6 +190,28 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
                 Archipelago::Traps::ApplyTrapEffect(onlineReceiver, effect, lethal);
             else
                 LOG_INFO("module.archipelago_wow", "Archipelago: trap effect '{}' skipped, delivery character '{}' is offline", effect, deliveryCharacter);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // Task 26: fish.yaml's items use the same `mail` delivery kind as
+        // the quests family, but are kept in their own generated table
+        // (Archipelago::Fish::ApItemIdToWowItemEntry) rather than merged
+        // into the quests-family one, so each compiled family stays
+        // self-contained -- checked first, falling through to the
+        // quests-family table below if it's not a fish item.
+        auto fishEntryIt = Archipelago::Fish::ApItemIdToWowItemEntry.find(received.item);
+        if (fishEntryIt != Archipelago::Fish::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, fishEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", fishEntryIt->second);
+            // Realm-wide "has this exact fish species ever been received"
+            // set, backing Fishing Quest's "all 46 species" completion check
+            // -- reuses the existing generic flag store (SetFlagTier under a
+            // per-AP-item-id key) rather than a new mechanism, same as Key
+            // Hunt's key counter and Task 23's instance-clear-sent guard.
+            sArchipelagoRealmState->SetFlagTier("fish_received_" + std::to_string(received.item), 1);
+            Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
