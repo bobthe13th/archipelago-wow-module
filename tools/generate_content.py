@@ -235,6 +235,19 @@ _GENERATED_HEADER_PY = (
 )
 
 
+def _string_literal(s: str) -> str:
+    """A double-quoted Python OR C++ string literal for `s`, with embedded
+    backslashes and double quotes escaped -- both languages use identical
+    backslash-escaping rules for these two characters, so one helper covers
+    emit_python_generic and emit_cpp_generic. Generated names come from raw
+    DB text (quest/vendor/recipe/spell names), which can and does contain
+    literal double quotes -- confirmed by Task 5's real extraction (9 of
+    3735 quest titles). Without this, naive f'"{name}"' interpolation
+    produces invalid syntax in both languages."""
+    escaped = s.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
+
+
 def emit_python_generic(data: dict) -> str:
     """Generic LOCATIONS/ITEMS emitter for new, name-keyed content families.
 
@@ -248,13 +261,13 @@ def emit_python_generic(data: dict) -> str:
     lines = [_GENERATED_HEADER_PY.format(source=f"content/{family}.yaml"), ""]
     lines.append("LOCATIONS: dict[str, int] = {")
     for loc in data["locations"]:
-        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+        lines.append(f'    {_string_literal(loc["name"])}: {loc["location_id"]},')
     lines.append("}")
     lines.append("")
     lines.append("ITEMS: dict[str, tuple[int, int]] = {")
     for item in data["items"]:
         count = item.get("count", 1)
-        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {count}),')
+        lines.append(f'    {_string_literal(item["name"])}: ({item["item_id"]}, {count}),')
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -559,11 +572,11 @@ def emit_cpp_generic(data: dict) -> str:
     lines.append(f"namespace Archipelago{guard}Content {{")
     lines.append("inline const std::map<std::string, uint32_t> LOCATIONS = {")
     for loc in data["locations"]:
-        lines.append(f'    {{"{loc["name"]}", {loc["location_id"]}}},')
+        lines.append(f'    {{{_string_literal(loc["name"])}, {loc["location_id"]}}},')
     lines.append("};")
     lines.append("inline const std::map<std::string, uint32_t> ITEMS = {")
     for item in data["items"]:
-        lines.append(f'    {{"{item["name"]}", {item["item_id"]}}},')
+        lines.append(f'    {{{_string_literal(item["name"])}, {item["item_id"]}}},')
     lines.append("};")
     lines.append("}")
     lines.append("")

@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, ValidationError
+from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -208,6 +208,32 @@ class TestGenericEmitter(unittest.TestCase):
         output = emit_python_generic(data)
         self.assertIn('"A Threat Within": (800000, 1)', output)
         self.assertIn('"A Threat Within": 700000', output)
+
+    def test_emit_python_generic_escapes_embedded_double_quotes(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 1}}],
+            "items": [{"name": 'Quest Reward: Wanted:  "Hogger" (#176)', "item_id": 1750176,
+                       "delivery": {"kind": "mail", "wow_item_entry": 1}}],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        # must compile as valid Python -- the real, end-to-end regression this
+        # bug produced (py_compile failure on the checked-in file)
+        compile(output, "<test>", "exec")
+        self.assertIn('"Quest: Wanted:  \\"Hogger\\" Reward (#176)": 750176', output)
+
+    def test_emit_cpp_generic_escapes_embedded_double_quotes(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 1}}],
+            "items": [],
+            "constants": {},
+        }
+        output = emit_cpp_generic(data)
+        self.assertIn('{"Quest: Wanted:  \\"Hogger\\" Reward (#176)", 750176}', output)
 
 
 if __name__ == "__main__":
