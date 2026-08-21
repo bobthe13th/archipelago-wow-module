@@ -235,6 +235,52 @@ class TestGenericEmitter(unittest.TestCase):
         output = emit_cpp_generic(data)
         self.assertIn('{"Quest: Wanted:  \\"Hogger\\" Reward (#176)", 750176}', output)
 
+    def test_emit_python_generic_omits_triggers_when_not_opted_in(self) -> None:
+        # "quests" is generic=True in this test's data but export_triggers
+        # defaults to False -- FAMILY_SCHEMAS["quests"] in the real registry
+        # doesn't even set generic=True, but this test only exercises
+        # emit_python_generic's own opt-in gate, not family dispatch, so any
+        # family name whose real schema has export_triggers unset (or absent
+        # entirely) demonstrates the default.
+        data = {
+            "family": "quests",
+            "locations": [{"name": "A Threat Within", "location_id": 700000,
+                           "trigger": {"kind": "quest", "quest_id": 783}}],
+            "items": [{"name": "A Threat Within", "item_id": 800000, "delivery": {"kind": "mail", "wow_item_entry": 25}}],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        self.assertNotIn("TRIGGERS", output)
+
+    def test_emit_python_generic_exports_triggers_for_quest_rewards(self) -> None:
+        # quest_rewards is the one family with export_triggers=True in the
+        # real FAMILY_SCHEMAS registry -- confirms the opt-in actually fires
+        # for it, the trigger dict round-trips as a valid Python literal via
+        # repr(), and the TRIGGERS dict's own KEYS reuse _string_literal
+        # (not a naive f'"{name}"') for names with an embedded double quote,
+        # exactly like LOCATIONS/ITEMS above.
+        data = {
+            "family": "quest_rewards",
+            "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 5, "prev_quest_id": None}}],
+            "items": [{"name": 'Quest Reward: Wanted:  "Hogger" (#176)', "item_id": 1750176,
+                       "delivery": {"kind": "mail", "wow_item_entry": 1}}],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        compile(output, "<test>", "exec")
+        self.assertIn("TRIGGERS: dict[str, dict] = {", output)
+        self.assertIn(
+            '"Quest: Wanted:  \\"Hogger\\" Reward (#176)": '
+            "{'kind': 'quest_reward', 'quest_id': 176, 'min_level': 5, 'prev_quest_id': None}",
+            output,
+        )
+        namespace: dict = {}
+        exec(output, namespace)
+        self.assertEqual(
+            namespace["TRIGGERS"]['Quest: Wanted:  "Hogger" Reward (#176)']["min_level"], 5,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
