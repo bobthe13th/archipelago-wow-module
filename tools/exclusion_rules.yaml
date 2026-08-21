@@ -1,0 +1,17 @@
+# Hand-maintained denylist for DB-extracted content families (Group 1-4 of
+# the M4.5 plan). Unlike content/*.yaml (generated, do not hand-edit), this
+# file IS meant to be hand-edited as new junk/test/GM-only rows are found in
+# future extraction runs -- add a pattern here, don't special-case it in an
+# extraction script.
+name_denylist:
+  - '(?i)\btest\b'
+  - '(?i)\bqa\b'
+  - '(?i)\bdeprecated\b'
+  - '(?i)\bunused\b'
+  - '(?i)\bnot used\b'
+  - '(?i)\bdo not use\b'
+  - '(?i)\bdebug\b'
+  - '(?i)\bgm[ _]'
+  - '(?i)\bdeveloper\b'
+  - '(?i)\binvalid\b'
+  - '(?i)\bdnt\b'
