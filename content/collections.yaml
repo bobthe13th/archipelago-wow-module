@@ -1,0 +1,1919 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/collections.yaml
+family: collections
+
+# Task 27 (design spec Sec5.4, Tier 3: Collector mode). Every collectible
+# mount AND companion pet obtainable on this realm's content, per the
+# design's own scope. Researched directly against this checkout's own data,
+# in three passes, each catching a real mistake before shipping bad data:
+#
+# 1. item_template.sql's class=15 (ITEM_CLASS_MISC) rows: subclass=5 for
+#    mounts, subclass=2 for companion pets (both confirmed empirically
+#    against known real items -- entry 18777 "Swift Brown Steed" is
+#    class=15/subclass=5, entry 8485 "Cat Carrier (Bombay)" is
+#    class=15/subclass=2 -- not assumed from an enum name). This yielded
+#    320 raw mount rows and 191 raw pet rows.
+#
+# 2. item_template.sql in this checkout is NOT scoped to only what this
+#    3.3.5a WotLK server can actually deliver -- it carries item rows for
+#    content from LATER expansions too (spot-checked: "Celestial Steed" and
+#    "X-53 Touring Rocket", both real Cataclysm-era items, are present in
+#    this checkout's class=15/subclass=5 rows despite never existing on a
+#    genuine WotLK client). Filtered to only items with a REAL, verifiable
+#    acquisition path in this checkout's own populated data: sold by a
+#    vendor (npc_vendor.item), a quest reward (quest_template's
+#    RewardItem1-4/RewardChoiceItemID1-6), or a creature loot drop
+#    (creature_loot_template, resolved through reference_loot_template.sql's
+#    indirection the same way fish.yaml's research already established).
+#    Confirmed both "Celestial Steed" and "X-53 Touring Rocket" are excluded
+#    by this filter (no vendor/quest/loot path exists for either in this
+#    checkout) while known-real items like "Swift Brown Steed" pass. This
+#    narrowed the roster to 201 mounts + 86 pets.
+#
+# 3. The real "you have learned this mount/companion" event needs the
+#    SPELL this item teaches, not the item itself (Player::LearnSpell is
+#    what actually happens; see the C++ hook comment in
+#    ArchipelagoCollectionScript.cpp). item_template's spellid_1 turned out
+#    to be a red herring -- nearly every mount/pet item shares the SAME
+#    spellid_1 value (55884), which src/server/game/Entities/Item/
+#    ItemTemplate.h's ITEM_SPELLTRIGGER_LEARN_SPELL_ID comment explains:
+#    "used in item_template.spell_2 with spell_id with SPELL_GENERIC_LEARN
+#    in spell_1" -- spellid_1/55884 is a shared generic wrapper, and the
+#    REAL taught spell is whichever spell slot (1-5) has spelltrigger==6
+#    (ITEM_SPELLTRIGGER_LEARN_SPELL_ID), confirmed against
+#    src/server/game/Entities/Item/ItemTemplate.h directly rather than
+#    assumed from the first spell slot. This is exactly the "verify against
+#    this specific checkout, don't guess from a plausible-looking field"
+#    mistake this project's research discipline exists to catch -- caught
+#    here by noticing 266 mounts implausibly sharing one spell id before
+#    ever writing this file, the same discipline that caught Task 26's
+#    backslash-escaped-apostrophe parsing bug and Time-Lost Proto-Drake's
+#    rank mismatch earlier this session.
+#
+# A small number of items (18 mount rows, several pet rows) teach the
+# IDENTICAL spell as another item in the roster -- e.g. a quest-reward copy
+# and a separate vendor-bought copy of visually the same mount. Deduplicated
+# by spell id (not item id) down to one canonical item per unique spell,
+# since WoW itself does not distinguish which item taught an already-known
+# mount/companion spell -- keeping both as separate "collectible" locations
+# would let learning ONE real item simultaneously complete two AP locations,
+# which does not model "collect each item" accurately. A separate handful of
+# names repeat across two DIFFERENT item entries with two DIFFERENT taught
+# spells -- real faction-mirrored mounts sharing an identical display name
+# in item_template -- disambiguated by appending the item's own entry id in
+# parens (deterministic, not an unverified faction guess). Final roster: 184
+# mounts + 80 pets = 264 total.
+locations:
+  - name: "Learn Mount: Horn of the Timber Wolf"
+    location_id: 780000
+    trigger: {kind: learn_spell, spell_id: 580}
+  - name: "Learn Mount: Black Stallion Bridle"
+    location_id: 780001
+    trigger: {kind: learn_spell, spell_id: 470}
+  - name: "Learn Mount: Pinto Bridle"
+    location_id: 780002
+    trigger: {kind: learn_spell, spell_id: 472}
+  - name: "Learn Mount: Chestnut Mare Bridle"
+    location_id: 780003
+    trigger: {kind: learn_spell, spell_id: 6648}
+  - name: "Learn Mount: Brown Horse Bridle"
+    location_id: 780004
+    trigger: {kind: learn_spell, spell_id: 458}
+  - name: "Learn Mount: Horn of the Dire Wolf"
+    location_id: 780005
+    trigger: {kind: learn_spell, spell_id: 6653}
+  - name: "Learn Mount: Horn of the Brown Wolf"
+    location_id: 780006
+    trigger: {kind: learn_spell, spell_id: 6654}
+  - name: "Learn Mount: Gray Ram"
+    location_id: 780007
+    trigger: {kind: learn_spell, spell_id: 6777}
+  - name: "Learn Mount: Brown Ram"
+    location_id: 780008
+    trigger: {kind: learn_spell, spell_id: 6899}
+  - name: "Learn Mount: White Ram"
+    location_id: 780009
+    trigger: {kind: learn_spell, spell_id: 6898}
+  - name: "Learn Mount: Red Mechanostrider"
+    location_id: 780010
+    trigger: {kind: learn_spell, spell_id: 10873}
+  - name: "Learn Mount: Whistle of the Emerald Raptor"
+    location_id: 780011
+    trigger: {kind: learn_spell, spell_id: 8395}
+  - name: "Learn Mount: Whistle of the Turquoise Raptor"
+    location_id: 780012
+    trigger: {kind: learn_spell, spell_id: 10796}
+  - name: "Learn Mount: Whistle of the Violet Raptor"
+    location_id: 780013
+    trigger: {kind: learn_spell, spell_id: 10799}
+  - name: "Learn Mount: Blue Mechanostrider"
+    location_id: 780014
+    trigger: {kind: learn_spell, spell_id: 10969}
+  - name: "Learn Mount: Reins of the Striped Nightsaber"
+    location_id: 780015
+    trigger: {kind: learn_spell, spell_id: 10793}
+  - name: "Learn Mount: Reins of the Striped Frostsaber"
+    location_id: 780016
+    trigger: {kind: learn_spell, spell_id: 8394}
+  - name: "Learn Mount: Reins of the Spotted Frostsaber"
+    location_id: 780017
+    trigger: {kind: learn_spell, spell_id: 10789}
+  - name: "Learn Mount: Reins of the Winterspring Frostsaber"
+    location_id: 780018
+    trigger: {kind: learn_spell, spell_id: 17229}
+  - name: "Learn Mount: Green Mechanostrider"
+    location_id: 780019
+    trigger: {kind: learn_spell, spell_id: 17453}
+  - name: "Learn Mount: Unpainted Mechanostrider"
+    location_id: 780020
+    trigger: {kind: learn_spell, spell_id: 17454}
+  - name: "Learn Mount: Red Skeletal Horse"
+    location_id: 780021
+    trigger: {kind: learn_spell, spell_id: 17462}
+  - name: "Learn Mount: Blue Skeletal Horse"
+    location_id: 780022
+    trigger: {kind: learn_spell, spell_id: 17463}
+  - name: "Learn Mount: Brown Skeletal Horse"
+    location_id: 780023
+    trigger: {kind: learn_spell, spell_id: 17464}
+  - name: "Learn Mount: Green Skeletal Warhorse"
+    location_id: 780024
+    trigger: {kind: learn_spell, spell_id: 17465}
+  - name: "Learn Mount: Deathcharger's Reins"
+    location_id: 780025
+    trigger: {kind: learn_spell, spell_id: 17481}
+  - name: "Learn Mount: Gray Kodo"
+    location_id: 780026
+    trigger: {kind: learn_spell, spell_id: 18989}
+  - name: "Learn Mount: Brown Kodo"
+    location_id: 780027
+    trigger: {kind: learn_spell, spell_id: 18990}
+  - name: "Learn Mount: Reins of the Swift Frostsaber"
+    location_id: 780028
+    trigger: {kind: learn_spell, spell_id: 23221}
+  - name: "Learn Mount: Reins of the Swift Mistsaber"
+    location_id: 780029
+    trigger: {kind: learn_spell, spell_id: 23219}
+  - name: "Learn Mount: Swift Green Mechanostrider"
+    location_id: 780030
+    trigger: {kind: learn_spell, spell_id: 23225}
+  - name: "Learn Mount: Swift White Mechanostrider"
+    location_id: 780031
+    trigger: {kind: learn_spell, spell_id: 23223}
+  - name: "Learn Mount: Swift Yellow Mechanostrider"
+    location_id: 780032
+    trigger: {kind: learn_spell, spell_id: 23222}
+  - name: "Learn Mount: Swift Palomino"
+    location_id: 780033
+    trigger: {kind: learn_spell, spell_id: 23227}
+  - name: "Learn Mount: Swift Brown Steed"
+    location_id: 780034
+    trigger: {kind: learn_spell, spell_id: 23229}
+  - name: "Learn Mount: Swift White Steed"
+    location_id: 780035
+    trigger: {kind: learn_spell, spell_id: 23228}
+  - name: "Learn Mount: Swift White Ram"
+    location_id: 780036
+    trigger: {kind: learn_spell, spell_id: 23240}
+  - name: "Learn Mount: Swift Brown Ram"
+    location_id: 780037
+    trigger: {kind: learn_spell, spell_id: 23238}
+  - name: "Learn Mount: Swift Gray Ram"
+    location_id: 780038
+    trigger: {kind: learn_spell, spell_id: 23239}
+  - name: "Learn Mount: Swift Blue Raptor"
+    location_id: 780039
+    trigger: {kind: learn_spell, spell_id: 23241}
+  - name: "Learn Mount: Swift Olive Raptor"
+    location_id: 780040
+    trigger: {kind: learn_spell, spell_id: 23242}
+  - name: "Learn Mount: Swift Orange Raptor"
+    location_id: 780041
+    trigger: {kind: learn_spell, spell_id: 23243}
+  - name: "Learn Mount: Purple Skeletal Warhorse"
+    location_id: 780042
+    trigger: {kind: learn_spell, spell_id: 23246}
+  - name: "Learn Mount: Great White Kodo"
+    location_id: 780043
+    trigger: {kind: learn_spell, spell_id: 23247}
+  - name: "Learn Mount: Great Brown Kodo"
+    location_id: 780044
+    trigger: {kind: learn_spell, spell_id: 23249}
+  - name: "Learn Mount: Great Gray Kodo"
+    location_id: 780045
+    trigger: {kind: learn_spell, spell_id: 23248}
+  - name: "Learn Mount: Horn of the Swift Brown Wolf"
+    location_id: 780046
+    trigger: {kind: learn_spell, spell_id: 23250}
+  - name: "Learn Mount: Horn of the Swift Timber Wolf"
+    location_id: 780047
+    trigger: {kind: learn_spell, spell_id: 23251}
+  - name: "Learn Mount: Horn of the Swift Gray Wolf"
+    location_id: 780048
+    trigger: {kind: learn_spell, spell_id: 23252}
+  - name: "Learn Mount: Reins of the Swift Stormsaber"
+    location_id: 780049
+    trigger: {kind: learn_spell, spell_id: 23338}
+  - name: "Learn Mount: Horn of the Frostwolf Howler"
+    location_id: 780050
+    trigger: {kind: learn_spell, spell_id: 23509}
+  - name: "Learn Mount: Stormpike Battle Charger"
+    location_id: 780051
+    trigger: {kind: learn_spell, spell_id: 23510}
+  - name: "Learn Mount: Swift Razzashi Raptor"
+    location_id: 780052
+    trigger: {kind: learn_spell, spell_id: 24242}
+  - name: "Learn Mount: Swift Zulian Tiger"
+    location_id: 780053
+    trigger: {kind: learn_spell, spell_id: 24252}
+  - name: "Learn Mount: Black Qiraji Resonating Crystal"
+    location_id: 780054
+    trigger: {kind: learn_spell, spell_id: 26656}
+  - name: "Learn Mount: Blue Qiraji Resonating Crystal"
+    location_id: 780055
+    trigger: {kind: learn_spell, spell_id: 25953}
+  - name: "Learn Mount: Red Qiraji Resonating Crystal"
+    location_id: 780056
+    trigger: {kind: learn_spell, spell_id: 26054}
+  - name: "Learn Mount: Green Qiraji Resonating Crystal"
+    location_id: 780057
+    trigger: {kind: learn_spell, spell_id: 26056}
+  - name: "Learn Mount: Yellow Qiraji Resonating Crystal"
+    location_id: 780058
+    trigger: {kind: learn_spell, spell_id: 26055}
+  - name: "Learn Mount: Golden Gryphon"
+    location_id: 780059
+    trigger: {kind: learn_spell, spell_id: 32235}
+  - name: "Learn Mount: Ebon Gryphon"
+    location_id: 780060
+    trigger: {kind: learn_spell, spell_id: 32239}
+  - name: "Learn Mount: Snowy Gryphon"
+    location_id: 780061
+    trigger: {kind: learn_spell, spell_id: 32240}
+  - name: "Learn Mount: Swift Blue Gryphon"
+    location_id: 780062
+    trigger: {kind: learn_spell, spell_id: 32242}
+  - name: "Learn Mount: Tawny Wind Rider"
+    location_id: 780063
+    trigger: {kind: learn_spell, spell_id: 32243}
+  - name: "Learn Mount: Blue Wind Rider"
+    location_id: 780064
+    trigger: {kind: learn_spell, spell_id: 32244}
+  - name: "Learn Mount: Green Wind Rider"
+    location_id: 780065
+    trigger: {kind: learn_spell, spell_id: 32245}
+  - name: "Learn Mount: Swift Red Wind Rider"
+    location_id: 780066
+    trigger: {kind: learn_spell, spell_id: 32246}
+  - name: "Learn Mount: Swift Red Gryphon"
+    location_id: 780067
+    trigger: {kind: learn_spell, spell_id: 32289}
+  - name: "Learn Mount: Swift Green Gryphon"
+    location_id: 780068
+    trigger: {kind: learn_spell, spell_id: 32290}
+  - name: "Learn Mount: Swift Purple Gryphon"
+    location_id: 780069
+    trigger: {kind: learn_spell, spell_id: 32292}
+  - name: "Learn Mount: Swift Green Wind Rider"
+    location_id: 780070
+    trigger: {kind: learn_spell, spell_id: 32295}
+  - name: "Learn Mount: Swift Yellow Wind Rider"
+    location_id: 780071
+    trigger: {kind: learn_spell, spell_id: 32296}
+  - name: "Learn Mount: Swift Purple Wind Rider"
+    location_id: 780072
+    trigger: {kind: learn_spell, spell_id: 32297}
+  - name: "Learn Mount: Brown Elekk"
+    location_id: 780073
+    trigger: {kind: learn_spell, spell_id: 34406}
+  - name: "Learn Mount: Reins of the Dark Riding Talbuk"
+    location_id: 780074
+    trigger: {kind: learn_spell, spell_id: 39316}
+  - name: "Learn Mount: Red Hawkstrider"
+    location_id: 780075
+    trigger: {kind: learn_spell, spell_id: 34795}
+  - name: "Learn Mount: Swift Pink Hawkstrider"
+    location_id: 780076
+    trigger: {kind: learn_spell, spell_id: 33660}
+  - name: "Learn Mount: Reins of the Cobalt War Talbuk"
+    location_id: 780077
+    trigger: {kind: learn_spell, spell_id: 34896}
+  - name: "Learn Mount: Reins of the White War Talbuk"
+    location_id: 780078
+    trigger: {kind: learn_spell, spell_id: 34897}
+  - name: "Learn Mount: Reins of the Silver War Talbuk"
+    location_id: 780079
+    trigger: {kind: learn_spell, spell_id: 34898}
+  - name: "Learn Mount: Reins of the Tan War Talbuk"
+    location_id: 780080
+    trigger: {kind: learn_spell, spell_id: 34899}
+  - name: "Learn Mount: Blue Hawkstrider"
+    location_id: 780081
+    trigger: {kind: learn_spell, spell_id: 35020}
+  - name: "Learn Mount: Black Hawkstrider"
+    location_id: 780082
+    trigger: {kind: learn_spell, spell_id: 35022}
+  - name: "Learn Mount: Purple Hawkstrider"
+    location_id: 780083
+    trigger: {kind: learn_spell, spell_id: 35018}
+  - name: "Learn Mount: Swift Green Hawkstrider"
+    location_id: 780084
+    trigger: {kind: learn_spell, spell_id: 35025}
+  - name: "Learn Mount: Swift Purple Hawkstrider"
+    location_id: 780085
+    trigger: {kind: learn_spell, spell_id: 35027}
+  - name: "Learn Mount: Reins of the Dark War Talbuk"
+    location_id: 780086
+    trigger: {kind: learn_spell, spell_id: 34790}
+  - name: "Learn Mount: Black Battlestrider"
+    location_id: 780087
+    trigger: {kind: learn_spell, spell_id: 22719}
+  - name: "Learn Mount: Black War Kodo"
+    location_id: 780088
+    trigger: {kind: learn_spell, spell_id: 22718}
+  - name: "Learn Mount: Black War Ram"
+    location_id: 780089
+    trigger: {kind: learn_spell, spell_id: 22720}
+  - name: "Learn Mount: Black War Steed Bridle"
+    location_id: 780090
+    trigger: {kind: learn_spell, spell_id: 22717}
+  - name: "Learn Mount: Horn of the Black War Wolf"
+    location_id: 780091
+    trigger: {kind: learn_spell, spell_id: 22724}
+  - name: "Learn Mount: Red Skeletal Warhorse"
+    location_id: 780092
+    trigger: {kind: learn_spell, spell_id: 22722}
+  - name: "Learn Mount: Reins of the Black War Tiger"
+    location_id: 780093
+    trigger: {kind: learn_spell, spell_id: 22723}
+  - name: "Learn Mount: Whistle of the Black War Raptor"
+    location_id: 780094
+    trigger: {kind: learn_spell, spell_id: 22721}
+  - name: "Learn Mount: Purple Elekk"
+    location_id: 780095
+    trigger: {kind: learn_spell, spell_id: 35711}
+  - name: "Learn Mount: Gray Elekk"
+    location_id: 780096
+    trigger: {kind: learn_spell, spell_id: 35710}
+  - name: "Learn Mount: Great Blue Elekk"
+    location_id: 780097
+    trigger: {kind: learn_spell, spell_id: 35713}
+  - name: "Learn Mount: Great Green Elekk"
+    location_id: 780098
+    trigger: {kind: learn_spell, spell_id: 35712}
+  - name: "Learn Mount: Great Purple Elekk"
+    location_id: 780099
+    trigger: {kind: learn_spell, spell_id: 35714}
+  - name: "Learn Mount: Fiery Warhorse's Reins"
+    location_id: 780100
+    trigger: {kind: learn_spell, spell_id: 36702}
+  - name: "Learn Mount: Reins of the Cobalt Riding Talbuk"
+    location_id: 780101
+    trigger: {kind: learn_spell, spell_id: 39315}
+  - name: "Learn Mount: Reins of the Silver Riding Talbuk"
+    location_id: 780102
+    trigger: {kind: learn_spell, spell_id: 39317}
+  - name: "Learn Mount: Reins of the Tan Riding Talbuk"
+    location_id: 780103
+    trigger: {kind: learn_spell, spell_id: 39318}
+  - name: "Learn Mount: Reins of the White Riding Talbuk"
+    location_id: 780104
+    trigger: {kind: learn_spell, spell_id: 39319}
+  - name: "Learn Mount: Green Riding Nether Ray"
+    location_id: 780105
+    trigger: {kind: learn_spell, spell_id: 39798}
+  - name: "Learn Mount: Purple Riding Nether Ray"
+    location_id: 780106
+    trigger: {kind: learn_spell, spell_id: 39801}
+  - name: "Learn Mount: Red Riding Nether Ray"
+    location_id: 780107
+    trigger: {kind: learn_spell, spell_id: 39800}
+  - name: "Learn Mount: Silver Riding Nether Ray"
+    location_id: 780108
+    trigger: {kind: learn_spell, spell_id: 39802}
+  - name: "Learn Mount: Blue Riding Nether Ray"
+    location_id: 780109
+    trigger: {kind: learn_spell, spell_id: 39803}
+  - name: "Learn Mount: Ashes of Al'ar"
+    location_id: 780110
+    trigger: {kind: learn_spell, spell_id: 40192}
+  - name: "Learn Mount: Reins of the Raven Lord"
+    location_id: 780111
+    trigger: {kind: learn_spell, spell_id: 41252}
+  - name: "Learn Mount: Reins of the Onyx Netherwing Drake"
+    location_id: 780112
+    trigger: {kind: learn_spell, spell_id: 41513}
+  - name: "Learn Mount: Reins of the Azure Netherwing Drake"
+    location_id: 780113
+    trigger: {kind: learn_spell, spell_id: 41514}
+  - name: "Learn Mount: Reins of the Cobalt Netherwing Drake"
+    location_id: 780114
+    trigger: {kind: learn_spell, spell_id: 41515}
+  - name: "Learn Mount: Reins of the Purple Netherwing Drake"
+    location_id: 780115
+    trigger: {kind: learn_spell, spell_id: 41516}
+  - name: "Learn Mount: Reins of the Veridian Netherwing Drake"
+    location_id: 780116
+    trigger: {kind: learn_spell, spell_id: 41517}
+  - name: "Learn Mount: Reins of the Violet Netherwing Drake"
+    location_id: 780117
+    trigger: {kind: learn_spell, spell_id: 41518}
+  - name: "Learn Mount: Brewfest Ram"
+    location_id: 780118
+    trigger: {kind: learn_spell, spell_id: 43899}
+  - name: "Learn Mount: Swift Brewfest Ram"
+    location_id: 780119
+    trigger: {kind: learn_spell, spell_id: 43900}
+  - name: "Learn Mount: Cenarion War Hippogryph"
+    location_id: 780120
+    trigger: {kind: learn_spell, spell_id: 43927}
+  - name: "Learn Mount: Swift Warstrider"
+    location_id: 780121
+    trigger: {kind: learn_spell, spell_id: 35028}
+  - name: "Learn Mount: Swift White Hawkstrider"
+    location_id: 780122
+    trigger: {kind: learn_spell, spell_id: 46628}
+  - name: "Learn Mount: Reins of the Black War Elekk"
+    location_id: 780123
+    trigger: {kind: learn_spell, spell_id: 48027}
+  - name: "Learn Mount: Winged Steed of the Ebon Blade"
+    location_id: 780124
+    trigger: {kind: learn_spell, spell_id: 54729}
+  - name: "Learn Mount: Reins of the Bronze Drake"
+    location_id: 780125
+    trigger: {kind: learn_spell, spell_id: 59569}
+  - name: "Learn Mount: Reins of the Twilight Drake"
+    location_id: 780126
+    trigger: {kind: learn_spell, spell_id: 59571}
+  - name: "Learn Mount: Reins of the Red Drake"
+    location_id: 780127
+    trigger: {kind: learn_spell, spell_id: 59570}
+  - name: "Learn Mount: Reins of the Black War Mammoth (43956)"
+    location_id: 780128
+    trigger: {kind: learn_spell, spell_id: 59785}
+  - name: "Learn Mount: Reins of the Ice Mammoth (43958)"
+    location_id: 780129
+    trigger: {kind: learn_spell, spell_id: 59799}
+  - name: "Learn Mount: Reins of the Grand Black War Mammoth (43959)"
+    location_id: 780130
+    trigger: {kind: learn_spell, spell_id: 61465}
+  - name: "Learn Mount: Reins of the Grand Ice Mammoth (43961)"
+    location_id: 780131
+    trigger: {kind: learn_spell, spell_id: 61470}
+  - name: "Learn Mount: Reins of the Black Drake"
+    location_id: 780132
+    trigger: {kind: learn_spell, spell_id: 59650}
+  - name: "Learn Mount: Reins of the Black War Mammoth (44077)"
+    location_id: 780133
+    trigger: {kind: learn_spell, spell_id: 59788}
+  - name: "Learn Mount: Reins of the Ice Mammoth (44080)"
+    location_id: 780134
+    trigger: {kind: learn_spell, spell_id: 59797}
+  - name: "Learn Mount: Reins of the Grand Black War Mammoth (44083)"
+    location_id: 780135
+    trigger: {kind: learn_spell, spell_id: 61467}
+  - name: "Learn Mount: Reins of the Grand Ice Mammoth (44086)"
+    location_id: 780136
+    trigger: {kind: learn_spell, spell_id: 61469}
+  - name: "Learn Mount: Reins of the Blue Proto-Drake"
+    location_id: 780137
+    trigger: {kind: learn_spell, spell_id: 59996}
+  - name: "Learn Mount: Reins of the Time-Lost Proto-Drake"
+    location_id: 780138
+    trigger: {kind: learn_spell, spell_id: 60002}
+  - name: "Learn Mount: Reins of the Armored Brown Bear (44225)"
+    location_id: 780139
+    trigger: {kind: learn_spell, spell_id: 60114}
+  - name: "Learn Mount: Reins of the Armored Brown Bear (44226)"
+    location_id: 780140
+    trigger: {kind: learn_spell, spell_id: 60116}
+  - name: "Learn Mount: Reins of the Wooly Mammoth (44230)"
+    location_id: 780141
+    trigger: {kind: learn_spell, spell_id: 59791}
+  - name: "Learn Mount: Reins of the Wooly Mammoth (44231)"
+    location_id: 780142
+    trigger: {kind: learn_spell, spell_id: 59793}
+  - name: "Learn Mount: Reins of the Traveler's Tundra Mammoth (44234)"
+    location_id: 780143
+    trigger: {kind: learn_spell, spell_id: 61447}
+  - name: "Learn Mount: Reins of the Traveler's Tundra Mammoth (44235)"
+    location_id: 780144
+    trigger: {kind: learn_spell, spell_id: 61425}
+  - name: "Learn Mount: Armored Snowy Gryphon"
+    location_id: 780145
+    trigger: {kind: learn_spell, spell_id: 61229}
+  - name: "Learn Mount: Armored Blue Wind Rider"
+    location_id: 780146
+    trigger: {kind: learn_spell, spell_id: 61230}
+  - name: "Learn Mount: Stormwind Steed"
+    location_id: 780147
+    trigger: {kind: learn_spell, spell_id: 63232}
+  - name: "Learn Mount: Ironforge Ram"
+    location_id: 780148
+    trigger: {kind: learn_spell, spell_id: 63636}
+  - name: "Learn Mount: Gnomeregan Mechanostrider"
+    location_id: 780149
+    trigger: {kind: learn_spell, spell_id: 63638}
+  - name: "Learn Mount: Exodar Elekk"
+    location_id: 780150
+    trigger: {kind: learn_spell, spell_id: 63639}
+  - name: "Learn Mount: Darnassian Nightsaber"
+    location_id: 780151
+    trigger: {kind: learn_spell, spell_id: 63637}
+  - name: "Learn Mount: Thunder Bluff Kodo"
+    location_id: 780152
+    trigger: {kind: learn_spell, spell_id: 63641}
+  - name: "Learn Mount: Darkspear Raptor"
+    location_id: 780153
+    trigger: {kind: learn_spell, spell_id: 63635}
+  - name: "Learn Mount: Orgrimmar Wolf"
+    location_id: 780154
+    trigger: {kind: learn_spell, spell_id: 63640}
+  - name: "Learn Mount: Silvermoon Hawkstrider"
+    location_id: 780155
+    trigger: {kind: learn_spell, spell_id: 63642}
+  - name: "Learn Mount: Forsaken Warhorse"
+    location_id: 780156
+    trigger: {kind: learn_spell, spell_id: 63643}
+  - name: "Learn Mount: Mimiron's Head"
+    location_id: 780157
+    trigger: {kind: learn_spell, spell_id: 63796}
+  - name: "Learn Mount: Argent Hippogryph"
+    location_id: 780158
+    trigger: {kind: learn_spell, spell_id: 63844}
+  - name: "Learn Mount: Horn of the Black Wolf"
+    location_id: 780159
+    trigger: {kind: learn_spell, spell_id: 64658}
+  - name: "Learn Mount: White Kodo"
+    location_id: 780160
+    trigger: {kind: learn_spell, spell_id: 64657}
+  - name: "Learn Mount: Whistle of the Venomhide Ravasaur"
+    location_id: 780161
+    trigger: {kind: learn_spell, spell_id: 64659}
+  - name: "Learn Mount: Black Skeletal Horse"
+    location_id: 780162
+    trigger: {kind: learn_spell, spell_id: 64977}
+  - name: "Learn Mount: Swift Purple Raptor"
+    location_id: 780163
+    trigger: {kind: learn_spell, spell_id: 65644}
+  - name: "Learn Mount: Swift Moonsaber"
+    location_id: 780164
+    trigger: {kind: learn_spell, spell_id: 65638}
+  - name: "Learn Mount: Great Red Elekk"
+    location_id: 780165
+    trigger: {kind: learn_spell, spell_id: 65637}
+  - name: "Learn Mount: White Skeletal Warhorse"
+    location_id: 780166
+    trigger: {kind: learn_spell, spell_id: 65645}
+  - name: "Learn Mount: Turbostrider"
+    location_id: 780167
+    trigger: {kind: learn_spell, spell_id: 65642}
+  - name: "Learn Mount: Swift Violet Ram"
+    location_id: 780168
+    trigger: {kind: learn_spell, spell_id: 65643}
+  - name: "Learn Mount: Swift Burgundy Wolf"
+    location_id: 780169
+    trigger: {kind: learn_spell, spell_id: 65646}
+  - name: "Learn Mount: Great Golden Kodo"
+    location_id: 780170
+    trigger: {kind: learn_spell, spell_id: 65641}
+  - name: "Learn Mount: Swift Red Hawkstrider"
+    location_id: 780171
+    trigger: {kind: learn_spell, spell_id: 65639}
+  - name: "Learn Mount: Swift Gray Steed"
+    location_id: 780172
+    trigger: {kind: learn_spell, spell_id: 65640}
+  - name: "Learn Mount: Silver Covenant Hippogryph"
+    location_id: 780173
+    trigger: {kind: learn_spell, spell_id: 66087}
+  - name: "Learn Mount: Sunreaver Dragonhawk"
+    location_id: 780174
+    trigger: {kind: learn_spell, spell_id: 66088}
+  - name: "Learn Mount: Quel'dorei Steed"
+    location_id: 780175
+    trigger: {kind: learn_spell, spell_id: 66090}
+  - name: "Learn Mount: Sunreaver Hawkstrider"
+    location_id: 780176
+    trigger: {kind: learn_spell, spell_id: 66091}
+  - name: "Learn Mount: Reins of the Striped Dawnsaber"
+    location_id: 780177
+    trigger: {kind: learn_spell, spell_id: 66847}
+  - name: "Learn Mount: Ochre Skeletal Warhorse"
+    location_id: 780178
+    trigger: {kind: learn_spell, spell_id: 66846}
+  - name: "Learn Mount: Argent Charger"
+    location_id: 780179
+    trigger: {kind: learn_spell, spell_id: 66906}
+  - name: "Learn Mount: Argent Warhorse"
+    location_id: 780180
+    trigger: {kind: learn_spell, spell_id: 67466}
+  - name: "Learn Mount: Reins of the Onyxian Drake"
+    location_id: 780181
+    trigger: {kind: learn_spell, spell_id: 69395}
+  - name: "Learn Mount: Invincible's Reins"
+    location_id: 780182
+    trigger: {kind: learn_spell, spell_id: 72286}
+  - name: "Learn Mount: Reins of the Crimson Deathcharger"
+    location_id: 780183
+    trigger: {kind: learn_spell, spell_id: 73313}
+  - name: "Learn Pet: Cat Carrier (Bombay)"
+    location_id: 780184
+    trigger: {kind: learn_spell, spell_id: 10673}
+  - name: "Learn Pet: Cat Carrier (Cornish Rex)"
+    location_id: 780185
+    trigger: {kind: learn_spell, spell_id: 10674}
+  - name: "Learn Pet: Cat Carrier (Orange Tabby)"
+    location_id: 780186
+    trigger: {kind: learn_spell, spell_id: 10676}
+  - name: "Learn Pet: Cat Carrier (Silver Tabby)"
+    location_id: 780187
+    trigger: {kind: learn_spell, spell_id: 10678}
+  - name: "Learn Pet: Cat Carrier (White Kitten)"
+    location_id: 780188
+    trigger: {kind: learn_spell, spell_id: 10679}
+  - name: "Learn Pet: Cat Carrier (Siamese)"
+    location_id: 780189
+    trigger: {kind: learn_spell, spell_id: 10677}
+  - name: "Learn Pet: Cat Carrier (Black Tabby)"
+    location_id: 780190
+    trigger: {kind: learn_spell, spell_id: 10675}
+  - name: "Learn Pet: Parrot Cage (Green Wing Macaw)"
+    location_id: 780191
+    trigger: {kind: learn_spell, spell_id: 10683}
+  - name: "Learn Pet: Parrot Cage (Hyacinth Macaw)"
+    location_id: 780192
+    trigger: {kind: learn_spell, spell_id: 10682}
+  - name: "Learn Pet: Parrot Cage (Senegal)"
+    location_id: 780193
+    trigger: {kind: learn_spell, spell_id: 10684}
+  - name: "Learn Pet: Parrot Cage (Cockatiel)"
+    location_id: 780194
+    trigger: {kind: learn_spell, spell_id: 10680}
+  - name: "Learn Pet: Rabbit Crate (Snowshoe)"
+    location_id: 780195
+    trigger: {kind: learn_spell, spell_id: 10711}
+  - name: "Learn Pet: Tiny Emerald Whelpling"
+    location_id: 780196
+    trigger: {kind: learn_spell, spell_id: 10698}
+  - name: "Learn Pet: Tiny Crimson Whelpling"
+    location_id: 780197
+    trigger: {kind: learn_spell, spell_id: 10697}
+  - name: "Learn Pet: Great Horned Owl"
+    location_id: 780198
+    trigger: {kind: learn_spell, spell_id: 10707}
+  - name: "Learn Pet: Hawk Owl"
+    location_id: 780199
+    trigger: {kind: learn_spell, spell_id: 10706}
+  - name: "Learn Pet: Black Kingsnake"
+    location_id: 780200
+    trigger: {kind: learn_spell, spell_id: 10714}
+  - name: "Learn Pet: Brown Snake"
+    location_id: 780201
+    trigger: {kind: learn_spell, spell_id: 10716}
+  - name: "Learn Pet: Crimson Snake"
+    location_id: 780202
+    trigger: {kind: learn_spell, spell_id: 10717}
+  - name: "Learn Pet: Cockroach"
+    location_id: 780203
+    trigger: {kind: learn_spell, spell_id: 10688}
+  - name: "Learn Pet: Prairie Dog Whistle"
+    location_id: 780204
+    trigger: {kind: learn_spell, spell_id: 10709}
+  - name: "Learn Pet: Mechanical Chicken"
+    location_id: 780205
+    trigger: {kind: learn_spell, spell_id: 12243}
+  - name: "Learn Pet: Dark Whelpling"
+    location_id: 780206
+    trigger: {kind: learn_spell, spell_id: 10695}
+  - name: "Learn Pet: Ancona Chicken"
+    location_id: 780207
+    trigger: {kind: learn_spell, spell_id: 10685}
+  - name: "Learn Pet: Tree Frog Box"
+    location_id: 780208
+    trigger: {kind: learn_spell, spell_id: 10704}
+  - name: "Learn Pet: Wood Frog Box"
+    location_id: 780209
+    trigger: {kind: learn_spell, spell_id: 10703}
+  - name: "Learn Pet: Sprite Darter Egg"
+    location_id: 780210
+    trigger: {kind: learn_spell, spell_id: 15067}
+  - name: "Learn Pet: Zergling Leash"
+    location_id: 780211
+    trigger: {kind: learn_spell, spell_id: 17709}
+  - name: "Learn Pet: Panda Collar"
+    location_id: 780212
+    trigger: {kind: learn_spell, spell_id: 17707}
+  - name: "Learn Pet: Diablo Stone"
+    location_id: 780213
+    trigger: {kind: learn_spell, spell_id: 17708}
+  - name: "Learn Pet: Blue Murloc Egg"
+    location_id: 780214
+    trigger: {kind: learn_spell, spell_id: 24696}
+  - name: "Learn Pet: Orange Murloc Egg"
+    location_id: 780215
+    trigger: {kind: learn_spell, spell_id: 25018}
+  - name: "Learn Pet: Pink Murloc Egg"
+    location_id: 780216
+    trigger: {kind: learn_spell, spell_id: 27241}
+  - name: "Learn Pet: Truesilver Shafted Arrow"
+    location_id: 780217
+    trigger: {kind: learn_spell, spell_id: 27570}
+  - name: "Learn Pet: White Murloc Egg"
+    location_id: 780218
+    trigger: {kind: learn_spell, spell_id: 28487}
+  - name: "Learn Pet: Polar Bear Collar"
+    location_id: 780219
+    trigger: {kind: learn_spell, spell_id: 28505}
+  - name: "Learn Pet: Turtle Box"
+    location_id: 780220
+    trigger: {kind: learn_spell, spell_id: 28738}
+  - name: "Learn Pet: Piglet's Collar"
+    location_id: 780221
+    trigger: {kind: learn_spell, spell_id: 28739}
+  - name: "Learn Pet: Rat Cage"
+    location_id: 780222
+    trigger: {kind: learn_spell, spell_id: 28740}
+  - name: "Learn Pet: Captured Flame"
+    location_id: 780223
+    trigger: {kind: learn_spell, spell_id: 28871}
+  - name: "Learn Pet: Mana Wyrmling"
+    location_id: 780224
+    trigger: {kind: learn_spell, spell_id: 35156}
+  - name: "Learn Pet: Brown Rabbit Crate"
+    location_id: 780225
+    trigger: {kind: learn_spell, spell_id: 35239}
+  - name: "Learn Pet: Blue Moth Egg"
+    location_id: 780226
+    trigger: {kind: learn_spell, spell_id: 35907}
+  - name: "Learn Pet: Red Moth Egg"
+    location_id: 780227
+    trigger: {kind: learn_spell, spell_id: 35909}
+  - name: "Learn Pet: Yellow Moth Egg"
+    location_id: 780228
+    trigger: {kind: learn_spell, spell_id: 35910}
+  - name: "Learn Pet: White Moth Egg"
+    location_id: 780229
+    trigger: {kind: learn_spell, spell_id: 35911}
+  - name: "Learn Pet: Golden Dragonhawk Hatchling"
+    location_id: 780230
+    trigger: {kind: learn_spell, spell_id: 36027}
+  - name: "Learn Pet: Red Dragonhawk Hatchling"
+    location_id: 780231
+    trigger: {kind: learn_spell, spell_id: 36028}
+  - name: "Learn Pet: Silver Dragonhawk Hatchling"
+    location_id: 780232
+    trigger: {kind: learn_spell, spell_id: 36029}
+  - name: "Learn Pet: Blue Dragonhawk Hatchling"
+    location_id: 780233
+    trigger: {kind: learn_spell, spell_id: 36031}
+  - name: "Learn Pet: Captured Firefly"
+    location_id: 780234
+    trigger: {kind: learn_spell, spell_id: 36034}
+  - name: "Learn Pet: Wolpertinger's Tankard"
+    location_id: 780235
+    trigger: {kind: learn_spell, spell_id: 39709}
+  - name: "Learn Pet: Tiny Sporebat"
+    location_id: 780236
+    trigger: {kind: learn_spell, spell_id: 45082}
+  - name: "Learn Pet: Azure Whelpling"
+    location_id: 780237
+    trigger: {kind: learn_spell, spell_id: 10696}
+  - name: "Learn Pet: Phoenix Hatchling"
+    location_id: 780238
+    trigger: {kind: learn_spell, spell_id: 46599}
+  - name: "Learn Pet: Nether Ray Fry"
+    location_id: 780239
+    trigger: {kind: learn_spell, spell_id: 51716}
+  - name: "Learn Pet: Vampiric Batling"
+    location_id: 780240
+    trigger: {kind: learn_spell, spell_id: 51851}
+  - name: "Learn Pet: Ghostly Skull"
+    location_id: 780241
+    trigger: {kind: learn_spell, spell_id: 53316}
+  - name: "Learn Pet: Nurtured Penguin Egg"
+    location_id: 780242
+    trigger: {kind: learn_spell, spell_id: 61357}
+  - name: "Learn Pet: Albino Snake"
+    location_id: 780243
+    trigger: {kind: learn_spell, spell_id: 10713}
+  - name: "Learn Pet: Teldrassil Sproutling"
+    location_id: 780244
+    trigger: {kind: learn_spell, spell_id: 62491}
+  - name: "Learn Pet: Dun Morogh Cub"
+    location_id: 780245
+    trigger: {kind: learn_spell, spell_id: 62508}
+  - name: "Learn Pet: Tirisfal Batling"
+    location_id: 780246
+    trigger: {kind: learn_spell, spell_id: 62510}
+  - name: "Learn Pet: Durotar Scorpion"
+    location_id: 780247
+    trigger: {kind: learn_spell, spell_id: 62513}
+  - name: "Learn Pet: Elwynn Lamb"
+    location_id: 780248
+    trigger: {kind: learn_spell, spell_id: 62516}
+  - name: "Learn Pet: Mulgore Hatchling"
+    location_id: 780249
+    trigger: {kind: learn_spell, spell_id: 62542}
+  - name: "Learn Pet: Enchanted Broom"
+    location_id: 780250
+    trigger: {kind: learn_spell, spell_id: 62564}
+  - name: "Learn Pet: Ammen Vale Lashling"
+    location_id: 780251
+    trigger: {kind: learn_spell, spell_id: 62562}
+  - name: "Learn Pet: Argent Squire"
+    location_id: 780252
+    trigger: {kind: learn_spell, spell_id: 62609}
+  - name: "Learn Pet: Mechanopeep"
+    location_id: 780253
+    trigger: {kind: learn_spell, spell_id: 62674}
+  - name: "Learn Pet: Argent Gruntling"
+    location_id: 780254
+    trigger: {kind: learn_spell, spell_id: 62746}
+  - name: "Learn Pet: Sen'jin Fetish"
+    location_id: 780255
+    trigger: {kind: learn_spell, spell_id: 63712}
+  - name: "Learn Pet: Calico Cat"
+    location_id: 780256
+    trigger: {kind: learn_spell, spell_id: 65358}
+  - name: "Learn Pet: Pint-Sized Pink Pachyderm"
+    location_id: 780257
+    trigger: {kind: learn_spell, spell_id: 44369}
+  - name: "Learn Pet: Shimmering Wyrmling"
+    location_id: 780258
+    trigger: {kind: learn_spell, spell_id: 66096}
+  - name: "Learn Pet: Deviate Hatchling"
+    location_id: 780259
+    trigger: {kind: learn_spell, spell_id: 67414}
+  - name: "Learn Pet: Gundrak Hatchling"
+    location_id: 780260
+    trigger: {kind: learn_spell, spell_id: 67415}
+  - name: "Learn Pet: Obsidian Hatchling"
+    location_id: 780261
+    trigger: {kind: learn_spell, spell_id: 67417}
+  - name: "Learn Pet: Razzashi Hatchling"
+    location_id: 780262
+    trigger: {kind: learn_spell, spell_id: 67420}
+  - name: "Learn Pet: Blue Clockwork Rocket Bot"
+    location_id: 780263
+    trigger: {kind: learn_spell, spell_id: 75134}
+
+# One item per location, mailing the real WoW item (wow_item_entry) that
+# teaches this mount/pet -- reuses the mail delivery kind exactly like
+# fish.yaml's items, since a real WoW item to deliver naturally exists here
+# too (unlike professions.yaml's pure flavor markers).
+items:
+  - name: "Mount: Horn of the Timber Wolf"
+    item_id: 880000
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 1132}
+  - name: "Mount: Black Stallion Bridle"
+    item_id: 880001
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 2411}
+  - name: "Mount: Pinto Bridle"
+    item_id: 880002
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 2414}
+  - name: "Mount: Chestnut Mare Bridle"
+    item_id: 880003
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5655}
+  - name: "Mount: Brown Horse Bridle"
+    item_id: 880004
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5656}
+  - name: "Mount: Horn of the Dire Wolf"
+    item_id: 880005
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5665}
+  - name: "Mount: Horn of the Brown Wolf"
+    item_id: 880006
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5668}
+  - name: "Mount: Gray Ram"
+    item_id: 880007
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5864}
+  - name: "Mount: Brown Ram"
+    item_id: 880008
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5872}
+  - name: "Mount: White Ram"
+    item_id: 880009
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 5873}
+  - name: "Mount: Red Mechanostrider"
+    item_id: 880010
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8563}
+  - name: "Mount: Whistle of the Emerald Raptor"
+    item_id: 880011
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8588}
+  - name: "Mount: Whistle of the Turquoise Raptor"
+    item_id: 880012
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8591}
+  - name: "Mount: Whistle of the Violet Raptor"
+    item_id: 880013
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8592}
+  - name: "Mount: Blue Mechanostrider"
+    item_id: 880014
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8595}
+  - name: "Mount: Reins of the Striped Nightsaber"
+    item_id: 880015
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8629}
+  - name: "Mount: Reins of the Striped Frostsaber"
+    item_id: 880016
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8631}
+  - name: "Mount: Reins of the Spotted Frostsaber"
+    item_id: 880017
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8632}
+  - name: "Mount: Reins of the Winterspring Frostsaber"
+    item_id: 880018
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13086}
+  - name: "Mount: Green Mechanostrider"
+    item_id: 880019
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13321}
+  - name: "Mount: Unpainted Mechanostrider"
+    item_id: 880020
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13322}
+  - name: "Mount: Red Skeletal Horse"
+    item_id: 880021
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13331}
+  - name: "Mount: Blue Skeletal Horse"
+    item_id: 880022
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13332}
+  - name: "Mount: Brown Skeletal Horse"
+    item_id: 880023
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13333}
+  - name: "Mount: Green Skeletal Warhorse"
+    item_id: 880024
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13334}
+  - name: "Mount: Deathcharger's Reins"
+    item_id: 880025
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13335}
+  - name: "Mount: Gray Kodo"
+    item_id: 880026
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 15277}
+  - name: "Mount: Brown Kodo"
+    item_id: 880027
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 15290}
+  - name: "Mount: Reins of the Swift Frostsaber"
+    item_id: 880028
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18766}
+  - name: "Mount: Reins of the Swift Mistsaber"
+    item_id: 880029
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18767}
+  - name: "Mount: Swift Green Mechanostrider"
+    item_id: 880030
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18772}
+  - name: "Mount: Swift White Mechanostrider"
+    item_id: 880031
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18773}
+  - name: "Mount: Swift Yellow Mechanostrider"
+    item_id: 880032
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18774}
+  - name: "Mount: Swift Palomino"
+    item_id: 880033
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18776}
+  - name: "Mount: Swift Brown Steed"
+    item_id: 880034
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18777}
+  - name: "Mount: Swift White Steed"
+    item_id: 880035
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18778}
+  - name: "Mount: Swift White Ram"
+    item_id: 880036
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18785}
+  - name: "Mount: Swift Brown Ram"
+    item_id: 880037
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18786}
+  - name: "Mount: Swift Gray Ram"
+    item_id: 880038
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18787}
+  - name: "Mount: Swift Blue Raptor"
+    item_id: 880039
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18788}
+  - name: "Mount: Swift Olive Raptor"
+    item_id: 880040
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18789}
+  - name: "Mount: Swift Orange Raptor"
+    item_id: 880041
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18790}
+  - name: "Mount: Purple Skeletal Warhorse"
+    item_id: 880042
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18791}
+  - name: "Mount: Great White Kodo"
+    item_id: 880043
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18793}
+  - name: "Mount: Great Brown Kodo"
+    item_id: 880044
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18794}
+  - name: "Mount: Great Gray Kodo"
+    item_id: 880045
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18795}
+  - name: "Mount: Horn of the Swift Brown Wolf"
+    item_id: 880046
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18796}
+  - name: "Mount: Horn of the Swift Timber Wolf"
+    item_id: 880047
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18797}
+  - name: "Mount: Horn of the Swift Gray Wolf"
+    item_id: 880048
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18798}
+  - name: "Mount: Reins of the Swift Stormsaber"
+    item_id: 880049
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 18902}
+  - name: "Mount: Horn of the Frostwolf Howler"
+    item_id: 880050
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 19029}
+  - name: "Mount: Stormpike Battle Charger"
+    item_id: 880051
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 19030}
+  - name: "Mount: Swift Razzashi Raptor"
+    item_id: 880052
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 19872}
+  - name: "Mount: Swift Zulian Tiger"
+    item_id: 880053
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 19902}
+  - name: "Mount: Black Qiraji Resonating Crystal"
+    item_id: 880054
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 21176}
+  - name: "Mount: Blue Qiraji Resonating Crystal"
+    item_id: 880055
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 21218}
+  - name: "Mount: Red Qiraji Resonating Crystal"
+    item_id: 880056
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 21321}
+  - name: "Mount: Green Qiraji Resonating Crystal"
+    item_id: 880057
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 21323}
+  - name: "Mount: Yellow Qiraji Resonating Crystal"
+    item_id: 880058
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 21324}
+  - name: "Mount: Golden Gryphon"
+    item_id: 880059
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25470}
+  - name: "Mount: Ebon Gryphon"
+    item_id: 880060
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25471}
+  - name: "Mount: Snowy Gryphon"
+    item_id: 880061
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25472}
+  - name: "Mount: Swift Blue Gryphon"
+    item_id: 880062
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25473}
+  - name: "Mount: Tawny Wind Rider"
+    item_id: 880063
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25474}
+  - name: "Mount: Blue Wind Rider"
+    item_id: 880064
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25475}
+  - name: "Mount: Green Wind Rider"
+    item_id: 880065
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25476}
+  - name: "Mount: Swift Red Wind Rider"
+    item_id: 880066
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25477}
+  - name: "Mount: Swift Red Gryphon"
+    item_id: 880067
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25527}
+  - name: "Mount: Swift Green Gryphon"
+    item_id: 880068
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25528}
+  - name: "Mount: Swift Purple Gryphon"
+    item_id: 880069
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25529}
+  - name: "Mount: Swift Green Wind Rider"
+    item_id: 880070
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25531}
+  - name: "Mount: Swift Yellow Wind Rider"
+    item_id: 880071
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25532}
+  - name: "Mount: Swift Purple Wind Rider"
+    item_id: 880072
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 25533}
+  - name: "Mount: Brown Elekk"
+    item_id: 880073
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 28481}
+  - name: "Mount: Reins of the Dark Riding Talbuk"
+    item_id: 880074
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 28915}
+  - name: "Mount: Red Hawkstrider"
+    item_id: 880075
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 28927}
+  - name: "Mount: Swift Pink Hawkstrider"
+    item_id: 880076
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 28936}
+  - name: "Mount: Reins of the Cobalt War Talbuk"
+    item_id: 880077
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29102}
+  - name: "Mount: Reins of the White War Talbuk"
+    item_id: 880078
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29103}
+  - name: "Mount: Reins of the Silver War Talbuk"
+    item_id: 880079
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29104}
+  - name: "Mount: Reins of the Tan War Talbuk"
+    item_id: 880080
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29105}
+  - name: "Mount: Blue Hawkstrider"
+    item_id: 880081
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29220}
+  - name: "Mount: Black Hawkstrider"
+    item_id: 880082
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29221}
+  - name: "Mount: Purple Hawkstrider"
+    item_id: 880083
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29222}
+  - name: "Mount: Swift Green Hawkstrider"
+    item_id: 880084
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29223}
+  - name: "Mount: Swift Purple Hawkstrider"
+    item_id: 880085
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29224}
+  - name: "Mount: Reins of the Dark War Talbuk"
+    item_id: 880086
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29228}
+  - name: "Mount: Black Battlestrider"
+    item_id: 880087
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29465}
+  - name: "Mount: Black War Kodo"
+    item_id: 880088
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29466}
+  - name: "Mount: Black War Ram"
+    item_id: 880089
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29467}
+  - name: "Mount: Black War Steed Bridle"
+    item_id: 880090
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29468}
+  - name: "Mount: Horn of the Black War Wolf"
+    item_id: 880091
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29469}
+  - name: "Mount: Red Skeletal Warhorse"
+    item_id: 880092
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29470}
+  - name: "Mount: Reins of the Black War Tiger"
+    item_id: 880093
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29471}
+  - name: "Mount: Whistle of the Black War Raptor"
+    item_id: 880094
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29472}
+  - name: "Mount: Purple Elekk"
+    item_id: 880095
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29743}
+  - name: "Mount: Gray Elekk"
+    item_id: 880096
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29744}
+  - name: "Mount: Great Blue Elekk"
+    item_id: 880097
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29745}
+  - name: "Mount: Great Green Elekk"
+    item_id: 880098
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29746}
+  - name: "Mount: Great Purple Elekk"
+    item_id: 880099
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29747}
+  - name: "Mount: Fiery Warhorse's Reins"
+    item_id: 880100
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 30480}
+  - name: "Mount: Reins of the Cobalt Riding Talbuk"
+    item_id: 880101
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 31829}
+  - name: "Mount: Reins of the Silver Riding Talbuk"
+    item_id: 880102
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 31831}
+  - name: "Mount: Reins of the Tan Riding Talbuk"
+    item_id: 880103
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 31833}
+  - name: "Mount: Reins of the White Riding Talbuk"
+    item_id: 880104
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 31835}
+  - name: "Mount: Green Riding Nether Ray"
+    item_id: 880105
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32314}
+  - name: "Mount: Purple Riding Nether Ray"
+    item_id: 880106
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32316}
+  - name: "Mount: Red Riding Nether Ray"
+    item_id: 880107
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32317}
+  - name: "Mount: Silver Riding Nether Ray"
+    item_id: 880108
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32318}
+  - name: "Mount: Blue Riding Nether Ray"
+    item_id: 880109
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32319}
+  - name: "Mount: Ashes of Al'ar"
+    item_id: 880110
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32458}
+  - name: "Mount: Reins of the Raven Lord"
+    item_id: 880111
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32768}
+  - name: "Mount: Reins of the Onyx Netherwing Drake"
+    item_id: 880112
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32857}
+  - name: "Mount: Reins of the Azure Netherwing Drake"
+    item_id: 880113
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32858}
+  - name: "Mount: Reins of the Cobalt Netherwing Drake"
+    item_id: 880114
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32859}
+  - name: "Mount: Reins of the Purple Netherwing Drake"
+    item_id: 880115
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32860}
+  - name: "Mount: Reins of the Veridian Netherwing Drake"
+    item_id: 880116
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32861}
+  - name: "Mount: Reins of the Violet Netherwing Drake"
+    item_id: 880117
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32862}
+  - name: "Mount: Brewfest Ram"
+    item_id: 880118
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 33976}
+  - name: "Mount: Swift Brewfest Ram"
+    item_id: 880119
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 33977}
+  - name: "Mount: Cenarion War Hippogryph"
+    item_id: 880120
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 33999}
+  - name: "Mount: Swift Warstrider"
+    item_id: 880121
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 34129}
+  - name: "Mount: Swift White Hawkstrider"
+    item_id: 880122
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 35513}
+  - name: "Mount: Reins of the Black War Elekk"
+    item_id: 880123
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 35906}
+  - name: "Mount: Winged Steed of the Ebon Blade"
+    item_id: 880124
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 40775}
+  - name: "Mount: Reins of the Bronze Drake"
+    item_id: 880125
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43951}
+  - name: "Mount: Reins of the Twilight Drake"
+    item_id: 880126
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43954}
+  - name: "Mount: Reins of the Red Drake"
+    item_id: 880127
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43955}
+  - name: "Mount: Reins of the Black War Mammoth (43956)"
+    item_id: 880128
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43956}
+  - name: "Mount: Reins of the Ice Mammoth (43958)"
+    item_id: 880129
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43958}
+  - name: "Mount: Reins of the Grand Black War Mammoth (43959)"
+    item_id: 880130
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43959}
+  - name: "Mount: Reins of the Grand Ice Mammoth (43961)"
+    item_id: 880131
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43961}
+  - name: "Mount: Reins of the Black Drake"
+    item_id: 880132
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 43986}
+  - name: "Mount: Reins of the Black War Mammoth (44077)"
+    item_id: 880133
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44077}
+  - name: "Mount: Reins of the Ice Mammoth (44080)"
+    item_id: 880134
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44080}
+  - name: "Mount: Reins of the Grand Black War Mammoth (44083)"
+    item_id: 880135
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44083}
+  - name: "Mount: Reins of the Grand Ice Mammoth (44086)"
+    item_id: 880136
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44086}
+  - name: "Mount: Reins of the Blue Proto-Drake"
+    item_id: 880137
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44151}
+  - name: "Mount: Reins of the Time-Lost Proto-Drake"
+    item_id: 880138
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44168}
+  - name: "Mount: Reins of the Armored Brown Bear (44225)"
+    item_id: 880139
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44225}
+  - name: "Mount: Reins of the Armored Brown Bear (44226)"
+    item_id: 880140
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44226}
+  - name: "Mount: Reins of the Wooly Mammoth (44230)"
+    item_id: 880141
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44230}
+  - name: "Mount: Reins of the Wooly Mammoth (44231)"
+    item_id: 880142
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44231}
+  - name: "Mount: Reins of the Traveler's Tundra Mammoth (44234)"
+    item_id: 880143
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44234}
+  - name: "Mount: Reins of the Traveler's Tundra Mammoth (44235)"
+    item_id: 880144
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44235}
+  - name: "Mount: Armored Snowy Gryphon"
+    item_id: 880145
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44689}
+  - name: "Mount: Armored Blue Wind Rider"
+    item_id: 880146
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44690}
+  - name: "Mount: Stormwind Steed"
+    item_id: 880147
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45125}
+  - name: "Mount: Ironforge Ram"
+    item_id: 880148
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45586}
+  - name: "Mount: Gnomeregan Mechanostrider"
+    item_id: 880149
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45589}
+  - name: "Mount: Exodar Elekk"
+    item_id: 880150
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45590}
+  - name: "Mount: Darnassian Nightsaber"
+    item_id: 880151
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45591}
+  - name: "Mount: Thunder Bluff Kodo"
+    item_id: 880152
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45592}
+  - name: "Mount: Darkspear Raptor"
+    item_id: 880153
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45593}
+  - name: "Mount: Orgrimmar Wolf"
+    item_id: 880154
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45595}
+  - name: "Mount: Silvermoon Hawkstrider"
+    item_id: 880155
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45596}
+  - name: "Mount: Forsaken Warhorse"
+    item_id: 880156
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45597}
+  - name: "Mount: Mimiron's Head"
+    item_id: 880157
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45693}
+  - name: "Mount: Argent Hippogryph"
+    item_id: 880158
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45725}
+  - name: "Mount: Horn of the Black Wolf"
+    item_id: 880159
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46099}
+  - name: "Mount: White Kodo"
+    item_id: 880160
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46100}
+  - name: "Mount: Whistle of the Venomhide Ravasaur"
+    item_id: 880161
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46102}
+  - name: "Mount: Black Skeletal Horse"
+    item_id: 880162
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46308}
+  - name: "Mount: Swift Purple Raptor"
+    item_id: 880163
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46743}
+  - name: "Mount: Swift Moonsaber"
+    item_id: 880164
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46744}
+  - name: "Mount: Great Red Elekk"
+    item_id: 880165
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46745}
+  - name: "Mount: White Skeletal Warhorse"
+    item_id: 880166
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46746}
+  - name: "Mount: Turbostrider"
+    item_id: 880167
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46747}
+  - name: "Mount: Swift Violet Ram"
+    item_id: 880168
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46748}
+  - name: "Mount: Swift Burgundy Wolf"
+    item_id: 880169
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46749}
+  - name: "Mount: Great Golden Kodo"
+    item_id: 880170
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46750}
+  - name: "Mount: Swift Red Hawkstrider"
+    item_id: 880171
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46751}
+  - name: "Mount: Swift Gray Steed"
+    item_id: 880172
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46752}
+  - name: "Mount: Silver Covenant Hippogryph"
+    item_id: 880173
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46813}
+  - name: "Mount: Sunreaver Dragonhawk"
+    item_id: 880174
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46814}
+  - name: "Mount: Quel'dorei Steed"
+    item_id: 880175
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46815}
+  - name: "Mount: Sunreaver Hawkstrider"
+    item_id: 880176
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46816}
+  - name: "Mount: Reins of the Striped Dawnsaber"
+    item_id: 880177
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 47100}
+  - name: "Mount: Ochre Skeletal Warhorse"
+    item_id: 880178
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 47101}
+  - name: "Mount: Argent Charger"
+    item_id: 880179
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 47179}
+  - name: "Mount: Argent Warhorse"
+    item_id: 880180
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 47180}
+  - name: "Mount: Reins of the Onyxian Drake"
+    item_id: 880181
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 49636}
+  - name: "Mount: Invincible's Reins"
+    item_id: 880182
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 50818}
+  - name: "Mount: Reins of the Crimson Deathcharger"
+    item_id: 880183
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 52200}
+  - name: "Pet: Cat Carrier (Bombay)"
+    item_id: 880184
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8485}
+  - name: "Pet: Cat Carrier (Cornish Rex)"
+    item_id: 880185
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8486}
+  - name: "Pet: Cat Carrier (Orange Tabby)"
+    item_id: 880186
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8487}
+  - name: "Pet: Cat Carrier (Silver Tabby)"
+    item_id: 880187
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8488}
+  - name: "Pet: Cat Carrier (White Kitten)"
+    item_id: 880188
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8489}
+  - name: "Pet: Cat Carrier (Siamese)"
+    item_id: 880189
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8490}
+  - name: "Pet: Cat Carrier (Black Tabby)"
+    item_id: 880190
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8491}
+  - name: "Pet: Parrot Cage (Green Wing Macaw)"
+    item_id: 880191
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8492}
+  - name: "Pet: Parrot Cage (Hyacinth Macaw)"
+    item_id: 880192
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8494}
+  - name: "Pet: Parrot Cage (Senegal)"
+    item_id: 880193
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8495}
+  - name: "Pet: Parrot Cage (Cockatiel)"
+    item_id: 880194
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8496}
+  - name: "Pet: Rabbit Crate (Snowshoe)"
+    item_id: 880195
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8497}
+  - name: "Pet: Tiny Emerald Whelpling"
+    item_id: 880196
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8498}
+  - name: "Pet: Tiny Crimson Whelpling"
+    item_id: 880197
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8499}
+  - name: "Pet: Great Horned Owl"
+    item_id: 880198
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8500}
+  - name: "Pet: Hawk Owl"
+    item_id: 880199
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 8501}
+  - name: "Pet: Black Kingsnake"
+    item_id: 880200
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10360}
+  - name: "Pet: Brown Snake"
+    item_id: 880201
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10361}
+  - name: "Pet: Crimson Snake"
+    item_id: 880202
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10392}
+  - name: "Pet: Cockroach"
+    item_id: 880203
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10393}
+  - name: "Pet: Prairie Dog Whistle"
+    item_id: 880204
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10394}
+  - name: "Pet: Mechanical Chicken"
+    item_id: 880205
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10398}
+  - name: "Pet: Dark Whelpling"
+    item_id: 880206
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 10822}
+  - name: "Pet: Ancona Chicken"
+    item_id: 880207
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 11023}
+  - name: "Pet: Tree Frog Box"
+    item_id: 880208
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 11026}
+  - name: "Pet: Wood Frog Box"
+    item_id: 880209
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 11027}
+  - name: "Pet: Sprite Darter Egg"
+    item_id: 880210
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 11474}
+  - name: "Pet: Zergling Leash"
+    item_id: 880211
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13582}
+  - name: "Pet: Panda Collar"
+    item_id: 880212
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13583}
+  - name: "Pet: Diablo Stone"
+    item_id: 880213
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 13584}
+  - name: "Pet: Blue Murloc Egg"
+    item_id: 880214
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 20371}
+  - name: "Pet: Orange Murloc Egg"
+    item_id: 880215
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 20651}
+  - name: "Pet: Pink Murloc Egg"
+    item_id: 880216
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 22114}
+  - name: "Pet: Truesilver Shafted Arrow"
+    item_id: 880217
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 22235}
+  - name: "Pet: White Murloc Egg"
+    item_id: 880218
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 22780}
+  - name: "Pet: Polar Bear Collar"
+    item_id: 880219
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 22781}
+  - name: "Pet: Turtle Box"
+    item_id: 880220
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 23002}
+  - name: "Pet: Piglet's Collar"
+    item_id: 880221
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 23007}
+  - name: "Pet: Rat Cage"
+    item_id: 880222
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 23015}
+  - name: "Pet: Captured Flame"
+    item_id: 880223
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 23083}
+  - name: "Pet: Mana Wyrmling"
+    item_id: 880224
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29363}
+  - name: "Pet: Brown Rabbit Crate"
+    item_id: 880225
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29364}
+  - name: "Pet: Blue Moth Egg"
+    item_id: 880226
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29901}
+  - name: "Pet: Red Moth Egg"
+    item_id: 880227
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29902}
+  - name: "Pet: Yellow Moth Egg"
+    item_id: 880228
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29903}
+  - name: "Pet: White Moth Egg"
+    item_id: 880229
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29904}
+  - name: "Pet: Golden Dragonhawk Hatchling"
+    item_id: 880230
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29953}
+  - name: "Pet: Red Dragonhawk Hatchling"
+    item_id: 880231
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29956}
+  - name: "Pet: Silver Dragonhawk Hatchling"
+    item_id: 880232
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29957}
+  - name: "Pet: Blue Dragonhawk Hatchling"
+    item_id: 880233
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29958}
+  - name: "Pet: Captured Firefly"
+    item_id: 880234
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 29960}
+  - name: "Pet: Wolpertinger's Tankard"
+    item_id: 880235
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 32233}
+  - name: "Pet: Tiny Sporebat"
+    item_id: 880236
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 34478}
+  - name: "Pet: Azure Whelpling"
+    item_id: 880237
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 34535}
+  - name: "Pet: Phoenix Hatchling"
+    item_id: 880238
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 35504}
+  - name: "Pet: Nether Ray Fry"
+    item_id: 880239
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 38628}
+  - name: "Pet: Vampiric Batling"
+    item_id: 880240
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 38658}
+  - name: "Pet: Ghostly Skull"
+    item_id: 880241
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 39973}
+  - name: "Pet: Nurtured Penguin Egg"
+    item_id: 880242
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44723}
+  - name: "Pet: Albino Snake"
+    item_id: 880243
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44822}
+  - name: "Pet: Teldrassil Sproutling"
+    item_id: 880244
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44965}
+  - name: "Pet: Dun Morogh Cub"
+    item_id: 880245
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44970}
+  - name: "Pet: Tirisfal Batling"
+    item_id: 880246
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44971}
+  - name: "Pet: Durotar Scorpion"
+    item_id: 880247
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44973}
+  - name: "Pet: Elwynn Lamb"
+    item_id: 880248
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44974}
+  - name: "Pet: Mulgore Hatchling"
+    item_id: 880249
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44980}
+  - name: "Pet: Enchanted Broom"
+    item_id: 880250
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44982}
+  - name: "Pet: Ammen Vale Lashling"
+    item_id: 880251
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44984}
+  - name: "Pet: Argent Squire"
+    item_id: 880252
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 44998}
+  - name: "Pet: Mechanopeep"
+    item_id: 880253
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45002}
+  - name: "Pet: Argent Gruntling"
+    item_id: 880254
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45022}
+  - name: "Pet: Sen'jin Fetish"
+    item_id: 880255
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 45606}
+  - name: "Pet: Calico Cat"
+    item_id: 880256
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46398}
+  - name: "Pet: Pint-Sized Pink Pachyderm"
+    item_id: 880257
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46707}
+  - name: "Pet: Shimmering Wyrmling"
+    item_id: 880258
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 46820}
+  - name: "Pet: Deviate Hatchling"
+    item_id: 880259
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 48114}
+  - name: "Pet: Gundrak Hatchling"
+    item_id: 880260
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 48116}
+  - name: "Pet: Obsidian Hatchling"
+    item_id: 880261
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 48120}
+  - name: "Pet: Razzashi Hatchling"
+    item_id: 880262
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 48126}
+  - name: "Pet: Blue Clockwork Rocket Bot"
+    item_id: 880263
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 54436}

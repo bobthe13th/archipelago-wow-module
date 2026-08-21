@@ -3,6 +3,9 @@
 
 #include <string>
 
+#include <vector>
+
+#include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoManager.h"
@@ -67,6 +70,59 @@ namespace Archipelago::Goals
             }
             return true;
         }
+
+        // Task 27 (Artisan): skill ids sourced from professions.yaml's own
+        // header comment (SharedDefines.h's SkillType enum) -- 11 primary,
+        // 3 secondary. Complete once all 3 secondary professions AND at
+        // least ArtisanPrimaryProfessionsRequired of the 11 primaries have
+        // reached the "profession_<skillId>_450" milestone flag. Kept as a
+        // small local list rather than a generated structure -- unlike
+        // INSTANCE_CLEAR_LOCATIONS (5 entries, genuinely core content), this
+        // is fixed design-catalog data professions.yaml itself hardcodes,
+        // and duplicating 14 stable ids here avoids adding yet another
+        // generated Archipelago::Professions:: structure for a one-caller need.
+        bool IsArtisanComplete()
+        {
+            static std::vector<uint32_t> const secondarySkillIds = { 129, 185, 356 }; // First Aid, Cooking, Fishing
+            static std::vector<uint32_t> const primarySkillIds = {
+                171, 164, 333, 202, 182, 773, 755, 165, 186, 393, 197,
+                // Alchemy, Blacksmithing, Enchanting, Engineering, Herbalism,
+                // Inscription, Jewelcrafting, Leatherworking, Mining, Skinning, Tailoring
+            };
+
+            for (uint32_t skillId : secondarySkillIds)
+                if (!sArchipelagoRealmState->IsFlagUnlocked("profession_" + std::to_string(skillId) + "_450"))
+                    return false;
+
+            uint32_t maxedPrimaries = 0;
+            for (uint32_t skillId : primarySkillIds)
+                if (sArchipelagoRealmState->IsFlagUnlocked("profession_" + std::to_string(skillId) + "_450"))
+                    ++maxedPrimaries;
+
+            return maxedPrimaries >= sArchipelagoRealmState->GetArtisanPrimaryProfessionsRequired();
+        }
+
+        // Task 27 (Collector): complete once at least CollectorItemsRequired
+        // of the 264 curated mounts/pets have been received at least once --
+        // "collection_received_<apItemId>" flag, recorded at the point of
+        // delivery (ArchipelagoPlayerScript.cpp's collections-item dispatch
+        // block), same convention as Fishing Quest's fish_received_ flags.
+        // Default CollectorItemsRequired (264) matches Fishing Quest's
+        // require-everything shape exactly; the threshold is configurable
+        // (like Artisan's primary-professions count) purely so a shorter
+        // Collector run is selectable per-seed, not because completion is
+        // mechanically harder to reach than Fishing Quest's.
+        bool IsCollectorComplete()
+        {
+            uint32_t receivedCount = 0;
+            for (auto const& [apItemId, wowItemEntry] : Archipelago::Collections::ApItemIdToWowItemEntry)
+            {
+                (void)wowItemEntry;
+                if (sArchipelagoRealmState->IsFlagUnlocked("collection_received_" + std::to_string(apItemId)))
+                    ++receivedCount;
+            }
+            return receivedCount >= sArchipelagoRealmState->GetCollectorItemsRequired();
+        }
     }
 
     void CheckAndSendGoalComplete()
@@ -86,6 +142,8 @@ namespace Archipelago::Goals
         bool complete = false;
         if (mode == "key_hunt")
             complete = IsKeyHuntComplete();
+        else if (mode == "artisan")
+            complete = IsArtisanComplete();
         else if (mode == "fishing_quest")
             complete = IsFishingQuestComplete();
         else if (mode == "classic")
@@ -96,11 +154,14 @@ namespace Archipelago::Goals
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL);
         else if (mode == "completionist")
             complete = IsCompletionistComplete();
-        // Every other GameMode value (artisan, collector, achievement_hunt,
-        // gladiator, explorer) has no C++-side completion check yet,
-        // matching goals.py's own _not_yet_implemented deferral for those
-        // modes -- this function simply never reports completion for them,
-        // rather than guessing.
+        else if (mode == "collector")
+            complete = IsCollectorComplete();
+        // Every other GameMode value (gladiator) has no C++-side completion
+        // check yet, matching goals.py's own dispatch for that mode -- this
+        // function simply never reports completion for it, rather than
+        // guessing. achievement_hunt/explorer are deferred entirely
+        // (not_buildable, see docs/m4-plan.md Task 27's outcome note), not
+        // merely not-yet-implemented.
 
         if (complete)
             sArchipelagoMgr->SendGoalComplete();

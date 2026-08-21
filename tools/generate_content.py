@@ -115,6 +115,8 @@ _TRIGGER_KINDS_BY_FAMILY = {
     "traps": set(),  # traps never have locations, same shape as gates
     "rares": {"rare_kill"},
     "fish": {"fish_catch"},
+    "professions": {"skill_milestone"},
+    "collections": {"learn_spell"},
 }
 
 _DELIVERY_KINDS_BY_FAMILY = {
@@ -125,6 +127,8 @@ _DELIVERY_KINDS_BY_FAMILY = {
     "traps": {"trap"},
     "rares": {"realm_state"},
     "fish": {"mail"},
+    "professions": {"realm_state"},
+    "collections": {"mail"},
 }
 
 _REALM_STATE_EFFECTS = {
@@ -133,6 +137,7 @@ _REALM_STATE_EFFECTS = {
     "unlock_dark_portal",
     "unlock_northrend_passage",
     "grant_key",
+    "record_milestone",
 }
 
 
@@ -213,6 +218,10 @@ def emit_python(data: dict) -> str:
         return _emit_python_rares(data)
     if family == "fish":
         return _emit_python_fish(data)
+    if family == "professions":
+        return _emit_python_professions(data)
+    if family == "collections":
+        return _emit_python_collections(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -405,6 +414,60 @@ def _emit_python_fish(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_python_professions(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/professions.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("# The skill-450 milestone item name for each primary/secondary profession")
+    lines.append("# -- goals.py's Artisan completion rule needs these grouped by category,")
+    lines.append("# not the full 84-item list, per professions.yaml's own KNOWN ACCEPTED")
+    lines.append("# LIMITATION note (a single character can't realistically max all 9")
+    lines.append("# primaries at once).")
+    # Matched by (skill_id, threshold) parsed back out of each item's own
+    # milestone_key -- not by list position/order, so this stays correct
+    # even if a future edit reorders either list independently.
+    item_name_by_skill_threshold = {}
+    for item in data["items"]:
+        milestone_key = item["delivery"]["milestone_key"]
+        _prefix, skill_id_str, threshold_str = milestone_key.rsplit("_", 2)
+        item_name_by_skill_threshold[(int(skill_id_str), int(threshold_str))] = item["name"]
+
+    for category in ("primary", "secondary"):
+        varname = f"{category.upper()}_PROFESSION_MAX_ITEM_NAMES"
+        lines.append(f"{varname}: frozenset[str] = frozenset({{")
+        for loc in data["locations"]:
+            trigger = loc["trigger"]
+            if trigger["category"] == category and trigger["threshold"] == 450:
+                item_name = item_name_by_skill_threshold[(trigger["skill_id"], trigger["threshold"])]
+                lines.append(f'    "{item_name}",')
+        lines.append("})")
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_python_collections(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/collections.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 _GENERATED_HEADER_CPP = (
     "// GENERATED FILE - do not edit by hand.\n"
     "// Regenerate with: python modules/archipelago_wow/tools/generate_content.py {source}\n"
@@ -427,6 +490,10 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_rares(data)
     if family == "fish":
         return _emit_cpp_fish(data)
+    if family == "professions":
+        return _emit_cpp_professions(data)
+    if family == "collections":
+        return _emit_cpp_collections(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -681,6 +748,73 @@ def _emit_cpp_fish(data: dict) -> str:
     lines.append("    // merged into the quests-family one so each compiled family stays")
     lines.append("    // self-contained; ArchipelagoPlayerScript.cpp checks this table explicitly")
     lines.append("    // before falling through to the quests-family one.")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_professions(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/professions.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <string>",
+        "#include <unordered_map>",
+        "#include <utility>",
+        "#include <vector>", "",
+        "namespace Archipelago::Professions", "{",
+    ]
+    lines.append("    // Every (threshold, location_id) pair for a given skill_id, sorted by")
+    lines.append("    // threshold ascending -- the skill-up hook (ArchipelagoProfessionScript.cpp)")
+    lines.append("    // scans this per skill_id to find which thresholds a skill-up newly")
+    lines.append("    // crossed, mirroring ArchipelagoLevelScript.cpp's own oldLevel..newLevel")
+    lines.append("    // range-scan (a single big skill-up, e.g. a trainer visit, can cross")
+    lines.append("    // multiple thresholds in one OnPlayerSetSkill call).")
+    lines.append("    inline std::unordered_map<uint32_t, std::vector<std::pair<uint32_t, int64_t>>> const ThresholdsBySkillId = {")
+    by_skill: dict[int, list[tuple[int, int]]] = {}
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        by_skill.setdefault(trigger["skill_id"], []).append((trigger["threshold"], loc["location_id"]))
+    for skill_id, pairs in by_skill.items():
+        pairs.sort()
+        entries = ", ".join(f'{{ {t}, {loc_id} }}' for t, loc_id in pairs)
+        lines.append(f'        {{ {skill_id}, {{ {entries} }} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // AP item id -> the realm-state flag key to set on receipt (this")
+    lines.append("    // family's `record_milestone` realm_state effect).")
+    lines.append("    inline std::unordered_map<int64_t, std::string> const ApItemIdToMilestoneKey = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, "{item["delivery"]["milestone_key"]}" }}, // "{item["name"]}"')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_collections(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/collections.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::Collections", "{",
+    ]
+    lines.append("    // The real spell a mount/pet item teaches -> its own location id.")
+    lines.append("    // Consumed by the learn-spell hook (ArchipelagoCollectionScript.cpp).")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const SpellIdToLocationId = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["trigger"]["spell_id"]}, {loc["location_id"]} }}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // AP item id -> the real wow_item_entry to mail (this family's own copy")
+    lines.append("    // of the mail-delivery table, same pattern as Archipelago::Fish's own")
+    lines.append("    // ApItemIdToWowItemEntry -- checked before falling through to the")
+    lines.append("    // quests-family table).")
     lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {")
     for item in data["items"]:
         lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')

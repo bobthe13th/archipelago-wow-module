@@ -1,0 +1,649 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/professions.yaml
+family: professions
+
+# Task 27 (design spec Sec5.4, Tier 3: Artisan mode). All 14 professions
+# named in the design's own scope ("every profession -- both primary-
+# profession slots plus secondary professions -- First Aid, Cooking,
+# Fishing -- to its WotLK-era skill cap (450)") -- 11 primary (Alchemy,
+# Blacksmithing, Enchanting, Engineering, Herbalism, Inscription,
+# Jewelcrafting, Leatherworking, Mining, Skinning, Tailoring) + 3 secondary
+# (First Aid, Cooking, Fishing). Skill line ids sourced from THIS checkout's
+# own compiled server code (src/server/shared/SharedDefines.h's SkillType
+# enum), not memory or assumption -- the same "verify against this specific
+# checkout" discipline as every hook/id in this plan, applied here after
+# discovering that data/sql/base/db_world's *_dbc.sql tables (which would
+# normally carry SkillLine.dbc data) are empty stub schemas in this
+# checkout (confirmed: achievement_dbc, achievement_criteria_dbc,
+# areatable_dbc, and several others all have zero data rows -- this
+# checkout never populated its DBC-derived SQL tables, and no binary .dbc
+# client files exist in the repo either). SharedDefines.h's enum was the
+# one place these ids were verifiably real for THIS checkout, since the
+# server's own gameplay logic depends on them being correct.
+#
+# Six milestone thresholds per profession (75/150/225/300/375/450, the
+# skill-point breakpoints WoW itself uses for recipe-tier gating) rather
+# than one location per skill point -- 84 locations total (14 x 6), a
+# deliberate granularity choice, not a data limitation like Task 26's
+# fish-region heuristic.
+#
+# `category: primary|secondary` on each trigger drives goals.py's
+# completion rule -- see the KNOWN ACCEPTED LIMITATION below for why.
+# Location names ("Profession: <name> <threshold>", the in-game skill-up
+# trigger) and item names ("Skill Milestone: <name> <threshold>", the
+# AP-side collectible) are deliberately distinct strings, matching
+# fish.yaml's "Fish Catch: X" vs "Fish: X" precedent -- items and locations
+# share a namespace in this content-table schema and must never collide.
+#
+# KNOWN ACCEPTED LIMITATION, documented rather than silently shipped: a
+# single WotLK character can only actively know 2 of the 9 gathering/
+# crafting PRIMARY professions at once (unlearning and relearning a third
+# is possible but grindy) -- reaching all 9 primary professions' 450 cap
+# simultaneously is not achievable on one character without significant
+# profession-swapping. This mirrors the DK level-55 reachability gap
+# already accepted for core_loop.yaml (locations.py's own comment) -- the
+# content and locations are all real and correctly modeled, but full
+# completion in the sense of "every location checked by one character" is
+# impractical, not impossible. Artisan's own completion rule (goals.py)
+# accounts for this by requiring only a configurable N of the 9 primaries
+# (default matching the realistic 2-profession limit) rather than all 9,
+# alongside all 3 secondary professions (always simultaneously reachable).
+locations:
+  - name: "Profession: Alchemy 75"
+    location_id: 770000
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 75, category: primary}
+  - name: "Profession: Alchemy 150"
+    location_id: 770001
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 150, category: primary}
+  - name: "Profession: Alchemy 225"
+    location_id: 770002
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 225, category: primary}
+  - name: "Profession: Alchemy 300"
+    location_id: 770003
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 300, category: primary}
+  - name: "Profession: Alchemy 375"
+    location_id: 770004
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 375, category: primary}
+  - name: "Profession: Alchemy 450"
+    location_id: 770005
+    trigger: {kind: skill_milestone, skill_id: 171, threshold: 450, category: primary}
+  - name: "Profession: Blacksmithing 75"
+    location_id: 770006
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 75, category: primary}
+  - name: "Profession: Blacksmithing 150"
+    location_id: 770007
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 150, category: primary}
+  - name: "Profession: Blacksmithing 225"
+    location_id: 770008
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 225, category: primary}
+  - name: "Profession: Blacksmithing 300"
+    location_id: 770009
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 300, category: primary}
+  - name: "Profession: Blacksmithing 375"
+    location_id: 770010
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 375, category: primary}
+  - name: "Profession: Blacksmithing 450"
+    location_id: 770011
+    trigger: {kind: skill_milestone, skill_id: 164, threshold: 450, category: primary}
+  - name: "Profession: Enchanting 75"
+    location_id: 770012
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 75, category: primary}
+  - name: "Profession: Enchanting 150"
+    location_id: 770013
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 150, category: primary}
+  - name: "Profession: Enchanting 225"
+    location_id: 770014
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 225, category: primary}
+  - name: "Profession: Enchanting 300"
+    location_id: 770015
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 300, category: primary}
+  - name: "Profession: Enchanting 375"
+    location_id: 770016
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 375, category: primary}
+  - name: "Profession: Enchanting 450"
+    location_id: 770017
+    trigger: {kind: skill_milestone, skill_id: 333, threshold: 450, category: primary}
+  - name: "Profession: Engineering 75"
+    location_id: 770018
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 75, category: primary}
+  - name: "Profession: Engineering 150"
+    location_id: 770019
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 150, category: primary}
+  - name: "Profession: Engineering 225"
+    location_id: 770020
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 225, category: primary}
+  - name: "Profession: Engineering 300"
+    location_id: 770021
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 300, category: primary}
+  - name: "Profession: Engineering 375"
+    location_id: 770022
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 375, category: primary}
+  - name: "Profession: Engineering 450"
+    location_id: 770023
+    trigger: {kind: skill_milestone, skill_id: 202, threshold: 450, category: primary}
+  - name: "Profession: Herbalism 75"
+    location_id: 770024
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 75, category: primary}
+  - name: "Profession: Herbalism 150"
+    location_id: 770025
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 150, category: primary}
+  - name: "Profession: Herbalism 225"
+    location_id: 770026
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 225, category: primary}
+  - name: "Profession: Herbalism 300"
+    location_id: 770027
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 300, category: primary}
+  - name: "Profession: Herbalism 375"
+    location_id: 770028
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 375, category: primary}
+  - name: "Profession: Herbalism 450"
+    location_id: 770029
+    trigger: {kind: skill_milestone, skill_id: 182, threshold: 450, category: primary}
+  - name: "Profession: Inscription 75"
+    location_id: 770030
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 75, category: primary}
+  - name: "Profession: Inscription 150"
+    location_id: 770031
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 150, category: primary}
+  - name: "Profession: Inscription 225"
+    location_id: 770032
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 225, category: primary}
+  - name: "Profession: Inscription 300"
+    location_id: 770033
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 300, category: primary}
+  - name: "Profession: Inscription 375"
+    location_id: 770034
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 375, category: primary}
+  - name: "Profession: Inscription 450"
+    location_id: 770035
+    trigger: {kind: skill_milestone, skill_id: 773, threshold: 450, category: primary}
+  - name: "Profession: Jewelcrafting 75"
+    location_id: 770036
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 75, category: primary}
+  - name: "Profession: Jewelcrafting 150"
+    location_id: 770037
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 150, category: primary}
+  - name: "Profession: Jewelcrafting 225"
+    location_id: 770038
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 225, category: primary}
+  - name: "Profession: Jewelcrafting 300"
+    location_id: 770039
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 300, category: primary}
+  - name: "Profession: Jewelcrafting 375"
+    location_id: 770040
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 375, category: primary}
+  - name: "Profession: Jewelcrafting 450"
+    location_id: 770041
+    trigger: {kind: skill_milestone, skill_id: 755, threshold: 450, category: primary}
+  - name: "Profession: Leatherworking 75"
+    location_id: 770042
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 75, category: primary}
+  - name: "Profession: Leatherworking 150"
+    location_id: 770043
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 150, category: primary}
+  - name: "Profession: Leatherworking 225"
+    location_id: 770044
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 225, category: primary}
+  - name: "Profession: Leatherworking 300"
+    location_id: 770045
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 300, category: primary}
+  - name: "Profession: Leatherworking 375"
+    location_id: 770046
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 375, category: primary}
+  - name: "Profession: Leatherworking 450"
+    location_id: 770047
+    trigger: {kind: skill_milestone, skill_id: 165, threshold: 450, category: primary}
+  - name: "Profession: Mining 75"
+    location_id: 770048
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 75, category: primary}
+  - name: "Profession: Mining 150"
+    location_id: 770049
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 150, category: primary}
+  - name: "Profession: Mining 225"
+    location_id: 770050
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 225, category: primary}
+  - name: "Profession: Mining 300"
+    location_id: 770051
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 300, category: primary}
+  - name: "Profession: Mining 375"
+    location_id: 770052
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 375, category: primary}
+  - name: "Profession: Mining 450"
+    location_id: 770053
+    trigger: {kind: skill_milestone, skill_id: 186, threshold: 450, category: primary}
+  - name: "Profession: Skinning 75"
+    location_id: 770054
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 75, category: primary}
+  - name: "Profession: Skinning 150"
+    location_id: 770055
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 150, category: primary}
+  - name: "Profession: Skinning 225"
+    location_id: 770056
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 225, category: primary}
+  - name: "Profession: Skinning 300"
+    location_id: 770057
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 300, category: primary}
+  - name: "Profession: Skinning 375"
+    location_id: 770058
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 375, category: primary}
+  - name: "Profession: Skinning 450"
+    location_id: 770059
+    trigger: {kind: skill_milestone, skill_id: 393, threshold: 450, category: primary}
+  - name: "Profession: Tailoring 75"
+    location_id: 770060
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 75, category: primary}
+  - name: "Profession: Tailoring 150"
+    location_id: 770061
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 150, category: primary}
+  - name: "Profession: Tailoring 225"
+    location_id: 770062
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 225, category: primary}
+  - name: "Profession: Tailoring 300"
+    location_id: 770063
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 300, category: primary}
+  - name: "Profession: Tailoring 375"
+    location_id: 770064
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 375, category: primary}
+  - name: "Profession: Tailoring 450"
+    location_id: 770065
+    trigger: {kind: skill_milestone, skill_id: 197, threshold: 450, category: primary}
+  - name: "Profession: First Aid 75"
+    location_id: 770066
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 75, category: secondary}
+  - name: "Profession: First Aid 150"
+    location_id: 770067
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 150, category: secondary}
+  - name: "Profession: First Aid 225"
+    location_id: 770068
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 225, category: secondary}
+  - name: "Profession: First Aid 300"
+    location_id: 770069
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 300, category: secondary}
+  - name: "Profession: First Aid 375"
+    location_id: 770070
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 375, category: secondary}
+  - name: "Profession: First Aid 450"
+    location_id: 770071
+    trigger: {kind: skill_milestone, skill_id: 129, threshold: 450, category: secondary}
+  - name: "Profession: Cooking 75"
+    location_id: 770072
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 75, category: secondary}
+  - name: "Profession: Cooking 150"
+    location_id: 770073
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 150, category: secondary}
+  - name: "Profession: Cooking 225"
+    location_id: 770074
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 225, category: secondary}
+  - name: "Profession: Cooking 300"
+    location_id: 770075
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 300, category: secondary}
+  - name: "Profession: Cooking 375"
+    location_id: 770076
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 375, category: secondary}
+  - name: "Profession: Cooking 450"
+    location_id: 770077
+    trigger: {kind: skill_milestone, skill_id: 185, threshold: 450, category: secondary}
+  - name: "Profession: Fishing 75"
+    location_id: 770078
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 75, category: secondary}
+  - name: "Profession: Fishing 150"
+    location_id: 770079
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 150, category: secondary}
+  - name: "Profession: Fishing 225"
+    location_id: 770080
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 225, category: secondary}
+  - name: "Profession: Fishing 300"
+    location_id: 770081
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 300, category: secondary}
+  - name: "Profession: Fishing 375"
+    location_id: 770082
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 375, category: secondary}
+  - name: "Profession: Fishing 450"
+    location_id: 770083
+    trigger: {kind: skill_milestone, skill_id: 356, threshold: 450, category: secondary}
+
+# One item per milestone location, using a new realm_state effect
+# (record_milestone) that just sets a generic flag-store entry keyed by
+# milestone_key -- reuses the same generic-flag-store mechanism this
+# session already established for Key Hunt's key counter, Task 23's
+# instance-clear-sent guard, and Task 26's fish_received tracking, rather
+# than inventing a 5th ad-hoc realm-state mechanism. No real WoW item to
+# mail exists for "you reached skill 225 in Blacksmithing" the way
+# Task 26's fish items had a natural real-item target, so these are pure
+# AP-side progression markers with no in-game delivery effect.
+items:
+  - name: "Skill Milestone: Alchemy 75"
+    item_id: 870000
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_75"}
+  - name: "Skill Milestone: Alchemy 150"
+    item_id: 870001
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_150"}
+  - name: "Skill Milestone: Alchemy 225"
+    item_id: 870002
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_225"}
+  - name: "Skill Milestone: Alchemy 300"
+    item_id: 870003
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_300"}
+  - name: "Skill Milestone: Alchemy 375"
+    item_id: 870004
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_375"}
+  - name: "Skill Milestone: Alchemy 450"
+    item_id: 870005
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_171_450"}
+  - name: "Skill Milestone: Blacksmithing 75"
+    item_id: 870006
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_75"}
+  - name: "Skill Milestone: Blacksmithing 150"
+    item_id: 870007
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_150"}
+  - name: "Skill Milestone: Blacksmithing 225"
+    item_id: 870008
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_225"}
+  - name: "Skill Milestone: Blacksmithing 300"
+    item_id: 870009
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_300"}
+  - name: "Skill Milestone: Blacksmithing 375"
+    item_id: 870010
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_375"}
+  - name: "Skill Milestone: Blacksmithing 450"
+    item_id: 870011
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_164_450"}
+  - name: "Skill Milestone: Enchanting 75"
+    item_id: 870012
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_75"}
+  - name: "Skill Milestone: Enchanting 150"
+    item_id: 870013
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_150"}
+  - name: "Skill Milestone: Enchanting 225"
+    item_id: 870014
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_225"}
+  - name: "Skill Milestone: Enchanting 300"
+    item_id: 870015
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_300"}
+  - name: "Skill Milestone: Enchanting 375"
+    item_id: 870016
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_375"}
+  - name: "Skill Milestone: Enchanting 450"
+    item_id: 870017
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_333_450"}
+  - name: "Skill Milestone: Engineering 75"
+    item_id: 870018
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_75"}
+  - name: "Skill Milestone: Engineering 150"
+    item_id: 870019
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_150"}
+  - name: "Skill Milestone: Engineering 225"
+    item_id: 870020
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_225"}
+  - name: "Skill Milestone: Engineering 300"
+    item_id: 870021
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_300"}
+  - name: "Skill Milestone: Engineering 375"
+    item_id: 870022
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_375"}
+  - name: "Skill Milestone: Engineering 450"
+    item_id: 870023
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_202_450"}
+  - name: "Skill Milestone: Herbalism 75"
+    item_id: 870024
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_75"}
+  - name: "Skill Milestone: Herbalism 150"
+    item_id: 870025
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_150"}
+  - name: "Skill Milestone: Herbalism 225"
+    item_id: 870026
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_225"}
+  - name: "Skill Milestone: Herbalism 300"
+    item_id: 870027
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_300"}
+  - name: "Skill Milestone: Herbalism 375"
+    item_id: 870028
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_375"}
+  - name: "Skill Milestone: Herbalism 450"
+    item_id: 870029
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_182_450"}
+  - name: "Skill Milestone: Inscription 75"
+    item_id: 870030
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_75"}
+  - name: "Skill Milestone: Inscription 150"
+    item_id: 870031
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_150"}
+  - name: "Skill Milestone: Inscription 225"
+    item_id: 870032
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_225"}
+  - name: "Skill Milestone: Inscription 300"
+    item_id: 870033
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_300"}
+  - name: "Skill Milestone: Inscription 375"
+    item_id: 870034
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_375"}
+  - name: "Skill Milestone: Inscription 450"
+    item_id: 870035
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_773_450"}
+  - name: "Skill Milestone: Jewelcrafting 75"
+    item_id: 870036
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_75"}
+  - name: "Skill Milestone: Jewelcrafting 150"
+    item_id: 870037
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_150"}
+  - name: "Skill Milestone: Jewelcrafting 225"
+    item_id: 870038
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_225"}
+  - name: "Skill Milestone: Jewelcrafting 300"
+    item_id: 870039
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_300"}
+  - name: "Skill Milestone: Jewelcrafting 375"
+    item_id: 870040
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_375"}
+  - name: "Skill Milestone: Jewelcrafting 450"
+    item_id: 870041
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_755_450"}
+  - name: "Skill Milestone: Leatherworking 75"
+    item_id: 870042
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_75"}
+  - name: "Skill Milestone: Leatherworking 150"
+    item_id: 870043
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_150"}
+  - name: "Skill Milestone: Leatherworking 225"
+    item_id: 870044
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_225"}
+  - name: "Skill Milestone: Leatherworking 300"
+    item_id: 870045
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_300"}
+  - name: "Skill Milestone: Leatherworking 375"
+    item_id: 870046
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_375"}
+  - name: "Skill Milestone: Leatherworking 450"
+    item_id: 870047
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_165_450"}
+  - name: "Skill Milestone: Mining 75"
+    item_id: 870048
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_75"}
+  - name: "Skill Milestone: Mining 150"
+    item_id: 870049
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_150"}
+  - name: "Skill Milestone: Mining 225"
+    item_id: 870050
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_225"}
+  - name: "Skill Milestone: Mining 300"
+    item_id: 870051
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_300"}
+  - name: "Skill Milestone: Mining 375"
+    item_id: 870052
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_375"}
+  - name: "Skill Milestone: Mining 450"
+    item_id: 870053
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_186_450"}
+  - name: "Skill Milestone: Skinning 75"
+    item_id: 870054
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_75"}
+  - name: "Skill Milestone: Skinning 150"
+    item_id: 870055
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_150"}
+  - name: "Skill Milestone: Skinning 225"
+    item_id: 870056
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_225"}
+  - name: "Skill Milestone: Skinning 300"
+    item_id: 870057
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_300"}
+  - name: "Skill Milestone: Skinning 375"
+    item_id: 870058
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_375"}
+  - name: "Skill Milestone: Skinning 450"
+    item_id: 870059
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_393_450"}
+  - name: "Skill Milestone: Tailoring 75"
+    item_id: 870060
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_75"}
+  - name: "Skill Milestone: Tailoring 150"
+    item_id: 870061
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_150"}
+  - name: "Skill Milestone: Tailoring 225"
+    item_id: 870062
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_225"}
+  - name: "Skill Milestone: Tailoring 300"
+    item_id: 870063
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_300"}
+  - name: "Skill Milestone: Tailoring 375"
+    item_id: 870064
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_375"}
+  - name: "Skill Milestone: Tailoring 450"
+    item_id: 870065
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_197_450"}
+  - name: "Skill Milestone: First Aid 75"
+    item_id: 870066
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_75"}
+  - name: "Skill Milestone: First Aid 150"
+    item_id: 870067
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_150"}
+  - name: "Skill Milestone: First Aid 225"
+    item_id: 870068
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_225"}
+  - name: "Skill Milestone: First Aid 300"
+    item_id: 870069
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_300"}
+  - name: "Skill Milestone: First Aid 375"
+    item_id: 870070
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_375"}
+  - name: "Skill Milestone: First Aid 450"
+    item_id: 870071
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_129_450"}
+  - name: "Skill Milestone: Cooking 75"
+    item_id: 870072
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_75"}
+  - name: "Skill Milestone: Cooking 150"
+    item_id: 870073
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_150"}
+  - name: "Skill Milestone: Cooking 225"
+    item_id: 870074
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_225"}
+  - name: "Skill Milestone: Cooking 300"
+    item_id: 870075
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_300"}
+  - name: "Skill Milestone: Cooking 375"
+    item_id: 870076
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_375"}
+  - name: "Skill Milestone: Cooking 450"
+    item_id: 870077
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_185_450"}
+  - name: "Skill Milestone: Fishing 75"
+    item_id: 870078
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_75"}
+  - name: "Skill Milestone: Fishing 150"
+    item_id: 870079
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_150"}
+  - name: "Skill Milestone: Fishing 225"
+    item_id: 870080
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_225"}
+  - name: "Skill Milestone: Fishing 300"
+    item_id: 870081
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_300"}
+  - name: "Skill Milestone: Fishing 375"
+    item_id: 870082
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_375"}
+  - name: "Skill Milestone: Fishing 450"
+    item_id: 870083
+    count: 1
+    delivery: {kind: realm_state, effect: record_milestone, milestone_key: "profession_356_450"}

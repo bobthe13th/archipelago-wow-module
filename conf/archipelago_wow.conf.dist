@@ -352,3 +352,40 @@ Archipelago.KeyHuntKeysRequired = 10
 
 Archipelago.KeyHuntInstancesRequired = 1
 ###################################################################################################
+
+#    Archipelago.ArtisanPrimaryProfessionsRequired
+#        Description: Only relevant when Archipelago.GameMode is "Artisan"
+#                      (Task 27) -- how many of the 11 primary professions
+#                      (Alchemy, Blacksmithing, Enchanting, Engineering,
+#                      Herbalism, Inscription, Jewelcrafting, Leatherworking,
+#                      Mining, Skinning, Tailoring) must reach skill 450 to
+#                      complete the goal, alongside all 3 secondary
+#                      professions (First Aid, Cooking, Fishing) also
+#                      reaching 450. Default 2 matches the realistic limit
+#                      of professions a single WotLK character can actively
+#                      know at once -- see professions.yaml's own KNOWN
+#                      ACCEPTED LIMITATION comment. Must match the connected
+#                      seed's own artisan_primary_professions_required option.
+#        Default:     2
+
+Archipelago.ArtisanPrimaryProfessionsRequired = 2
+###################################################################################################
+
+#
+#    Archipelago.CollectorItemsRequired
+#        Description: Only relevant when Archipelago.GameMode is "Collector"
+#                      (Task 27) -- how many of the 264 curated mounts/pets
+#                      (collections.yaml) must have been received at least
+#                      once to complete the goal. Default 264 is the FULL
+#                      roster, matching the design spec's "every collectible
+#                      mount AND every collectible pet" scope exactly -- AP
+#                      item delivery here isn't gated by in-game drop
+#                      rarity, so unlike Artisan's profession-slot
+#                      constraint there is no mechanical reason to default
+#                      lower. Lower this only to shorten a given seed's
+#                      Collector run. Must match the connected seed's own
+#                      collector_items_required option.
+#        Default:     264
+
+Archipelago.CollectorItemsRequired = 264
+###################################################################################################

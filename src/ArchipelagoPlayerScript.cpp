@@ -14,11 +14,13 @@
 #include "APGating.h"
 #include "APProtocol.h"
 #include "APTraps.h"
+#include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGoals.h"
+#include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoTrapsContentTable.h"
@@ -211,6 +213,36 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             // per-AP-item-id key) rather than a new mechanism, same as Key
             // Hunt's key counter and Task 23's instance-clear-sent guard.
             sArchipelagoRealmState->SetFlagTier("fish_received_" + std::to_string(received.item), 1);
+            Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // Task 27 (Artisan): professions.yaml's items use the record_milestone
+        // realm_state effect -- no real WoW item to mail (unlike fish),
+        // just a flag-store entry under this item's own milestone_key.
+        auto professionMilestoneIt = Archipelago::Professions::ApItemIdToMilestoneKey.find(received.item);
+        if (professionMilestoneIt != Archipelago::Professions::ApItemIdToMilestoneKey.end())
+        {
+            sArchipelagoRealmState->SetFlagTier(professionMilestoneIt->second, 1);
+            Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // Task 27 (Collector): collections.yaml's items also use `mail`
+        // delivery (a real WoW item exists to hand over, unlike Artisan's
+        // pure flavor milestones), kept in its own generated table for the
+        // same self-contained-family reason as fish.
+        auto collectionEntryIt = Archipelago::Collections::ApItemIdToWowItemEntry.find(received.item);
+        if (collectionEntryIt != Archipelago::Collections::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, collectionEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", collectionEntryIt->second);
+            // Realm-wide "has this exact mount/pet ever been received" flag,
+            // backing Collector's "all 264 collectibles" completion check --
+            // same generic flag-store reuse as fish's per-species flag.
+            sArchipelagoRealmState->SetFlagTier("collection_received_" + std::to_string(received.item), 1);
             Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;

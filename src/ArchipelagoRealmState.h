@@ -176,6 +176,24 @@ public:
     uint32_t GetKeyHuntInstancesRequired() const { return _keyHuntInstancesRequired; }
     void SetKeyHuntInstancesRequired(uint32_t required) { _keyHuntInstancesRequired = required; }
 
+    // Cached mirror of Archipelago.ArtisanPrimaryProfessionsRequired
+    // (Task 27), same not-persisted worldserver.conf-mirror convention as
+    // every other option above -- consumed from
+    // ArchipelagoGoals.cpp's IsArtisanComplete.
+    uint32_t GetArtisanPrimaryProfessionsRequired() const { return _artisanPrimaryProfessionsRequired; }
+    void SetArtisanPrimaryProfessionsRequired(uint32_t required) { _artisanPrimaryProfessionsRequired = required; }
+
+    // Cached mirror of Archipelago.CollectorItemsRequired (Task 27) -- the
+    // default (264, matching CollectorItemsRequired's default in options.py)
+    // is the FULL roster, per the design spec's "every collectible mount AND
+    // every collectible pet" scope; unlike Artisan's hard profession-slot
+    // constraint, AP item delivery here isn't gated by in-game drop rarity,
+    // so there's no mechanical reason to default lower. The option exists so
+    // a shorter Collector run is selectable per-seed. Consumed from
+    // ArchipelagoGoals.cpp's IsCollectorComplete.
+    uint32_t GetCollectorItemsRequired() const { return _collectorItemsRequired; }
+    void SetCollectorItemsRequired(uint32_t required) { _collectorItemsRequired = required; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -202,6 +220,8 @@ private:
     std::string _completionistExpansion = "vanilla";
     uint32_t _keyHuntKeysRequired = 10;
     uint32_t _keyHuntInstancesRequired = 1;
+    uint32_t _artisanPrimaryProfessionsRequired = 2;
+    uint32_t _collectorItemsRequired = 264;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

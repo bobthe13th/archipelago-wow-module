@@ -242,6 +242,16 @@ public:
         sArchipelagoRealmState->SetKeyHuntKeysRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.KeyHuntKeysRequired", 10));
         sArchipelagoRealmState->SetKeyHuntInstancesRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.KeyHuntInstancesRequired", 1));
 
+        // Task 27 (Artisan): must match the connected seed's own
+        // artisan_primary_professions_required option -- same manual-sync
+        // requirement as every other option above.
+        sArchipelagoRealmState->SetArtisanPrimaryProfessionsRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.ArtisanPrimaryProfessionsRequired", 2));
+
+        // Task 27 (Collector): must match the connected seed's own
+        // collector_items_required option -- same manual-sync requirement
+        // as every other option above.
+        sArchipelagoRealmState->SetCollectorItemsRequired(sConfigMgr->GetOption<uint32_t>("Archipelago.CollectorItemsRequired", 264));
+
         // Task 14's known collision (flagged during Task 8): AccessGating can suppress
         // a player's ability to even open the Auction House window, so combining it with
         // Policy::AuctionHouse could list an AP-earned item on the AH a player is then

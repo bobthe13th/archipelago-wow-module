@@ -37,6 +37,14 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "fish_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFishContentTable.h",
     },
+    "professions": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "professions_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoProfessionsContentTable.h",
+    },
+    "collections": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "collections_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCollectionsContentTable.h",
+    },
 }
 
 
