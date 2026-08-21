@@ -156,12 +156,11 @@ namespace Archipelago::Goals
             complete = IsCompletionistComplete();
         else if (mode == "collector")
             complete = IsCollectorComplete();
-        // Every other GameMode value (gladiator) has no C++-side completion
-        // check yet, matching goals.py's own dispatch for that mode -- this
-        // function simply never reports completion for it, rather than
-        // guessing. achievement_hunt/explorer are deferred entirely
-        // (not_buildable, see docs/m4-plan.md Task 27's outcome note), not
-        // merely not-yet-implemented.
+        // achievement_hunt/explorer/gladiator are all deferred entirely
+        // (not_buildable, see docs/m4-plan.md Task 27's outcome note) --
+        // goals.py's generate_early raises OptionError for all three before
+        // any of these GameMode values can ever reach a running worldserver,
+        // so this function never needs a branch for them.
 
         if (complete)
             sArchipelagoMgr->SendGoalComplete();
