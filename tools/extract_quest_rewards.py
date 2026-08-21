@@ -10,8 +10,22 @@ import yaml
 
 from db_extract import run_query, is_denylisted, load_exclusion_rules
 
-_LOCATION_ID_BASE = 750_000
+_LOCATION_ID_BASE = 1_000_000
 _ITEM_ID_BASE = 1_750_000
+# Location base fixed from the plan's original 750_000 (Task 6 finding, not
+# present in Task 4's original code or the plan text): quest_template.ID
+# values in the 10000-19999 range are common in this checkout's real data
+# (confirmed: quest_id 10005-10043 alone produce 12 real collisions), and
+# 750_000 + a quest_id in that range lands squarely inside fish.yaml's own
+# 760000-760045 decade block, corrupting location_name_to_id with duplicate
+# IDs pointing at two different location names (caught by
+# Archipelago/test/general/test_ids.py::TestIDs::test_duplicate_location_ids,
+# which failed for this exact reason before this fix). 1_000_000 is
+# disjoint from every existing decade block (700000-789999) and from every
+# other million-wide block this plan reserves (2M/2.5M/3M/3.5M/4M/4.5M for
+# Groups 2-4) -- quest_template.ID would need to exceed 750,000 to collide
+# with _ITEM_ID_BASE, which is far beyond any real or plausible WotLK quest
+# ID.
 
 _FIXED_REWARD_COLS = ["RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4"]
 _CHOICE_REWARD_COLS = [f"RewardChoiceItemID{i}" for i in range(1, 7)]
