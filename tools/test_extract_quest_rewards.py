@@ -1,6 +1,7 @@
 import unittest
+from unittest.mock import patch, MagicMock
 
-from extract_quest_rewards import pick_representative_reward
+from extract_quest_rewards import pick_representative_reward, extract
 
 
 class TestPickRepresentativeReward(unittest.TestCase):
@@ -21,3 +22,33 @@ class TestPickRepresentativeReward(unittest.TestCase):
                "RewardChoiceItemID1": 0, "RewardChoiceItemID2": 0, "RewardChoiceItemID3": 0,
                "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
         self.assertIsNone(pick_representative_reward(row))
+
+
+class TestExtractNullHandling(unittest.TestCase):
+    """Test that extract() correctly handles SQL NULL values from LEFT JOIN.
+
+    db_extract.run_query returns all columns as strings; mysql.exe -Nse
+    renders SQL NULL as the literal string "NULL", not as Python None.
+    The extract() function must handle this correctly to avoid ValueError
+    when a quest_template row has no matching quest_template_addon row.
+    """
+
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_null_prev_quest_id_does_not_crash(self, mock_run_query, mock_load_rules) -> None:
+        """Test that a literal "NULL" string for prev_quest_id produces None in output."""
+        mock_load_rules.return_value = {"name_denylist": []}
+        # Simulate a quest with no matching quest_template_addon row:
+        # prev_quest_id comes back as the literal string "NULL" from mysql.exe -Nse
+        mock_run_query.return_value = [
+            ("100", "Test Quest", "10", "NULL",
+             "1234", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0")
+        ]
+
+        # Should not raise ValueError
+        result = extract()
+
+        # Should produce one location with prev_quest_id=None
+        self.assertEqual(len(result["locations"]), 1)
+        self.assertIsNone(result["locations"][0]["trigger"]["prev_quest_id"])

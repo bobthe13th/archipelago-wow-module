@@ -71,7 +71,7 @@ def extract() -> dict:
                 "kind": "quest_reward",
                 "quest_id": quest_id_int,
                 "min_level": int(min_level),
-                "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0") else None,
+                "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
             },
         })
         items.append({
