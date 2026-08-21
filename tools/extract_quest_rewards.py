@@ -62,8 +62,8 @@ def extract() -> dict:
             continue
 
         quest_id_int = int(quest_id)
-        location_name = f"Quest: {title} Reward"
-        item_name = f"Quest Reward: {title}"
+        location_name = f"Quest: {title} Reward (#{quest_id_int})"
+        item_name = f"Quest Reward: {title} (#{quest_id_int})"
         locations.append({
             "name": location_name,
             "location_id": _LOCATION_ID_BASE + quest_id_int,
