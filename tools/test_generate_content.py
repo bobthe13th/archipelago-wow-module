@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from generate_content import load_family, emit_python, emit_cpp, ValidationError
+from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, ValidationError
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -195,6 +195,19 @@ class TestEmitCpp(unittest.TestCase):
         self.assertIn("{ INSTANCE_KEY_RAGEFIRE_CHASM, 11520 }", text)
         self.assertIn("{ 5, 710000 }", text)
         self.assertIn('{ INSTANCE_KEY_RAGEFIRE_CHASM, 720000 }', text)
+
+
+class TestGenericEmitter(unittest.TestCase):
+    def test_emit_python_generic_includes_counts(self) -> None:
+        data = {
+            "family": "quests",
+            "locations": [{"name": "A Threat Within", "location_id": 700000, "trigger": {"kind": "quest", "quest_id": 783}}],
+            "items": [{"name": "A Threat Within", "item_id": 800000, "delivery": {"kind": "mail", "wow_item_entry": 25}}],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        self.assertIn('"A Threat Within": (800000, 1)', output)
+        self.assertIn('"A Threat Within": 700000', output)
 
 
 if __name__ == "__main__":

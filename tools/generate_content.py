@@ -11,6 +11,7 @@ import argparse
 import pathlib
 import re
 import sys
+from dataclasses import dataclass
 
 import yaml
 
@@ -120,28 +121,27 @@ def _validate_boss_lists(locations: list, yaml_path: pathlib.Path) -> None:
             )
 
 
-_TRIGGER_KINDS_BY_FAMILY = {
-    "quests": {"quest"},
-    "core_loop": {"level_milestone", "instance_clear"},
-    "gates": set(),  # gates never have locations
-    "filler": {"always_available"},
-    "traps": set(),  # traps never have locations, same shape as gates
-    "rares": {"rare_kill"},
-    "fish": {"fish_catch"},
-    "professions": {"skill_milestone"},
-    "collections": {"learn_spell"},
-}
+@dataclass
+class FamilySchema:
+    valid_trigger_kinds: set[str]
+    valid_delivery_kinds: set[str]
+    generic: bool = False  # True only for new families (Group 1-4) that use emit_*_generic;
+                            # every existing family below keeps its own hand-rolled emitter.
 
-_DELIVERY_KINDS_BY_FAMILY = {
-    "quests": {"mail"},
-    "core_loop": {"realm_state"},
-    "gates": {"flag"},
-    "filler": set(),  # filler never has items
-    "traps": {"trap"},
-    "rares": {"realm_state"},
-    "fish": {"mail"},
-    "professions": {"realm_state"},
-    "collections": {"mail"},
+
+FAMILY_SCHEMAS: dict[str, FamilySchema] = {
+    "quests": FamilySchema(valid_trigger_kinds={"quest"}, valid_delivery_kinds={"mail"}),
+    "core_loop": FamilySchema(
+        valid_trigger_kinds={"level_milestone", "instance_clear"},
+        valid_delivery_kinds={"realm_state"},
+    ),
+    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
+    "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
+    "traps": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"trap"}),
+    "rares": FamilySchema(valid_trigger_kinds={"rare_kill"}, valid_delivery_kinds={"realm_state"}),
+    "fish": FamilySchema(valid_trigger_kinds={"fish_catch"}, valid_delivery_kinds={"mail"}),
+    "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
+    "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -155,7 +155,8 @@ _REALM_STATE_EFFECTS = {
 
 
 def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_path: pathlib.Path) -> None:
-    valid_trigger_kinds = _TRIGGER_KINDS_BY_FAMILY.get(family)
+    schema = FAMILY_SCHEMAS.get(family)
+    valid_trigger_kinds = schema.valid_trigger_kinds if schema is not None else None
     if valid_trigger_kinds is not None:
         for loc in locations:
             kind = loc["trigger"]["kind"]
@@ -166,7 +167,7 @@ def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_p
                     f"(expected one of {sorted(valid_trigger_kinds)})"
                 )
 
-    valid_delivery_kinds = _DELIVERY_KINDS_BY_FAMILY.get(family)
+    valid_delivery_kinds = schema.valid_delivery_kinds if schema is not None else None
     if valid_delivery_kinds is not None:
         for item in items:
             delivery = item["delivery"]
@@ -215,8 +216,36 @@ _GENERATED_HEADER_PY = (
 )
 
 
+def emit_python_generic(data: dict) -> str:
+    """Generic LOCATIONS/ITEMS emitter for new, name-keyed content families.
+
+    Not used by any of the 9 existing families as of this task -- each keeps
+    its own hand-rolled emitter, since 5 of 8 name-keyed families already emit
+    extra family-specific exports (e.g. gates.FLAG_KEY_BY_ITEM_NAME) this
+    generic shape doesn't cover. Group 1-4's new families register
+    `generic=True` in FAMILY_SCHEMAS to opt into this emitter instead.
+    """
+    family = data["family"]
+    lines = [_GENERATED_HEADER_PY.format(source=f"content/{family}.yaml"), ""]
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        count = item.get("count", 1)
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {count}),')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def emit_python(data: dict) -> str:
     family = data["family"]
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is not None and schema.generic:
+        return emit_python_generic(data)
     if family == "quests":
         return _emit_python_quests(data)
     if family == "core_loop":
@@ -487,8 +516,46 @@ _GENERATED_HEADER_CPP = (
 )
 
 
+def emit_cpp_generic(data: dict) -> str:
+    """Generic LOCATIONS/ITEMS header emitter for new, name-keyed content families.
+
+    Not used by any of the 9 existing families as of this task -- every
+    existing header uses its own namespace/shape (e.g. Archipelago::Gates'
+    ApItemToFlagKeyAndTier, Archipelago::Filler's unordered_set), and those
+    symbols are referenced from compiled .cpp sources under src/, so they
+    keep their own hand-rolled emitter. Group 1-4's new families register
+    `generic=True` in FAMILY_SCHEMAS to opt into this emitter instead.
+    """
+    family = data["family"]
+    lines = [
+        "// GENERATED FILE - do not edit by hand.",
+        f"// Regenerate with: python modules/archipelago_wow/tools/generate_content.py content/{family}.yaml",
+        "#pragma once",
+        "",
+        "#include <map>",
+        "#include <string>",
+        "",
+    ]
+    guard = family.upper()
+    lines.append(f"namespace Archipelago{guard}Content {{")
+    lines.append("inline const std::map<std::string, uint32_t> LOCATIONS = {")
+    for loc in data["locations"]:
+        lines.append(f'    {{"{loc["name"]}", {loc["location_id"]}}},')
+    lines.append("};")
+    lines.append("inline const std::map<std::string, uint32_t> ITEMS = {")
+    for item in data["items"]:
+        lines.append(f'    {{"{item["name"]}", {item["item_id"]}}},')
+    lines.append("};")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def emit_cpp(data: dict) -> str:
     family = data["family"]
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is not None and schema.generic:
+        return emit_cpp_generic(data)
     if family == "quests":
         return _emit_cpp_quests(data)
     if family == "core_loop":
