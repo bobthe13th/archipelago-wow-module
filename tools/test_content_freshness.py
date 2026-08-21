@@ -49,6 +49,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "quest_rewards_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoQuestRewardsContentTable.h",
     },
+    "vendor_stock": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "vendor_stock_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoVendorStockContentTable.h",
+    },
 }
 
 

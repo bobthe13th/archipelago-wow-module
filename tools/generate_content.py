@@ -50,6 +50,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_recognized_kinds(data["family"], data["locations"], data["items"], yaml_path)
     _validate_boss_lists(data["locations"], yaml_path)
     _validate_quest_reward_rows(data["locations"], yaml_path)
+    _validate_vendor_purchase_rows(data["locations"], yaml_path)
 
     return data
 
@@ -139,6 +140,23 @@ def _validate_quest_reward_rows(locations: list, yaml_path: pathlib.Path) -> Non
             )
 
 
+def _validate_vendor_purchase_rows(locations: list, yaml_path: pathlib.Path) -> None:
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "vendor_purchase":
+            continue
+        missing_keys = []
+        if "npc_entry" not in trigger:
+            missing_keys.append("npc_entry")
+        if "item_slot" not in trigger:
+            missing_keys.append("item_slot")
+        if missing_keys:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has vendor_purchase trigger "
+                f"but is missing required key(s): {missing_keys}"
+            )
+
+
 @dataclass
 class FamilySchema:
     valid_trigger_kinds: set[str]
@@ -168,6 +186,9 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
     "quest_rewards": FamilySchema(
         valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
+    ),
+    "vendor_stock": FamilySchema(
+        valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"}, generic=True,
     ),
 }
 
