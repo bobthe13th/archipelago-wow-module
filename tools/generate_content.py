@@ -145,6 +145,12 @@ class FamilySchema:
     valid_delivery_kinds: set[str]
     generic: bool = False  # True only for new families (Group 1-4) that use emit_*_generic;
                             # every existing family below keeps its own hand-rolled emitter.
+    export_triggers: bool = False  # True only for families whose generic Python module needs a
+                                    # TRIGGERS: dict[str, dict] export (the raw `trigger` sub-dict
+                                    # per location name, verbatim) alongside LOCATIONS/ITEMS -- e.g.
+                                    # quest_rewards' rules.py rule reads TRIGGERS[name]["min_level"].
+                                    # Opt-in per family, not automatically added to every generic
+                                    # family, since most generic families have no rule that needs it.
 
 
 FAMILY_SCHEMAS: dict[str, FamilySchema] = {
@@ -160,7 +166,9 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "fish": FamilySchema(valid_trigger_kinds={"fish_catch"}, valid_delivery_kinds={"mail"}),
     "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
-    "quest_rewards": FamilySchema(valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True),
+    "quest_rewards": FamilySchema(
+        valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
+    ),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -270,6 +278,22 @@ def emit_python_generic(data: dict) -> str:
         lines.append(f'    {_string_literal(item["name"])}: ({item["item_id"]}, {count}),')
     lines.append("}")
     lines.append("")
+
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is not None and schema.export_triggers:
+        lines.append("TRIGGERS: dict[str, dict] = {")
+        for loc in data["locations"]:
+            # Keys here are the same location names as LOCATIONS above (can
+            # contain embedded double quotes, e.g. the "Hogger" quest) --
+            # reuse _string_literal rather than a naive f'"{name}"', same
+            # fix as LOCATIONS/ITEMS above. The value is the raw `trigger`
+            # sub-dict verbatim; repr() on a plain dict of str/int/None
+            # values already produces a valid Python dict literal with
+            # correct string escaping, so no separate helper is needed for
+            # the trigger's own inner values.
+            lines.append(f'    {_string_literal(loc["name"])}: {loc["trigger"]!r},')
+        lines.append("}")
+        lines.append("")
     return "\n".join(lines)
 
 
