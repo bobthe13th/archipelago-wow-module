@@ -191,3 +191,37 @@ TEST_CASE("BuildConnectPacket still round-trips through the JSON library (M1 reg
     CHECK(json.find("\"cmd\":\"Connect\"") != std::string::npos);
     CHECK(json.find("Te\\\"ster") != std::string::npos);
 }
+
+TEST_CASE("ParseApItemDisplayFromSlotData parses ap_item_display from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "ap_item_display": {
+                "2000000": {"name": "Alice's Sword of Might", "flags": 1},
+                "1000001": {"name": "Tester's Minor Heal Potion", "flags": 0}
+            }
+        }
+    }])";
+
+    auto display = Archipelago::ParseApItemDisplayFromSlotData(raw);
+
+    REQUIRE(display.size() == 2u);
+    CHECK(display[2000000].name == "Alice's Sword of Might");
+    CHECK(display[2000000].flags == 1);
+    CHECK(display[1000001].name == "Tester's Minor Heal Potion");
+    CHECK(display[1000001].flags == 0);
+}
+
+TEST_CASE("ParseApItemDisplayFromSlotData returns empty when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto display = Archipelago::ParseApItemDisplayFromSlotData(raw);
+    CHECK(display.empty());
+}
+
+TEST_CASE("ParseApItemDisplayFromSlotData returns empty on malformed JSON")
+{
+    auto display = Archipelago::ParseApItemDisplayFromSlotData("not json");
+    CHECK(display.empty());
+}

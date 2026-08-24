@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace Archipelago
@@ -47,6 +48,17 @@ namespace Archipelago
     {
         std::string cause;
         std::string source;
+    };
+
+    // One location's synthesized-item display data, computed at generation
+    // time in slot_data.py's _add_ap_item_display_data and carried here
+    // verbatim over the Connected message's slot_data object -- see the
+    // M4.7 design spec's §2-3 for why generation-time computation replaced
+    // an earlier LocationScouts-based design.
+    struct ApItemDisplay
+    {
+        std::string name;
+        int32_t flags = 0;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
@@ -95,4 +107,13 @@ namespace Archipelago
     // batched) frame and collects one IncomingDeathLink per "Bounce"+
     // "DeathLink" command found, in order.
     std::vector<IncomingDeathLink> ParseIncomingDeathLinks(std::string const& raw);
+
+    // Parses Connected's slot_data["ap_item_display"] object (a JSON object
+    // keyed by location id as a STRING -- JSON object keys are always
+    // strings, even though the apworld's dict is keyed by int -- into
+    // location_id -> ApItemDisplay. Returns an empty map (never throws) if
+    // slot_data or ap_item_display is absent/malformed, matching every
+    // other Parse* function's "don't crash the connection state machine on
+    // a shape it doesn't recognize" discipline.
+    std::unordered_map<int64_t, ApItemDisplay> ParseApItemDisplayFromSlotData(std::string const& raw);
 }

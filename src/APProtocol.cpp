@@ -164,4 +164,44 @@ namespace Archipelago
             CollectIncomingDeathLinkFromElement(element, result);
         return result;
     }
+
+    std::unordered_map<int64_t, ApItemDisplay> ParseApItemDisplayFromSlotData(std::string const& raw)
+    {
+        std::unordered_map<int64_t, ApItemDisplay> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || element.value("cmd", "") != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("ap_item_display") || !slotData["ap_item_display"].is_object())
+                continue;
+
+            for (auto const& [locationIdStr, displayJson] : slotData["ap_item_display"].items())
+            {
+                if (!displayJson.is_object())
+                    continue;
+                ApItemDisplay display;
+                display.name = displayJson.value("name", std::string());
+                display.flags = displayJson.value("flags", int32_t(0));
+                try
+                {
+                    result[std::stoll(locationIdStr)] = display;
+                }
+                catch (std::exception const&)
+                {
+                    // Non-numeric key -- skip rather than crash; a malformed
+                    // slot_data payload should degrade to "no display data
+                    // for this location", not take down the connection.
+                    continue;
+                }
+            }
+        }
+        return result;
+    }
 }
