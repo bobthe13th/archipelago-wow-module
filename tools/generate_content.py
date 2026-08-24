@@ -188,7 +188,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
     ),
     "vendor_stock": FamilySchema(
-        valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"}, generic=True,
+        valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
     ),
 }
 
@@ -609,8 +609,11 @@ def emit_cpp_generic(data: dict) -> str:
         f"// Regenerate with: python modules/archipelago_wow/tools/generate_content.py content/{family}.yaml",
         "#pragma once",
         "",
+        "#include <cstdint>",
         "#include <map>",
         "#include <string>",
+        "#include <unordered_map>",
+        "#include <utility>",
         "",
     ]
     guard = family.upper()
@@ -623,9 +626,50 @@ def emit_cpp_generic(data: dict) -> str:
     for item in data["items"]:
         lines.append(f'    {{{_string_literal(item["name"])}, {item["item_id"]}}},')
     lines.append("};")
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is not None and schema.export_triggers:
+        lines.extend(_emit_cpp_trigger_lookup(data))
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
+
+
+def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
+    """Typed trigger-lookup map for a generic family's C++ header, gated on
+    FamilySchema.export_triggers. Unlike emit_python_generic's TRIGGERS (a
+    dynamic dict[str, dict] -- fine in Python), C++ needs a real key type per
+    trigger kind, so this dispatches on the family's own trigger.kind rather
+    than trying to emit one generic dict-of-dicts shape. New export_triggers
+    families register a new branch here when they need one -- quest_reward
+    and vendor_purchase are the only two kinds that exist as of M4.7."""
+    locations = data["locations"]
+    if not locations:
+        return []
+    kind = locations[0]["trigger"]["kind"]
+
+    if kind == "quest_reward":
+        lines = ["inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = {"]
+        for loc in locations:
+            lines.append(f'    {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+        lines.append("};")
+        return lines
+
+    if kind == "vendor_purchase":
+        lines = ["inline const std::map<std::pair<uint32_t, uint16_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {"]
+        for loc in locations:
+            trigger = loc["trigger"]
+            lines.append(
+                f'    {{ {{ {trigger["npc_entry"]}, {trigger["item_slot"]} }}, {loc["location_id"]} }}, '
+                f'// {_string_literal(loc["name"])}'
+            )
+        lines.append("};")
+        return lines
+
+    raise ValidationError(
+        f"family {data['family']!r} has export_triggers=True but trigger.kind "
+        f"{kind!r} has no C++ trigger-lookup emission registered in "
+        f"_emit_cpp_trigger_lookup -- add a branch for it"
+    )
 
 
 def emit_cpp(data: dict) -> str:

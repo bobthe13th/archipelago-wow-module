@@ -282,5 +282,33 @@ class TestGenericEmitter(unittest.TestCase):
         )
 
 
+class TestEmitCppGenericTriggers(unittest.TestCase):
+    def test_quest_reward_family_emits_quest_id_to_location_id_map(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [
+                {"name": "Quest: A Reward (#1)", "location_id": 1000001,
+                 "trigger": {"kind": "quest_reward", "quest_id": 1, "min_level": 1, "prev_quest_id": None}},
+            ],
+            "items": [],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("QUEST_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("{ 1, 1000001 }", cpp)
+
+    def test_vendor_purchase_family_emits_slot_to_location_id_map(self) -> None:
+        data = {
+            "family": "vendor_stock",
+            "locations": [
+                {"name": "Vendor: Someone - Item (#0)", "location_id": 2000000,
+                 "trigger": {"kind": "vendor_purchase", "npc_entry": 54, "item_slot": 0}},
+            ],
+            "items": [],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("VENDOR_SLOT_TO_LOCATION_ID", cpp)
+        self.assertIn("{ { 54, 0 }, 2000000 }", cpp)
+
+
 if __name__ == "__main__":
     unittest.main()
