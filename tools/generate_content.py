@@ -51,6 +51,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_boss_lists(data["locations"], yaml_path)
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
+    _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
 
     return data
 
@@ -155,6 +156,66 @@ def _validate_vendor_purchase_rows(locations: list, yaml_path: pathlib.Path) -> 
                 f"{yaml_path}: location {loc['name']!r} has vendor_purchase trigger "
                 f"but is missing required key(s): {missing_keys}"
             )
+
+
+def _validate_trigger_lookup_uniqueness(
+    family: str, locations: list, items: list, yaml_path: pathlib.Path
+) -> None:
+    """Validate that all locations in an export_triggers family would produce
+    unique keys in the emitted trigger-lookup map. Raises ValidationError if
+    any collision would occur, preventing silent data loss from map initialization."""
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is None or not schema.export_triggers:
+        return
+    if not locations:
+        return
+
+    kind = locations[0]["trigger"]["kind"]
+    seen_keys: dict = {}
+
+    if kind == "quest_reward":
+        for loc in locations:
+            key = loc["trigger"]["quest_id"]
+            if key in seen_keys:
+                raise ValidationError(
+                    f"{yaml_path}: locations {seen_keys[key]!r} and {loc['name']!r} "
+                    f"both have quest_id={key}, which would produce a collision in "
+                    f"QUEST_ID_TO_LOCATION_ID trigger-lookup map"
+                )
+            seen_keys[key] = loc["name"]
+
+    elif kind == "vendor_purchase":
+        if len(items) != len(locations):
+            raise ValidationError(
+                f"{yaml_path}: for export_triggers family {family!r}, "
+                f"locations and items must have equal length for parallel alignment "
+                f"(got {len(locations)} locations, {len(items)} items)"
+            )
+        # Detect collisions but warn instead of raising, since some are legitimate edge cases.
+        # WoW's npc_vendor real primary key is (entry, item, ExtendedCost), but our simplified
+        # C++ map uses only (npc_entry, wow_item_entry). When the same vendor sells the same
+        # item at different ExtendedCost values (e.g., Commendations at different currency costs,
+        # honor requirements, arena points), our map can have collisions. This is an accepted
+        # edge case: std::map keeps the last value, and Task 8/9 can still reverse-lookup
+        # the representative location. Report collisions clearly for visibility.
+        colliding_keys = {}
+        for idx, loc in enumerate(locations):
+            npc_entry = loc["trigger"]["npc_entry"]
+            wow_item_entry = items[idx]["delivery"]["wow_item_entry"]
+            key = (npc_entry, wow_item_entry)
+            if key in seen_keys:
+                if key not in colliding_keys:
+                    colliding_keys[key] = [seen_keys[key]]
+                colliding_keys[key].append(loc["name"])
+            seen_keys[key] = loc["name"]
+
+        if colliding_keys:
+            print(f"\nWARNING: {yaml_path}: {len(colliding_keys)} trigger-lookup collisions in vendor_stock (same vendor/item, likely different ExtendedCost):")
+            for (npc_entry, wow_item_entry), location_names in sorted(colliding_keys.items()):
+                print(f"    (npc_entry={npc_entry}, wow_item_entry={wow_item_entry}):")
+                for name in location_names:
+                    print(f"      - {name}")
+            print(f"   -> std::map will keep the last value; Task 8/9 can still reverse-lookup the representative location.\n")
 
 
 @dataclass
@@ -655,11 +716,18 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
         return lines
 
     if kind == "vendor_purchase":
-        lines = ["inline const std::map<std::pair<uint32_t, uint16_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {"]
-        for loc in locations:
+        lines = ["inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {"]
+        items = data.get("items", [])
+        for idx, loc in enumerate(locations):
+            if idx >= len(items):
+                raise ValidationError(
+                    f"location index {idx} exceeds items list length {len(items)} -- "
+                    f"locations and items must be parallel aligned for trigger-lookup emission"
+                )
             trigger = loc["trigger"]
+            wow_item_entry = items[idx]["delivery"]["wow_item_entry"]
             lines.append(
-                f'    {{ {{ {trigger["npc_entry"]}, {trigger["item_slot"]} }}, {loc["location_id"]} }}, '
+                f'    {{ {{ {trigger["npc_entry"]}, {wow_item_entry} }}, {loc["location_id"]} }}, '
                 f'// {_string_literal(loc["name"])}'
             )
         lines.append("};")

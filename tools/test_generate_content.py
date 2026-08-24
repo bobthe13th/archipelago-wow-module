@@ -303,11 +303,14 @@ class TestEmitCppGenericTriggers(unittest.TestCase):
                 {"name": "Vendor: Someone - Item (#0)", "location_id": 2000000,
                  "trigger": {"kind": "vendor_purchase", "npc_entry": 54, "item_slot": 0}},
             ],
-            "items": [],
+            "items": [
+                {"name": "Some Item", "item_id": 5000000, "count": 1,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1234}},
+            ],
         }
         cpp = emit_cpp_generic(data)
         self.assertIn("VENDOR_SLOT_TO_LOCATION_ID", cpp)
-        self.assertIn("{ { 54, 0 }, 2000000 }", cpp)
+        self.assertIn("{ { 54, 1234 }, 2000000 }", cpp)
 
 
 if __name__ == "__main__":
