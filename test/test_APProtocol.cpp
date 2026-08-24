@@ -2,6 +2,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "APProtocol.h"
+#include "APInterception.h"
 
 using namespace Archipelago;
 
@@ -245,4 +246,26 @@ TEST_CASE("ParseApItemDisplayFromSlotData skips an entry with wrong-typed name/f
     CHECK(display.count(2000000) == 0);
     CHECK(display[1000001].name == "Tester's Minor Heal Potion");
     CHECK(display[1000001].flags == 0);
+}
+
+TEST_CASE("APInterception::ClassifiesEachSingleFlagBit")
+{
+    using namespace Archipelago::Interception;
+    CHECK(ClassifyItem(0b00001) == ItemClass::Progression);
+    CHECK(ClassifyItem(0b00010) == ItemClass::Useful);
+    CHECK(ClassifyItem(0b00100) == ItemClass::Trap);
+    CHECK(ClassifyItem(0b00000) == ItemClass::Filler);
+}
+
+TEST_CASE("APInterception::TrapBitWinsOverProgressionIfBothSet")
+{
+    using namespace Archipelago::Interception;
+    CHECK(ClassifyItem(0b00101) == ItemClass::Trap);
+}
+
+TEST_CASE("APInterception::SkipBalancingBitIsIgnoredForDisplay")
+{
+    using namespace Archipelago::Interception;
+    CHECK(ClassifyItem(0b01001) == ItemClass::Progression); // progression + skip_balancing
+    CHECK(ClassifyItem(0b01000) == ItemClass::Filler);       // skip_balancing alone
 }
