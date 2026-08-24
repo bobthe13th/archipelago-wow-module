@@ -225,3 +225,24 @@ TEST_CASE("ParseApItemDisplayFromSlotData returns empty on malformed JSON")
     auto display = Archipelago::ParseApItemDisplayFromSlotData("not json");
     CHECK(display.empty());
 }
+
+TEST_CASE("ParseApItemDisplayFromSlotData skips an entry with wrong-typed name/flags instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "ap_item_display": {
+                "2000000": {"name": 12345, "flags": "notanumber"},
+                "1000001": {"name": "Tester's Minor Heal Potion", "flags": 0}
+            }
+        }
+    }])";
+
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> display;
+    CHECK_NOTHROW(display = Archipelago::ParseApItemDisplayFromSlotData(raw));
+
+    REQUIRE(display.size() == 1u);
+    CHECK(display.count(2000000) == 0);
+    CHECK(display[1000001].name == "Tester's Minor Heal Potion");
+    CHECK(display[1000001].flags == 0);
+}

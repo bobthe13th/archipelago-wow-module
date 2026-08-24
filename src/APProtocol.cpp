@@ -186,18 +186,24 @@ namespace Archipelago
             {
                 if (!displayJson.is_object())
                     continue;
-                ApItemDisplay display;
-                display.name = displayJson.value("name", std::string());
-                display.flags = displayJson.value("flags", int32_t(0));
                 try
                 {
+                    ApItemDisplay display;
+                    // .value() only substitutes the default when the key is
+                    // absent -- a present-but-wrong-typed field (e.g. a
+                    // numeric "name" or a string "flags") still throws
+                    // json::type_error out of get<T>(), so that has to be
+                    // caught here too, not just the stoll() below.
+                    display.name = displayJson.value("name", std::string());
+                    display.flags = displayJson.value("flags", int32_t(0));
                     result[std::stoll(locationIdStr)] = display;
                 }
                 catch (std::exception const&)
                 {
-                    // Non-numeric key -- skip rather than crash; a malformed
-                    // slot_data payload should degrade to "no display data
-                    // for this location", not take down the connection.
+                    // Non-numeric key, or a wrong-typed name/flags field --
+                    // skip rather than crash; a malformed slot_data payload
+                    // should degrade to "no display data for this location",
+                    // not take down the connection.
                     continue;
                 }
             }
