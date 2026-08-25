@@ -131,6 +131,21 @@ namespace Archipelago::ItemDisplay
         return result;
     }
 
+    // M4.7.1.3: PickRewardColumn returning std::nullopt used to be treated
+    // as an unexpected/defensive case (a quest that made it into
+    // QUEST_ID_TO_LOCATION_ID "shouldn't" have zero reward columns) -- now
+    // that extract_quest_rewards.py deliberately includes zero-reward
+    // quests (is_filler_reward-tagged), it's a real, routine case. This
+    // returns the single (column, originalValue) pair the caller should
+    // rewrite instead of skipping: always RewardItem1 matched on its own
+    // current value 0 (the same idempotent WHERE-matched-on-original-value
+    // discipline every other rewrite in this file already uses), giving
+    // the quest a real, checkable reward where it previously had none.
+    inline std::pair<std::string, uint32_t> FallbackRewardColumnForFillerQuest()
+    {
+        return std::make_pair(std::string("RewardItem1"), uint32_t(0));
+    }
+
     // Called once, from ArchipelagoWorldScript::OnUpdate, the first time
     // slot_data arrives with a non-empty ap_item_display map. For every
     // location present in `display` that also has a real npc_vendor or

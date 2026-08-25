@@ -182,11 +182,17 @@ namespace Archipelago::ItemDisplay
                 }
                 else
                 {
-                    LOG_ERROR("module.archipelago_wow",
-                        "Archipelago: quest {} (location {}) has no non-zero reward-item "
-                        "column (or quest_template row is missing) -- no trigger column to "
-                        "rewrite, skipped",
-                        questId, locationId);
+                    // M4.7.1.3: no longer an error case -- a quest with
+                    // zero real reward columns is now expected for any
+                    // is_filler_reward-tagged location (extract_quest_rewards.py).
+                    // Give it a real reward: RewardItem1, matched on its
+                    // own current value 0.
+                    auto const& [column, originalValue] =
+                        Archipelago::ItemDisplay::FallbackRewardColumnForFillerQuest();
+                    WorldDatabase.Execute(
+                        "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
+                        column, entry, questId, column, originalValue
+                    );
                 }
                 continue;
             }

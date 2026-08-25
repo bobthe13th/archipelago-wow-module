@@ -115,3 +115,20 @@ TEST_CASE("APItemDisplay::RewardColumnsToRewriteReturnsOnlyThePickedColumnForASi
     CHECK(toRewrite[0].first == "RewardChoiceItemID2");
     CHECK(toRewrite[0].second == 9u);
 }
+
+// M4.7.1.3: a quest with genuinely zero reward-item columns is no longer
+// an unexpected/defensive case (extract_quest_rewards.py now includes
+// these, tagged is_filler_reward) -- SynthesizeAndRewireLocations's
+// fallback needs a real column to write into instead of just logging and
+// skipping. RewardItem1 (matched on its own current value 0) is that
+// fallback, chosen because it's the first fixed slot in
+// QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER and fixed slots are never
+// touched beyond what's written into them (unlike choice slots, which
+// need every alternative rewritten too -- not a concern here since
+// RewardItem1 is the only column being set).
+TEST_CASE("APItemDisplay::FallbackRewardColumnForFillerQuestReturnsRewardItem1MatchedOnZero")
+{
+    auto [column, originalValue] = Archipelago::ItemDisplay::FallbackRewardColumnForFillerQuest();
+    CHECK(column == "RewardItem1");
+    CHECK(originalValue == 0u);
+}
