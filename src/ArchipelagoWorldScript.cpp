@@ -1,6 +1,8 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoWorldScript.cpp
 #include <algorithm>
 #include <mutex>
+#include <optional>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -404,6 +406,10 @@ public:
             [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
                 std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
                 _pendingSlotData = display;
+            },
+            [this](std::string const& behavior) {
+                std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
+                _pendingVendorCheckRepeatBehavior = behavior;
             });
     }
 
@@ -444,6 +450,18 @@ public:
         }
         if (!slotData.empty())
             Archipelago::ItemDisplay::SynthesizeAndRewireLocations(slotData);
+
+        std::optional<std::string> vendorCheckRepeatBehavior;
+        {
+            std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
+            if (!_vendorCheckRepeatBehaviorApplied && _pendingVendorCheckRepeatBehavior)
+            {
+                vendorCheckRepeatBehavior = _pendingVendorCheckRepeatBehavior;
+                _vendorCheckRepeatBehaviorApplied = true;
+            }
+        }
+        if (vendorCheckRepeatBehavior)
+            sArchipelagoRealmState->SetVendorCheckRepeatBehavior(*vendorCheckRepeatBehavior);
     }
 
 private:
@@ -488,6 +506,17 @@ private:
     std::mutex _pendingSlotDataMutex;
     std::unordered_map<int64_t, Archipelago::ApItemDisplay> _pendingSlotData;
     bool _slotDataApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingSlotData/_slotDataApplied above, for the one-shot
+    // vendor_check_repeat_behavior slot_data string (M4.7 Task 8). A
+    // separate mutex/optional rather than folding into _pendingSlotData's:
+    // logically unrelated slot_data keys, parsed by a completely separate
+    // Parse* function (ParseVendorCheckRepeatBehaviorFromSlotData), so no
+    // reason to let one queue's lock contention block the other.
+    std::mutex _pendingVendorCheckRepeatBehaviorMutex;
+    std::optional<std::string> _pendingVendorCheckRepeatBehavior;
+    bool _vendorCheckRepeatBehaviorApplied = false;
 };
 
 void AddArchipelagoWorldScripts()

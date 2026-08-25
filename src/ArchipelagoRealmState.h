@@ -194,6 +194,18 @@ public:
     uint32_t GetCollectorItemsRequired() const { return _collectorItemsRequired; }
     void SetCollectorItemsRequired(uint32_t required) { _collectorItemsRequired = required; }
 
+    // Cached mirror of slot_data["vendor_check_repeat_behavior"] (M4.7 Task 8),
+    // same not-persisted, set-once-from-slot_data convention as GameMode/
+    // CompletionistExpansion above -- consumed from
+    // ArchipelagoInterceptionScript.cpp's vendor purchase hook to decide what
+    // happens on a REPEAT purchase of an already-checked Vendor Inventories
+    // slot (the first purchase always sends the check and destroys the item,
+    // regardless of this setting). Defaults to "suppress_entirely" (matching
+    // the apworld option's own default), meaning subsequent purchases from
+    // the slot silently do nothing.
+    std::string GetVendorCheckRepeatBehavior() const { return _vendorCheckRepeatBehavior; }
+    void SetVendorCheckRepeatBehavior(std::string behavior) { _vendorCheckRepeatBehavior = std::move(behavior); }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -222,6 +234,7 @@ private:
     uint32_t _keyHuntInstancesRequired = 1;
     uint32_t _artisanPrimaryProfessionsRequired = 2;
     uint32_t _collectorItemsRequired = 264;
+    std::string _vendorCheckRepeatBehavior = "suppress_entirely";
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

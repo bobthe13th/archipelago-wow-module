@@ -169,6 +169,20 @@ namespace Archipelago::ItemDisplay
                     "UPDATE npc_vendor SET item = {} WHERE entry = {} AND item = {}",
                     entry, npcEntry, wowItemEntry
                 );
+
+                // Persist the ORIGINAL wow item entry (already in scope above,
+                // from the same npcEntry/wowItemEntry destructure the UPDATE
+                // just used) so ArchipelagoInterceptionScript.cpp's repeat-
+                // purchase behaviors (vanilla_item/gold_conversion) can
+                // recover it later without re-deriving it from anything
+                // lossy (e.g. the synthesized item's player-chosen name).
+                // ON DUPLICATE KEY UPDATE keeps this idempotent across a
+                // re-seed against the same realm, same as the UPDATE above.
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_vendor_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, wowItemEntry
+                );
                 continue;
             }
 

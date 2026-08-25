@@ -48,7 +48,8 @@ namespace Archipelago
             std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
             std::function<void()> onConnected = nullptr,
             std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr,
-            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr);
+            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr,
+            std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr);
         ~APClient();
 
         void Start();
@@ -67,6 +68,7 @@ namespace Archipelago
         std::function<void()> _onConnected;
         std::function<void(std::vector<IncomingDeathLink> const&)> _onDeathLinkReceived;
         std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> _onSlotDataReceived;
+        std::function<void(std::string const&)> _onVendorCheckRepeatBehaviorReceived;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
         // Set by APClientSession the moment a session reaches HandshakeComplete, and

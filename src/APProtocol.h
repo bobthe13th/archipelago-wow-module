@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -116,4 +117,12 @@ namespace Archipelago
     // other Parse* function's "don't crash the connection state machine on
     // a shape it doesn't recognize" discipline.
     std::unordered_map<int64_t, ApItemDisplay> ParseApItemDisplayFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["vendor_check_repeat_behavior"] (a single
+    // string option, M4.7 Task 8) mirroring ParseApItemDisplayFromSlotData's
+    // exact "don't crash the connection state machine on a shape it doesn't
+    // recognize" discipline. Returns std::nullopt (never throws) if
+    // slot_data or the key is absent/malformed (wrong type, missing, no
+    // Connected command in the frame).
+    std::optional<std::string> ParseVendorCheckRepeatBehaviorFromSlotData(std::string const& raw);
 }

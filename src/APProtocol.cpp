@@ -210,4 +210,25 @@ namespace Archipelago
         }
         return result;
     }
+
+    std::optional<std::string> ParseVendorCheckRepeatBehaviorFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || element.value("cmd", "") != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("vendor_check_repeat_behavior") ||
+                !slotData["vendor_check_repeat_behavior"].is_string())
+                continue;
+            return slotData["vendor_check_repeat_behavior"].get<std::string>();
+        }
+        return std::nullopt;
+    }
 }

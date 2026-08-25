@@ -49,7 +49,8 @@ namespace Archipelago
             std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived,
             std::function<void()> const& onConnected,
             std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived,
-            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& onSlotDataReceived)
+            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& onSlotDataReceived,
+            std::function<void(std::string const&)> const& onVendorCheckRepeatBehaviorReceived)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -61,6 +62,7 @@ namespace Archipelago
             , _onConnected(onConnected)
             , _onDeathLinkReceived(onDeathLinkReceived)
             , _onSlotDataReceived(onSlotDataReceived)
+            , _onVendorCheckRepeatBehaviorReceived(onVendorCheckRepeatBehaviorReceived)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -345,6 +347,13 @@ namespace Archipelago
             if (!slotData.empty() && _onSlotDataReceived)
                 _onSlotDataReceived(slotData);
 
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData
+            // above -- ParseVendorCheckRepeatBehaviorFromSlotData internally checks
+            // cmd == "Connected" itself (M4.7 Task 8).
+            auto vendorCheckRepeatBehavior = ParseVendorCheckRepeatBehaviorFromSlotData(message);
+            if (vendorCheckRepeatBehavior && _onVendorCheckRepeatBehaviorReceived)
+                _onVendorCheckRepeatBehaviorReceived(*vendorCheckRepeatBehavior);
+
             ReadNext(false);
         }
 
@@ -466,18 +475,21 @@ namespace Archipelago
         std::function<void()> const& _onConnected;
         std::function<void(std::vector<IncomingDeathLink> const&)> const& _onDeathLinkReceived;
         std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& _onSlotDataReceived;
+        std::function<void(std::string const&)> const& _onVendorCheckRepeatBehaviorReceived;
     };
 
     APClient::APClient(ClientOptions options,
         std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
         std::function<void()> onConnected,
         std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived,
-        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived)
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived,
+        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived)
         : _options(std::move(options))
         , _onItemsReceived(std::move(onItemsReceived))
         , _onConnected(std::move(onConnected))
         , _onDeathLinkReceived(std::move(onDeathLinkReceived))
         , _onSlotDataReceived(std::move(onSlotDataReceived))
+        , _onVendorCheckRepeatBehaviorReceived(std::move(onVendorCheckRepeatBehaviorReceived))
     {
     }
 
@@ -495,7 +507,8 @@ namespace Archipelago
         {
             std::lock_guard<std::mutex> lock(_sessionMutex);
             _session = std::make_shared<APClientSession>(
-                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived, _onSlotDataReceived);
+                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived,
+                _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived);
             session = _session;
         }
         session->Run();
@@ -601,7 +614,8 @@ namespace Archipelago
                         // _sessionMutex comment on the member in APClient.h.
                         std::lock_guard<std::mutex> lock(_sessionMutex);
                         _session = std::make_shared<APClientSession>(
-                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived, _onSlotDataReceived);
+                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected,
+                            _onDeathLinkReceived, _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived);
                         session = _session;
                     }
                     session->Run();

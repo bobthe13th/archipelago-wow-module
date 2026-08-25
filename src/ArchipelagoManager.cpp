@@ -12,7 +12,8 @@ ArchipelagoManager* ArchipelagoManager::instance()
 void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
     std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
     std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
-    std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived)
+    std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived,
+    std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived)
 {
     if (_client)
         return;
@@ -22,7 +23,8 @@ void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
         std::move(onItemsReceived),
         [this]() { ResendAllChecksAndGoal(); },
         std::move(onDeathLinkReceived),
-        std::move(onSlotDataReceived));
+        std::move(onSlotDataReceived),
+        std::move(onVendorCheckRepeatBehaviorReceived));
     _client->Start();
 }
 

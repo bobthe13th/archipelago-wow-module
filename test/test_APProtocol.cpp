@@ -248,6 +248,48 @@ TEST_CASE("ParseApItemDisplayFromSlotData skips an entry with wrong-typed name/f
     CHECK(display[1000001].flags == 0);
 }
 
+TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData parses vendor_check_repeat_behavior from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "vendor_check_repeat_behavior": "gold_conversion"
+        }
+    }])";
+
+    auto behavior = Archipelago::ParseVendorCheckRepeatBehaviorFromSlotData(raw);
+
+    REQUIRE(behavior.has_value());
+    CHECK(*behavior == "gold_conversion");
+}
+
+TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto behavior = Archipelago::ParseVendorCheckRepeatBehaviorFromSlotData(raw);
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt on malformed JSON")
+{
+    auto behavior = Archipelago::ParseVendorCheckRepeatBehaviorFromSlotData("not json");
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when the key is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "vendor_check_repeat_behavior": 12345
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseVendorCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
 TEST_CASE("APInterception::ClassifiesEachSingleFlagBit")
 {
     using namespace Archipelago::Interception;
