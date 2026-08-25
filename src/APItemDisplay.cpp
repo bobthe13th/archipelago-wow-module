@@ -201,8 +201,24 @@ namespace Archipelago::ItemDisplay
                 // UPDATE runs once, npc_vendor.item no longer equals
                 // wowItemEntry for this row, so a second run of this same
                 // statement matches zero rows and is a safe no-op.
+                // maxcount=1 + a large incrtime (never 0 -- Creature.cpp's
+                // GetVendorItemCurrentCount/UpdateVendorItemCurrentCount use
+                // incrtime as a DIVISOR whenever maxcount > 0, so 0 is a
+                // real crash risk, not just "restocks instantly") makes the
+                // client's own vendor UI show this slot as 1-in-stock, then
+                // out-of-stock after purchase -- a strictly better player
+                // experience than today's buy-then-refund, layered on top
+                // of (not replacing) the interception hook below, which
+                // remains the real enforcement (e.g. against a GM .additem
+                // bypass of the vendor UI). Stock counts are tracked
+                // in-memory per Creature instance, not persisted -- a
+                // worldserver restart shows 1-in-stock again for an
+                // already-checked slot even though the interception hook
+                // still correctly refuses to re-grant the check; cosmetic
+                // only, not an exploit.
                 WorldDatabase.Execute(
-                    "UPDATE npc_vendor SET item = {} WHERE entry = {} AND item = {}",
+                    "UPDATE npc_vendor SET item = {}, maxcount = 1, incrtime = 2147483647 "
+                    "WHERE entry = {} AND item = {}",
                     entry, npcEntry, wowItemEntry
                 );
 
