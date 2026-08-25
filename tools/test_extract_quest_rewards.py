@@ -52,3 +52,62 @@ class TestExtractNullHandling(unittest.TestCase):
         # Should produce one location with prev_quest_id=None
         self.assertEqual(len(result["locations"]), 1)
         self.assertIsNone(result["locations"][0]["trigger"]["prev_quest_id"])
+
+
+class TestExtractFillerRewardHandling(unittest.TestCase):
+    """M4.7.1.3: a quest with zero real reward-item columns is no longer
+    skipped at extraction -- it gets a real location + item, tagged
+    distinctly, using the project's designated real filler item (7073,
+    "Broken Fang", reused from APTraps.cpp's ApplyGreyItemBagFill)."""
+
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_zero_reward_quest_produces_filler_tagged_location_and_item(self, mock_run_query, mock_load_rules) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_run_query.return_value = [
+            ("200", "No Reward Quest", "15", "NULL",
+             "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0")
+        ]
+
+        result = extract()
+
+        self.assertEqual(len(result["locations"]), 1)
+        self.assertEqual(len(result["items"]), 1)
+        self.assertTrue(result["locations"][0]["trigger"]["is_filler_reward"])
+        self.assertEqual(result["items"][0]["delivery"]["wow_item_entry"], 7073)
+        self.assertEqual(result["locations"][0]["name"], "Quest: No Reward Quest Reward (#200)")
+        self.assertEqual(result["locations"][0]["trigger"]["quest_id"], 200)
+
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_real_reward_quest_has_no_filler_tag(self, mock_run_query, mock_load_rules) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_run_query.return_value = [
+            ("300", "Real Reward Quest", "20", "NULL",
+             "5555", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0")
+        ]
+
+        result = extract()
+
+        self.assertEqual(len(result["locations"]), 1)
+        self.assertNotIn("is_filler_reward", result["locations"][0]["trigger"])
+        self.assertEqual(result["items"][0]["delivery"]["wow_item_entry"], 5555)
+
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_zero_reward_quest_with_denylisted_title_is_still_excluded(self, mock_run_query, mock_load_rules) -> None:
+        # Filler-reward inclusion must not bypass the existing denylist
+        # filter -- a junk/test/GM-titled quest with no reward is still junk.
+        mock_load_rules.return_value = {"name_denylist": [r"(?i)\bqa\b"]}
+        mock_run_query.return_value = [
+            ("400", "QA Test Quest", "1", "NULL",
+             "0", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0")
+        ]
+
+        result = extract()
+
+        self.assertEqual(len(result["locations"]), 0)
+        self.assertEqual(len(result["items"]), 0)

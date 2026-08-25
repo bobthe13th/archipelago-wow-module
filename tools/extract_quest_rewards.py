@@ -30,6 +30,13 @@ _ITEM_ID_BASE = 1_750_000
 _FIXED_REWARD_COLS = ["RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4"]
 _CHOICE_REWARD_COLS = [f"RewardChoiceItemID{i}" for i in range(1, 7)]
 
+_FILLER_ITEM_ENTRY = 7073  # "Broken Fang" -- real, confirmed Quality-0 (Poor/grey)
+                            # junk item in this checkout's item_template, reused from
+                            # APTraps.cpp's ApplyGreyItemBagFill (same "designated real
+                            # junk item" purpose) -- used as the wow_item_entry payload
+                            # for quests with no real vanilla reward at all (M4.7.1.3),
+                            # since there's no genuine reward item to represent instead.
+
 
 def pick_representative_reward(row: dict) -> Optional[int]:
     """Exactly one reward item per quest, matching this codebase's 1:1
@@ -64,29 +71,42 @@ def extract() -> dict:
     for row in rows:
         (quest_id, title, min_level, prev_quest_id,
          ri1, ri2, ri3, ri4, rc1, rc2, rc3, rc4, rc5, rc6) = row
+        if not title or is_denylisted(title, rules):
+            continue
+
         row_dict = {
             "RewardItem1": ri1, "RewardItem2": ri2, "RewardItem3": ri3, "RewardItem4": ri4,
             "RewardChoiceItemID1": rc1, "RewardChoiceItemID2": rc2, "RewardChoiceItemID3": rc3,
             "RewardChoiceItemID4": rc4, "RewardChoiceItemID5": rc5, "RewardChoiceItemID6": rc6,
         }
         reward_item = pick_representative_reward(row_dict)
-        if reward_item is None:
-            continue
-        if not title or is_denylisted(title, rules):
-            continue
+        # M4.7.1.3: a quest with NO real reward item (only a spell grant, or
+        # genuinely nothing) used to be skipped entirely here. It's now a
+        # real, first-class member of this family -- every quest deserves a
+        # checkable location, not just the ones that happened to already
+        # hand out an item. is_filler_reward marks the location distinctly
+        # (present only on these rows; absent, not False, on every other
+        # row) so a future consumer (e.g. an M4.8-style tag dimension) can
+        # tell the two cases apart without re-deriving it from the item id.
+        is_filler_reward = reward_item is None
+        if is_filler_reward:
+            reward_item = _FILLER_ITEM_ENTRY
 
         quest_id_int = int(quest_id)
         location_name = f"Quest: {title} Reward (#{quest_id_int})"
         item_name = f"Quest Reward: {title} (#{quest_id_int})"
+        trigger = {
+            "kind": "quest_reward",
+            "quest_id": quest_id_int,
+            "min_level": int(min_level),
+            "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
+        }
+        if is_filler_reward:
+            trigger["is_filler_reward"] = True
         locations.append({
             "name": location_name,
             "location_id": _LOCATION_ID_BASE + quest_id_int,
-            "trigger": {
-                "kind": "quest_reward",
-                "quest_id": quest_id_int,
-                "min_level": int(min_level),
-                "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
-            },
+            "trigger": trigger,
         })
         items.append({
             "name": item_name,
