@@ -18,6 +18,8 @@
 // unique-count-1) placeholder has actually been stored and then destroyed,
 // and granting the real effect via Player::AddItem (which runs its own full
 // CanStoreNewItem validation) avoids that entirely.
+#include <cmath>
+
 #include "Chat.h"
 #include "Item.h"
 #include "Player.h"
@@ -45,9 +47,10 @@ namespace
         return sArchipelagoRealmState->HasSentLocationCheck(static_cast<uint64_t>(locationId));
     }
 
-    // "vanilla_item"/"gold_conversion" both need the ORIGINAL item id, which
-    // this class doesn't have direct access to (Task 6 only had it transiently
-    // in scope while rewriting the npc_vendor row) -- Task 8 persists it into
+    // "vanilla_item"/"gold_conversion"/the suppress_entirely refund all need
+    // the ORIGINAL item id, which this class doesn't have direct access to
+    // (Task 6 only had it transiently in scope while rewriting the
+    // npc_vendor row) -- Task 8 persists it into
     // archipelago_vendor_original_items (location_id -> original_item_id) at
     // synthesis time (see APItemDisplay.cpp's vendor branch), so it can be
     // recovered here.
@@ -61,13 +64,13 @@ namespace
 
     // Called for every REPEAT purchase of an already-checked vendor slot
     // (the caller has already destroyed the synthesized placeholder by the
-    // time this runs -- see OnPlayerAfterStoreOrEquipNewItem). `synthesizedEntry`
-    // is the synthesized item's own item_template entry -- its BuyPrice is
-    // kept in sync with the real vendor item's BuyPrice (APItemDisplay.cpp's
-    // vendor branch), which is what the player was just actually charged for
-    // this repeat purchase, so suppress_entirely's refund below reads it from
-    // there rather than needing a separately-tracked "price paid" value.
-    void ApplyRepeatBehavior(Player* player, int64_t locationId, uint32_t synthesizedEntry)
+    // time this runs -- see OnPlayerAfterStoreOrEquipNewItem). `pVendor`/
+    // `crItem`/`count` are threaded straight through from the hook's own
+    // parameters (the same values Player::BuyItemFromVendorSlot used to
+    // charge for this purchase in the first place) so suppress_entirely's
+    // refund below can reproduce that exact charge rather than assuming a
+    // flat, undiscounted BuyPrice.
+    void ApplyRepeatBehavior(Player* player, int64_t locationId, Creature* pVendor, VendorItem const* crItem, uint8_t count)
     {
         std::string behavior = sArchipelagoRealmState->GetVendorCheckRepeatBehavior();
         if (behavior == "vanilla_item")
@@ -97,12 +100,36 @@ namespace
             player->AddItem(FILLER_CONSUMABLE_ENTRY, 1);
             return;
         }
-        // suppress_entirely (default): cancel the purchase -- refund the
-        // real gold the player was just charged (the synthesized item's own
-        // BuyPrice, kept in sync with the real vendor item's price by
-        // APItemDisplay.cpp) and tell them why nothing was granted.
-        if (ItemTemplate const* proto = sObjectMgr->GetItemTemplate(synthesizedEntry))
-            player->ModifyMoney(static_cast<int32>(proto->BuyPrice));
+        // suppress_entirely (default): cancel the purchase -- refund EXACTLY
+        // the real gold the player was just charged, reproducing
+        // Player::BuyItemFromVendorSlot's own price computation (Player.cpp):
+        // "price = pProto->BuyPrice * count;
+        //  price = uint32(std::floor(price * GetReputationPriceDiscount(creature)));"
+        // -- gated the same way by VendorItem::IsGoldRequired, so a
+        // token/ExtendedCost-only slot (which charged 0 gold) correctly
+        // refunds 0, rather than always refunding the flat BuyPrice
+        // regardless of what was actually charged (a real, if smaller, gold
+        // faucet the earlier revision of this fix introduced). Reads the
+        // ORIGINAL item's proto -- its BuyPrice is numerically identical to
+        // the synthesized item's own BuyPrice (APItemDisplay.cpp's vendor
+        // branch keeps them in sync), so this is equivalent for the price
+        // magnitude and is the more directly correct source to read from.
+        uint32_t refundAmount = 0;
+        uint32_t originalItemId = GetOriginalItemId(locationId);
+        if (ItemTemplate const* originalProto = sObjectMgr->GetItemTemplate(originalItemId))
+        {
+            if (crItem->IsGoldRequired(originalProto))
+                refundAmount = static_cast<uint32_t>(
+                    std::floor(originalProto->BuyPrice * count * player->GetReputationPriceDiscount(pVendor)));
+        }
+        else
+        {
+            LOG_ERROR("module.archipelago_wow",
+                "Archipelago: suppress_entirely repeat behavior for location {} has no "
+                "recoverable original item template -- cannot compute the real gold charged, "
+                "refunding nothing", locationId);
+        }
+        player->ModifyMoney(static_cast<int32>(refundAmount));
         ChatHandler(player->GetSession()).PSendSysMessage(
             "Archipelago: you have already sent this check -- purchase refunded.");
     }
@@ -114,9 +141,9 @@ public:
     ArchipelagoInterceptionScript()
         : PlayerScript("ArchipelagoInterceptionScript", { PLAYERHOOK_ON_AFTER_STORE_OR_EQUIP_NEW_ITEM }) { }
 
-    void OnPlayerAfterStoreOrEquipNewItem(Player* player, uint32 /*vendorslot*/, Item* item, uint8 /*count*/,
-        uint8 /*bag*/, uint8 /*slot*/, ItemTemplate const* /*pProto*/, Creature* /*pVendor*/,
-        VendorItem const* /*crItem*/, bool /*bStore*/) override
+    void OnPlayerAfterStoreOrEquipNewItem(Player* player, uint32 /*vendorslot*/, Item* item, uint8 count,
+        uint8 /*bag*/, uint8 /*slot*/, ItemTemplate const* /*pProto*/, Creature* pVendor,
+        VendorItem const* crItem, bool /*bStore*/) override
     {
         if (item == nullptr)
             return;
@@ -142,7 +169,7 @@ public:
             return;
         }
 
-        ApplyRepeatBehavior(player, locationId, entry);
+        ApplyRepeatBehavior(player, locationId, pVendor, crItem, count);
     }
 };
 

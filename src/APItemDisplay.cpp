@@ -197,9 +197,22 @@ namespace Archipelago::ItemDisplay
                 // ON DUPLICATE KEY UPDATE) because only the vendor branch has
                 // a real "price" concept at all -- quest rewards are never
                 // purchased.
+                //
+                // MySQL 8.4 (this project's real target -- confirmed via
+                // DatabaseWorkerPool.h's MIN_MYSQL_SERVER_VERSION and
+                // docker-compose.yml's mysql:8.4 image, NOT MariaDB) rejects
+                // an UPDATE whose subquery SELECTs from the SAME table being
+                // updated (ER_UPDATE_TABLE_USED, error 1093) -- a prior
+                // revision of this statement used exactly that form and
+                // silently failed every time (WorldDatabase.Execute is
+                // fire-and-forget async, so the error only ever reached the
+                // log, never a caller). The standard MySQL-safe multi-table
+                // UPDATE-JOIN form below has no such restriction, and also
+                // degrades to a safe no-op (rather than a NULL-propagation
+                // hazard) if wowItemEntry doesn't match any row.
                 WorldDatabase.Execute(
-                    "UPDATE item_template SET BuyPrice = (SELECT BuyPrice FROM item_template WHERE entry = {}) "
-                    "WHERE entry = {}",
+                    "UPDATE item_template AS tgt JOIN item_template AS src ON src.entry = {} "
+                    "SET tgt.BuyPrice = src.BuyPrice WHERE tgt.entry = {}",
                     wowItemEntry, entry
                 );
                 continue;
