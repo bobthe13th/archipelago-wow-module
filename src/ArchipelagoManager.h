@@ -3,9 +3,11 @@
 
 #include <functional>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "APClient.h"
+#include "APProtocol.h"
 
 class ArchipelagoManager
 {
@@ -14,7 +16,8 @@ public:
 
     void Initialize(Archipelago::ClientOptions options,
         std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
-        std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived);
+        std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
+        std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived);
     void Shutdown();
 
     void SendLocationChecks(std::vector<int64_t> const& locationIds);

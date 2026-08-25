@@ -10,6 +10,7 @@
 #include "World.h"
 #include "APDelivery.h"
 #include "APGating.h"
+#include "APItemDisplay.h"
 #include "ArchipelagoDeathLink.h"
 #include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
@@ -399,6 +400,10 @@ public:
             [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
                 std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
                 _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
+            },
+            [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
+                std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
+                _pendingSlotData = display;
             });
     }
 
@@ -427,6 +432,18 @@ public:
         }
         if (!deathLinks.empty())
             Archipelago::DeathLink::HandleIncomingDeathLinks(deathLinks);
+
+        std::unordered_map<int64_t, Archipelago::ApItemDisplay> slotData;
+        {
+            std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
+            if (!_slotDataApplied && !_pendingSlotData.empty())
+            {
+                slotData = _pendingSlotData;
+                _slotDataApplied = true;
+            }
+        }
+        if (!slotData.empty())
+            Archipelago::ItemDisplay::SynthesizeAndRewireLocations(slotData);
     }
 
 private:
@@ -459,6 +476,18 @@ private:
     // separate avoids one queue's lock contention blocking the other's.
     std::mutex _pendingDeathLinksMutex;
     std::vector<Archipelago::IncomingDeathLink> _pendingDeathLinks;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingItems/
+    // _pendingDeathLinks above, for the one-shot ap_item_display slot_data map
+    // (M4.7 Task 4). A separate mutex rather than sharing one of the above:
+    // same reasoning as _pendingDeathLinksMutex -- logically unrelated data,
+    // no reason to let one queue's lock contention block the other. Guarded
+    // by _slotDataApplied so the (expensive, DB-writing) synthesis pass in
+    // OnUpdate below runs at most once per server run, even across a
+    // reconnect that re-sends Connected/slot_data.
+    std::mutex _pendingSlotDataMutex;
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> _pendingSlotData;
+    bool _slotDataApplied = false;
 };
 
 void AddArchipelagoWorldScripts()

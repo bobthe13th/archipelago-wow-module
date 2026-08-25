@@ -48,7 +48,8 @@ namespace Archipelago
             std::atomic<ConnectionState>& state, std::atomic<bool>& reachedHandshake,
             std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived,
             std::function<void()> const& onConnected,
-            std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived)
+            std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived,
+            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& onSlotDataReceived)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -59,6 +60,7 @@ namespace Archipelago
             , _onItemsReceived(onItemsReceived)
             , _onConnected(onConnected)
             , _onDeathLinkReceived(onDeathLinkReceived)
+            , _onSlotDataReceived(onSlotDataReceived)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -335,6 +337,14 @@ namespace Archipelago
                     _onDeathLinkReceived(bounces);
             }
 
+            // ParseApItemDisplayFromSlotData internally checks cmd == "Connected"
+            // itself, so no extra gating on the parsed `types` list is needed here --
+            // parsing the raw frame unconditionally is simplest and matches the M4.7
+            // design spec's plumbing task (Task 4).
+            auto slotData = ParseApItemDisplayFromSlotData(message);
+            if (!slotData.empty() && _onSlotDataReceived)
+                _onSlotDataReceived(slotData);
+
             ReadNext(false);
         }
 
@@ -455,16 +465,19 @@ namespace Archipelago
         std::function<void(std::vector<ReceivedItem> const&)> const& _onItemsReceived;
         std::function<void()> const& _onConnected;
         std::function<void(std::vector<IncomingDeathLink> const&)> const& _onDeathLinkReceived;
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& _onSlotDataReceived;
     };
 
     APClient::APClient(ClientOptions options,
         std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
         std::function<void()> onConnected,
-        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived)
+        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived,
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived)
         : _options(std::move(options))
         , _onItemsReceived(std::move(onItemsReceived))
         , _onConnected(std::move(onConnected))
         , _onDeathLinkReceived(std::move(onDeathLinkReceived))
+        , _onSlotDataReceived(std::move(onSlotDataReceived))
     {
     }
 
@@ -482,7 +495,7 @@ namespace Archipelago
         {
             std::lock_guard<std::mutex> lock(_sessionMutex);
             _session = std::make_shared<APClientSession>(
-                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived);
+                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived, _onSlotDataReceived);
             session = _session;
         }
         session->Run();
@@ -588,7 +601,7 @@ namespace Archipelago
                         // _sessionMutex comment on the member in APClient.h.
                         std::lock_guard<std::mutex> lock(_sessionMutex);
                         _session = std::make_shared<APClientSession>(
-                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived);
+                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived, _onSlotDataReceived);
                         session = _session;
                     }
                     session->Run();

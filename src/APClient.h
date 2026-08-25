@@ -8,6 +8,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 #include <boost/asio/io_context.hpp>
@@ -46,7 +47,8 @@ namespace Archipelago
         APClient(ClientOptions options,
             std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
             std::function<void()> onConnected = nullptr,
-            std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr);
+            std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr,
+            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr);
         ~APClient();
 
         void Start();
@@ -64,6 +66,7 @@ namespace Archipelago
         std::function<void(std::vector<ReceivedItem> const&)> _onItemsReceived;
         std::function<void()> _onConnected;
         std::function<void(std::vector<IncomingDeathLink> const&)> _onDeathLinkReceived;
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> _onSlotDataReceived;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
         // Set by APClientSession the moment a session reaches HandshakeComplete, and
