@@ -38,6 +38,8 @@ namespace
             return Archipelago::Delivery::Policy::AuctionHouse;
         if (value == "FirstToClaim")
             return Archipelago::Delivery::Policy::FirstToClaim;
+        if (value == "AllAccountsDelivery")
+            return Archipelago::Delivery::Policy::AllAccountsDelivery;
         if (value != "SingleDeliveryCharacter")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.DeliveryPolicy '{}', falling back to SingleDeliveryCharacter", value);
         return Archipelago::Delivery::Policy::SingleDeliveryCharacter;

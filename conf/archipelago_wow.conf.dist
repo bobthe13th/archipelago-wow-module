@@ -123,8 +123,20 @@ Archipelago.CharacterUnlockGating = 0
 #                      House before Auction House Access is granted -- a
 #                      real softlock, not just a mismatch.
 #        Values:      "SingleDeliveryCharacter" (default) | "SharedCacheNpc" |
-#                      "AuctionHouse" | "FirstToClaim"
+#                      "AuctionHouse" | "FirstToClaim" | "AllAccountsDelivery"
 #        Default:     "SingleDeliveryCharacter"
+#
+#                      AllAccountsDelivery mails every delivered item to
+#                      every account with at least one real character --
+#                      deduped to whichever character on that account most
+#                      recently logged out, not literally every character.
+#                      No volume cap: a long campaign can mail thousands of
+#                      items to every account with no filtering. Orthogonal
+#                      to Archipelago.CatchUpPolicy: only reaches
+#                      accounts/characters that exist AT THE MOMENT each
+#                      item is delivered -- an account created afterward
+#                      relies entirely on CatchUpPolicy to backfill what it
+#                      missed, exactly like every other delivery policy.
 
 Archipelago.DeliveryPolicy = "SingleDeliveryCharacter"
 

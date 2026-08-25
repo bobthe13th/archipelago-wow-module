@@ -13,6 +13,7 @@
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
 #include "Player.h"
+#include "QueryResult.h"
 #include "Random.h"
 #include "StringFormat.h"
 #include "WorldSessionMgr.h"
@@ -132,6 +133,63 @@ namespace
         MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
         draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
     }
+
+    // M4.7.1.3: the real "every player receives everything" policy. One
+    // mail per ACCOUNT, not per character -- deduped to whichever
+    // character on that account most recently logged out (highest
+    // logout_time; ties broken deterministically by highest guid), a
+    // design decision made explicitly (not literally "every single
+    // character," which would mail every alt separately). Soft-deleted
+    // characters (deleteDate IS NOT NULL) are excluded. Orthogonal to
+    // CatchUpPolicy: this only ever reaches accounts/characters that exist
+    // AT THE MOMENT this specific delivery runs, exactly like every other
+    // delivery policy above -- an account created afterward relies
+    // entirely on CatchUpPolicy (APCatchUp.h/.cpp) to backfill what it
+    // missed. No volume cap: every delivered item is mailed to every
+    // eligible account, with no classification filtering and no batching
+    // -- a deliberate choice (M4.7.1.3 design resolution), not an
+    // oversight; a long campaign can mail thousands of items to every
+    // account.
+    void MailToAllAccounts(uint32_t wowItemEntry, CharacterDatabaseTransaction trans)
+    {
+        QueryResult result = CharacterDatabase.Query(
+            "SELECT guid, name FROM ("
+            "  SELECT guid, name, "
+            "         ROW_NUMBER() OVER (PARTITION BY account ORDER BY logout_time DESC, guid DESC) AS rn "
+            "  FROM characters WHERE deleteDate IS NULL"
+            ") ranked WHERE rn = 1"
+        );
+        if (!result)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: AllAccountsDelivery found no eligible accounts (no real characters exist yet), dropping item {}", wowItemEntry);
+            return;
+        }
+
+        uint32_t recipientCount = 0;
+        do
+        {
+            Field* fields = result->Fetch();
+            ObjectGuid::LowType lowGuid = fields[0].Get<uint32_t>();
+            std::string recipientName = fields[1].Get<std::string>();
+
+            Item* item = Item::CreateItem(wowItemEntry, 1);
+            if (!item)
+            {
+                LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {} while mailing to '{}', item is lost", wowItemEntry, recipientName);
+                continue;
+            }
+
+            Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
+            item->SaveToDB(trans);
+            MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
+            draft.AddItem(item);
+            MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches MailToDeliveryCharacter's precedent */);
+            draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+            ++recipientCount;
+        } while (result->NextRow());
+
+        LOG_INFO("module.archipelago_wow", "Archipelago: mailed WoW item entry {} to {} account(s) (AllAccountsDelivery)", wowItemEntry, recipientCount);
+    }
 }
 
 namespace Archipelago::Delivery
@@ -171,6 +229,10 @@ namespace Archipelago::Delivery
                     "Archipelago: '{}' is up for grabs at the Archipelago Cache Keeper (Northshire Abbey) -- first come, first served!", itemName));
                 break;
             }
+
+            case Policy::AllAccountsDelivery:
+                MailToAllAccounts(wowItemEntry, trans);
+                break;
 
             case Policy::SingleDeliveryCharacter:
             default:

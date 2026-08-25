@@ -25,6 +25,13 @@ namespace Archipelago::Delivery
                           // (ArchipelagoCacheKeeperScript.cpp), repurposed with a third
                           // gossip option that drains the whole pending queue to whoever
                           // interacts with it first.
+        AllAccountsDelivery, // M4.7.1.3: the real "every player receives everything" policy
+                             // SingleDeliveryCharacter's old name (EveryoneReceives) always
+                             // implied but never built. Mails to ONE character per account
+                             // (the account's own most-recently-logged-out character, not
+                             // literally every character) -- see MailToAllAccounts's own
+                             // comment in APDelivery.cpp for the full design (account
+                             // selection, CatchUpPolicy orthogonality, no volume cap).
     };
 
     // Task 14: buyout price band for Policy::AuctionHouse listings, resolved once at
