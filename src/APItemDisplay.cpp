@@ -102,16 +102,27 @@ namespace Archipelago::ItemDisplay
         {
             uint32_t entry = SynthesizedEntryFor(locationId);
 
-            // SynthesizedEntryFor is a pure function of locationId, so an
-            // item_template row already existing under this exact entry
-            // means this location was already fully synthesized on a
-            // previous run -- the cheapest, most direct way to answer "is
-            // this actually new" without needing WorldDatabase.Execute's
-            // fire-and-forget calls below to report affected-row counts
-            // (M4.7.1 finding #2: the old code counted "ran this run" as
-            // "new," so the LOG_WARN below fired identically on every
-            // restart after the first, not just the first).
-            if (!WorldDatabase.Query("SELECT entry FROM item_template WHERE entry = {}", entry))
+            // SynthesizedEntryFor is a pure function of locationId, so a
+            // re-seed against an already-set-up realm (a normal randomizer
+            // workflow -- see SynthesizeItemTemplateRow's own comment below
+            // on exactly this scenario) can reuse this same entry for a
+            // DIFFERENT item's name/classification. Checking mere row
+            // EXISTENCE would wrongly count that as "not new" even though
+            // the name/icon are about to be rewritten to something new --
+            // comparing against the row's CURRENT name catches a real
+            // content change even when the entry already existed (name is
+            // always rewritten by SynthesizeItemTemplateRow whenever the
+            // underlying item genuinely changed, since it encodes
+            // "<player>'s <item>"). A name match means this exact
+            // location's content is unchanged since the last run; a
+            // mismatch (or no row at all) means it's genuinely new/changed
+            // and the restart-required warning below should fire for it.
+            std::string escapedNewName(itemDisplay.name);
+            WorldDatabase.EscapeString(escapedNewName);
+            bool contentUnchanged = static_cast<bool>(WorldDatabase.Query(
+                "SELECT name FROM item_template WHERE entry = {} AND name = '{}'",
+                entry, escapedNewName));
+            if (!contentUnchanged)
                 ++newlySynthesizedCount;
 
             auto itemClass = Archipelago::Interception::ClassifyItem(itemDisplay.flags);
