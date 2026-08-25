@@ -9,7 +9,7 @@
 #include <utility>
 
 namespace ArchipelagoVENDOR_STOCKContent {
-inline const std::map<std::string, uint32_t> LOCATIONS = {
+inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
     {"Vendor: Corina Steele - Gladius (#0)", 2000000},
     {"Vendor: Corina Steele - Two-handed Sword (#1)", 2000001},
     {"Vendor: Corina Steele - Tomahawk (#2)", 2000002},
@@ -37749,7 +37749,15 @@ inline const std::map<std::string, uint32_t> LOCATIONS = {
     {"Vendor: Knight-Lieutenant T'Maire Sydes - Furious Gladiator's Libram of Fortitude (#37748)", 2037748},
     {"Vendor: Knight-Lieutenant T'Maire Sydes - Commendation of Bravery (#37749)", 2037749},
 };
-inline const std::map<std::string, uint32_t> ITEMS = {
+inline std::map<std::string, uint32_t> BuildLOCATIONS()
+{
+    std::map<std::string, uint32_t> result;
+    for (auto const& row : LOCATIONS_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::map<std::string, uint32_t> LOCATIONS = BuildLOCATIONS();
+inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Vendor Item: Corina Steele - Gladius (#0)", 2500000},
     {"Vendor Item: Corina Steele - Two-handed Sword (#1)", 2500001},
     {"Vendor Item: Corina Steele - Tomahawk (#2)", 2500002},
@@ -75489,6 +75497,14 @@ inline const std::map<std::string, uint32_t> ITEMS = {
     {"Vendor Item: Knight-Lieutenant T'Maire Sydes - Furious Gladiator's Libram of Fortitude (#37748)", 2537748},
     {"Vendor Item: Knight-Lieutenant T'Maire Sydes - Commendation of Bravery (#37749)", 2537749},
 };
+inline std::map<std::string, uint32_t> BuildITEMS()
+{
+    std::map<std::string, uint32_t> result;
+    for (auto const& row : ITEMS_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::map<std::string, uint32_t> ITEMS = BuildITEMS();
 inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {
     { { 54, 2488 }, 2000000 }, // "Vendor: Corina Steele - Gladius (#0)"
     { { 54, 2489 }, 2000001 }, // "Vendor: Corina Steele - Two-handed Sword (#1)"

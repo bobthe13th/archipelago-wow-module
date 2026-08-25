@@ -9,7 +9,7 @@
 #include <utility>
 
 namespace ArchipelagoQUEST_REWARDSContent {
-inline const std::map<std::string, uint32_t> LOCATIONS = {
+inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
     {"Quest: Kanrethad's Quest Reward (#1)", 1000001},
     {"Quest: Bounty on Garrick Padfoot Reward (#6)", 1000006},
     {"Quest: A Rogue's Deal Reward (#8)", 1000008},
@@ -3746,7 +3746,15 @@ inline const std::map<std::string, uint32_t> LOCATIONS = {
     {"Quest: Words for Delivery Reward (#25500)", 1025500},
     {"Quest: The Twilight Destroyer Reward (#26034)", 1026034},
 };
-inline const std::map<std::string, uint32_t> ITEMS = {
+inline std::map<std::string, uint32_t> BuildLOCATIONS()
+{
+    std::map<std::string, uint32_t> result;
+    for (auto const& row : LOCATIONS_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::map<std::string, uint32_t> LOCATIONS = BuildLOCATIONS();
+inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Quest Reward: Kanrethad's Quest (#1)", 1750001},
     {"Quest Reward: Bounty on Garrick Padfoot (#6)", 1750006},
     {"Quest Reward: A Rogue's Deal (#8)", 1750008},
@@ -7483,6 +7491,14 @@ inline const std::map<std::string, uint32_t> ITEMS = {
     {"Quest Reward: Words for Delivery (#25500)", 1775500},
     {"Quest Reward: The Twilight Destroyer (#26034)", 1776034},
 };
+inline std::map<std::string, uint32_t> BuildITEMS()
+{
+    std::map<std::string, uint32_t> result;
+    for (auto const& row : ITEMS_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::map<std::string, uint32_t> ITEMS = BuildITEMS();
 inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = {
     { 1, 1000001 }, // "Quest: Kanrethad's Quest Reward (#1)"
     { 6, 1000006 }, // "Quest: Bounty on Garrick Padfoot Reward (#6)"

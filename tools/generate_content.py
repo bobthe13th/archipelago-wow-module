@@ -714,6 +714,51 @@ _GENERATED_HEADER_CPP = (
 )
 
 
+def _emit_cpp_large_string_map(var_name: str, rows: list[tuple[str, int]]) -> list[str]:
+    """Emits a `std::map<std::string, uint32_t>` global WITHOUT a single giant
+    aggregate initializer (M4.7.1 finding #1). MSVC materializes a
+    non-trivial (std::string-keyed) initializer_list's backing array on the
+    STACK inside the global's dynamic initializer -- at tens of thousands of
+    rows (Vendor Inventories' ~37,739-row LOCATIONS/ITEMS) that overflows the
+    default 1 MiB thread stack, crashing worldserver.exe in __chkstk before
+    main() ever runs, on every build, regardless of seed options. Fix: stage
+    the raw (char const*, uint32_t) pairs -- a trivial type, so MSVC places
+    the whole array directly in .rdata at zero stack cost -- then build the
+    real map at runtime via a small loop whose stack usage is O(1) per
+    iteration, not O(row count) for the whole table at once.
+
+    Only LOCATIONS/ITEMS (std::string-keyed) need this treatment. The
+    trigger-lookup maps _emit_cpp_trigger_lookup emits separately
+    (QUEST_ID_TO_LOCATION_ID: uint32_t->int64_t, VENDOR_SLOT_TO_LOCATION_ID:
+    pair<uint32_t,uint32_t>->int64_t) use fully trivial key/value types --
+    their initializer_list backing arrays can already be placed directly in
+    .rdata by the compiler with no dynamic-initializer stack cost, so they
+    were never actually at risk (confirmed by the crash trace itself, which
+    named LOCATIONS specifically, not either trigger-lookup map) and are
+    deliberately left as plain aggregate initializers rather than converted
+    for no reason.
+    """
+    if not rows:
+        # An empty `constexpr ... X_RAW[] = {};` is illegal C++ (zero-size
+        # array) -- and an empty map is never at stack-overflow risk anyway,
+        # so just emit the simple, original form for this case.
+        return [f"inline const std::map<std::string, uint32_t> {var_name} = {{}};"]
+
+    lines = [f"inline constexpr std::pair<char const*, uint32_t> {var_name}_RAW[] = {{"]
+    for name, id_ in rows:
+        lines.append(f'    {{{_string_literal(name)}, {id_}}},')
+    lines.append("};")
+    lines.append(f"inline std::map<std::string, uint32_t> Build{var_name}()")
+    lines.append("{")
+    lines.append("    std::map<std::string, uint32_t> result;")
+    lines.append(f"    for (auto const& row : {var_name}_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(f"inline const std::map<std::string, uint32_t> {var_name} = Build{var_name}();")
+    return lines
+
+
 def emit_cpp_generic(data: dict) -> str:
     """Generic LOCATIONS/ITEMS header emitter for new, name-keyed content families.
 
@@ -739,14 +784,12 @@ def emit_cpp_generic(data: dict) -> str:
     ]
     guard = family.upper()
     lines.append(f"namespace Archipelago{guard}Content {{")
-    lines.append("inline const std::map<std::string, uint32_t> LOCATIONS = {")
-    for loc in data["locations"]:
-        lines.append(f'    {{{_string_literal(loc["name"])}, {loc["location_id"]}}},')
-    lines.append("};")
-    lines.append("inline const std::map<std::string, uint32_t> ITEMS = {")
-    for item in data["items"]:
-        lines.append(f'    {{{_string_literal(item["name"])}, {item["item_id"]}}},')
-    lines.append("};")
+    lines.extend(_emit_cpp_large_string_map(
+        "LOCATIONS", [(loc["name"], loc["location_id"]) for loc in data["locations"]]
+    ))
+    lines.extend(_emit_cpp_large_string_map(
+        "ITEMS", [(item["name"], item["item_id"]) for item in data["items"]]
+    ))
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.export_triggers:
         lines.extend(_emit_cpp_trigger_lookup(data))

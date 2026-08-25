@@ -313,5 +313,41 @@ class TestEmitCppGenericTriggers(unittest.TestCase):
         self.assertIn("{ { 54, 1234 }, 2000000 }", cpp)
 
 
+class TestEmitCppGenericLargeMaps(unittest.TestCase):
+    def test_locations_and_items_use_raw_array_plus_builder_not_a_single_aggregate(self) -> None:
+        data = {
+            "family": "vendor_stock",
+            "locations": [
+                {"name": "Vendor: Someone - Item (#0)", "location_id": 2000000,
+                 "trigger": {"kind": "vendor_purchase", "npc_entry": 54, "item_slot": 0}},
+            ],
+            "items": [
+                {"name": "Some Item", "item_id": 5000000, "count": 1,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1234}},
+            ],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("LOCATIONS_RAW[]", cpp)
+        self.assertIn("inline std::map<std::string, uint32_t> BuildLOCATIONS()", cpp)
+        self.assertIn("inline const std::map<std::string, uint32_t> LOCATIONS = BuildLOCATIONS();", cpp)
+        self.assertIn("ITEMS_RAW[]", cpp)
+        self.assertIn("inline std::map<std::string, uint32_t> BuildITEMS()", cpp)
+        self.assertIn("inline const std::map<std::string, uint32_t> ITEMS = BuildITEMS();", cpp)
+        self.assertIn('{"Vendor: Someone - Item (#0)", 2000000}', cpp)
+        self.assertIn('{"Some Item", 5000000}', cpp)
+
+    def test_empty_locations_emits_simple_empty_map_not_a_raw_array(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [],
+            "items": [],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("inline const std::map<std::string, uint32_t> LOCATIONS = {};", cpp)
+        self.assertIn("inline const std::map<std::string, uint32_t> ITEMS = {};", cpp)
+        self.assertNotIn("LOCATIONS_RAW", cpp)
+        self.assertNotIn("ITEMS_RAW", cpp)
+
+
 if __name__ == "__main__":
     unittest.main()
