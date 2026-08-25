@@ -178,7 +178,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             auto const& [effect, lethal] = trapIt->second;
             // Traps fire on receipt, targeting the same delivery character
-            // EveryoneReceives mails to -- there is no other single "the
+            // SingleDeliveryCharacter mails to -- there is no other single "the
             // player" to target in this realm-as-slot architecture. Only
             // fires if that character is online right now; an offline
             // delivery character never gets a queued/retroactive trap (a
