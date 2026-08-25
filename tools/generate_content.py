@@ -727,16 +727,19 @@ def _emit_cpp_large_string_map(var_name: str, rows: list[tuple[str, int]]) -> li
     real map at runtime via a small loop whose stack usage is O(1) per
     iteration, not O(row count) for the whole table at once.
 
-    Only LOCATIONS/ITEMS (std::string-keyed) need this treatment. The
-    trigger-lookup maps _emit_cpp_trigger_lookup emits separately
-    (QUEST_ID_TO_LOCATION_ID: uint32_t->int64_t, VENDOR_SLOT_TO_LOCATION_ID:
-    pair<uint32_t,uint32_t>->int64_t) use fully trivial key/value types --
-    their initializer_list backing arrays can already be placed directly in
-    .rdata by the compiler with no dynamic-initializer stack cost, so they
-    were never actually at risk (confirmed by the crash trace itself, which
-    named LOCATIONS specifically, not either trigger-lookup map) and are
-    deliberately left as plain aggregate initializers rather than converted
-    for no reason.
+    LOCATIONS/ITEMS (std::string-keyed) need this treatment for certain --
+    std::string isn't trivially constructible, so a giant initializer_list
+    of them can never be placed in static storage. The trigger-lookup maps
+    _emit_cpp_trigger_lookup emits separately (QUEST_ID_TO_LOCATION_ID,
+    VENDOR_SLOT_TO_LOCATION_ID) use fully trivial key/value types, and this
+    module originally assumed that made them safe from the same failure --
+    a real rebuild-and-launch proved that assumption wrong for
+    VENDOR_SLOT_TO_LOCATION_ID (see _emit_cpp_trigger_lookup_vendor_purchase's
+    own docstring). Both trigger-lookup maps now use this same raw-array-
+    plus-builder pattern too, not because their types turned out to be
+    non-trivial, but because "this type is trivial, therefore it's safe"
+    was an unverified theory that already failed once and wasn't worth
+    re-trusting for the smaller of the two maps either.
     """
     if not rows:
         # An empty `constexpr ... X_RAW[] = {};` is illegal C++ (zero-size
