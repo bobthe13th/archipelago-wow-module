@@ -201,10 +201,13 @@ namespace Archipelago::ItemDisplay
                 // UPDATE runs once, npc_vendor.item no longer equals
                 // wowItemEntry for this row, so a second run of this same
                 // statement matches zero rows and is a safe no-op.
-                // maxcount=1 + a large incrtime (never 0 -- Creature.cpp's
-                // GetVendorItemCurrentCount/UpdateVendorItemCurrentCount use
-                // incrtime as a DIVISOR whenever maxcount > 0, so 0 is a
-                // real crash risk, not just "restocks instantly") makes the
+                // maxcount=1 + a large incrtime (never 0 -- ObjectMgr::IsVendorItemValid
+                // rejects any row with maxcount > 0 && incrtime == 0 at data-load time
+                // (ObjectMgr.cpp:10416-10423), silently dropping it from the vendor's
+                // list entirely, rather than the more commonly assumed "restocks
+                // instantly"; separately, Creature.cpp's GetVendorItemCurrentCount/
+                // UpdateVendorItemCurrentCount also use incrtime as a divisor, which 0
+                // would additionally break if that guard were ever bypassed) makes the
                 // client's own vendor UI show this slot as 1-in-stock, then
                 // out-of-stock after purchase -- a strictly better player
                 // experience than today's buy-then-refund, layered on top
