@@ -117,16 +117,16 @@ Archipelago.CharacterUnlockGating = 0
 #                      progression), so a mismatch just means items don't
 #                      arrive the way the seed's players expect, not a
 #                      softlock. AuctionHouse is refused (falls back to
-#                      EveryoneReceives, logged as an error) whenever
+#                      SingleDeliveryCharacter, logged as an error) whenever
 #                      Archipelago.AccessGating is also on, since it can
 #                      list a player's own AP-earned item on the Auction
 #                      House before Auction House Access is granted -- a
 #                      real softlock, not just a mismatch.
-#        Values:      "EveryoneReceives" (default) | "SharedCacheNpc" |
+#        Values:      "SingleDeliveryCharacter" (default) | "SharedCacheNpc" |
 #                      "AuctionHouse" | "FirstToClaim"
-#        Default:     "EveryoneReceives"
+#        Default:     "SingleDeliveryCharacter"
 
-Archipelago.DeliveryPolicy = "EveryoneReceives"
+Archipelago.DeliveryPolicy = "SingleDeliveryCharacter"
 
 #    Archipelago.AuctionHouseCostTier
 #        Description: Only used when Archipelago.DeliveryPolicy is
@@ -150,7 +150,7 @@ Archipelago.AuctionHouseCostTier = "Market"
 #                      realm has already received (M4 Sec7.2) -- every
 #                      delivered item is logged once, regardless of
 #                      DeliveryPolicy, but historically only reached one
-#                      designated character (EveryoneReceives'
+#                      designated character (SingleDeliveryCharacter's
 #                      DeliveryCharacter); every other character starts with
 #                      none of it. Only turn this away from the default when
 #                      the connected seed's player YAML also has a matching

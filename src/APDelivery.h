@@ -12,7 +12,9 @@ namespace Archipelago::Delivery
 {
     enum class Policy
     {
-        EveryoneReceives, // M2/M2.1's existing, only behavior: mail to Archipelago.DeliveryCharacter
+        SingleDeliveryCharacter, // M2/M2.1's existing, only behavior: mail to Archipelago.DeliveryCharacter --
+                                  // renamed from EveryoneReceives (M4.7.1.2), which never mailed "everyone,"
+                                  // only this one named character; see CatchUpPolicy for the real gap this named.
         SharedCacheNpc,   // Task 13: no single recipient -- records the item type as available
                           // in the realm-wide cache instead (see archipelago_cache_items);
                           // npc_archipelago_cache_keeper.cpp hands each character their own
@@ -39,7 +41,7 @@ namespace Archipelago::Delivery
         Random,
     };
 
-    // wowItemEntry is the WoW item_template entry to deliver. Policy::EveryoneReceives
+    // wowItemEntry is the WoW item_template entry to deliver. Policy::SingleDeliveryCharacter
     // constructs and mails one Item of this entry to deliveryCharacter (M2/M2.1's original,
     // only behavior, unchanged). Policy::SharedCacheNpc never constructs an Item here at
     // all -- see the enum comment above. Task 12 originally took an already-constructed
@@ -52,7 +54,7 @@ namespace Archipelago::Delivery
 
     // Shared "give this online player one copy of wowItemEntry right now" primitive:
     // stores it directly into their bags if there's room, otherwise mails it (same
-    // postmaster sender DeliverItem's EveryoneReceives branch uses) so it's never
+    // postmaster sender DeliverItem's SingleDeliveryCharacter branch uses) so it's never
     // silently lost. Used by anything that grants an item to an already-identified,
     // online Player* -- the Archipelago Cache Keeper's claim options (Tasks 13/15)
     // and new-character catch-up (Task 16) -- as opposed to DeliverItem above, which

@@ -172,7 +172,7 @@ namespace Archipelago::Delivery
                 break;
             }
 
-            case Policy::EveryoneReceives:
+            case Policy::SingleDeliveryCharacter:
             default:
                 MailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
                 break;

@@ -38,9 +38,9 @@ namespace
             return Archipelago::Delivery::Policy::AuctionHouse;
         if (value == "FirstToClaim")
             return Archipelago::Delivery::Policy::FirstToClaim;
-        if (value != "EveryoneReceives")
-            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.DeliveryPolicy '{}', falling back to EveryoneReceives", value);
-        return Archipelago::Delivery::Policy::EveryoneReceives;
+        if (value != "SingleDeliveryCharacter")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.DeliveryPolicy '{}', falling back to SingleDeliveryCharacter", value);
+        return Archipelago::Delivery::Policy::SingleDeliveryCharacter;
     }
 
     // Task 14: same manual-sync mirror as ParseDeliveryPolicy above, for the apworld's
@@ -171,7 +171,7 @@ public:
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
-        _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "EveryoneReceives"));
+        _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "SingleDeliveryCharacter"));
         _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
 
         // Task 16 (design spec Sec7.2): same manual-sync mirror-toggle discipline as
@@ -265,8 +265,8 @@ public:
         // "just their own" AH listings.
         if (_deliveryPolicy == Archipelago::Delivery::Policy::AuctionHouse && _accessGating)
         {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryPolicy=AuctionHouse with AccessGating=1 can softlock a player's own AP-earned items (they could be listed before Auction House Access is granted) -- falling back to EveryoneReceives");
-            _deliveryPolicy = Archipelago::Delivery::Policy::EveryoneReceives;
+            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryPolicy=AuctionHouse with AccessGating=1 can softlock a player's own AP-earned items (they could be listed before Auction House Access is granted) -- falling back to SingleDeliveryCharacter");
+            _deliveryPolicy = Archipelago::Delivery::Policy::SingleDeliveryCharacter;
         }
 
         // Mirror into ArchipelagoRealmState so the gating scripts (instance
@@ -472,7 +472,7 @@ private:
     std::string _password;
     bool _useTls = false;
     std::string _deliveryCharacter;
-    Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::EveryoneReceives;
+    Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::SingleDeliveryCharacter;
     Archipelago::Delivery::CostTier _auctionHouseCostTier = Archipelago::Delivery::CostTier::Market;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
