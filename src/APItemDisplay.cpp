@@ -63,13 +63,28 @@ namespace
         // one extra read avoids four hardcoded displayid literals here
         // drifting from Task 5b's migration if it's ever re-run with
         // different resolved values.
+        //
+        // The ON DUPLICATE KEY UPDATE clause must refresh every
+        // classification-relevant column the SELECT above computes from the
+        // icon source row (class, subclass, displayid, Quality, Flags,
+        // InventoryType, bonding) -- not just name. A re-seed against an
+        // already-set-up world DB (same realm, new seed -- a normal
+        // randomizer workflow) reuses this same synthesized entry
+        // (SynthesizedEntryFor is a pure function of location_id), but the
+        // new seed's item at that location can have a DIFFERENT
+        // classification (e.g. Progression last time, Trap this time). If
+        // only name were refreshed, the row would show a new name paired
+        // with the OLD icon/displayid -- silently showing the wrong
+        // classification to the player.
         WorldDatabase.Execute(
             "INSERT INTO item_template (entry, class, subclass, name, displayid, Quality, Flags, BuyCount, "
             "BuyPrice, SellPrice, InventoryType, MaxCount, Stackable, ContainerSlots, bonding, VerifiedBuild) "
             "SELECT {}, class, subclass, '{}', displayid, Quality, Flags, BuyCount, BuyPrice, 0, InventoryType, "
             "MaxCount, Stackable, ContainerSlots, bonding, VerifiedBuild "
             "FROM item_template WHERE entry = {} "
-            "ON DUPLICATE KEY UPDATE name = VALUES(name)",
+            "ON DUPLICATE KEY UPDATE name = VALUES(name), class = VALUES(class), subclass = VALUES(subclass), "
+            "displayid = VALUES(displayid), Quality = VALUES(Quality), Flags = VALUES(Flags), "
+            "InventoryType = VALUES(InventoryType), bonding = VALUES(bonding)",
             entry, escapedName, iconEntry
         );
     }
