@@ -7499,7 +7499,7 @@ inline std::map<std::string, uint32_t> BuildITEMS()
     return result;
 }
 inline const std::map<std::string, uint32_t> ITEMS = BuildITEMS();
-inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = {
+inline constexpr std::pair<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID_RAW[] = {
     { 1, 1000001 }, // "Quest: Kanrethad's Quest Reward (#1)"
     { 6, 1000006 }, // "Quest: Bounty on Garrick Padfoot Reward (#6)"
     { 8, 1000008 }, // "Quest: A Rogue's Deal Reward (#8)"
@@ -11236,4 +11236,12 @@ inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = {
     { 25500, 1025500 }, // "Quest: Words for Delivery Reward (#25500)"
     { 26034, 1026034 }, // "Quest: The Twilight Destroyer Reward (#26034)"
 };
+inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()
+{
+    std::unordered_map<uint32_t, int64_t> result;
+    for (auto const& row : QUEST_ID_TO_LOCATION_ID_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = BuildQUEST_ID_TO_LOCATION_ID();
 }

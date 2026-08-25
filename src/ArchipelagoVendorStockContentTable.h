@@ -75505,7 +75505,7 @@ inline std::map<std::string, uint32_t> BuildITEMS()
     return result;
 }
 inline const std::map<std::string, uint32_t> ITEMS = BuildITEMS();
-inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {
+inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID_RAW[] = {
     { { 54, 2488 }, 2000000 }, // "Vendor: Corina Steele - Gladius (#0)"
     { { 54, 2489 }, 2000001 }, // "Vendor: Corina Steele - Two-handed Sword (#1)"
     { { 54, 2490 }, 2000002 }, // "Vendor: Corina Steele - Tomahawk (#2)"
@@ -113245,4 +113245,12 @@ inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOC
     { { 40607, 42853 }, 2037748 }, // "Vendor: Knight-Lieutenant T'Maire Sydes - Furious Gladiator's Libram of Fortitude (#37748)"
     { { 40607, 45706 }, 2037749 }, // "Vendor: Knight-Lieutenant T'Maire Sydes - Commendation of Bravery (#37749)"
 };
+inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildVENDOR_SLOT_TO_LOCATION_ID()
+{
+    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;
+    for (auto const& row : VENDOR_SLOT_TO_LOCATION_ID_RAW)
+        result.emplace(row.first, row.second);
+    return result;
+}
+inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = BuildVENDOR_SLOT_TO_LOCATION_ID();
 }

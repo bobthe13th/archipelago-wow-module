@@ -798,6 +798,70 @@ def emit_cpp_generic(data: dict) -> str:
     return "\n".join(lines)
 
 
+def _emit_cpp_trigger_lookup_quest_reward(locations: list) -> list[str]:
+    """QUEST_ID_TO_LOCATION_ID via the same raw-constexpr-array-plus-runtime-
+    builder pattern as _emit_cpp_large_string_map (M4.7.1 Task 3 -- empirical
+    correction: this map's key/value types are fully trivial, and the
+    original M4.7.1.1 plan argued on that basis it could never overflow the
+    stack the way LOCATIONS/ITEMS did. A real rebuild-and-launch proved that
+    argument wrong for VENDOR_SLOT_TO_LOCATION_ID's larger sibling below, so
+    this one gets the same treatment rather than re-trusting the same
+    falsified reasoning a second time -- it's small enough (~3,735 rows for
+    quest_rewards) to likely never have been at real risk, but "likely" was
+    exactly the confidence level that was already wrong once."""
+    lines = ["inline constexpr std::pair<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID_RAW[] = {"]
+    for loc in locations:
+        lines.append(f'    {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+    lines.append("};")
+    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("    for (auto const& row : QUEST_ID_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = "
+        "BuildQUEST_ID_TO_LOCATION_ID();"
+    )
+    return lines
+
+
+def _emit_cpp_trigger_lookup_vendor_purchase(locations: list, items: list) -> list[str]:
+    """VENDOR_SLOT_TO_LOCATION_ID via the same pattern -- this is the map
+    that actually crashed worldserver.exe a second time after Task 1's fix
+    (M4.7.1 Task 3), proving the "trivial types are always safe" theory
+    wrong for this compiler/row-count in practice."""
+    lines = [
+        "inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID_RAW[] = {"
+    ]
+    for idx, loc in enumerate(locations):
+        if idx >= len(items):
+            raise ValidationError(
+                f"location index {idx} exceeds items list length {len(items)} -- "
+                f"locations and items must be parallel aligned for trigger-lookup emission"
+            )
+        trigger = loc["trigger"]
+        wow_item_entry = items[idx]["delivery"]["wow_item_entry"]
+        lines.append(
+            f'    {{ {{ {trigger["npc_entry"]}, {wow_item_entry} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append("inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildVENDOR_SLOT_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : VENDOR_SLOT_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = "
+        "BuildVENDOR_SLOT_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
     FamilySchema.export_triggers. Unlike emit_python_generic's TRIGGERS (a
@@ -812,29 +876,10 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     kind = locations[0]["trigger"]["kind"]
 
     if kind == "quest_reward":
-        lines = ["inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = {"]
-        for loc in locations:
-            lines.append(f'    {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
-        lines.append("};")
-        return lines
+        return _emit_cpp_trigger_lookup_quest_reward(locations)
 
     if kind == "vendor_purchase":
-        lines = ["inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = {"]
-        items = data.get("items", [])
-        for idx, loc in enumerate(locations):
-            if idx >= len(items):
-                raise ValidationError(
-                    f"location index {idx} exceeds items list length {len(items)} -- "
-                    f"locations and items must be parallel aligned for trigger-lookup emission"
-                )
-            trigger = loc["trigger"]
-            wow_item_entry = items[idx]["delivery"]["wow_item_entry"]
-            lines.append(
-                f'    {{ {{ {trigger["npc_entry"]}, {wow_item_entry} }}, {loc["location_id"]} }}, '
-                f'// {_string_literal(loc["name"])}'
-            )
-        lines.append("};")
-        return lines
+        return _emit_cpp_trigger_lookup_vendor_purchase(locations, data.get("items", []))
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "

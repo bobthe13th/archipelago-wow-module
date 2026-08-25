@@ -283,7 +283,7 @@ class TestGenericEmitter(unittest.TestCase):
 
 
 class TestEmitCppGenericTriggers(unittest.TestCase):
-    def test_quest_reward_family_emits_quest_id_to_location_id_map(self) -> None:
+    def test_quest_reward_family_emits_quest_id_to_location_id_via_raw_array_builder(self) -> None:
         data = {
             "family": "quest_rewards",
             "locations": [
@@ -293,10 +293,15 @@ class TestEmitCppGenericTriggers(unittest.TestCase):
             "items": [],
         }
         cpp = emit_cpp_generic(data)
-        self.assertIn("QUEST_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("QUEST_ID_TO_LOCATION_ID_RAW[]", cpp)
+        self.assertIn("inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()", cpp)
+        self.assertIn(
+            "inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = BuildQUEST_ID_TO_LOCATION_ID();",
+            cpp,
+        )
         self.assertIn("{ 1, 1000001 }", cpp)
 
-    def test_vendor_purchase_family_emits_slot_to_location_id_map(self) -> None:
+    def test_vendor_purchase_family_emits_slot_to_location_id_via_raw_array_builder(self) -> None:
         data = {
             "family": "vendor_stock",
             "locations": [
@@ -309,7 +314,16 @@ class TestEmitCppGenericTriggers(unittest.TestCase):
             ],
         }
         cpp = emit_cpp_generic(data)
-        self.assertIn("VENDOR_SLOT_TO_LOCATION_ID", cpp)
+        self.assertIn("VENDOR_SLOT_TO_LOCATION_ID_RAW[]", cpp)
+        self.assertIn(
+            "inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildVENDOR_SLOT_TO_LOCATION_ID()",
+            cpp,
+        )
+        self.assertIn(
+            "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOCATION_ID = "
+            "BuildVENDOR_SLOT_TO_LOCATION_ID();",
+            cpp,
+        )
         self.assertIn("{ { 54, 1234 }, 2000000 }", cpp)
 
 
