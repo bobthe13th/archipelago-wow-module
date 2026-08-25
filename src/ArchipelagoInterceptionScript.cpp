@@ -65,12 +65,18 @@ namespace
     // Called for every REPEAT purchase of an already-checked vendor slot
     // (the caller has already destroyed the synthesized placeholder by the
     // time this runs -- see OnPlayerAfterStoreOrEquipNewItem). `pVendor`/
-    // `crItem`/`count` are threaded straight through from the hook's own
-    // parameters (the same values Player::BuyItemFromVendorSlot used to
-    // charge for this purchase in the first place) so suppress_entirely's
-    // refund below can reproduce that exact charge rather than assuming a
-    // flat, undiscounted BuyPrice.
-    void ApplyRepeatBehavior(Player* player, int64_t locationId, Creature* pVendor, VendorItem const* crItem, uint8_t count)
+    // `crItem`/`count`/`pProto` are threaded straight through from the
+    // hook's own parameters (the exact same values -- `pProto` included --
+    // Player::BuyItemFromVendorSlot used to charge for this purchase in the
+    // first place: the core resolves `pProto` there as
+    // sObjectMgr->GetItemTemplate(item), `item` being the SYNTHESIZED entry
+    // the client actually bought, and passes that identical pointer through
+    // to this hook) so suppress_entirely's refund below can reproduce that
+    // exact charge byte-for-byte rather than assuming a flat, undiscounted
+    // BuyPrice, or re-deriving a DIFFERENT (original-item) proto that can
+    // diverge from what was actually charged.
+    void ApplyRepeatBehavior(Player* player, int64_t locationId, Creature* pVendor, VendorItem const* crItem,
+        uint8_t count, ItemTemplate const* pProto)
     {
         std::string behavior = sArchipelagoRealmState->GetVendorCheckRepeatBehavior();
         if (behavior == "vanilla_item")
@@ -105,33 +111,48 @@ namespace
         // Player::BuyItemFromVendorSlot's own price computation (Player.cpp):
         // "price = pProto->BuyPrice * count;
         //  price = uint32(std::floor(price * GetReputationPriceDiscount(creature)));"
-        // -- gated the same way by VendorItem::IsGoldRequired, so a
-        // token/ExtendedCost-only slot (which charged 0 gold) correctly
-        // refunds 0, rather than always refunding the flat BuyPrice
-        // regardless of what was actually charged (a real, if smaller, gold
-        // faucet the earlier revision of this fix introduced). Reads the
-        // ORIGINAL item's proto -- its BuyPrice is numerically identical to
-        // the synthesized item's own BuyPrice (APItemDisplay.cpp's vendor
-        // branch keeps them in sync), so this is equivalent for the price
-        // magnitude and is the more directly correct source to read from.
+        // gated by "crItem->IsGoldRequired(pProto) && pProto->BuyPrice > 0".
+        //
+        // Deliberately uses the SYNTHESIZED item's own `pProto` here (the
+        // hook parameter), NOT a separately-looked-up original-item proto --
+        // an earlier revision of this fix used the original item's proto for
+        // this check, which is WRONG: the real purchase evaluates
+        // IsGoldRequired against the SYNTHESIZED placeholder's proto (the
+        // core resolves it as sObjectMgr->GetItemTemplate(item) where `item`
+        // is the synthesized entry the client actually bought), and
+        // SynthesizeItemTemplateRow never copies FlagsExtra, so the
+        // synthesized proto's ITEM_FLAG2_DONT_IGNORE_BUY_PRICE is always
+        // unset. For any vendor slot with a nonzero ExtendedCost, this means
+        // the REAL purchase always charges 0 gold -- but reading the
+        // ORIGINAL item's proto instead pays out full (BuyPrice * discount)
+        // whenever the original item happens to carry that flag. Confirmed
+        // against this project's own compiled Vendor Inventories content:
+        // 77 real npc_vendor rows (42 distinct items, all unlimited stock)
+        // hit exactly this, including several Kirin Tor faction rings worth
+        // 1,250g per repeat purchase -- a real, systematic gold faucet under
+        // the default suppress_entirely behavior, not a theoretical edge
+        // case. Using `pProto` here makes this byte-exact by construction
+        // (same pointer the real charge computation used) and also removes
+        // the DB round-trip GetOriginalItemId/GetItemTemplate previously did
+        // for this specific check.
         uint32_t refundAmount = 0;
-        uint32_t originalItemId = GetOriginalItemId(locationId);
-        if (ItemTemplate const* originalProto = sObjectMgr->GetItemTemplate(originalItemId))
-        {
-            if (crItem->IsGoldRequired(originalProto))
-                refundAmount = static_cast<uint32_t>(
-                    std::floor(originalProto->BuyPrice * count * player->GetReputationPriceDiscount(pVendor)));
-        }
-        else
-        {
-            LOG_ERROR("module.archipelago_wow",
-                "Archipelago: suppress_entirely repeat behavior for location {} has no "
-                "recoverable original item template -- cannot compute the real gold charged, "
-                "refunding nothing", locationId);
-        }
+        if (pProto != nullptr && crItem->IsGoldRequired(pProto) && pProto->BuyPrice > 0)
+            refundAmount = static_cast<uint32_t>(
+                std::floor(pProto->BuyPrice * count * player->GetReputationPriceDiscount(pVendor)));
         player->ModifyMoney(static_cast<int32>(refundAmount));
-        ChatHandler(player->GetSession()).PSendSysMessage(
-            "Archipelago: you have already sent this check -- purchase refunded.");
+        // Honest messaging: an ExtendedCost-only slot already consumed the
+        // player's honor/arena/token currency before this hook ever ran (in
+        // Player::BuyItemFromVendorSlot, well before _StoreOrEquipNewItem),
+        // and that currency is NOT refunded here (a larger design question,
+        // out of this fix's scope) -- refundAmount correctly computes to 0
+        // gold for such a slot, so the message must not claim a refund that
+        // didn't happen.
+        if (refundAmount > 0)
+            ChatHandler(player->GetSession()).PSendSysMessage(
+                "Archipelago: you have already sent this check -- purchase refunded.");
+        else
+            ChatHandler(player->GetSession()).PSendSysMessage(
+                "Archipelago: you have already sent this check.");
     }
 }
 
@@ -142,7 +163,7 @@ public:
         : PlayerScript("ArchipelagoInterceptionScript", { PLAYERHOOK_ON_AFTER_STORE_OR_EQUIP_NEW_ITEM }) { }
 
     void OnPlayerAfterStoreOrEquipNewItem(Player* player, uint32 /*vendorslot*/, Item* item, uint8 count,
-        uint8 /*bag*/, uint8 /*slot*/, ItemTemplate const* /*pProto*/, Creature* pVendor,
+        uint8 /*bag*/, uint8 /*slot*/, ItemTemplate const* pProto, Creature* pVendor,
         VendorItem const* crItem, bool /*bStore*/) override
     {
         if (item == nullptr)
@@ -169,7 +190,7 @@ public:
             return;
         }
 
-        ApplyRepeatBehavior(player, locationId, pVendor, crItem, count);
+        ApplyRepeatBehavior(player, locationId, pVendor, crItem, count, pProto);
     }
 };
 
