@@ -6,6 +6,7 @@
 #include "ArchipelagoVendorStockContentTable.h"
 #include "DatabaseEnv.h"
 #include "Log.h"
+#include "QueryResult.h"
 
 namespace
 {
@@ -90,18 +91,51 @@ namespace Archipelago::ItemDisplay
             if (auto it = locationToQuestId.find(locationId); it != locationToQuestId.end())
             {
                 uint32_t questId = it->second;
-                for (std::string const& column : { "RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4",
-                                                     "RewardChoiceItemID1", "RewardChoiceItemID2", "RewardChoiceItemID3",
-                                                     "RewardChoiceItemID4", "RewardChoiceItemID5", "RewardChoiceItemID6" })
+
+                // QUEST_ID_TO_LOCATION_ID doesn't carry which of the 10
+                // reward-item columns held the real trigger item (unlike the
+                // vendor map below, which does), so that column has to be
+                // re-derived at runtime -- via the exact same preference
+                // order pick_representative_reward() used at generation
+                // time (see PickRewardColumn's doc comment). Blindly setting
+                // all 10 columns here would corrupt the other 9, which may
+                // be legitimately-unused zeros or real alternate-choice
+                // rewards for a genuine multi-choice quest.
+                std::array<uint32_t, 10> columnValues{};
+                if (QueryResult result = WorldDatabase.Query(
+                        "SELECT RewardItem1, RewardItem2, RewardItem3, RewardItem4, "
+                        "RewardChoiceItemID1, RewardChoiceItemID2, RewardChoiceItemID3, "
+                        "RewardChoiceItemID4, RewardChoiceItemID5, RewardChoiceItemID6 "
+                        "FROM quest_template WHERE ID = {}",
+                        questId))
                 {
-                    // Every reward-slot column is a plain int (not part of
-                    // quest_template's primary key -- confirmed schema),
-                    // so this is a safe no-op for every column this quest
-                    // doesn't actually use (WHERE matches zero rows).
+                    Field* fields = result->Fetch();
+                    for (size_t i = 0; i < columnValues.size(); ++i)
+                        columnValues[i] = fields[i].Get<uint32_t>();
+                }
+
+                if (auto picked = Archipelago::ItemDisplay::PickRewardColumn(columnValues))
+                {
+                    auto const& [column, originalValue] = *picked;
+                    // Matches on the original reward value per this task's
+                    // idempotency constraint -- after this UPDATE runs once,
+                    // the picked column no longer equals originalValue, so a
+                    // second run of this same statement matches zero rows
+                    // and is a safe no-op. Only the ONE column
+                    // PickRewardColumn selected is touched; the other 9 are
+                    // left completely alone.
                     WorldDatabase.Execute(
-                        "UPDATE quest_template SET {} = {} WHERE ID = {}",
-                        column, entry, questId
+                        "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
+                        column, entry, questId, column, originalValue
                     );
+                }
+                else
+                {
+                    LOG_ERROR("module.archipelago_wow",
+                        "Archipelago: quest {} (location {}) has no non-zero reward-item "
+                        "column (or quest_template row is missing) -- no trigger column to "
+                        "rewrite, skipped",
+                        questId, locationId);
                 }
                 continue;
             }
