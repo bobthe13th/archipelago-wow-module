@@ -248,6 +248,22 @@ TEST_CASE("ParseApItemDisplayFromSlotData skips an entry with wrong-typed name/f
     CHECK(display[1000001].flags == 0);
 }
 
+TEST_CASE("ParseApItemDisplayFromSlotData returns empty when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "ap_item_display": {
+                "2000000": {"name": "Alice's Sword of Might", "flags": 1}
+            }
+        }
+    }])";
+
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> display;
+    CHECK_NOTHROW(display = Archipelago::ParseApItemDisplayFromSlotData(raw));
+    CHECK(display.empty());
+}
+
 TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData parses vendor_check_repeat_behavior from Connected's slot_data")
 {
     std::string raw = R"([{
@@ -282,6 +298,20 @@ TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when the k
         "cmd": "Connected",
         "slot_data": {
             "vendor_check_repeat_behavior": 12345
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseVendorCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "vendor_check_repeat_behavior": "gold_conversion"
         }
     }])";
 

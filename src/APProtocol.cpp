@@ -174,7 +174,15 @@ namespace Archipelago
 
         for (json const& element : parsed)
         {
-            if (!element.is_object() || element.value("cmd", "") != "Connected")
+            // element.value("cmd", "") would only substitute the default
+            // when "cmd" is ABSENT -- a present-but-wrong-typed cmd (e.g. a
+            // numeric cmd) still throws json::type_error out of get<T>(),
+            // which would crash the connection state machine on a malformed
+            // frame instead of degrading gracefully like every other
+            // Parse* function's discipline requires. Check contains()+
+            // is_string() explicitly instead.
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
                 continue;
             if (!element.contains("slot_data") || !element["slot_data"].is_object())
                 continue;
@@ -219,7 +227,15 @@ namespace Archipelago
 
         for (json const& element : parsed)
         {
-            if (!element.is_object() || element.value("cmd", "") != "Connected")
+            // element.value("cmd", "") would only substitute the default
+            // when "cmd" is ABSENT -- a present-but-wrong-typed cmd (e.g. a
+            // numeric cmd) still throws json::type_error out of get<T>(),
+            // which would crash the connection state machine on a malformed
+            // frame instead of degrading gracefully like every other
+            // Parse* function's discipline requires. Check contains()+
+            // is_string() explicitly instead.
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
                 continue;
             if (!element.contains("slot_data") || !element["slot_data"].is_object())
                 continue;

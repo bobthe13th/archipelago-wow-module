@@ -183,6 +183,25 @@ namespace Archipelago::ItemDisplay
                     "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
                     locationId, wowItemEntry
                 );
+
+                // Design spec Sec6: the synthesized item's price must come
+                // from the game's own normal vendor-list rendering -- i.e.
+                // the REAL vendor item's BuyPrice, not the 4 classification-
+                // icon templates' own BuyPrice (0, inherited from the
+                // giftbox icon items SynthesizeItemTemplateRow copies from).
+                // Without this, every synthesized vendor slot is free, and a
+                // vendor with unlimited stock lets a player repeat-buy it
+                // for free real items (vanilla_item) or free gold
+                // (gold_conversion) -- an unlimited duplication exploit. Kept
+                // in sync here (not baked into SynthesizeItemTemplateRow's
+                // ON DUPLICATE KEY UPDATE) because only the vendor branch has
+                // a real "price" concept at all -- quest rewards are never
+                // purchased.
+                WorldDatabase.Execute(
+                    "UPDATE item_template SET BuyPrice = (SELECT BuyPrice FROM item_template WHERE entry = {}) "
+                    "WHERE entry = {}",
+                    wowItemEntry, entry
+                );
                 continue;
             }
 
