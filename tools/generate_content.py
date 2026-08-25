@@ -52,6 +52,9 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
+    data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
+        data["family"], data["locations"], data["items"], yaml_path
+    )
 
     return data
 
@@ -215,7 +218,64 @@ def _validate_trigger_lookup_uniqueness(
                 print(f"    (npc_entry={npc_entry}, wow_item_entry={wow_item_entry}):")
                 for name in location_names:
                     print(f"      - {name}")
-            print(f"   -> std::map will keep the last value; Task 8/9 can still reverse-lookup the representative location.\n")
+            print(f"   -> only the first-encountered location per key survives into VENDOR_SLOT_TO_LOCATION_ID; "
+                  f"the rest are excluded from the emitted pool entirely (see _dedupe_vendor_trigger_collisions).\n")
+
+
+def _dedupe_vendor_trigger_collisions(
+    family: str, locations: list, items: list, yaml_path: pathlib.Path
+) -> tuple[list, list]:
+    """Finding I4 (M4.7 final review): when multiple vendor_stock locations
+    share the same (npc_entry, wow_item_entry) trigger-lookup key,
+    _validate_trigger_lookup_uniqueness above only WARNS -- it does not stop
+    the colliding rows from being emitted into LOCATIONS/ITEMS. That used to
+    leave 12 of 16 colliding locations (4 collision groups, one survivor
+    each) sitting in the apworld's placeable location pool with NO access
+    rule, while their C++ trigger silently disappeared: std::map's
+    initializer-list construction keeps only the FIRST insertion for a
+    duplicate key (see _emit_cpp_trigger_lookup's VENDOR_SLOT_TO_LOCATION_ID)
+    -- not the last, despite an earlier, now-corrected comment here claiming
+    otherwise. A seed that places a required progression item on one of
+    those 12 unreachable locations was unwinnable. Excludes every duplicate
+    beyond the first-encountered one (locations/items are parallel-aligned
+    by index) at the SOURCE, so they never enter LOCATIONS/ITEMS for either
+    the Python data module or the C++ header -- not just the trigger-lookup
+    map. Only applies to vendor_purchase-kind export_triggers families
+    (quest_reward collisions are a hard ValidationError above, never reach
+    here); a no-op for every other family."""
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is None or not schema.export_triggers or not locations:
+        return locations, items
+    if locations[0]["trigger"]["kind"] != "vendor_purchase":
+        return locations, items
+    if len(items) != len(locations):
+        return locations, items  # already reported as a hard error above
+
+    seen_keys: dict[tuple[int, int], str] = {}
+    kept_locations: list = []
+    kept_items: list = []
+    dropped_names: list[str] = []
+    for loc, item in zip(locations, items):
+        npc_entry = loc["trigger"]["npc_entry"]
+        wow_item_entry = item["delivery"]["wow_item_entry"]
+        key = (npc_entry, wow_item_entry)
+        if key in seen_keys:
+            dropped_names.append(loc["name"])
+            continue
+        seen_keys[key] = loc["name"]
+        kept_locations.append(loc)
+        kept_items.append(item)
+
+    if dropped_names:
+        print(f"\nNOTE: {yaml_path}: excluded {len(dropped_names)} duplicate-trigger-key location(s) "
+              f"from the placeable pool -- each shares its (npc_entry, wow_item_entry) key with an "
+              f"earlier location that already won the C++ VENDOR_SLOT_TO_LOCATION_ID slot, so these "
+              f"would otherwise be unreachable/uncheckable in-game (Finding I4):")
+        for name in dropped_names:
+            print(f"    - {name}")
+        print()
+
+    return kept_locations, kept_items
 
 
 @dataclass

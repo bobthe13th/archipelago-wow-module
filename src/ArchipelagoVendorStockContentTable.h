@@ -13534,17 +13534,7 @@ inline const std::map<std::string, uint32_t> LOCATIONS = {
     {"Vendor: Mylini Frostmoon - Great Axe (#13521)", 2013521},
     {"Vendor: Mylini Frostmoon - Rondel (#13522)", 2013522},
     {"Vendor: Horde Warbringer - Commendation of Service (#13523)", 2013523},
-    {"Vendor: Horde Warbringer - Commendation of Service (#13524)", 2013524},
-    {"Vendor: Horde Warbringer - Commendation of Service (#13525)", 2013525},
-    {"Vendor: Horde Warbringer - Commendation of Service (#13526)", 2013526},
-    {"Vendor: Horde Warbringer - Commendation of Service (#13527)", 2013527},
-    {"Vendor: Horde Warbringer - Commendation of Service (#13528)", 2013528},
     {"Vendor: Alliance Brigadier General - Commendation of Service (#13529)", 2013529},
-    {"Vendor: Alliance Brigadier General - Commendation of Service (#13530)", 2013530},
-    {"Vendor: Alliance Brigadier General - Commendation of Service (#13531)", 2013531},
-    {"Vendor: Alliance Brigadier General - Commendation of Service (#13532)", 2013532},
-    {"Vendor: Alliance Brigadier General - Commendation of Service (#13533)", 2013533},
-    {"Vendor: Alliance Brigadier General - Commendation of Service (#13534)", 2013534},
     {"Vendor: Katrina Shimmerstar - Tigule and Foror's Strawberry Ice Cream (#13535)", 2013535},
     {"Vendor: Katrina Shimmerstar - Moonbrook Riot Taffy (#13536)", 2013536},
     {"Vendor: Katrina Shimmerstar - Styleen's Sour Suckerpop (#13537)", 2013537},
@@ -28342,7 +28332,6 @@ inline const std::map<std::string, uint32_t> LOCATIONS = {
     {"Vendor: Knight Dameron - Lasting Feralheart Spaulders (#28329)", 2028329},
     {"Vendor: Knight Dameron - Exquisite Sunderseer Mantle (#28330)", 2028330},
     {"Vendor: Knight Dameron - Wintergrasp Commendation (#28331)", 2028331},
-    {"Vendor: Knight Dameron - Wintergrasp Commendation (#28332)", 2028332},
     {"Vendor: Knight Dameron - Titan-Forged Boots of Dominance (#28333)", 2028333},
     {"Vendor: Knight Dameron - Titan-Forged Boots of Salvation (#28334)", 2028334},
     {"Vendor: Knight Dameron - Titan-Forged Boots of Triumph (#28335)", 2028335},
@@ -28458,7 +28447,6 @@ inline const std::map<std::string, uint32_t> LOCATIONS = {
     {"Vendor: Stone Guard Mukar - Lasting Feralheart Spaulders (#28445)", 2028445},
     {"Vendor: Stone Guard Mukar - Exquisite Sunderseer Mantle (#28446)", 2028446},
     {"Vendor: Stone Guard Mukar - Wintergrasp Commendation (#28447)", 2028447},
-    {"Vendor: Stone Guard Mukar - Wintergrasp Commendation (#28448)", 2028448},
     {"Vendor: Stone Guard Mukar - Titan-Forged Boots of Dominance (#28449)", 2028449},
     {"Vendor: Stone Guard Mukar - Titan-Forged Boots of Salvation (#28450)", 2028450},
     {"Vendor: Stone Guard Mukar - Titan-Forged Boots of Triumph (#28451)", 2028451},
@@ -51286,17 +51274,7 @@ inline const std::map<std::string, uint32_t> ITEMS = {
     {"Vendor Item: Mylini Frostmoon - Great Axe (#13521)", 2513521},
     {"Vendor Item: Mylini Frostmoon - Rondel (#13522)", 2513522},
     {"Vendor Item: Horde Warbringer - Commendation of Service (#13523)", 2513523},
-    {"Vendor Item: Horde Warbringer - Commendation of Service (#13524)", 2513524},
-    {"Vendor Item: Horde Warbringer - Commendation of Service (#13525)", 2513525},
-    {"Vendor Item: Horde Warbringer - Commendation of Service (#13526)", 2513526},
-    {"Vendor Item: Horde Warbringer - Commendation of Service (#13527)", 2513527},
-    {"Vendor Item: Horde Warbringer - Commendation of Service (#13528)", 2513528},
     {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13529)", 2513529},
-    {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13530)", 2513530},
-    {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13531)", 2513531},
-    {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13532)", 2513532},
-    {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13533)", 2513533},
-    {"Vendor Item: Alliance Brigadier General - Commendation of Service (#13534)", 2513534},
     {"Vendor Item: Katrina Shimmerstar - Tigule and Foror's Strawberry Ice Cream (#13535)", 2513535},
     {"Vendor Item: Katrina Shimmerstar - Moonbrook Riot Taffy (#13536)", 2513536},
     {"Vendor Item: Katrina Shimmerstar - Styleen's Sour Suckerpop (#13537)", 2513537},
@@ -66094,7 +66072,6 @@ inline const std::map<std::string, uint32_t> ITEMS = {
     {"Vendor Item: Knight Dameron - Lasting Feralheart Spaulders (#28329)", 2528329},
     {"Vendor Item: Knight Dameron - Exquisite Sunderseer Mantle (#28330)", 2528330},
     {"Vendor Item: Knight Dameron - Wintergrasp Commendation (#28331)", 2528331},
-    {"Vendor Item: Knight Dameron - Wintergrasp Commendation (#28332)", 2528332},
     {"Vendor Item: Knight Dameron - Titan-Forged Boots of Dominance (#28333)", 2528333},
     {"Vendor Item: Knight Dameron - Titan-Forged Boots of Salvation (#28334)", 2528334},
     {"Vendor Item: Knight Dameron - Titan-Forged Boots of Triumph (#28335)", 2528335},
@@ -66210,7 +66187,6 @@ inline const std::map<std::string, uint32_t> ITEMS = {
     {"Vendor Item: Stone Guard Mukar - Lasting Feralheart Spaulders (#28445)", 2528445},
     {"Vendor Item: Stone Guard Mukar - Exquisite Sunderseer Mantle (#28446)", 2528446},
     {"Vendor Item: Stone Guard Mukar - Wintergrasp Commendation (#28447)", 2528447},
-    {"Vendor Item: Stone Guard Mukar - Wintergrasp Commendation (#28448)", 2528448},
     {"Vendor Item: Stone Guard Mukar - Titan-Forged Boots of Dominance (#28449)", 2528449},
     {"Vendor Item: Stone Guard Mukar - Titan-Forged Boots of Salvation (#28450)", 2528450},
     {"Vendor Item: Stone Guard Mukar - Titan-Forged Boots of Triumph (#28451)", 2528451},
@@ -89038,17 +89014,7 @@ inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOC
     { { 15315, 2531 }, 2013521 }, // "Vendor: Mylini Frostmoon - Great Axe (#13521)"
     { { 15315, 2534 }, 2013522 }, // "Vendor: Mylini Frostmoon - Rondel (#13522)"
     { { 15350, 54637 }, 2013523 }, // "Vendor: Horde Warbringer - Commendation of Service (#13523)"
-    { { 15350, 54637 }, 2013524 }, // "Vendor: Horde Warbringer - Commendation of Service (#13524)"
-    { { 15350, 54637 }, 2013525 }, // "Vendor: Horde Warbringer - Commendation of Service (#13525)"
-    { { 15350, 54637 }, 2013526 }, // "Vendor: Horde Warbringer - Commendation of Service (#13526)"
-    { { 15350, 54637 }, 2013527 }, // "Vendor: Horde Warbringer - Commendation of Service (#13527)"
-    { { 15350, 54637 }, 2013528 }, // "Vendor: Horde Warbringer - Commendation of Service (#13528)"
     { { 15351, 54637 }, 2013529 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13529)"
-    { { 15351, 54637 }, 2013530 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13530)"
-    { { 15351, 54637 }, 2013531 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13531)"
-    { { 15351, 54637 }, 2013532 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13532)"
-    { { 15351, 54637 }, 2013533 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13533)"
-    { { 15351, 54637 }, 2013534 }, // "Vendor: Alliance Brigadier General - Commendation of Service (#13534)"
     { { 15353, 7228 }, 2013535 }, // "Vendor: Katrina Shimmerstar - Tigule and Foror's Strawberry Ice Cream (#13535)"
     { { 15353, 18632 }, 2013536 }, // "Vendor: Katrina Shimmerstar - Moonbrook Riot Taffy (#13536)"
     { { 15353, 18633 }, 2013537 }, // "Vendor: Katrina Shimmerstar - Styleen's Sour Suckerpop (#13537)"
@@ -103846,7 +103812,6 @@ inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOC
     { { 32294, 44105 }, 2028329 }, // "Vendor: Knight Dameron - Lasting Feralheart Spaulders (#28329)"
     { { 32294, 44107 }, 2028330 }, // "Vendor: Knight Dameron - Exquisite Sunderseer Mantle (#28330)"
     { { 32294, 44115 }, 2028331 }, // "Vendor: Knight Dameron - Wintergrasp Commendation (#28331)"
-    { { 32294, 44115 }, 2028332 }, // "Vendor: Knight Dameron - Wintergrasp Commendation (#28332)"
     { { 32294, 44891 }, 2028333 }, // "Vendor: Knight Dameron - Titan-Forged Boots of Dominance (#28333)"
     { { 32294, 44892 }, 2028334 }, // "Vendor: Knight Dameron - Titan-Forged Boots of Salvation (#28334)"
     { { 32294, 44893 }, 2028335 }, // "Vendor: Knight Dameron - Titan-Forged Boots of Triumph (#28335)"
@@ -103962,7 +103927,6 @@ inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> VENDOR_SLOT_TO_LOC
     { { 32296, 44105 }, 2028445 }, // "Vendor: Stone Guard Mukar - Lasting Feralheart Spaulders (#28445)"
     { { 32296, 44107 }, 2028446 }, // "Vendor: Stone Guard Mukar - Exquisite Sunderseer Mantle (#28446)"
     { { 32296, 44115 }, 2028447 }, // "Vendor: Stone Guard Mukar - Wintergrasp Commendation (#28447)"
-    { { 32296, 44115 }, 2028448 }, // "Vendor: Stone Guard Mukar - Wintergrasp Commendation (#28448)"
     { { 32296, 44891 }, 2028449 }, // "Vendor: Stone Guard Mukar - Titan-Forged Boots of Dominance (#28449)"
     { { 32296, 44892 }, 2028450 }, // "Vendor: Stone Guard Mukar - Titan-Forged Boots of Salvation (#28450)"
     { { 32296, 44893 }, 2028451 }, // "Vendor: Stone Guard Mukar - Titan-Forged Boots of Triumph (#28451)"

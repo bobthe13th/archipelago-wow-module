@@ -7,12 +7,30 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "APProtocol.h"
 
 namespace Archipelago::ItemDisplay
 {
-    inline constexpr int64_t AP_ITEM_SYNTH_BASE = 900000000;
+    // MUST stay far below the real max WoW item_template entry (56,806 in
+    // this checkout) plus this project's other custom blocks (traps
+    // 850000-850016, classification icons 850100-850103) so synthesized
+    // entries never collide with either -- but just as importantly, MUST
+    // NOT be large. ObjectMgr::LoadItemTemplates() (src/server/game/Globals/
+    // ObjectMgr.cpp) sizes _itemTemplateStoreFast via
+    // resize(max_entry_in_item_template + 1, nullptr) with NO bounds check,
+    // so the single highest entry across the whole item_template table
+    // determines a vector allocation of that many pointer-sized slots --
+    // paid on EVERY worldserver startup, on every seed, once ANY row this
+    // high exists. The previous value (900000000) plus the max real
+    // location_id in this project (2,037,749 as of this task) would have
+    // resized that vector to ~902M entries (~6.7 GiB) on startup. At
+    // 3,000,000 + that same max location_id, the vector tops out around
+    // 5.04M entries (~40 MB) -- a normal, safe size. Do not raise this
+    // constant without re-deriving that arithmetic against the CURRENT max
+    // location_id across content/*.yaml.
+    inline constexpr int64_t AP_ITEM_SYNTH_BASE = 3000000;
 
     // Pure function of location_id -- this is the entire idempotency
     // argument for the DB rewrites below: re-running synthesis for an
@@ -29,16 +47,34 @@ namespace Archipelago::ItemDisplay
     // (RewardChoiceItemID1-6, in order) -- that function's "first non-zero
     // column wins" logic is what decided which single column is "the" AP
     // reward for a given quest at generation time, and the runtime rewrite
-    // below must pick the exact same column or it corrupts the other 9
-    // (which may be legitimately-unused zeros OR real alternate-choice
-    // rewards for a genuine multi-choice quest). Keep this array and
+    // in APItemDisplay.cpp must pick the exact same column via
+    // PickRewardColumn or it targets the wrong slot. Keep this array and
     // PickRewardColumn in sync if that function's preference order ever
     // changes.
+    //
+    // Finding I5 (M4.7 final review): identifying the "representative"
+    // column here is necessary but not sufficient for a genuine multi-choice
+    // quest. If the picked column turns out to be one of the 6
+    // RewardChoiceItemID slots (index >= FIRST_CHOICE_COLUMN_INDEX below),
+    // RewardColumnsToRewrite (below PickRewardColumn) additionally rewrites
+    // every OTHER non-zero choice column to the same synthesized entry --
+    // otherwise a player who picks a different (real) choice at turn-in
+    // never triggers the synthesized reward, and the location becomes
+    // permanently uncheckable. Fixed slots (RewardItem1-4) are never touched
+    // beyond the one PickRewardColumn selects: those are separate items
+    // always granted together, not mutually-exclusive alternatives, so
+    // there is nothing to extend for them.
     inline constexpr std::array<char const*, 10> QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER = {
         "RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4",
         "RewardChoiceItemID1", "RewardChoiceItemID2", "RewardChoiceItemID3",
         "RewardChoiceItemID4", "RewardChoiceItemID5", "RewardChoiceItemID6"
     };
+
+    // Index into QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER (and the parallel
+    // columnValues array) of the first RewardChoiceItemID slot -- everything
+    // at or after this index is a player-choice column; everything before it
+    // is a fixed/always-granted column. See Finding I5's note above.
+    inline constexpr size_t FIRST_CHOICE_COLUMN_INDEX = 4;
 
     // Pure selection logic, unit-testable without a DB connection: given the
     // CURRENT value of each of the 10 reward-item columns above (in the same
@@ -56,6 +92,43 @@ namespace Archipelago::ItemDisplay
                 return std::make_pair(std::string(QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER[i]), columnValues[i]);
         }
         return std::nullopt;
+    }
+
+    // Finding I5 (M4.7 final review), pure function unit-testable without a
+    // DB connection: given PickRewardColumn's already-identified (column,
+    // originalValue) pick and the same columnValues array, returns EVERY
+    // (column name, original value) pair the caller must rewrite to the
+    // synthesized entry -- always the picked column itself, plus, when the
+    // picked column is one of the 6 RewardChoiceItemID slots, every OTHER
+    // non-zero choice column too (these are mutually-exclusive turn-in
+    // alternatives; whichever one the player actually picks must still
+    // resolve to the synthesized item, or the location can never be
+    // checked). Fixed slots (RewardItem1-4) never get this treatment --
+    // those are separate items granted together, not alternatives, so the
+    // returned vector is just the single picked pair in that case. Results
+    // are in QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER order (picked column
+    // first, since it's always index-lowest or equal among what's returned).
+    inline std::vector<std::pair<std::string, uint32_t>> RewardColumnsToRewrite(
+        std::pair<std::string, uint32_t> const& picked,
+        std::array<uint32_t, 10> const& columnValues)
+    {
+        std::vector<std::pair<std::string, uint32_t>> result{ picked };
+
+        size_t pickedIndex = 0;
+        while (pickedIndex < QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER.size()
+               && picked.first != QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER[pickedIndex])
+            ++pickedIndex;
+
+        if (pickedIndex < FIRST_CHOICE_COLUMN_INDEX)
+            return result; // fixed slot -- nothing else to extend
+
+        for (size_t i = FIRST_CHOICE_COLUMN_INDEX; i < columnValues.size(); ++i)
+        {
+            if (i == pickedIndex || columnValues[i] == 0)
+                continue;
+            result.emplace_back(QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER[i], columnValues[i]);
+        }
+        return result;
     }
 
     // Called once, from ArchipelagoWorldScript::OnUpdate, the first time

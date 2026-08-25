@@ -113,9 +113,11 @@ namespace Archipelago::ItemDisplay
                 // re-derived at runtime -- via the exact same preference
                 // order pick_representative_reward() used at generation
                 // time (see PickRewardColumn's doc comment). Blindly setting
-                // all 10 columns here would corrupt the other 9, which may
-                // be legitimately-unused zeros or real alternate-choice
-                // rewards for a genuine multi-choice quest.
+                // all 10 columns unconditionally would corrupt the fixed
+                // RewardItem1-4 slots, which are separate items always
+                // granted together, not mutually-exclusive alternatives.
+                // (The 6 RewardChoiceItemID columns are handled deliberately
+                // below -- see Finding I5's comment after PickRewardColumn.)
                 std::array<uint32_t, 10> columnValues{};
                 if (QueryResult result = WorldDatabase.Query(
                         "SELECT RewardItem1, RewardItem2, RewardItem3, RewardItem4, "
@@ -131,18 +133,27 @@ namespace Archipelago::ItemDisplay
 
                 if (auto picked = Archipelago::ItemDisplay::PickRewardColumn(columnValues))
                 {
-                    auto const& [column, originalValue] = *picked;
-                    // Matches on the original reward value per this task's
-                    // idempotency constraint -- after this UPDATE runs once,
-                    // the picked column no longer equals originalValue, so a
-                    // second run of this same statement matches zero rows
-                    // and is a safe no-op. Only the ONE column
-                    // PickRewardColumn selected is touched; the other 9 are
-                    // left completely alone.
-                    WorldDatabase.Execute(
-                        "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
-                        column, entry, questId, column, originalValue
-                    );
+                    // Finding I5 (M4.7 final review): RewardColumnsToRewrite
+                    // returns just the one picked (column, originalValue)
+                    // pair for a fixed-slot quest, or that pair PLUS every
+                    // other non-zero choice column when the picked column is
+                    // itself a player-choice column -- see its own doc
+                    // comment in APItemDisplay.h for why the latter is
+                    // necessary (a player who picks a different real choice
+                    // must still trigger the synthesized reward). Each pair
+                    // is matched on its own original value per this task's
+                    // idempotency constraint -- after a given UPDATE runs
+                    // once, that column no longer equals originalValue, so a
+                    // second run of the same statement matches zero rows and
+                    // is a safe no-op.
+                    for (auto const& [column, originalValue] :
+                         Archipelago::ItemDisplay::RewardColumnsToRewrite(*picked, columnValues))
+                    {
+                        WorldDatabase.Execute(
+                            "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
+                            column, entry, questId, column, originalValue
+                        );
+                    }
                 }
                 else
                 {
@@ -222,6 +233,28 @@ namespace Archipelago::ItemDisplay
                 "Archipelago: slot_data ap_item_display had location {} with no matching "
                 "quest_reward or vendor_purchase trigger -- skipped, no row to rewrite",
                 locationId);
+        }
+
+        // Finding C2 (M4.7 final review): this function runs from
+        // ArchipelagoWorldScript::OnUpdate, which fires only AFTER
+        // SetInitialWorldSettings() has already loaded item_template/
+        // npc_vendor/quest_template into their in-memory caches at startup.
+        // The DB rows just written above are correct, but this AzerothCore
+        // checkout has no live-reload path for any of those three tables
+        // (no bare `.reload item_template`, confirmed against
+        // src/server/scripts/Commands/cs_reload.cpp), so the vendor/quest
+        // slot this run just rewrote still shows the REAL WoW item in-game
+        // until the process restarts and reloads those caches from disk.
+        // Without this log, that looks like the feature silently did
+        // nothing rather than "worked, but needs a restart to show."
+        if (!display.empty())
+        {
+            LOG_WARN("module.archipelago_wow",
+                "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward "
+                "data -- a worldserver RESTART is required before these changes take effect "
+                "(item_template/npc_vendor/quest_template are cached in memory and have no live-"
+                "reload path)",
+                display.size());
         }
     }
 }
