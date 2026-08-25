@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError
+from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError, FAMILY_SCHEMAS
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -361,6 +361,45 @@ class TestEmitCppGenericLargeMaps(unittest.TestCase):
         self.assertIn("inline const std::map<std::string, uint32_t> ITEMS = {};", cpp)
         self.assertNotIn("LOCATIONS_RAW", cpp)
         self.assertNotIn("ITEMS_RAW", cpp)
+
+
+class TestLegacyEmitterSizeGuard(unittest.TestCase):
+    """M4.7.1 Finding 4: guards against the exact stack-overflow class of
+    bug M4.7.1.1 fixed reopening for a DIFFERENT family. The generic=True
+    families (quest_rewards, vendor_stock) already use the safe
+    raw-array-plus-builder pattern (_emit_cpp_large_string_map /
+    _emit_cpp_trigger_lookup_quest_reward / _emit_cpp_trigger_lookup_vendor_purchase)
+    regardless of size -- this guard is only for the remaining hand-rolled
+    emitters (quests/core_loop/gates/filler/traps/rares/fish/professions/
+    collections as of M4.7.1.3), which still build bare aggregate
+    initializers and would silently reopen the crash if any one of them
+    ever grows past a safe margin. 2,000 is comfortable headroom over the
+    current largest legacy family (collections, 264 rows) and stays well
+    below the real, empirically-confirmed crash point (~37,739 rows)."""
+
+    LEGACY_FAMILY_ROW_LIMIT = 2000
+
+    def test_no_legacy_family_exceeds_the_safe_row_count(self) -> None:
+        content_dir = pathlib.Path(__file__).parent.parent / "content"
+        for family, schema in FAMILY_SCHEMAS.items():
+            if schema.generic:
+                continue  # already on the safe raw-array-plus-builder pattern regardless of size
+            yaml_path = content_dir / f"{family}.yaml"
+            if not yaml_path.exists():
+                continue
+            data = load_family(yaml_path)
+            row_count = len(data["locations"]) + len(data["items"])
+            self.assertLess(
+                row_count, self.LEGACY_FAMILY_ROW_LIMIT,
+                f"{family}.yaml has {row_count} combined location+item rows, over the "
+                f"{self.LEGACY_FAMILY_ROW_LIMIT}-row safety margin for its hand-rolled "
+                f"emitter (_emit_cpp_{family}) -- this is the exact failure class M4.7.1.1 "
+                f"fixed for quest_rewards/vendor_stock (a bare aggregate initializer over "
+                f"~37,739 rows overflowed MSVC's default 1 MiB stack at startup). Convert "
+                f"{family}'s C++ emission to the same raw-array-plus-builder pattern "
+                f"(_emit_cpp_large_string_map or equivalent) before this ships, per Finding "
+                f"4 in docs/superpowers/plans/2026-08-25-archipelago-wow-m4.7.1-findings.md."
+            )
 
 
 if __name__ == "__main__":
