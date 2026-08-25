@@ -96,10 +96,24 @@ namespace Archipelago::ItemDisplay
     {
         auto locationToQuestId = BuildLocationIdToQuestId();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
+        uint32_t newlySynthesizedCount = 0;
 
         for (auto const& [locationId, itemDisplay] : display)
         {
             uint32_t entry = SynthesizedEntryFor(locationId);
+
+            // SynthesizedEntryFor is a pure function of locationId, so an
+            // item_template row already existing under this exact entry
+            // means this location was already fully synthesized on a
+            // previous run -- the cheapest, most direct way to answer "is
+            // this actually new" without needing WorldDatabase.Execute's
+            // fire-and-forget calls below to report affected-row counts
+            // (M4.7.1 finding #2: the old code counted "ran this run" as
+            // "new," so the LOG_WARN below fired identically on every
+            // restart after the first, not just the first).
+            if (!WorldDatabase.Query("SELECT entry FROM item_template WHERE entry = {}", entry))
+                ++newlySynthesizedCount;
+
             auto itemClass = Archipelago::Interception::ClassifyItem(itemDisplay.flags);
             SynthesizeItemTemplateRow(entry, itemDisplay.name, IconEntryFor(itemClass));
 
@@ -246,14 +260,25 @@ namespace Archipelago::ItemDisplay
         // slot this run just rewrote still shows the REAL WoW item in-game
         // until the process restarts and reloads those caches from disk.
         // Without this log, that looks like the feature silently did
-        // nothing rather than "worked, but needs a restart to show."
-        if (!display.empty())
+        // nothing rather than "worked, but needs a restart to show." M4.7.1
+        // finding #2: this used to fire on EVERY connection with non-empty
+        // slot_data, not just the first -- newlySynthesizedCount (computed
+        // above) is what actually distinguishes "did real work, you need a
+        // restart" from "ran again, changed nothing, you're already done."
+        if (newlySynthesizedCount > 0)
         {
             LOG_WARN("module.archipelago_wow",
                 "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward "
                 "data -- a worldserver RESTART is required before these changes take effect "
                 "(item_template/npc_vendor/quest_template are cached in memory and have no live-"
                 "reload path)",
+                newlySynthesizedCount);
+        }
+        else if (!display.empty())
+        {
+            LOG_INFO("module.archipelago_wow",
+                "Archipelago: {} AP-display location(s) already synthesized, 0 new -- no "
+                "restart needed",
                 display.size());
         }
     }
