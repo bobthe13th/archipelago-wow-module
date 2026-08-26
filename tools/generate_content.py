@@ -52,6 +52,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
+    _validate_tags_rows(data["family"], data["locations"], yaml_path)
     data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
         data["family"], data["locations"], data["items"], yaml_path
     )
@@ -222,6 +223,33 @@ def _validate_trigger_lookup_uniqueness(
                   f"the rest are excluded from the emitted pool entirely (see _dedupe_vendor_trigger_collisions).\n")
 
 
+def _validate_tags_rows(family: str, locations: list, yaml_path: pathlib.Path) -> None:
+    """Every location in an export_tags family must carry a non-empty `tags`
+    block, and every dimension inside it must resolve to at least one value
+    -- the "never zero tags" invariant (spec §1: e.g. quest_reward_type_pools
+    always has at least `standard` as a fallback). A location that silently
+    has zero tags in some dimension would be permanently unreachable via any
+    player selection for that dimension, which is a content-authoring bug,
+    not a valid state."""
+    schema = FAMILY_SCHEMAS.get(family)
+    if schema is None or not schema.export_tags:
+        return
+    for loc in locations:
+        tags = loc.get("tags")
+        if not tags:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} is missing a 'tags' block, "
+                f"required because family {family!r} has export_tags=True"
+            )
+        for dimension, values in tags.items():
+            if not values:
+                raise ValidationError(
+                    f"{yaml_path}: location {loc['name']!r} has an empty tag list for "
+                    f"dimension {dimension!r} -- every dimension must resolve to at least "
+                    f"one tag value"
+                )
+
+
 def _dedupe_vendor_trigger_collisions(
     family: str, locations: list, items: list, yaml_path: pathlib.Path
 ) -> tuple[list, list]:
@@ -290,6 +318,10 @@ class FamilySchema:
                                     # quest_rewards' rules.py rule reads TRIGGERS[name]["min_level"].
                                     # Opt-in per family, not automatically added to every generic
                                     # family, since most generic families have no rule that needs it.
+    export_tags: bool = False  # True only for families whose generic Python module needs a
+                                # TAGS: dict[str, dict[str, frozenset[str]]] export (M4.8) --
+                                # opt-in per family, same shape as export_triggers above. C++ never
+                                # needs this (spec §4) -- it's Python-only, generation-time bookkeeping.
 
 
 FAMILY_SCHEMAS: dict[str, FamilySchema] = {
@@ -421,6 +453,13 @@ def emit_python_generic(data: dict) -> str:
     lines.append("}")
     lines.append("")
 
+    lines.append("ALWAYS_PRESENT: frozenset[str] = frozenset({")
+    for loc in data["locations"]:
+        if loc.get("always_present"):
+            lines.append(f'    {_string_literal(loc["name"])},')
+    lines.append("})")
+    lines.append("")
+
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.export_triggers:
         lines.append("TRIGGERS: dict[str, dict] = {")
@@ -436,6 +475,19 @@ def emit_python_generic(data: dict) -> str:
             lines.append(f'    {_string_literal(loc["name"])}: {loc["trigger"]!r},')
         lines.append("}")
         lines.append("")
+
+    if schema is not None and schema.export_tags:
+        lines.append("TAGS: dict[str, dict[str, frozenset[str]]] = {")
+        for loc in data["locations"]:
+            dims = loc.get("tags", {})
+            dim_parts = [
+                f'{_string_literal(dim)}: frozenset({{{", ".join(_string_literal(v) for v in values)}}})'
+                for dim, values in dims.items()
+            ]
+            lines.append(f'    {_string_literal(loc["name"])}: {{{", ".join(dim_parts)}}},')
+        lines.append("}")
+        lines.append("")
+
     return "\n".join(lines)
 
 

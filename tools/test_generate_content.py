@@ -209,6 +209,17 @@ class TestGenericEmitter(unittest.TestCase):
         self.assertIn('"A Threat Within": (800000, 1)', output)
         self.assertIn('"A Threat Within": 700000', output)
 
+    def test_emit_python_generic_always_emits_always_present_even_when_empty(self) -> None:
+        data = {
+            "family": "quests",
+            "locations": [{"name": "A Threat Within", "location_id": 700000, "trigger": {"kind": "quest", "quest_id": 783}}],
+            "items": [],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        self.assertIn("ALWAYS_PRESENT: frozenset[str] = frozenset({", output)
+        compile(output, "<test>", "exec")
+
     def test_emit_python_generic_escapes_embedded_double_quotes(self) -> None:
         data = {
             "family": "quest_rewards",
@@ -401,6 +412,130 @@ class TestLegacyEmitterSizeGuard(unittest.TestCase):
                 f"(_emit_cpp_large_string_map or equivalent) before this ships, per Finding "
                 f"4 in docs/superpowers/plans/2026-08-25-archipelago-wow-m4.7.1-findings.md."
             )
+
+
+class TestAlwaysPresentAndTags(unittest.TestCase):
+    def test_always_present_true_locations_are_included_in_the_frozenset(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [
+                {"name": "Quest: A Reward (#1)", "location_id": 1000001,
+                 "trigger": {"kind": "quest_reward", "quest_id": 1, "min_level": 1}, "always_present": True,
+                 "tags": {"type": ["standard"], "expansion": ["vanilla"]}},
+                {"name": "Quest: B Reward (#2)", "location_id": 1000002,
+                 "trigger": {"kind": "quest_reward", "quest_id": 2, "min_level": 1},
+                 "tags": {"type": ["standard"], "expansion": ["vanilla"]}},
+            ],
+            "items": [],
+            "constants": {},
+        }
+        output = emit_python_generic(data)
+        compile(output, "<test>", "exec")
+        namespace: dict = {}
+        exec(output, namespace)
+        self.assertEqual(namespace["ALWAYS_PRESENT"], frozenset({"Quest: A Reward (#1)"}))
+
+    def test_export_tags_off_by_default_omits_tags_block(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [{"name": "Quest: A Reward (#1)", "location_id": 1000001,
+                           "trigger": {"kind": "quest_reward", "quest_id": 1, "min_level": 1},
+                           "tags": {"type": ["standard"], "expansion": ["vanilla"]}}],
+            "items": [],
+            "constants": {},
+        }
+        # This test constructs `data` directly (bypassing FAMILY_SCHEMAS'
+        # real export_tags=True for quest_rewards, which this task does NOT
+        # flip yet -- see Task 3) to prove emit_python_generic's OWN gate
+        # works independent of the real registry's current state.
+        original_schema = FAMILY_SCHEMAS["quest_rewards"]
+        FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=False,
+        )
+        try:
+            output = emit_python_generic(data)
+            self.assertNotIn("TAGS:", output)
+        finally:
+            FAMILY_SCHEMAS["quest_rewards"] = original_schema
+
+    def test_export_tags_on_emits_tags_block_as_valid_python(self) -> None:
+        data = {
+            "family": "quest_rewards",
+            "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 1},
+                           "tags": {"type": ["dungeon_quest", "repeatable"], "expansion": ["wotlk"]}}],
+            "items": [],
+            "constants": {},
+        }
+        original_schema = FAMILY_SCHEMAS["quest_rewards"]
+        FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=True,
+        )
+        try:
+            output = emit_python_generic(data)
+            compile(output, "<test>", "exec")
+            namespace: dict = {}
+            exec(output, namespace)
+            tags = namespace["TAGS"]['Quest: Wanted:  "Hogger" Reward (#176)']
+            self.assertEqual(tags["type"], frozenset({"dungeon_quest", "repeatable"}))
+            self.assertEqual(tags["expansion"], frozenset({"wotlk"}))
+        finally:
+            FAMILY_SCHEMAS["quest_rewards"] = original_schema
+
+    def test_load_family_rejects_missing_tags_block_when_export_tags_is_on(self) -> None:
+        # As of this task, the REAL FAMILY_SCHEMAS["quest_rewards"] still has
+        # export_tags=False (flipped in Task 3, alongside real tags data) --
+        # temporarily override it here so this test exercises the validator
+        # gate itself, not the real registry's current (pre-Task-3) state.
+        original_schema = FAMILY_SCHEMAS["quest_rewards"]
+        FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=True,
+        )
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                path = pathlib.Path(tmp) / "test.yaml"
+                path.write_text(textwrap.dedent("""
+                    family: quest_rewards
+                    locations:
+                      - name: 'Quest: No Tags Reward (#1)'
+                        location_id: 1000001
+                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                    items: []
+                """), encoding="utf-8")
+                with self.assertRaises(ValidationError):
+                    load_family(path)
+        finally:
+            FAMILY_SCHEMAS["quest_rewards"] = original_schema
+
+    def test_load_family_rejects_empty_dimension_list_when_export_tags_is_on(self) -> None:
+        original_schema = FAMILY_SCHEMAS["quest_rewards"]
+        FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=True,
+        )
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                path = pathlib.Path(tmp) / "test.yaml"
+                path.write_text(textwrap.dedent("""
+                    family: quest_rewards
+                    locations:
+                      - name: 'Quest: Empty Dim Reward (#1)'
+                        location_id: 1000001
+                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                        tags: {type: [], expansion: [vanilla]}
+                    items: []
+                """), encoding="utf-8")
+                with self.assertRaises(ValidationError):
+                    load_family(path)
+        finally:
+            FAMILY_SCHEMAS["quest_rewards"] = original_schema
 
 
 if __name__ == "__main__":
