@@ -325,7 +325,6 @@ class FamilySchema:
 
 
 FAMILY_SCHEMAS: dict[str, FamilySchema] = {
-    "quests": FamilySchema(valid_trigger_kinds={"quest"}, valid_delivery_kinds={"mail"}),
     "core_loop": FamilySchema(
         valid_trigger_kinds={"level_milestone", "instance_clear"},
         valid_delivery_kinds={"realm_state"},
@@ -498,8 +497,6 @@ def emit_python(data: dict) -> str:
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.generic:
         return emit_python_generic(data)
-    if family == "quests":
-        return _emit_python_quests(data)
     if family == "core_loop":
         return _emit_python_core_loop(data)
     if family == "gates":
@@ -517,21 +514,6 @@ def emit_python(data: dict) -> str:
     if family == "collections":
         return _emit_python_collections(data)
     raise ValidationError(f"unknown family: {family!r}")
-
-
-def _emit_python_quests(data: dict) -> str:
-    lines = [_GENERATED_HEADER_PY.format(source="content/quests.yaml"), ""]
-    lines.append("LOCATIONS: dict[str, int] = {")
-    for loc in data["locations"]:
-        lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
-    lines.append("}")
-    lines.append("")
-    lines.append("ITEMS: dict[str, int] = {")
-    for item in data["items"]:
-        lines.append(f'    "{item["name"]}": {item["item_id"]},')
-    lines.append("}")
-    lines.append("")
-    return "\n".join(lines)
 
 
 def _emit_python_core_loop(data: dict) -> str:
@@ -955,8 +937,6 @@ def emit_cpp(data: dict) -> str:
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.generic:
         return emit_cpp_generic(data)
-    if family == "quests":
-        return _emit_cpp_quests(data)
     if family == "core_loop":
         return _emit_cpp_core_loop(data)
     if family == "gates":
@@ -974,33 +954,6 @@ def emit_cpp(data: dict) -> str:
     if family == "collections":
         return _emit_cpp_collections(data)
     raise ValidationError(f"unknown family: {family!r}")
-
-
-def _emit_cpp_quests(data: dict) -> str:
-    lines = [
-        _GENERATED_HEADER_CPP.format(source="content/quests.yaml"),
-        "#pragma once", "",
-        "#include <cstdint>",
-        "#include <unordered_map>", "",
-        "namespace Archipelago::Content", "{",
-    ]
-    lines.append("    inline std::unordered_map<uint32_t, int64_t> const QuestIdToLocationId = {")
-    for loc in data["locations"]:
-        lines.append(f'        {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {loc["name"]}')
-    lines.append("    };")
-    lines.append("")
-    lines.append("    inline std::unordered_map<int64_t, uint32_t> const LocationIdToQuestId = {")
-    for loc in data["locations"]:
-        lines.append(f'        {{ {loc["location_id"]}, {loc["trigger"]["quest_id"]} }}, // {loc["name"]}')
-    lines.append("    };")
-    lines.append("")
-    lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {")
-    for item in data["items"]:
-        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')
-    lines.append("    };")
-    lines.append("}")
-    lines.append("")
-    return "\n".join(lines)
 
 
 def _emit_cpp_core_loop(data: dict) -> str:

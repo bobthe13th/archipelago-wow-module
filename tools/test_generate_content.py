@@ -81,28 +81,6 @@ class TestLoadFamily(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 load_family(path)
 
-    def test_valid_quests_family_loads_and_emits_python(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            path = self._write(tmp, """
-                family: quests
-                locations:
-                  - name: A Threat Within
-                    location_id: 700000
-                    trigger: {kind: quest, quest_id: 783}
-                items:
-                  - name: Worn Shortsword
-                    item_id: 800000
-                    count: 1
-                    delivery: {kind: mail, wow_item_entry: 25}
-            """)
-            data = load_family(path)
-            self.assertEqual(data["family"], "quests")
-            text = emit_python(data)
-            self.assertIn('"A Threat Within": 700000', text)
-            self.assertIn('"Worn Shortsword": 800000', text)
-            self.assertIn("GENERATED FILE", text)
-
-
 class TestGatesFamily(unittest.TestCase):
     def _write(self, tmpdir: str, text: str) -> pathlib.Path:
         path = pathlib.Path(tmpdir) / "test.yaml"
@@ -147,27 +125,6 @@ class TestGatesFamily(unittest.TestCase):
 
 
 class TestEmitCpp(unittest.TestCase):
-    def test_quests_family_emits_cpp_maps(self) -> None:
-        data = {
-            "family": "quests",
-            "constants": {},
-            "locations": [
-                {"name": "A Threat Within", "location_id": 700000,
-                 "trigger": {"kind": "quest", "quest_id": 783}},
-            ],
-            "items": [
-                {"name": "Worn Shortsword", "item_id": 800000, "count": 1,
-                 "delivery": {"kind": "mail", "wow_item_entry": 25}},
-            ],
-        }
-        text = emit_cpp(data)
-        self.assertIn("QuestIdToLocationId", text)
-        self.assertIn("{ 783, 700000 }, // A Threat Within", text)
-        self.assertIn("LocationIdToQuestId", text)
-        self.assertIn("{ 700000, 783 }, // A Threat Within", text)
-        self.assertIn("ApItemIdToWowItemEntry", text)
-        self.assertIn('{ 800000, 25 }, // "Worn Shortsword"', text)
-
     def test_core_loop_family_emits_cpp_constants_and_maps(self) -> None:
         data = {
             "family": "core_loop",

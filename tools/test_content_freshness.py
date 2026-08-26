@@ -9,10 +9,6 @@ _CONTENT_DIR = _MODULE_DIR / "content"
 _ARCHIPELAGO_WOW_DIR = _MODULE_DIR.parent.parent.parent / "Archipelago" / "worlds" / "wow"
 
 _FAMILIES = {
-    "quests": {
-        "py_out": _ARCHIPELAGO_WOW_DIR / "content_data.py",
-        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoContentTable.h",
-    },
     "core_loop": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "core_loop_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCoreLoopContentTable.h",
