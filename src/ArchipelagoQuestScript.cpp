@@ -5,22 +5,14 @@
 #include "ScriptMgr.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
-#include "ArchipelagoContentTable.h"
 
-class ArchipelagoQuestScript : public PlayerScript
-{
-public:
-    ArchipelagoQuestScript() : PlayerScript("ArchipelagoQuestScript", { PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST }) { }
-
-    void OnPlayerCompleteQuest(Player* /*player*/, Quest const* quest) override
-    {
-        auto it = Archipelago::Content::QuestIdToLocationId.find(quest->GetQuestId());
-        if (it == Archipelago::Content::QuestIdToLocationId.end())
-            return; // not one of the curated Northshire/Goldshire quests this milestone tracks
-
-        sArchipelagoMgr->SendLocationChecks({ it->second });
-    }
-};
+// M4.8.0: the standalone `quests` family's ArchipelagoQuestScript
+// (PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST, keyed off a curated
+// Archipelago::Content::QuestIdToLocationId map) is retired -- those 19
+// locations now live in the quest_rewards family (always_present), which
+// is delivered exclusively through ArchipelagoQuestRewardScript below (item
+// synthesis + PLAYERHOOK_ON_QUEST_REWARD_ITEM), same as every other
+// quest_rewards location.
 
 // Separate small PlayerScript rather than folding into ArchipelagoQuestScript
 // above (one-hook-one-small-class precedent, see APTraps.cpp's header comment
@@ -61,6 +53,5 @@ public:
 
 void AddArchipelagoQuestScripts()
 {
-    new ArchipelagoQuestScript();
     new ArchipelagoQuestRewardScript();
 }

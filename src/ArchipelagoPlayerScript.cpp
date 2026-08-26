@@ -15,7 +15,6 @@
 #include "APProtocol.h"
 #include "APTraps.h"
 #include "ArchipelagoCollectionsContentTable.h"
-#include "ArchipelagoContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
@@ -249,20 +248,13 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        auto entryIt = Archipelago::Content::ApItemIdToWowItemEntry.find(received.item);
-        if (entryIt == Archipelago::Content::ApItemIdToWowItemEntry.end())
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: received unknown AP item id {}, skipping", received.item);
-            highestSeen = std::max(highestSeen, received.index);
-            continue;
-        }
-
-        Archipelago::Delivery::DeliverItem(deliveryPolicy, entryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
-        // Logged unconditionally, regardless of deliveryPolicy -- Task 16's
-        // new-character catch-up needs an authoritative record of every item
-        // the realm has ever received, independent of which policy routed it.
-        trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", entryIt->second);
-
+        // M4.8.0: the standalone `quests` family (the only thing that ever
+        // reached this final fallback -- every other family's items are
+        // caught by their own lookup table above, and quest_rewards/
+        // vendor_stock items are delivered via item-synthesis interception,
+        // never through this AP-ReceivedItems-mail path at all) is retired.
+        // Reaching this point now means a genuinely unrecognized AP item id.
+        LOG_ERROR("module.archipelago_wow", "Archipelago: received unknown AP item id {}, skipping", received.item);
         highestSeen = std::max(highestSeen, received.index);
     }
 
