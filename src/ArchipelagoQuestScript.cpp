@@ -14,15 +14,16 @@
 // synthesis + PLAYERHOOK_ON_QUEST_REWARD_ITEM), same as every other
 // quest_rewards location.
 
-// Separate small PlayerScript rather than folding into ArchipelagoQuestScript
-// above (one-hook-one-small-class precedent, see APTraps.cpp's header comment
+// Separate small PlayerScript rather than a hook folded into some other
+// class (one-hook-one-small-class precedent, see APTraps.cpp's header comment
 // for ArchipelagoTrapZoneScript, and ArchipelagoInterceptionScript.cpp's own
-// dedicated class for the analogous vendor-purchase case): that class tracks
-// a curated, hand-picked set of M1/M2-era quests via QuestIdToLocationId, a
-// completely different content family and lookup shape from the Quest
-// Rewards family handled here, which recognizes ANY synthesized AP item
-// (Task 6/APItemDisplay's AP_ITEM_SYNTH_BASE-offset entries) by id range
-// rather than by a curated quest-id map. Mirrors
+// dedicated class for the analogous vendor-purchase case): the now-deleted
+// ArchipelagoQuestScript (see comment above) tracked a curated, hand-picked
+// set of M1/M2-era quests via QuestIdToLocationId, a completely different
+// content family and lookup shape from the Quest Rewards family handled
+// here, which recognizes ANY synthesized AP item (Task 6/APItemDisplay's
+// AP_ITEM_SYNTH_BASE-offset entries) by id range rather than by a curated
+// quest-id map. Mirrors
 // ArchipelagoInterceptionScript's vendor-purchase interception exactly, minus
 // the repeat-purchase handling that class needs and this one doesn't -- a
 // quest can only be completed/turned in once, so there is no repeat-checkout

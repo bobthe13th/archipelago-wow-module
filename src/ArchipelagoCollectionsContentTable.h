@@ -277,10 +277,9 @@ namespace Archipelago::Collections
         { 75134, 780263 }, // Learn Pet: Blue Clockwork Rocket Bot
     };
 
-    // AP item id -> the real wow_item_entry to mail (this family's own copy
-    // of the mail-delivery table, same pattern as Archipelago::Fish's own
-    // ApItemIdToWowItemEntry -- checked before falling through to the
-    // quests-family table).
+    // AP item id -> the real wow_item_entry to mail -- this family's own
+    // self-contained mail-delivery table, same pattern as Archipelago::Fish's
+    // own ApItemIdToWowItemEntry.
     inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {
         { 880000, 1132 }, // "Mount: Horn of the Timber Wolf"
         { 880001, 2411 }, // "Mount: Black Stallion Bridle"

@@ -36,10 +36,12 @@ deduplication.
 
 ## Sending location checks
 
-`ArchipelagoQuestScript` hooks `PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST`. When the
-completed quest is one of the curated Northshire/Goldshire starting quests
-(mapped via a generated content table, see below), it sends the
-corresponding AP location id as a `LocationChecks` packet.
+`ArchipelagoQuestRewardScript` hooks `PLAYERHOOK_ON_QUEST_REWARD_ITEM`,
+intercepting item synthesis at quest turn-in. This is the mechanism for all
+`quest_rewards` locations, including the 19 curated Northshire/Goldshire
+starting-quest locations (mapped via a generated content table, see below),
+which are always-present rows in that same family rather than a separate
+hook.
 
 ## Receiving items
 
@@ -62,8 +64,8 @@ trail, but note that item is still marked processed -- it is not retried.
 
 ## Content tables
 
-Locations and items are defined in YAML under `content/` (`quests.yaml`,
-`core_loop.yaml`) and compiled into both the C++ header maps used by this
+Locations and items are defined in YAML under `content/` (`core_loop.yaml`,
+`quest_rewards.yaml`, and other content families) and compiled into both the C++ header maps used by this
 module and the Python apworld's data modules by
 `tools/generate_content.py` -- see `tools/README.md` for the regeneration
 workflow. Never hand-edit `src/Archipelago*ContentTable.h` or

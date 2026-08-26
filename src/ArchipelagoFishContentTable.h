@@ -59,12 +59,10 @@ namespace Archipelago::Fish
         { 27429, 760045 }, // Fish Catch: Zangarian Sporefish
     };
 
-    // AP item id -> the real wow_item_entry to mail -- mirrors
-    // Archipelago::Content::ApItemIdToWowItemEntry's exact shape (both use the
-    // `mail` delivery kind), kept as this family's own table rather than
-    // merged into the quests-family one so each compiled family stays
-    // self-contained; ArchipelagoPlayerScript.cpp checks this table explicitly
-    // before falling through to the quests-family one.
+    // AP item id -> the real wow_item_entry to mail -- this family's own
+    // self-contained mail-delivery table (the `mail` delivery kind), kept
+    // separate from every other family's table so each compiled family
+    // stays self-contained.
     inline std::unordered_map<int64_t, uint32_t> const ApItemIdToWowItemEntry = {
         { 860000, 27422 }, // "Fish: Barbed Gill Trout"
         { 860001, 41812 }, // "Fish: Barrelhead Goby"
