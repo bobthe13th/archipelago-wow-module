@@ -373,9 +373,10 @@ class TestLegacyEmitterSizeGuard(unittest.TestCase):
     emitters (quests/core_loop/gates/filler/traps/rares/fish/professions/
     collections as of M4.7.1.3), which still build bare aggregate
     initializers and would silently reopen the crash if any one of them
-    ever grows past a safe margin. 2,000 is comfortable headroom over the
-    current largest legacy family (collections, 264 rows) and stays well
-    below the real, empirically-confirmed crash point (~37,739 rows)."""
+    ever grows past a safe margin. 2,000 is ~3.8x headroom over the
+    current largest legacy family (collections, 264 locations + 264 items
+    = 528 combined rows) and stays well below the real,
+    empirically-confirmed crash point (~37,739 rows)."""
 
     LEGACY_FAMILY_ROW_LIMIT = 2000
 

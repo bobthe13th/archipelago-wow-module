@@ -144,6 +144,7 @@ namespace Archipelago::ItemDisplay
                 // (The 6 RewardChoiceItemID columns are handled deliberately
                 // below -- see Finding I5's comment after PickRewardColumn.)
                 std::array<uint32_t, 10> columnValues{};
+                bool questRowFound = false;
                 if (QueryResult result = WorldDatabase.Query(
                         "SELECT RewardItem1, RewardItem2, RewardItem3, RewardItem4, "
                         "RewardChoiceItemID1, RewardChoiceItemID2, RewardChoiceItemID3, "
@@ -151,6 +152,7 @@ namespace Archipelago::ItemDisplay
                         "FROM quest_template WHERE ID = {}",
                         questId))
                 {
+                    questRowFound = true;
                     Field* fields = result->Fetch();
                     for (size_t i = 0; i < columnValues.size(); ++i)
                         columnValues[i] = fields[i].Get<uint32_t>();
@@ -180,17 +182,34 @@ namespace Archipelago::ItemDisplay
                         );
                     }
                 }
+                else if (!questRowFound)
+                {
+                    LOG_ERROR("module.archipelago_wow",
+                        "Archipelago: quest {} (location {}) has no quest_template row at all "
+                        "-- content/data desync, no trigger column to rewrite, skipped",
+                        questId, locationId);
+                }
                 else
                 {
                     // M4.7.1.3: no longer an error case -- a quest with
                     // zero real reward columns is now expected for any
                     // is_filler_reward-tagged location (extract_quest_rewards.py).
                     // Give it a real reward: RewardItem1, matched on its
-                    // own current value 0.
+                    // own current value 0. RewardAmount1 MUST also be set
+                    // to a nonzero count in the same statement -- AzerothCore
+                    // treats RewardItemId != 0 with RewardItemIdCount == 0 as
+                    // "don't actually reward this item" (ObjectMgr.cpp's
+                    // LoadQuests validation), which cascades to
+                    // Item::CreateItem returning nullptr and this module's
+                    // own OnPlayerQuestRewardItem hook silently no-op'ing on
+                    // a null item -- the location would never be checkable.
+                    // Confirmed the hard way: this bug shipped once already
+                    // and left all 5,504 filler-tagged locations uncheckable
+                    // before this fix (caught in M4.7.1.3's final review).
                     auto const& [column, originalValue] =
                         Archipelago::ItemDisplay::FallbackRewardColumnForFillerQuest();
                     WorldDatabase.Execute(
-                        "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
+                        "UPDATE quest_template SET {} = {}, RewardAmount1 = 1 WHERE ID = {} AND {} = {}",
                         column, entry, questId, column, originalValue
                     );
                 }

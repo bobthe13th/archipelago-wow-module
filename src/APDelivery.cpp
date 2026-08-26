@@ -109,6 +109,31 @@ namespace
         LOG_INFO("module.archipelago_wow", "Archipelago: listed WoW item entry {} on the neutral Auction House (auction #{}, buyout {} copper)", wowItemEntry, auction->Id, buyout);
     }
 
+    // Shared by MailToDeliveryCharacter and MailToAllAccounts: constructs one
+    // Item of wowItemEntry and mails it to lowGuid via the standard
+    // "Archipelago" subject / "An item from your multiworld has arrived."
+    // body, same Postmaster sender (34337) both policies already used
+    // identically. Returns false (and logs) if Item::CreateItem failed --
+    // callers decide whether that's fatal (MailToDeliveryCharacter) or
+    // skip-and-continue (MailToAllAccounts, mid-loop).
+    bool MailItemTo(uint32_t wowItemEntry, ObjectGuid::LowType lowGuid, std::string const& recipientLabel, CharacterDatabaseTransaction trans)
+    {
+        Item* item = Item::CreateItem(wowItemEntry, 1);
+        if (!item)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {} while mailing to '{}', item is lost", wowItemEntry, recipientLabel);
+            return false;
+        }
+
+        Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
+        item->SaveToDB(trans);
+        MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
+        draft.AddItem(item);
+        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
+        draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+        return true;
+    }
+
     void MailToDeliveryCharacter(uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans)
     {
         ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
@@ -118,20 +143,7 @@ namespace
             return;
         }
 
-        Item* item = Item::CreateItem(wowItemEntry, 1);
-        if (!item)
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {}, item is lost", wowItemEntry);
-            return;
-        }
-
-        ObjectGuid::LowType lowGuid = receiverGuid.GetCounter();
-        Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
-        item->SaveToDB(trans);
-        MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
-        draft.AddItem(item);
-        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
-        draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+        MailItemTo(wowItemEntry, receiverGuid.GetCounter(), deliveryCharacter, trans);
     }
 
     // M4.7.1.3: the real "every player receives everything" policy. One
@@ -172,20 +184,8 @@ namespace
             ObjectGuid::LowType lowGuid = fields[0].Get<uint32_t>();
             std::string recipientName = fields[1].Get<std::string>();
 
-            Item* item = Item::CreateItem(wowItemEntry, 1);
-            if (!item)
-            {
-                LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {} while mailing to '{}', item is lost", wowItemEntry, recipientName);
-                continue;
-            }
-
-            Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
-            item->SaveToDB(trans);
-            MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
-            draft.AddItem(item);
-            MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches MailToDeliveryCharacter's precedent */);
-            draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
-            ++recipientCount;
+            if (MailItemTo(wowItemEntry, lowGuid, recipientName, trans))
+                ++recipientCount;
         } while (result->NextRow());
 
         LOG_INFO("module.archipelago_wow", "Archipelago: mailed WoW item entry {} to {} account(s) (AllAccountsDelivery)", wowItemEntry, recipientCount);

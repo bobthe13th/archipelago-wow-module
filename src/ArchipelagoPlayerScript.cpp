@@ -59,9 +59,10 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
 {
     // Archipelago.DeliveryCharacter is only load-bearing for Policy::SingleDeliveryCharacter
     // (the only branch APDelivery::DeliverItem actually mails to it) -- Task 13's
-    // SharedCacheNpc, and Task 14/15's AuctionHouse/FirstToClaim, have no single
-    // recipient at all, so an operator running one of those policies should not be
-    // forced to also configure a delivery character that nothing here will use.
+    // SharedCacheNpc, Task 14/15's AuctionHouse/FirstToClaim, and M4.7.1.3's
+    // AllAccountsDelivery, have no single recipient at all, so an operator running
+    // one of those policies should not be forced to also configure a delivery
+    // character that nothing here will use.
     if (deliveryPolicy == Archipelago::Delivery::Policy::SingleDeliveryCharacter)
     {
         if (deliveryCharacter.empty())
