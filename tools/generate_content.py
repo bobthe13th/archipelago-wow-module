@@ -338,7 +338,8 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
     "quest_rewards": FamilySchema(
-        valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
+        valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True,
     ),
     "vendor_stock": FamilySchema(
         valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
