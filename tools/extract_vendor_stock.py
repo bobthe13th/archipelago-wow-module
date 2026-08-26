@@ -7,30 +7,42 @@ import pathlib
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules
+from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
 
 _LOCATION_ID_BASE = 2_000_000
 _ITEM_ID_BASE = 2_500_000
-# row_index is the row's own 0-based position in this query's own
-# ORDER BY v.entry, v.slot, v.item, v.ExtendedCost result order -- it is
-# the only thing guaranteed unique per row: (entry, slot) alone is NOT
-# unique (most vendors store every item at slot=0), while
-# (entry, item, ExtendedCost) is confirmed fully unique in the real data
-# but row_index is simpler and doubles as the name-collision fix below.
 
 
-def build_row(row: tuple[str, ...], row_index: int) -> dict:
+def _load_vendor_expansions() -> dict[int, str]:
+    """npc_vendor.entry (a creature TEMPLATE id) -> expansion, resolved from
+    that template's real spawned instances -- npc_vendor.entry joins to
+    creature.id (the spawn table's own primary key doubling as its template
+    FK in this schema), NOT creature_template, which has no map column at
+    all (confirmed: a vendor's map is spawn-level data, not template-level).
+    MIN(map) is the deterministic tie-break for the small fraction of
+    vendor entries whose spawns span multiple maps, mirroring
+    extract_quest_rewards.py's _load_quest_expansions' identical tie-break.
+    A vendor entry with no real spawn row at all (a handful of unused/
+    GM-only templates, confirmed real via a live query) is absent from this
+    dict; the caller defaults those to 'vanilla'."""
+    map_expansions = parse_map_expansions()
+    rows = run_query("""
+        SELECT nv.entry, MIN(c.map)
+        FROM npc_vendor nv
+        JOIN creature c ON nv.entry = c.id
+        GROUP BY nv.entry
+    """)
+    return {int(entry): map_expansions.get(int(map_id), "vanilla") for entry, map_id in rows}
+
+
+def build_row(row: tuple[str, ...], row_index: int, expansion: str) -> dict:
     """Map one raw npc_vendor/item_template/creature_template result row
     (entry, npc_name, item, slot, ExtendedCost, item_name) plus its stable
-    row_index to the location/item dict shape this family emits.
+    row_index and pre-resolved expansion tag to the location/item dict
+    shape this family emits.
 
-    The row_index suffix on both names is required, not cosmetic: real
-    data has 730 distinct (npc_name, item_name) pairs shared by 2+ rows
-    (e.g. NPC "Alana Moonstrike" sells two different item_template entries
-    that happen to share the literal name "Sanctified Lasherweave Cover")
-    -- without it, the compiler's _validate_unique_names would reject the
-    whole family, the same failure class that blocked Task 5 until Task 4
-    was reopened."""
+    The row_index suffix on both names is required, not cosmetic -- see the
+    prior version of this docstring (unchanged reasoning, M4.5/M4.7)."""
     entry, npc_name, item, slot, extended_cost, item_name = row
 
     entry_int = int(entry)
@@ -51,12 +63,14 @@ def build_row(row: tuple[str, ...], row_index: int) -> dict:
             "kind": "mail",
             "wow_item_entry": item_int,
         },
+        "tags": {"expansion": [expansion]},
         "_item_name_for_denylist": item_name,
     }
 
 
 def extract() -> dict:
     rules = load_exclusion_rules()
+    vendor_expansions = _load_vendor_expansions()
     rows = run_query("""
         SELECT v.entry, c.name AS npc_name, v.item, v.slot, v.ExtendedCost, i.name AS item_name
         FROM npc_vendor v
@@ -67,9 +81,9 @@ def extract() -> dict:
 
     locations, items = [], []
     for row_index, row in enumerate(rows):
-        built = build_row(row, row_index)
-        # Denylist applies to item_name ONLY -- a legitimate vendor can
-        # have a joke/flavor name without every item they sell being junk.
+        entry_int = int(row[0])
+        expansion = vendor_expansions.get(entry_int, "vanilla")
+        built = build_row(row, row_index, expansion)
         if is_denylisted(built["_item_name_for_denylist"], rules):
             continue
 
@@ -77,6 +91,7 @@ def extract() -> dict:
             "name": built["location_name"],
             "location_id": built["location_id"],
             "trigger": built["trigger"],
+            "tags": built["tags"],
         })
         items.append({
             "name": built["item_name"],

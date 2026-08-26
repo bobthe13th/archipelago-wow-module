@@ -342,7 +342,8 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         generic=True, export_triggers=True, export_tags=True,
     ),
     "vendor_stock": FamilySchema(
-        valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"}, generic=True, export_triggers=True,
+        valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True,
     ),
 }
 
