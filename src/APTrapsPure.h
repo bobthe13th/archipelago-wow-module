@@ -86,4 +86,21 @@ namespace Archipelago::Traps::Pure
     {
         return roll < current ? roll : static_cast<uint8_t>(roll + 1);
     }
+
+    // Curated pool of 2 real, non-lethal debuff spells, confirmed against
+    // this checkout's own var/extractors/dbc/Spell.dbc (see this plan's
+    // Global Constraints for the exact field-136 SpellName_lang decode used
+    // to confirm both): spell 702 "Curse of Weakness" (Rank 1) and spell
+    // 1714 "Curse of Tongues" (Rank 1, also independently in-tree cited at
+    // src/server/scripts/EasternKingdoms/Karazhan/boss_shade_of_aran.cpp:79
+    // as SPELL_CURSE_OF_TONGUE_RANK1). Both are pure debuffs (damage-dealt
+    // reduction / cast-speed reduction) with no direct-damage component --
+    // deliberately kept to just these two rather than padding the pool with
+    // additional unverified ids.
+    inline constexpr std::array<uint32_t, 2> DEBUFF_SPELL_POOL = { 702, 1714 };
+
+    inline uint32_t PickDebuffSpellId(uint32_t roll)
+    {
+        return DEBUFF_SPELL_POOL[roll % DEBUFF_SPELL_POOL.size()];
+    }
 }

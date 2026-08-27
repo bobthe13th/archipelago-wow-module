@@ -200,6 +200,19 @@ namespace
         target->SetByteValue(PLAYER_BYTES, 2, newStyle);
     }
 
+    void ApplyRandomDebuff(Player* target)
+    {
+        // Mirrors ApplyPolymorph's exact self-cast shape (target->CastSpell(
+        // target, ..., true)) -- both curses in the curated pool are
+        // normally "cast on an enemy" spells with no special self-target
+        // restriction enforced server-side, the same property that already
+        // lets ApplyPolymorph/ApplyDisarm self-cast their own nominally-
+        // hostile spells successfully today.
+        uint32_t spellId = Archipelago::Traps::Pure::PickDebuffSpellId(
+            urand(0, Archipelago::Traps::Pure::DEBUFF_SPELL_POOL.size() - 1));
+        target->CastSpell(target, spellId, true);
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -234,6 +247,8 @@ namespace
             ApplyRandomWeatherBurst(target);
         else if (effect == "haircut")
             ApplyHaircut(target);
+        else if (effect == "random_debuff")
+            ApplyRandomDebuff(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

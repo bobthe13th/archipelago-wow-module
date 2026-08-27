@@ -71,3 +71,14 @@ TEST_CASE("APTraps::PickDifferentHairStyleHandlesAHighCurrentValueFromARaceWithM
     // valid, in-range, different value.
     CHECK(Archipelago::Traps::Pure::PickDifferentHairStyle(15, 3) == 3);
 }
+
+TEST_CASE("APTraps::PickDebuffSpellIdSelectsFromTheCuratedPool")
+{
+    CHECK(Archipelago::Traps::Pure::PickDebuffSpellId(0) == 702u);  // Curse of Weakness (Rank 1)
+    CHECK(Archipelago::Traps::Pure::PickDebuffSpellId(1) == 1714u); // Curse of Tongues (Rank 1)
+}
+
+TEST_CASE("APTraps::PickDebuffSpellIdWrapsOutOfRangeRolls")
+{
+    CHECK(Archipelago::Traps::Pure::PickDebuffSpellId(2) == Archipelago::Traps::Pure::PickDebuffSpellId(0));
+}
