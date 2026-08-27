@@ -376,6 +376,7 @@ class FamilySchema:
                                 # TAGS: dict[str, dict[str, frozenset[str]]] export (M4.8) --
                                 # opt-in per family, same shape as export_triggers above. C++ never
                                 # needs this (spec §4) -- it's Python-only, generation-time bookkeeping.
+    export_item_delivery: bool = False
 
 
 FAMILY_SCHEMAS: dict[str, FamilySchema] = {
@@ -400,11 +401,11 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     ),
     "recipes": FamilySchema(
         valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
-        generic=True, export_triggers=True, export_tags=True,
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "trainer_spells": FamilySchema(
         valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
-        generic=True, export_triggers=True, export_tags=True,
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
 }
 
@@ -908,6 +909,8 @@ def emit_cpp_generic(data: dict) -> str:
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.export_triggers:
         lines.extend(_emit_cpp_trigger_lookup(data))
+    if schema is not None and schema.export_item_delivery:
+        lines.extend(_emit_cpp_item_delivery_lookup(data["items"]))
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -1036,6 +1039,34 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
         f"{kind!r} has no C++ trigger-lookup emission registered in "
         f"_emit_cpp_trigger_lookup -- add a branch for it"
     )
+
+
+def _emit_cpp_item_delivery_lookup(items: list) -> list[str]:
+    """AP item id -> real wow_item_entry to mail, for a generic family's
+    `mail`-delivery items -- the same map shape/name Archipelago::Fish's/
+    Archipelago::Collections' own hand-rolled emitters already produce
+    (ApItemIdToWowItemEntry), but reusable via FamilySchema.
+    export_item_delivery for any generic family instead of requiring its
+    own bespoke emitter just for this one map. Uses the same
+    raw-constexpr-array-plus-runtime-builder pattern every other
+    large-row-count C++ export in this file uses (recipes: 1,912 items,
+    trainer_spells: 1,966 items -- well past the M4.7.1 stack-overflow
+    threshold a bare aggregate initializer proved unsafe at, twice, before
+    this project learned that lesson -- see _emit_cpp_trigger_lookup's own
+    docstring)."""
+    lines = ["inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {"]
+    for item in items:
+        lines.append(f'    {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // {_string_literal(item["name"])}')
+    lines.append("};")
+    lines.append("inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()")
+    lines.append("{")
+    lines.append("    std::unordered_map<int64_t, uint32_t> result;")
+    lines.append("    for (auto const& row : AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();")
+    return lines
 
 
 def emit_cpp(data: dict) -> str:

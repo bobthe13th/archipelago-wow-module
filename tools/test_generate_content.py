@@ -646,5 +646,40 @@ class TestLearnSpellTriggerLookup(unittest.TestCase):
             generate_content._validate_learn_spell_rows(locations, pathlib.Path("test.yaml"))
 
 
+class TestEmitCppItemDeliveryLookup(unittest.TestCase):
+    def test_emits_ap_item_id_to_wow_item_entry_map_when_flag_set(self) -> None:
+        data = {
+            "family": "recipes",
+            "locations": [
+                {"name": "Recipe: Westfall Stew (#728)", "location_id": 6000728,
+                 "trigger": {"kind": "learn_spell", "spell_id": 2543},
+                 "tags": {"profession": ["cooking"], "expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Recipe Item: Westfall Stew (#728)", "item_id": 6500728,
+                 "delivery": {"kind": "mail", "wow_item_entry": 728}},
+            ],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("ApItemIdToWowItemEntry", cpp)
+        self.assertIn("{ 6500728, 728 }", cpp)
+
+    def test_no_map_emitted_when_flag_unset(self) -> None:
+        data = {
+            "family": "vendor_stock",
+            "locations": [
+                {"name": "Vendor: Fake NPC - Fake Item (#1)", "location_id": 2000001,
+                 "trigger": {"kind": "vendor_purchase", "npc_entry": 1, "item_slot": 0},
+                 "tags": {"expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Vendor Item: Fake NPC - Fake Item (#1)", "item_id": 2500001,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1}},
+            ],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertNotIn("ApItemIdToWowItemEntry", cpp)
+
+
 if __name__ == "__main__":
     unittest.main()
