@@ -289,9 +289,76 @@ namespace
             TEMPSUMMON_TIMED_DESPAWN, Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DESPAWN_MS);
     }
 
-    // effect slugs with no verified real implementation yet -- each needs its
-    // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
-    // note for specifics on why each was deferred rather than guessed at).
+    // The first repeating (not one-shot) scheduled trap effect in this
+    // module -- Tasks 2 and 6's lambda events fire exactly once each, but a
+    // LambdaBasicEvent's Execute() always returns true (EventProcessor.h),
+    // meaning it can never reschedule itself. A real BasicEvent subclass is
+    // needed instead: each tick's Execute() deals damage, then explicitly
+    // schedules a FRESH instance for the next tick (if any remain) via
+    // player->m_Events.AddEventAtOffset(new FloorIsLavaTickEvent(...), ...)
+    // before returning true itself (this instance is always "done" after
+    // Execute -- the next tick is a new object, not a kept-alive one).
+    class FloorIsLavaTickEvent : public BasicEvent
+    {
+    public:
+        FloorIsLavaTickEvent(ObjectGuid playerGuid, uint32_t remainingTicks)
+            : _playerGuid(playerGuid), _remainingTicks(remainingTicks) { }
+
+        bool Execute(uint64 /*e_time*/, uint32 /*p_time*/) override
+        {
+            Player* player = ObjectAccessor::FindPlayer(_playerGuid);
+            if (!player || !player->IsAlive())
+                return true; // player logged out or already died -- nothing left to tick
+
+            uint32_t tickDamage = Archipelago::Traps::Pure::ComputeTickDamage(
+                player->GetMaxHealth(), Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_PERCENT);
+            Unit::DealDamage(player, player, tickDamage, nullptr, DOT, SPELL_SCHOOL_MASK_FIRE, nullptr, true);
+
+            if (_remainingTicks > 1 && player->IsAlive())
+            {
+                player->m_Events.AddEventAtOffset(
+                    new FloorIsLavaTickEvent(_playerGuid, _remainingTicks - 1),
+                    Milliseconds(Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_INTERVAL_MS));
+            }
+            return true;
+        }
+
+    private:
+        ObjectGuid _playerGuid;
+        uint32_t _remainingTicks;
+    };
+
+    void ApplyFloorIsLava(Player* target)
+    {
+        // Deviation from the M4.9 spec's illustrative "periodic-damage aura
+        // / real DOT-shaped spell id" framing for this row: no single
+        // existing spell id was found in this checkout with the same
+        // citation confidence as ApplyPolymorph's 118 or ApplyDisarm's
+        // 15752 (a self-inflicted, fixed, level-independent damage-over-
+        // time effect is not a common player-facing spell shape in WotLK's
+        // real spell data). Uses the spec's own explicitly-sanctioned
+        // fallback instead: a scheduled Unit::DealDamage (Unit.h:1228, the
+        // same static API every other damage source in this checkout
+        // ultimately funnels through) tick loop, self-inflicted (attacker
+        // == victim == target), fire-schooled. 5 ticks at 1-second
+        // intervals, 10% of the player's CURRENT max health per tick (not
+        // remaining health) -- up to 50% cumulative over 5 seconds.
+        // Genuinely risky (this IS the second "lethal" effect, alongside
+        // ApplySpawnRareOnYou) without being a guaranteed kill for a
+        // full-health player, matching this module's "legible chaos, not
+        // instant unavoidable death" framing (see APTraps.cpp's own
+        // sphere-0 queueing comment on ApplyTrapEffect).
+        ObjectGuid guid = target->GetGUID();
+        target->m_Events.AddEventAtOffset(
+            new FloorIsLavaTickEvent(guid, Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_COUNT),
+            Milliseconds(Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_INTERVAL_MS));
+    }
+
+    // Defensive fallback only, as of M4.9.1 -- every real effect slug in
+    // ArchipelagoTrapsContentTable.h has its own Dispatch case (see
+    // docs/m4-plan.md's Task 17 for the original 8, and this plan's own
+    // Tasks 1-9 for the remaining 9). This only fires for a genuinely
+    // unrecognized slug, e.g. a content-authoring typo.
     void ApplyNotYetImplemented(Player* target, std::string const& effect)
     {
         LOG_INFO("module.archipelago_wow", "Archipelago: trap effect '{}' is not yet implemented, skipped for {}", effect, target->GetName());
@@ -331,6 +398,8 @@ namespace
             ApplyAggroNearby(target);
         else if (effect == "spawn_rare_on_you")
             ApplySpawnRareOnYou(target);
+        else if (effect == "floor_is_lava")
+            ApplyFloorIsLava(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

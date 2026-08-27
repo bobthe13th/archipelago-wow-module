@@ -126,3 +126,20 @@ TEST_CASE("APTraps::SpawnRareOnYouSpawnPositionUsesTheSharedOffsetHelper")
     CHECK(pos.x == doctest::Approx(Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DISTANCE_YARDS));
     CHECK(pos.y == doctest::Approx(0.0f));
 }
+
+TEST_CASE("APTraps::ComputeTickDamageIsTenPercentOfMaxHealth")
+{
+    CHECK(Archipelago::Traps::Pure::ComputeTickDamage(1000, 10) == 100u);
+}
+
+TEST_CASE("APTraps::ComputeTickDamageFloorsAtOneForVeryLowMaxHealth")
+{
+    CHECK(Archipelago::Traps::Pure::ComputeTickDamage(5, 10) == 1u);
+}
+
+TEST_CASE("APTraps::FloorIsLavaConstantsMatchTheDesignedFiveSecondBurst")
+{
+    CHECK(Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_COUNT == 5u);
+    CHECK(Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_INTERVAL_MS == 1000u);
+    CHECK(Archipelago::Traps::Pure::FLOOR_IS_LAVA_TICK_PERCENT == 10u);
+}

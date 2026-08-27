@@ -14,10 +14,10 @@ class Player;
 namespace Archipelago::Traps
 {
     // effect is one of ArchipelagoTrapsContentTable.h's delivery.effect slugs.
-    // Not every slug has a real implementation yet -- see APTraps.cpp's
-    // dispatcher for exactly which (8 of 17 as of Task 17's initial landing);
-    // an unimplemented slug logs and safely no-ops rather than crashing or
-    // silently pretending to have applied something.
+    // All 17 slugs have a real implementation as of M4.9.1 (see APTraps.cpp's
+    // dispatcher); an unrecognized slug (e.g. a content-authoring typo) logs
+    // and safely no-ops rather than crashing or silently pretending to have
+    // applied something.
     //
     // Sec8's "No traps in sphere-0 starting zones" rule: if target is
     // currently in a sphere-0 zone, the effect is queued instead of applied

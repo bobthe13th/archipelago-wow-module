@@ -131,4 +131,18 @@ namespace Archipelago::Traps::Pure
     inline constexpr uint32_t SPAWN_RARE_ON_YOU_CREATURE_ENTRY = 448;
     inline constexpr uint32_t SPAWN_RARE_ON_YOU_DESPAWN_MS = 300000; // 5 minutes
     inline constexpr float SPAWN_RARE_ON_YOU_DISTANCE_YARDS = 5.0f;
+
+    inline constexpr uint32_t FLOOR_IS_LAVA_TICK_COUNT = 5;
+    inline constexpr uint32_t FLOOR_IS_LAVA_TICK_INTERVAL_MS = 1000; // 1 second
+    inline constexpr uint32_t FLOOR_IS_LAVA_TICK_PERCENT = 10; // of CURRENT max health, per tick
+
+    // Never returns 0 -- a max-health value small enough that 10% rounds
+    // down to 0 (maxHealth < 10) still deals at least 1 damage per tick,
+    // matching this module's other minimum-noticeable-effect choices (e.g.
+    // ApplyDurabilityDamage's 10%, ApplyScreenDrunk's 100/255).
+    inline uint32_t ComputeTickDamage(uint32_t maxHealth, uint32_t percent)
+    {
+        uint32_t damage = maxHealth * percent / 100;
+        return damage > 0 ? damage : 1;
+    }
 }
