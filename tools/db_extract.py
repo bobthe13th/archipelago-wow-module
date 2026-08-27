@@ -61,6 +61,97 @@ def parse_map_expansions(dbc_path: pathlib.Path = _MAP_DBC_PATH) -> dict[int, st
     return result
 
 
+_SKILL_LINE_ABILITY_DBC_PATH = (
+    pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
+)
+
+
+def parse_skill_line_abilities(dbc_path: pathlib.Path = _SKILL_LINE_ABILITY_DBC_PATH) -> dict[int, int]:
+    """Parse SkillLineAbility.dbc's real Spell/SkillLine fields (WDBC
+    format, same header shape parse_map_expansions already documents) into
+    a spell_id -> skill_line_id dict. field[1] is SkillLine, field[2] is
+    Spell per SkillLineAbilityEntry (src/server/shared/DataStores/
+    DBCStructure.h:1597-1612) -- field_count=14 confirmed against this
+    checkout's real var/extractors/dbc/SkillLineAbility.dbc
+    (record_size=56=14*4). Needed because this DB's own
+    skilllineability_dbc/skillline_dbc SQL tables (confirmed present via
+    `SHOW TABLES LIKE '%skill%'`) are unpopulated stubs -- `SELECT COUNT(*)
+    FROM skilllineability_dbc` returns 0 -- so a real spell_id -> profession
+    join is only possible against the client DBC directly, the same
+    situation M4.8 hit for Map.dbc's expansionID (see this plan's Global
+    Constraints). Verified against known real recipe-teaching spells before
+    trusting the field offsets: 2543 (Cook: Westfall Stew) -> 185
+    (Cooking), 2158/2163 (leather patterns) -> 165 (Leatherworking),
+    3230/2335 (elixir/potion recipes) -> 171 (Alchemy) -- all four match
+    their real WotLK profession exactly. If a spell_id appears in more than
+    one record, the FIRST record encountered wins -- deterministic since
+    WDBC record order is stable file content, not a runtime concern."""
+    with open(dbc_path, "rb") as f:
+        data = f.read()
+    magic = data[0:4]
+    if magic != b"WDBC":
+        raise ValueError(f"{dbc_path}: not a WDBC file (magic={magic!r})")
+    record_count, field_count, record_size, _string_block_size = struct.unpack("<4I", data[4:20])
+    records_start = 20
+    result: dict[int, int] = {}
+    for i in range(record_count):
+        rec_off = records_start + i * record_size
+        fields = struct.unpack("<" + "i" * field_count, data[rec_off:rec_off + record_size])
+        skill_line, spell_id = fields[1], fields[2]
+        result.setdefault(spell_id, skill_line)
+    return result
+
+
+_SPELL_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Spell.dbc"
+_SPELL_NAME_FIELD_INDEX = 136  # SpellEntry::SpellName[0] (enUS), field 136 per DBCStructure.h:1719
+
+
+def parse_spell_names(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> dict[int, str]:
+    """Parse Spell.dbc's real enUS SpellName field (WDBC format WITH a
+    string block, unlike Map.dbc/SkillLineAbility.dbc) into a spell_id ->
+    name dict. field[0] is ID, field[136] is the enUS locale's
+    string-block OFFSET for SpellName (src/server/shared/DataStores/
+    DBCStructure.h:1719, `std::array<char const*, 16> SpellName; // 136-151
+    m_name_lang`) -- confirmed against this checkout's real
+    var/extractors/dbc/Spell.dbc: field_count=234, record_size=936=234*4,
+    string_block_start (20 + record_count*record_size) lands exactly at
+    the real file's string block (verified: string_block_start +
+    string_block_size == the real file's exact byte length). Needed
+    because this DB's own spell_dbc SQL table has no name column at all
+    and only 4,491 rows (a partial stub, not the ~49,839-row real
+    Spell.dbc) -- trainer_spell has no name column of its own, so this is
+    the ONLY source of a real, player-facing spell name for the Trainer
+    Spells & Abilities family. Verified against known real spells before
+    trusting the offset: 72 -> "Shield Bash", 100 -> "Charge", 2543 ->
+    "Westfall Stew" (matches the recipe item's own name, cross-checked
+    against extract_recipes.py's independent item_template-sourced
+    name)."""
+    with open(dbc_path, "rb") as f:
+        data = f.read()
+    magic = data[0:4]
+    if magic != b"WDBC":
+        raise ValueError(f"{dbc_path}: not a WDBC file (magic={magic!r})")
+    record_count, field_count, record_size, string_block_size = struct.unpack("<4I", data[4:20])
+    records_start = 20
+    string_block_start = records_start + record_count * record_size
+
+    def _read_string(offset: int) -> str:
+        if offset == 0:
+            return ""
+        start = string_block_start + offset
+        end = data.index(b"\x00", start)
+        return data[start:end].decode("utf-8", errors="replace")
+
+    result: dict[int, str] = {}
+    for i in range(record_count):
+        rec_off = records_start + i * record_size
+        fields = struct.unpack("<" + "i" * field_count, data[rec_off:rec_off + record_size])
+        spell_id = fields[0]
+        name_offset = fields[_SPELL_NAME_FIELD_INDEX]
+        result[spell_id] = _read_string(name_offset)
+    return result
+
+
 def run_query(sql: str) -> list[tuple[str, ...]]:
     """Run one SQL statement against acore_world via the mysql.exe CLI
     (matching this project's existing MySQLExecutable-via-CLI convention --

@@ -4,7 +4,10 @@ import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
 
-from db_extract import is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH, parse_map_expansions
+from db_extract import (
+    is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
+    parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
+)
 
 
 class TestExclusionRules(unittest.TestCase):
@@ -118,3 +121,102 @@ class TestParseMapExpansions(unittest.TestCase):
         self.assertEqual(result[571], "wotlk")   # Northrend
         self.assertEqual(result[574], "wotlk")   # Utgarde Keep
         self.assertEqual(result[631], "wotlk")   # Icecrown Citadel
+
+
+class TestParseSkillLineAbilities(unittest.TestCase):
+    def _write_fake_dbc(self, tmpdir: str, records: list[tuple[int, int, int]]) -> pathlib.Path:
+        """records: list of (id, skill_line, spell_id) -- writes a minimal
+        real WDBC file with exactly 14 int32 fields per record (matching
+        SkillLineAbilityEntry's real field_count so field[1]/field[2] really
+        are SkillLine/Spell -- src/server/shared/DataStores/DBCStructure.h:
+        1597-1612), every other field zeroed, no string block needed."""
+        field_count = 14
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "SkillLineAbility.dbc"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, 0))
+            for id_, skill_line, spell_id in records:
+                fields = [0] * field_count
+                fields[0] = id_
+                fields[1] = skill_line
+                fields[2] = spell_id
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+        return path
+
+    def test_resolves_spell_id_to_skill_line(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(69, 6, 116), (472, 6, 205)])
+            result = parse_skill_line_abilities(path)
+        self.assertEqual(result, {116: 6, 205: 6})
+
+    def test_first_record_wins_when_a_spell_id_appears_twice(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(1, 100, 500), (2, 200, 500)])
+            result = parse_skill_line_abilities(path)
+        self.assertEqual(result, {500: 100})
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                parse_skill_line_abilities(path)
+
+    def test_real_skill_line_ability_dbc_resolves_known_recipe_spells(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # SkillLineAbility.dbc, confirming field[1]/field[2] against known,
+        # human-verifiable recipe-target spells (this plan's own research).
+        result = parse_skill_line_abilities()
+        self.assertEqual(result[2543], 185)  # Cook: Westfall Stew -> Cooking
+        self.assertEqual(result[2158], 165)  # Leatherworking pattern -> Leatherworking
+        self.assertEqual(result[3230], 171)  # Alchemy recipe -> Alchemy
+
+
+class TestParseSpellNames(unittest.TestCase):
+    def _write_fake_dbc(self, tmpdir: str, records: list[tuple[int, str]]) -> pathlib.Path:
+        """records: list of (spell_id, enUS_name) -- writes a minimal real
+        WDBC file with exactly 234 int32-sized fields per record (matching
+        SpellEntry's real field_count so field[136] really is the enUS
+        SpellName string-block offset -- DBCStructure.h:1719) and a real
+        trailing string block."""
+        field_count = 234
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "Spell.dbc"
+        string_block = b"\x00"  # offset 0 is always the empty string
+        offsets = []
+        for _, name in records:
+            offsets.append(len(string_block))
+            string_block += name.encode("utf-8") + b"\x00"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, len(string_block)))
+            for (spell_id, _name), offset in zip(records, offsets):
+                fields = [0] * field_count
+                fields[0] = spell_id
+                fields[136] = offset
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+            f.write(string_block)
+        return path
+
+    def test_resolves_spell_id_to_enus_name(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(72, "Shield Bash"), (100, "Charge")])
+            result = parse_spell_names(path)
+        self.assertEqual(result, {72: "Shield Bash", 100: "Charge"})
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                parse_spell_names(path)
+
+    def test_real_spell_dbc_resolves_known_spell_names(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # Spell.dbc, confirming field[136]'s string-block-offset resolution
+        # against known, human-verifiable spell names.
+        result = parse_spell_names()
+        self.assertEqual(result[72], "Shield Bash")
+        self.assertEqual(result[100], "Charge")
+        self.assertEqual(result[2543], "Westfall Stew")
