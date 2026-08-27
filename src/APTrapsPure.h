@@ -121,4 +121,14 @@ namespace Archipelago::Traps::Pure
     {
         return found < cap ? found : cap;
     }
+
+    // Entry 448 "Hogger": a real, genuinely dangerous creature template.
+    // See this plan's Global Constraints for the full citation
+    // (rank=1 CREATURE_ELITE_ELITE, HealthModifier=3, DamageModifier=1.7,
+    // AIName='SmartAI' -- real scripted abilities, not a bare tab-target).
+    // This is the "lethal" bucket's whole point, unlike
+    // RANDOM_MOB_SPAWN_CREATURE_ENTRY's deliberately-harmless Chicken.
+    inline constexpr uint32_t SPAWN_RARE_ON_YOU_CREATURE_ENTRY = 448;
+    inline constexpr uint32_t SPAWN_RARE_ON_YOU_DESPAWN_MS = 300000; // 5 minutes
+    inline constexpr float SPAWN_RARE_ON_YOU_DISTANCE_YARDS = 5.0f;
 }

@@ -110,3 +110,19 @@ TEST_CASE("APTraps::ClampAggroCountReturnsZeroWhenNothingWasFound")
 {
     CHECK(Archipelago::Traps::Pure::ClampAggroCount(0, 8) == 0u);
 }
+
+TEST_CASE("APTraps::SpawnRareOnYouCreatureEntryIsTheCuratedHoggerTemplate")
+{
+    // Entry 448, data/sql/base/db_world/creature_template.sql:392 -- see
+    // this plan's Global Constraints for the full citation (rank=1 Elite,
+    // HealthModifier=3, DamageModifier=1.7, real SmartAI abilities).
+    CHECK(Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_CREATURE_ENTRY == 448u);
+}
+
+TEST_CASE("APTraps::SpawnRareOnYouSpawnPositionUsesTheSharedOffsetHelper")
+{
+    auto pos = Archipelago::Traps::Pure::ComputeSpawnOffsetPosition(
+        0.0f, 0.0f, 0.0f, 0.0f, Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DISTANCE_YARDS);
+    CHECK(pos.x == doctest::Approx(Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DISTANCE_YARDS));
+    CHECK(pos.y == doctest::Approx(0.0f));
+}

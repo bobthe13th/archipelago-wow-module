@@ -273,6 +273,22 @@ namespace
         }
     }
 
+    void ApplySpawnRareOnYou(Player* target)
+    {
+        // This module has no per-player creature-level-scaling mechanism
+        // (none of the other 16 trap effects need one either), so a single
+        // fixed, deliberately-curated elite (Hogger, level 11) is the
+        // accepted trade-off: genuinely risky for a leveling character, a
+        // low-risk inconvenience for an endgame one. See this plan's
+        // Global Constraints.
+        auto pos = Archipelago::Traps::Pure::ComputeSpawnOffsetPosition(
+            target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),
+            target->GetOrientation(), Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DISTANCE_YARDS);
+        target->SummonCreature(Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_CREATURE_ENTRY,
+            pos.x, pos.y, pos.z, target->GetOrientation(),
+            TEMPSUMMON_TIMED_DESPAWN, Archipelago::Traps::Pure::SPAWN_RARE_ON_YOU_DESPAWN_MS);
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -313,6 +329,8 @@ namespace
             ApplyRandomTransform(target);
         else if (effect == "aggro_nearby")
             ApplyAggroNearby(target);
+        else if (effect == "spawn_rare_on_you")
+            ApplySpawnRareOnYou(target);
         else
             ApplyNotYetImplemented(target, effect);
     }
