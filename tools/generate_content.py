@@ -965,11 +965,12 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     dynamic dict[str, dict] -- fine in Python), C++ needs a real key type per
     trigger kind, so this dispatches on the family's own trigger.kind rather
     than trying to emit one generic dict-of-dicts shape. New export_triggers
-    families register a new branch here when they need one -- quest_reward
-    and vendor_purchase are the only two kinds that exist as of M4.7. A new
-    branch's map MUST use the same raw-constexpr-array-plus-runtime-builder
-    pattern as `_emit_cpp_trigger_lookup_quest_reward`/`_emit_cpp_trigger_lookup_vendor_purchase`
-    below, never a bare aggregate initializer -- that exact mistake is what
+    families register a new branch here when they need one -- quest_reward,
+    vendor_purchase, and learn_spell (added M4.9 for recipes/trainer_spells)
+    are the kinds that exist as of M4.9.2. A new branch's map MUST use the
+    same raw-constexpr-array-plus-runtime-builder pattern as
+    `_emit_cpp_trigger_lookup_quest_reward`/`_emit_cpp_trigger_lookup_vendor_purchase`/
+    `_emit_cpp_trigger_lookup_learn_spell` below, never a bare aggregate initializer -- that exact mistake is what
     caused a real production stack-overflow crash (M4.7.1 finding #1), twice,
     before this project learned that lesson."""
     locations = data["locations"]
