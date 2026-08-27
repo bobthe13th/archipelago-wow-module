@@ -1,0 +1,33 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/filler_reward_effects.yaml
+family: filler_reward_effects
+
+# M4.9.3.1 (design spec's Filler section). Items only, no locations -- an
+# effect fires on receipt, not on a location check, matching traps.yaml's
+# shape exactly (see that file for the precedent this one mirrors). Each
+# item's `delivery.effect` is a slug identifying which case
+# ApplyFillerRewardEffect (APFillerRewardEffects.cpp) handles. Unlike traps,
+# every effect here is unconditionally positive (a reward, never a trap) --
+# there is no `lethal` sub-field. `count` is a per-item ceiling; the actual
+# runtime cap-per-category (30, "as even as possible") is applied by
+# items.py's create_filler_item_pool at generation time, not here.
+items:
+  - name: "Filler: Random Buff"
+    item_id: 8500000
+    count: 30
+    delivery: {kind: filler_effect, effect: cast_spell}
+  - name: "Filler: Gold Reward"
+    item_id: 8500001
+    count: 30
+    delivery: {kind: filler_effect, effect: grant_money}
+  - name: "Filler: XP Reward"
+    item_id: 8500002
+    count: 30
+    delivery: {kind: filler_effect, effect: grant_xp_percent}
+  - name: "Filler: Character Title"
+    item_id: 8500003
+    count: 30
+    delivery: {kind: filler_effect, effect: grant_title}
+  - name: "Filler: Portable Service"
+    item_id: 8500004
+    count: 30
+    delivery: {kind: filler_effect, effect: portable_service}

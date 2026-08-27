@@ -722,5 +722,21 @@ class TestItemLevelTags(unittest.TestCase):
         self.assertIn('"Filler: Test Item (#1)": {"category": frozenset({"consumable"})}', text)
 
 
+class TestFillerRewardEffectsEmitter(unittest.TestCase):
+    def test_emits_effect_by_item_name_and_cpp_map(self) -> None:
+        data = {
+            "family": "filler_reward_effects",
+            "items": [
+                {"name": "Filler: Random Buff", "item_id": 8500000, "count": 30,
+                 "delivery": {"kind": "filler_effect", "effect": "cast_spell"}},
+            ],
+        }
+        py = emit_python(data)
+        self.assertIn('"Filler:RandomBuff":"cast_spell"', py.replace(" ", ""))
+        cpp = emit_cpp(data)
+        self.assertIn("ApItemToEffect", cpp)
+        self.assertIn('{ 8500000, "cast_spell" }', cpp)
+
+
 if __name__ == "__main__":
     unittest.main()

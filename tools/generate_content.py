@@ -421,6 +421,9 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds=set(), valid_delivery_kinds={"mail"},
         generic=True, export_tags=True, export_item_delivery=True,
     ),
+    "filler_reward_effects": FamilySchema(
+        valid_trigger_kinds=set(), valid_delivery_kinds={"filler_effect"},
+    ),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -586,6 +589,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_filler(data)
     if family == "traps":
         return _emit_python_traps(data)
+    if family == "filler_reward_effects":
+        return _emit_python_filler_reward_effects(data)
     if family == "rares":
         return _emit_python_rares(data)
     if family == "fish":
@@ -740,6 +745,21 @@ def _emit_python_traps(data: dict) -> str:
     lines.append("LETHAL_BY_ITEM_NAME: dict[str, bool] = {")
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": {item["delivery"]["lethal"]},')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_python_filler_reward_effects(data: dict) -> str:
+    lines = [_GENERATED_HEADER_PY.format(source="content/filler_reward_effects.yaml"), ""]
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("EFFECT_BY_ITEM_NAME: dict[str, str] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": "{item["delivery"]["effect"]}",')
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -1100,6 +1120,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_filler(data)
     if family == "traps":
         return _emit_cpp_traps(data)
+    if family == "filler_reward_effects":
+        return _emit_cpp_filler_reward_effects(data)
     if family == "rares":
         return _emit_cpp_rares(data)
     if family == "fish":
@@ -1290,6 +1312,24 @@ def _emit_cpp_traps(data: dict) -> str:
         delivery = item["delivery"]
         lethal_cpp = "true" if delivery["lethal"] else "false"
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["effect"]}", {lethal_cpp} }} }}, // {item["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_filler_reward_effects(data: dict) -> str:
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/filler_reward_effects.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <string>",
+        "#include <unordered_map>", "",
+        "namespace Archipelago::FillerRewardEffects", "{",
+    ]
+    lines.append("    inline std::unordered_map<int64_t, std::string> const ApItemToEffect = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, "{item["delivery"]["effect"]}" }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")

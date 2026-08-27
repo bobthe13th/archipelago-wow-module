@@ -57,6 +57,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "trainer_spells_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoTrainerSpellsContentTable.h",
     },
+    "filler_reward_effects": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_effects_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardEffectsContentTable.h",
+    },
 }
 
 
