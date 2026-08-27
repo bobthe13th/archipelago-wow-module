@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "APDelivery.h"
+#include "APTrapsPure.h"
 #include "DatabaseEnv.h"
 #include "Log.h"
 #include "Player.h"
@@ -105,6 +106,26 @@ namespace
         target->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
     }
 
+    void ApplyRandomMobSpawn(Player* target)
+    {
+        // Entry 620 "Chicken": a real, harmless CREATURE_TYPE_CRITTER (type=8)
+        // template confirmed in this checkout's own
+        // data/sql/base/db_world/creature_template.sql:519 -- rank=0 (Normal,
+        // not elite), minlevel=maxlevel=1, and critters cannot enter combat or
+        // attack (Acore::AnyUnfriendlyUnitInObjectRangeCheck itself excludes
+        // IsCritter() units -- see ApplyAggroNearby, Task 7), so this is
+        // deliberately, verifiably NOT the "lethal" bucket's job -- pure
+        // flavor. Spawned via the standard WorldObject::SummonCreature API
+        // (Object.h) with TEMPSUMMON_TIMED_DESPAWN so it cleans itself up
+        // with no extra bookkeeping on this module's side.
+        auto pos = Archipelago::Traps::Pure::ComputeSpawnOffsetPosition(
+            target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),
+            target->GetOrientation(), Archipelago::Traps::Pure::RANDOM_MOB_SPAWN_DISTANCE_YARDS);
+        target->SummonCreature(Archipelago::Traps::Pure::RANDOM_MOB_SPAWN_CREATURE_ENTRY,
+            pos.x, pos.y, pos.z, target->GetOrientation(),
+            TEMPSUMMON_TIMED_DESPAWN, Archipelago::Traps::Pure::RANDOM_MOB_SPAWN_DESPAWN_MS);
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -131,6 +152,8 @@ namespace
             ApplyDisarm(target);
         else if (effect == "forced_dance")
             ApplyForcedDance(target);
+        else if (effect == "random_mob_spawn")
+            ApplyRandomMobSpawn(target);
         else
             ApplyNotYetImplemented(target, effect);
     }
