@@ -13,6 +13,7 @@ void AddArchipelagoDeathLinkScripts();
 void AddArchipelagoLootScripts();
 void AddArchipelagoProfessionScripts();
 void AddArchipelagoCollectionScripts();
+void AddArchipelagoLearnSpellScripts();
 void AddArchipelagoInterceptionScripts();
 
 // Folder name is "archipelago_wow" (no dashes) -> loader function is Addarchipelago_wowScripts,
@@ -34,6 +35,7 @@ void Addarchipelago_wowScripts()
     AddArchipelagoLootScripts();
     AddArchipelagoProfessionScripts();
     AddArchipelagoCollectionScripts();
+    AddArchipelagoLearnSpellScripts();
     AddArchipelagoInterceptionScripts();
 }
 
