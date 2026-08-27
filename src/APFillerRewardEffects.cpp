@@ -71,17 +71,28 @@ namespace
     }
 
     // Real, curated, verifiably-safe creature entry for the summoned
-    // banker/mailbox NPC: 2673 "Target Dummy" (minlevel=maxlevel=1, rank=0
-    // Normal, type=9 CREATURE_TYPE_MECHANICAL, AIName='' -- no AI script at
-    // all, cannot move/attack/aggro, confirmed even more inert than
-    // APTraps.cpp's own Chicken(620)). Summoned via the same SummonCreature
+    // banker/mailbox NPC: 620 "Chicken" -- the SAME entry APTraps.cpp's own
+    // ApplyRandomMobSpawn already summons successfully in production (see
+    // that file's Task-7-era comment), a proven-safe precedent in this exact
+    // codebase. Its ScriptName is 'npc_chicken_cluck'
+    // (data/sql/base/db_world/creature_template.sql:519), but that script's
+    // Reset() (src/server/scripts/World/npcs_special.cpp:619-624) only does
+    // SetFaction(FACTION_PREY) and RemoveNpcFlag(UNIT_NPC_FLAG_QUESTGIVER) --
+    // no despawn/self-kill logic anywhere in the file, and it never touches
+    // UNIT_NPC_FLAG_BANKER/UNIT_NPC_FLAG_MAILBOX, so the ReplaceAllNpcFlags
+    // call below is unaffected and the full 60-second SummonCreature/
+    // TEMPSUMMON_TIMED_DESPAWN window below is genuinely honored. (An
+    // earlier choice, entry 2673 "Target Dummy", was reverted: its real
+    // ScriptName 'npc_target_dummy' -- src/server/scripts/World/
+    // npcs_special.cpp:358-385 -- self-kills 15 seconds after spawn, well
+    // inside this 60-second window.) Summoned via the same SummonCreature
     // API APTraps.cpp's ApplyRandomMobSpawn/ApplySpawnRareOnYou already use,
     // then flagged as banker+mailbox and shown directly via the session --
     // no player interaction/gossip click required (real, in-tree precedent:
     // src/server/scripts/Pet/pet_generic.cpp's "Argent Pony" companion).
     // Repair needs no summoned NPC at all -- DurabilityRepairAll operates
     // directly on the player.
-    constexpr uint32_t PORTABLE_SERVICE_NPC_ENTRY = 2673;
+    constexpr uint32_t PORTABLE_SERVICE_NPC_ENTRY = 620;
     constexpr uint32_t PORTABLE_SERVICE_DESPAWN_MS = 60000; // 1 minute
 
     void ApplyPortableService(Player* target)
