@@ -61,6 +61,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_effects_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardEffectsContentTable.h",
     },
+    "filler_reward_items": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_items_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardItemsContentTable.h",
+    },
 }
 
 
@@ -90,3 +94,4 @@ class TestContentFreshness(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
