@@ -3,6 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
+import generate_content
 from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError, FAMILY_SCHEMAS
 
 
@@ -493,6 +494,48 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
                     load_family(path)
         finally:
             FAMILY_SCHEMAS["quest_rewards"] = original_schema
+
+
+class TestLearnSpellTriggerLookup(unittest.TestCase):
+    def test_emits_spell_id_to_location_id_map(self) -> None:
+        data = {
+            "family": "recipes",
+            "locations": [
+                {"name": "Recipe: Westfall Stew (#728)", "location_id": 6000728,
+                 "trigger": {"kind": "learn_spell", "spell_id": 2543},
+                 "tags": {"profession": ["cooking"], "expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Recipe Item: Westfall Stew (#728)", "item_id": 6500728,
+                 "delivery": {"kind": "mail", "wow_item_entry": 728}},
+            ],
+        }
+        cpp = generate_content.emit_cpp_generic(data)
+        self.assertIn("SPELL_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("{ 2543, 6000728 }", cpp)
+
+    def test_duplicate_spell_id_within_one_family_is_a_hard_validation_error(self) -> None:
+        data = {
+            "family": "recipes",
+            "locations": [
+                {"name": "Recipe: A (#1)", "location_id": 6000001,
+                 "trigger": {"kind": "learn_spell", "spell_id": 100},
+                 "tags": {"profession": ["cooking"], "expansion": ["vanilla"]}},
+                {"name": "Recipe: B (#2)", "location_id": 6000002,
+                 "trigger": {"kind": "learn_spell", "spell_id": 100},
+                 "tags": {"profession": ["cooking"], "expansion": ["vanilla"]}},
+            ],
+            "items": [],
+        }
+        with self.assertRaises(generate_content.ValidationError):
+            generate_content._validate_trigger_lookup_uniqueness("recipes", data["locations"], data["items"], pathlib.Path("test.yaml"))
+
+    def test_learn_spell_row_missing_spell_id_is_rejected(self) -> None:
+        locations = [
+            {"name": "Recipe: A (#1)", "location_id": 6000001, "trigger": {"kind": "learn_spell"}},
+        ]
+        with self.assertRaises(generate_content.ValidationError):
+            generate_content._validate_learn_spell_rows(locations, pathlib.Path("test.yaml"))
 
 
 if __name__ == "__main__":

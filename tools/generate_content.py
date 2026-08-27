@@ -51,6 +51,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_boss_lists(data["locations"], yaml_path)
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
+    _validate_learn_spell_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
     _validate_tags_rows(data["family"], data["locations"], yaml_path)
     data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
@@ -162,6 +163,18 @@ def _validate_vendor_purchase_rows(locations: list, yaml_path: pathlib.Path) -> 
             )
 
 
+def _validate_learn_spell_rows(locations: list, yaml_path: pathlib.Path) -> None:
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "learn_spell":
+            continue
+        if "spell_id" not in trigger:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has learn_spell trigger "
+                f"but is missing required key: spell_id"
+            )
+
+
 def _validate_trigger_lookup_uniqueness(
     family: str, locations: list, items: list, yaml_path: pathlib.Path
 ) -> None:
@@ -221,6 +234,17 @@ def _validate_trigger_lookup_uniqueness(
                     print(f"      - {name}")
             print(f"   -> only the first-encountered location per key survives into VENDOR_SLOT_TO_LOCATION_ID; "
                   f"the rest are excluded from the emitted pool entirely (see _dedupe_vendor_trigger_collisions).\n")
+
+    elif kind == "learn_spell":
+        for loc in locations:
+            key = loc["trigger"]["spell_id"]
+            if key in seen_keys:
+                raise ValidationError(
+                    f"{yaml_path}: locations {seen_keys[key]!r} and {loc['name']!r} "
+                    f"both have spell_id={key}, which would produce a collision in "
+                    f"SPELL_ID_TO_LOCATION_ID trigger-lookup map"
+                )
+            seen_keys[key] = loc["name"]
 
 
 def _validate_tags_rows(family: str, locations: list, yaml_path: pathlib.Path) -> None:
@@ -342,6 +366,14 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     ),
     "vendor_stock": FamilySchema(
         valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True,
+    ),
+    "recipes": FamilySchema(
+        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True,
+    ),
+    "trainer_spells": FamilySchema(
+        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True,
     ),
 }
@@ -901,6 +933,32 @@ def _emit_cpp_trigger_lookup_vendor_purchase(locations: list, items: list) -> li
     return lines
 
 
+def _emit_cpp_trigger_lookup_learn_spell(locations: list) -> list[str]:
+    """SPELL_ID_TO_LOCATION_ID via the same raw-constexpr-array-plus-
+    runtime-builder pattern as _emit_cpp_trigger_lookup_quest_reward (M4.9)
+    -- both new families (recipes: 1,912 rows, trainer_spells: 1,966 rows)
+    are in the same order of magnitude as quest_rewards' own
+    QUEST_ID_TO_LOCATION_ID, well past the point M4.7.1's real
+    stack-overflow lesson (see _emit_cpp_large_string_map's docstring)
+    says a bare aggregate initializer is safe to trust."""
+    lines = ["inline constexpr std::pair<uint32_t, int64_t> SPELL_ID_TO_LOCATION_ID_RAW[] = {"]
+    for loc in locations:
+        lines.append(f'    {{ {loc["trigger"]["spell_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+    lines.append("};")
+    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildSPELL_ID_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("    for (auto const& row : SPELL_ID_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint32_t, int64_t> SPELL_ID_TO_LOCATION_ID = "
+        "BuildSPELL_ID_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
     FamilySchema.export_triggers. Unlike emit_python_generic's TRIGGERS (a
@@ -924,6 +982,9 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
 
     if kind == "vendor_purchase":
         return _emit_cpp_trigger_lookup_vendor_purchase(locations, data.get("items", []))
+
+    if kind == "learn_spell":
+        return _emit_cpp_trigger_lookup_learn_spell(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "
