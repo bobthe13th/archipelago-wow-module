@@ -24,11 +24,22 @@ class TestQueryCategory(unittest.TestCase):
 
 
 class TestExtractTenSimpleCategories(unittest.TestCase):
+    @patch("extract_filler_reward_items._extract_mount_or_pet_category")
+    @patch("extract_filler_reward_items._extract_recipe_category")
     @patch("extract_filler_reward_items.load_exclusion_rules")
     @patch("extract_filler_reward_items.run_query")
     def test_extracts_one_item_per_row_across_the_ten_simple_categories(
-        self, mock_run_query, mock_load_rules
+        self, mock_run_query, mock_load_rules, mock_extract_recipe, mock_extract_mount_or_pet
     ) -> None:
+        # recipe/mount/pet (added in a later task, M4.9.3.1 Task 5) are each
+        # cross-family-dependent and already covered by their own dedicated
+        # test classes below -- stub them out here so this test stays
+        # scoped to the 10 simple, single-query categories its name
+        # promises, and so mock_run_query's fixed 10-entry side_effect list
+        # below (one per simple category) isn't consumed by the 2 extra
+        # real run_query calls _extract_mount_or_pet_category makes.
+        mock_extract_recipe.return_value = []
+        mock_extract_mount_or_pet.return_value = []
         mock_load_rules.return_value = {"name_denylist": []}
         # 10 categories queried in this task; one fixture row each.
         mock_run_query.side_effect = [
@@ -60,6 +71,34 @@ class TestExtractTenSimpleCategories(unittest.TestCase):
         from extract_filler_reward_items import _TOY_ENTRIES
         self.assertEqual(len(_TOY_ENTRIES), 6)
         self.assertEqual(_TOY_ENTRIES[33079], "Murloc Costume")
+
+
+class TestRecipeCategoryReusesRecipesYaml(unittest.TestCase):
+    @patch("extract_filler_reward_items._load_recipes_yaml_items")
+    def test_recipe_rows_have_no_learn_spell_trigger(self, mock_load_recipes) -> None:
+        from extract_filler_reward_items import _extract_recipe_category
+        mock_load_recipes.return_value = [{"entry": 3122, "name": "Codex of Holy Word: Shield III"}]
+        rows = _extract_recipe_category()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["category"], "recipe")
+        self.assertEqual(rows[0]["entry"], 3122)
+
+
+class TestMountPetExcludeCollections(unittest.TestCase):
+    @patch("extract_filler_reward_items._load_collections_claimed_spell_ids")
+    @patch("extract_filler_reward_items.run_query")
+    def test_excludes_a_spell_id_already_claimed_by_collections(
+        self, mock_run_query, mock_load_claimed
+    ) -> None:
+        from extract_filler_reward_items import _extract_mount_or_pet_category
+        mock_load_claimed.return_value = frozenset({16084})
+        mock_run_query.return_value = [
+            ("8586", "Whistle of the Mottled Red Raptor", "0", "0", "16084", "6", "0", "0", "0", "0", "0", "0"),
+            ("12303", "Reins of the Nightsaber", "0", "0", "16055", "6", "0", "0", "0", "0", "0", "0"),
+        ]
+        rows = _extract_mount_or_pet_category(subclass=5, category="mount")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["entry"], 12303)
 
 
 if __name__ == "__main__":

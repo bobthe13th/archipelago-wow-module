@@ -97,6 +97,101 @@ _TOY_ENTRIES = {
 }
 
 
+def _load_recipes_yaml_items() -> list[dict]:
+    """Real (entry, name) pairs from content/recipes.yaml's own already-
+    extracted item list -- Filler's "recipe reward" category is a SEPARATE
+    random sample of the SAME real recipe pool extract_recipes.py already
+    draws from (2,034 real class=9 recipe items), delivered as a plain
+    filler mail item with NO learn_spell trigger attached (unlike Recipes'
+    own copies) -- so there is no location-check collision risk, a
+    filler-delivered recipe item just sits in the mailbox/inventory unless
+    separately used to learn it, a normal side-effect not a hidden trigger.
+    Reads content/recipes.yaml directly (must run after extract_recipes.py
+    has produced it, same ordering discipline extract_trainer_spells.py
+    already established for its own cross-family read)."""
+    recipes_path = pathlib.Path(__file__).parent.parent / "content" / "recipes.yaml"
+    with open(recipes_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    result = []
+    for item in data["items"]:
+        # recipes.yaml's item name is "Recipe Item: {name} (#{entry})" --
+        # extract the real entry from delivery.wow_item_entry directly
+        # rather than parsing it back out of the name string.
+        entry = item["delivery"]["wow_item_entry"]
+        # Strip "Recipe Item: " prefix and " (#N)" suffix to recover the
+        # real underlying item name for Filler's own "Filler: {name} (#N)"
+        # naming convention.
+        raw_name = item["name"][len("Recipe Item: "):].rsplit(" (#", 1)[0]
+        result.append({"entry": entry, "name": raw_name})
+    return result
+
+
+def _extract_recipe_category() -> list[dict]:
+    rows = _load_recipes_yaml_items()
+    return [{"entry": r["entry"], "name": r["name"], "category": "recipe"} for r in rows]
+
+
+def _load_collections_claimed_spell_ids() -> frozenset[int]:
+    """Real spell_ids already claimed by Collections' own SpellIdToLocationId
+    map (264 total: confirmed against ArchipelagoCollectionsContentTable.h's
+    own real content) -- Filler's Mount/Pet categories exclude these to
+    prevent a Filler-delivered mount/pet from silently double-firing a
+    Collections location check (OnPlayerLearnSpell fires on ANY learned
+    spell matching Collections' map, regardless of delivery source --
+    confirmed by reading ArchipelagoCollectionScript.cpp directly during
+    planning).
+
+    Deviation from this task's own brief: the brief called for exec()'ing
+    the sibling Archipelago repo's compiled
+    worlds/wow/collections_content_data.py and reading its TRIGGERS dict.
+    Verified against the real, current file that this does not exist --
+    Collections is one of the non-generic families in generate_content.py
+    (_emit_python_collections), which -- unlike quest_rewards/recipes/
+    trainer_spells/vendor_stock's emit_python_generic path -- only ever
+    emits LOCATIONS/ITEMS, never a TRIGGERS dict (FAMILY_SCHEMAS["collections"]
+    has no export_triggers=True). So collections_content_data.py has no
+    spell_id data to read at all, in this repo state or any prior one --
+    not a staleness problem, a real shape mismatch with the brief's
+    assumption. Reading this module's own content/collections.yaml directly
+    instead -- the same hand-curated source generate_content.py itself
+    compiles from -- recovers the identical real data (confirmed: 264
+    locations, 264 unique trigger.spell_id values, matching the brief's own
+    264-total research figure) without depending on a cross-repo compiled
+    artifact that doesn't carry it."""
+    collections_yaml_path = pathlib.Path(__file__).parent.parent / "content" / "collections.yaml"
+    with open(collections_yaml_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return frozenset(
+        loc["trigger"]["spell_id"]
+        for loc in data["locations"]
+        if loc.get("trigger", {}).get("kind") == "learn_spell"
+    )
+
+
+def _extract_mount_or_pet_category(subclass: int, category: str) -> list[dict]:
+    already_claimed = _load_collections_claimed_spell_ids()
+    rows = run_query(f"""
+        SELECT entry, name, spellid_1, spelltrigger_1, spellid_2, spelltrigger_2,
+               spellid_3, spelltrigger_3, spellid_4, spelltrigger_4, spellid_5, spelltrigger_5
+        FROM item_template
+        WHERE class = 15 AND subclass = {subclass} AND {_TEST_POLLUTION_FILTER}
+        ORDER BY entry
+    """)
+    result = []
+    for row in rows:
+        entry_str, name = row[0], row[1]
+        taught_spell = None
+        for n in range(5):
+            spellid, spelltrigger = row[2 + n * 2], row[3 + n * 2]
+            if int(spelltrigger) == 6 and int(spellid) != 0:
+                taught_spell = int(spellid)
+                break
+        if taught_spell is None or taught_spell in already_claimed:
+            continue
+        result.append({"entry": int(entry_str), "name": name, "category": category})
+    return result
+
+
 def _query_category(category: str, sql: str, rules: dict) -> list[dict]:
     rows = run_query(sql)
     result = []
@@ -123,6 +218,21 @@ def extract() -> dict:
         if is_denylisted(name, rules):
             continue
         all_rows.append({"entry": entry, "name": name, "category": "toy"})
+
+    for row in _extract_recipe_category():
+        if is_denylisted(row["name"], rules):
+            continue
+        all_rows.append(row)
+
+    for row in _extract_mount_or_pet_category(subclass=5, category="mount"):
+        if is_denylisted(row["name"], rules):
+            continue
+        all_rows.append(row)
+
+    for row in _extract_mount_or_pet_category(subclass=2, category="pet"):
+        if is_denylisted(row["name"], rules):
+            continue
+        all_rows.append(row)
 
     all_rows.sort(key=lambda r: r["entry"])
 
