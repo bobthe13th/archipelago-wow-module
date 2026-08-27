@@ -66,4 +66,24 @@ namespace Archipelago::Traps::Pure
     {
         return WEATHER_BURST_TYPE_POOL[roll % WEATHER_BURST_TYPE_POOL.size()];
     }
+
+    // CharHairGeosets.dbc VariationID range confirmed safe (0-9 inclusive)
+    // for EVERY playable race/gender combination in this checkout's real
+    // var/extractors/dbc/CharHairGeosets.dbc -- the minimum (RaceID=8
+    // Troll, SexID=1 Female) has exactly 10 real VariationID rows (0-9).
+    // See this plan's Global Constraints for the exact parse used to
+    // confirm this.
+    inline constexpr uint8_t HAIRSTYLE_VALUE_COUNT = 10;
+
+    // Deterministically picks a value in [0, HAIRSTYLE_VALUE_COUNT) that is
+    // guaranteed different from `current`, given `roll` in
+    // [0, HAIRSTYLE_VALUE_COUNT - 2]. Works correctly even when `current`
+    // is itself outside the safe range (some races have far more than 10
+    // real hairstyle options, e.g. Human female has 24) -- in that case
+    // every candidate in [0, HAIRSTYLE_VALUE_COUNT) is automatically <
+    // current, so the "skip current" branch is simply never taken.
+    inline uint8_t PickDifferentHairStyle(uint8_t current, uint8_t roll)
+    {
+        return roll < current ? roll : static_cast<uint8_t>(roll + 1);
+    }
 }

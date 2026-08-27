@@ -16,6 +16,7 @@
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
 #include "SpellAuras.h"
+#include "UpdateFields.h"
 #include "Weather.h"
 
 namespace
@@ -179,6 +180,26 @@ namespace
         weather->SetWeather(WeatherType(picked), Archipelago::Traps::Pure::WEATHER_BURST_GRADE);
     }
 
+    void ApplyHaircut(Player* target)
+    {
+        // PLAYER_BYTES (UpdateFields.h:181) offset 2 = hairstyle, offset 3 =
+        // haircolor -- confirmed against this checkout's OWN Player.cpp, not
+        // just asserted as stable public data: Player::Create
+        // (Player.cpp:551) packs `Skin | (Face<<8) | (HairStyle<<16) |
+        // (HairColor<<24)` into PLAYER_BYTES, and
+        // Player::SendInitialPacketsAfterAddToMap (Player.cpp:13566-13569)
+        // reads GetByteValue(PLAYER_BYTES, 2) as hairstyle and
+        // GetByteValue(PLAYER_BYTES, 3) as haircolor. Only the hairstyle
+        // byte (offset 2) is touched here -- see this plan's Global
+        // Constraints for why haircolor (offset 3) was deliberately left
+        // out of this task's scope, and why "haircut" maps most literally
+        // to hairstyle anyway.
+        uint8_t currentStyle = target->GetByteValue(PLAYER_BYTES, 2);
+        uint8_t newStyle = Archipelago::Traps::Pure::PickDifferentHairStyle(
+            currentStyle, static_cast<uint8_t>(urand(0, Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT - 2)));
+        target->SetByteValue(PLAYER_BYTES, 2, newStyle);
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -211,6 +232,8 @@ namespace
             ApplyTemporaryPvpFlag(target);
         else if (effect == "random_weather_burst")
             ApplyRandomWeatherBurst(target);
+        else if (effect == "haircut")
+            ApplyHaircut(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

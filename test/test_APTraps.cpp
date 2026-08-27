@@ -48,3 +48,26 @@ TEST_CASE("APTraps::PickWeatherBurstTypeWrapsOutOfRangeRolls")
     CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(2) == Archipelago::Traps::Pure::PickWeatherBurstType(0));
     CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(3) == Archipelago::Traps::Pure::PickWeatherBurstType(1));
 }
+
+TEST_CASE("APTraps::PickDifferentHairStyleNeverReturnsTheCurrentValue")
+{
+    for (uint8_t current = 0; current < Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT; ++current)
+        for (uint8_t roll = 0; roll < Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT - 1; ++roll)
+            CHECK(Archipelago::Traps::Pure::PickDifferentHairStyle(current, roll) != current);
+}
+
+TEST_CASE("APTraps::PickDifferentHairStyleStaysWithinTheDbcVerifiedSafeRange")
+{
+    for (uint8_t current = 0; current < Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT; ++current)
+        for (uint8_t roll = 0; roll < Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT - 1; ++roll)
+            CHECK(Archipelago::Traps::Pure::PickDifferentHairStyle(current, roll) < Archipelago::Traps::Pure::HAIRSTYLE_VALUE_COUNT);
+}
+
+TEST_CASE("APTraps::PickDifferentHairStyleHandlesAHighCurrentValueFromARaceWithMoreOptions")
+{
+    // e.g. a Human female (24 real hairstyle options, CharHairGeosets.dbc
+    // RaceID=1/SexID=1) whose CURRENT style (15) is already outside this
+    // module's conservative universal-safe range -- must still produce a
+    // valid, in-range, different value.
+    CHECK(Archipelago::Traps::Pure::PickDifferentHairStyle(15, 3) == 3);
+}
