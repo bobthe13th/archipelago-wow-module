@@ -103,4 +103,13 @@ namespace Archipelago::Traps::Pure
     {
         return DEBUFF_SPELL_POOL[roll % DEBUFF_SPELL_POOL.size()];
     }
+
+    // Display id 304: the Chicken model (creature_template_model.sql:489,
+    // CreatureID=620 -- the same real "Chicken" template
+    // RANDOM_MOB_SPAWN_CREATURE_ENTRY spawns, Idx=0, Probability=1, so this
+    // is its one and only real model) -- reusing an already-curated,
+    // already-cited harmless model rather than curating a second one from
+    // scratch.
+    inline constexpr uint32_t RANDOM_TRANSFORM_DISPLAY_ID = 304;
+    inline constexpr uint32_t RANDOM_TRANSFORM_DURATION_MS = 90000; // 90 seconds
 }

@@ -82,3 +82,16 @@ TEST_CASE("APTraps::PickDebuffSpellIdWrapsOutOfRangeRolls")
 {
     CHECK(Archipelago::Traps::Pure::PickDebuffSpellId(2) == Archipelago::Traps::Pure::PickDebuffSpellId(0));
 }
+
+TEST_CASE("APTraps::RandomTransformDisplayIdIsTheCuratedChickenModel")
+{
+    // Display id 304, creature_template_model.sql:489 (CreatureID=620, the
+    // same "Chicken" template ApplyRandomMobSpawn spawns) -- see this
+    // plan's Global Constraints.
+    CHECK(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DISPLAY_ID == 304u);
+}
+
+TEST_CASE("APTraps::RandomTransformDurationIsNinetySeconds")
+{
+    CHECK(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DURATION_MS == 90000u);
+}

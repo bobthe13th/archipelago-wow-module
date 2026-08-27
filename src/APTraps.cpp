@@ -213,6 +213,23 @@ namespace
         target->CastSpell(target, spellId, true);
     }
 
+    void ApplyRandomTransform(Player* target)
+    {
+        // Unit::SetDisplayId (Unit.h:1975) is the real morph API;
+        // Unit::DeMorph() (Unit.h:1969) reverts to the player's own real
+        // model. Reverted after a fixed duration via the same one-shot
+        // m_Events lambda pattern ApplyTemporaryPvpFlag (Task 2)
+        // introduced.
+        target->SetDisplayId(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DISPLAY_ID);
+
+        ObjectGuid guid = target->GetGUID();
+        target->m_Events.AddEventAtOffset([guid]()
+        {
+            if (Player* player = ObjectAccessor::FindPlayer(guid))
+                player->DeMorph();
+        }, Milliseconds(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DURATION_MS));
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -249,6 +266,8 @@ namespace
             ApplyHaircut(target);
         else if (effect == "random_debuff")
             ApplyRandomDebuff(target);
+        else if (effect == "random_transform")
+            ApplyRandomTransform(target);
         else
             ApplyNotYetImplemented(target, effect);
     }
