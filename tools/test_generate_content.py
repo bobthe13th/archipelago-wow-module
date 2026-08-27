@@ -131,8 +131,10 @@ class TestEmitCpp(unittest.TestCase):
             "family": "core_loop",
             "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
             "locations": [
-                {"name": "Reach Level 5", "location_id": 710000,
-                 "trigger": {"kind": "level_milestone", "level": 5}},
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
                 {"name": "Clear Ragefire Chasm", "location_id": 720000,
                  "trigger": {"kind": "instance_clear", "instance_key": "ragefire_chasm",
                              "final_boss_entry": 11520}},
@@ -151,8 +153,114 @@ class TestEmitCpp(unittest.TestCase):
         self.assertIn("STARTING_LEVEL_CAP = 10", text)
         self.assertIn('INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm"', text)
         self.assertIn("{ INSTANCE_KEY_RAGEFIRE_CHASM, 11520 }", text)
-        self.assertIn("{ 5, 710000 }", text)
+        self.assertIn("LEVEL_LOCATIONS_STANDARD", text)
+        self.assertIn("LEVEL_LOCATIONS_DEATH_KNIGHT", text)
+        self.assertIn("{ 5, 710005 }", text)
+        self.assertIn("{ 55, 711055 }", text)
         self.assertIn('{ INSTANCE_KEY_RAGEFIRE_CHASM, 720000 }', text)
+
+    def test_core_loop_death_knight_track_row_is_excluded_from_standard_map(self) -> None:
+        data = {
+            "family": "core_loop",
+            "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
+            ],
+            "items": [],
+        }
+        text = emit_cpp(data)
+        standard_block = text.split("LEVEL_LOCATIONS_STANDARD = {")[1].split("};")[0]
+        self.assertNotIn("711055", standard_block)
+        dk_block = text.split("LEVEL_LOCATIONS_DEATH_KNIGHT = {")[1].split("};")[0]
+        self.assertNotIn("710005", dk_block)
+
+
+class TestEmitPythonCoreLoopTracks(unittest.TestCase):
+    def test_emits_level_locations_and_names_grouped_by_track(self) -> None:
+        data = {
+            "family": "core_loop",
+            "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
+            ],
+            "items": [],
+        }
+        text = emit_python(data)
+        compile(text, "<test>", "exec")
+        namespace: dict = {}
+        exec(text, namespace)
+        self.assertEqual(namespace["LEVEL_LOCATIONS_BY_TRACK"]["standard"], {5: 710005})
+        self.assertEqual(namespace["LEVEL_LOCATIONS_BY_TRACK"]["death_knight"], {55: 711055})
+        self.assertEqual(namespace["LEVEL_LOCATION_NAMES_BY_TRACK"]["standard"], {5: "Reach Level 5"})
+        self.assertEqual(
+            namespace["LEVEL_LOCATION_NAMES_BY_TRACK"]["death_knight"],
+            {55: "Reach Level 55 (Death Knight)"},
+        )
+
+
+class TestLoadFamilyLevelMilestoneTrack(unittest.TestCase):
+    def _write(self, tmpdir: str, text: str) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "test.yaml"
+        path.write_text(textwrap.dedent(text), encoding="utf-8")
+        return path
+
+    def test_level_milestone_missing_track_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5}
+                items: []
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_level_milestone_unrecognized_track_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5, track: nonsense}
+                items: []
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_level_milestone_valid_track_loads_successfully(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5, track: standard}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
+
+    def test_instance_clear_rows_are_unaffected_by_the_track_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Clear Ragefire Chasm
+                    location_id: 720000
+                    trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
 
 
 class TestGenericEmitter(unittest.TestCase):

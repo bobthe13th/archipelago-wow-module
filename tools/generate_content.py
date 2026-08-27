@@ -54,6 +54,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_learn_spell_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
     _validate_tags_rows(data["family"], data["locations"], yaml_path)
+    _validate_level_milestone_tracks(data["family"], data["locations"], yaml_path)
     data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
         data["family"], data["locations"], data["items"], yaml_path
     )
@@ -272,6 +273,35 @@ def _validate_tags_rows(family: str, locations: list, yaml_path: pathlib.Path) -
                     f"dimension {dimension!r} -- every dimension must resolve to at least "
                     f"one tag value"
                 )
+
+
+_VALID_LEVEL_MILESTONE_TRACKS = {"standard", "death_knight"}
+
+
+def _validate_level_milestone_tracks(family: str, locations: list, yaml_path: pathlib.Path) -> None:
+    """M4.9: every level_milestone location must declare which of the two
+    per-class tracks it belongs to (standard: every class except Death
+    Knight, levels 1-80; death_knight: Death Knight only, levels 55-80,
+    matching the class's real Player::Create starting level). Both the C++
+    level-up hook (ArchipelagoLevelScript.cpp, Task 4) and the apworld
+    (locations.py's create_core_loop_locations, Task 3) need this to pick
+    the right one of the two content tracks -- a location silently missing
+    it (or naming an unrecognized track) would be a content-authoring bug,
+    not a valid state. core_loop-specific (not gated by a FamilySchema
+    opt-in flag like export_tags/export_triggers) since no other family has
+    a level_milestone trigger kind at all."""
+    if family != "core_loop":
+        return
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "level_milestone":
+            continue
+        track = trigger.get("track")
+        if track not in _VALID_LEVEL_MILESTONE_TRACKS:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has level_milestone trigger "
+                f"with track={track!r} -- must be one of {sorted(_VALID_LEVEL_MILESTONE_TRACKS)}"
+            )
 
 
 def _dedupe_vendor_trigger_collisions(
@@ -574,11 +604,25 @@ def _emit_python_core_loop(data: dict) -> str:
             lines.append(f'    {item["item_id"]}: "{delivery["instance_key"]}",')
     lines.append("}")
     lines.append("")
-    lines.append("LEVEL_LOCATIONS: dict[int, int] = {")
     milestone_locs = [loc for loc in data["locations"] if loc["trigger"]["kind"] == "level_milestone"]
     milestone_locs.sort(key=lambda loc: loc["trigger"]["level"])
+    tracks: dict[str, list] = {}
     for loc in milestone_locs:
-        lines.append(f'    {loc["trigger"]["level"]}: {loc["location_id"]},')
+        tracks.setdefault(loc["trigger"]["track"], []).append(loc)
+    lines.append("LEVEL_LOCATIONS_BY_TRACK: dict[str, dict[int, int]] = {")
+    for track_name, locs in tracks.items():
+        entries = ", ".join(f'{loc["trigger"]["level"]}: {loc["location_id"]}' for loc in locs)
+        lines.append(f'    "{track_name}": {{{entries}}},')
+    lines.append("}")
+    lines.append("")
+    lines.append("# M4.9: name for each (track, level) pair, generated directly from each")
+    lines.append("# location row's own `name` field -- same anti-hardcoded-ternary discipline")
+    lines.append("# as INSTANCE_CLEAR_LOCATION_NAMES below (Task 23 bugfix), so locations.py/")
+    lines.append("# rules.py never need to hand-format a track-specific name suffix themselves.")
+    lines.append("LEVEL_LOCATION_NAMES_BY_TRACK: dict[str, dict[int, str]] = {")
+    for track_name, locs in tracks.items():
+        entries = ", ".join(f'{loc["trigger"]["level"]}: "{loc["name"]}"' for loc in locs)
+        lines.append(f'    "{track_name}": {{{entries}}},')
     lines.append("}")
     lines.append("")
     lines.append("INSTANCE_CLEAR_LOCATIONS: dict[str, int] = {")
@@ -1070,9 +1114,21 @@ def _emit_cpp_core_loop(data: dict) -> str:
         lines.append(f'        {{ {const_name}, {loc["trigger"]["final_boss_entry"]} }},')
     lines.append("    };")
     lines.append("")
-    lines.append("    inline std::unordered_map<uint32_t, int64_t> const LEVEL_LOCATIONS = {")
+    lines.append("    // M4.9: split into two per-class tracks (standard: every class except")
+    lines.append("    // Death Knight, levels 1-80; death_knight: Death Knight only, levels")
+    lines.append("    // 55-80, matching the class's real starting level) -- the level-up hook")
+    lines.append("    // (ArchipelagoLevelScript.cpp) reads the connecting player's own real")
+    lines.append("    // class (player->getClass() == CLASS_DEATH_KNIGHT) to pick which one.")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const LEVEL_LOCATIONS_STANDARD = {")
     for loc in milestone_locs:
-        lines.append(f'        {{ {loc["trigger"]["level"]}, {loc["location_id"]} }},')
+        if loc["trigger"]["track"] == "standard":
+            lines.append(f'        {{ {loc["trigger"]["level"]}, {loc["location_id"]} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const LEVEL_LOCATIONS_DEATH_KNIGHT = {")
+    for loc in milestone_locs:
+        if loc["trigger"]["track"] == "death_knight":
+            lines.append(f'        {{ {loc["trigger"]["level"]}, {loc["location_id"]} }},')
     lines.append("    };")
     lines.append("")
     lines.append("    inline std::unordered_map<std::string, int64_t> const INSTANCE_CLEAR_LOCATIONS = {")
