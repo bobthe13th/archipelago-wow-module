@@ -31,3 +31,8 @@ TEST_CASE("APTraps::RandomMobSpawnCreatureEntryIsTheCuratedChickenTemplate")
     // this plan's Global Constraints for the full citation.
     CHECK(Archipelago::Traps::Pure::RANDOM_MOB_SPAWN_CREATURE_ENTRY == 620u);
 }
+
+TEST_CASE("APTraps::TemporaryPvpFlagDurationIsSixtySeconds")
+{
+    CHECK(Archipelago::Traps::Pure::TEMPORARY_PVP_FLAG_DURATION_MS == 60000u);
+}

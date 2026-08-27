@@ -7,7 +7,9 @@
 #include "APDelivery.h"
 #include "APTrapsPure.h"
 #include "DatabaseEnv.h"
+#include "EventProcessor.h"
 #include "Log.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
@@ -126,6 +128,31 @@ namespace
             TEMPSUMMON_TIMED_DESPAWN, Archipelago::Traps::Pure::RANDOM_MOB_SPAWN_DESPAWN_MS);
     }
 
+    void ApplyTemporaryPvpFlag(Player* target)
+    {
+        // Player::UpdatePvP(bool state, bool _override) -- Player.h:1885, a
+        // real API. state=true flags the player PvP-enabled immediately;
+        // _override=true bypasses the normal client-initiated
+        // sheathe-weapon-first/5-minute-timer PvP-flagging rules, matching a
+        // trap's "it just happens to you" framing rather than a voluntary
+        // toggle. Reverted after a fixed duration via a one-shot m_Events
+        // lambda event (WorldObject::m_Events, Object.h:742;
+        // EventProcessor::AddEventAtOffset, EventProcessor.h:108-114) -- the
+        // first timed/delayed trap effect in this module (see this plan's
+        // Global Constraints). ObjectAccessor::FindPlayer re-resolves the
+        // player by guid rather than capturing the raw Player* directly,
+        // since the player could log out during the delay and a dangling
+        // pointer must never be dereferenced.
+        target->UpdatePvP(true, true);
+
+        ObjectGuid guid = target->GetGUID();
+        target->m_Events.AddEventAtOffset([guid]()
+        {
+            if (Player* player = ObjectAccessor::FindPlayer(guid))
+                player->UpdatePvP(false, true);
+        }, Milliseconds(Archipelago::Traps::Pure::TEMPORARY_PVP_FLAG_DURATION_MS));
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -154,6 +181,8 @@ namespace
             ApplyForcedDance(target);
         else if (effect == "random_mob_spawn")
             ApplyRandomMobSpawn(target);
+        else if (effect == "temporary_pvp_flag")
+            ApplyTemporaryPvpFlag(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

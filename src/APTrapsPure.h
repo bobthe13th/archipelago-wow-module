@@ -45,4 +45,8 @@ namespace Archipelago::Traps::Pure
     inline constexpr uint32_t RANDOM_MOB_SPAWN_CREATURE_ENTRY = 620;
     inline constexpr uint32_t RANDOM_MOB_SPAWN_DESPAWN_MS = 120000; // 2 minutes
     inline constexpr float RANDOM_MOB_SPAWN_DISTANCE_YARDS = 3.0f;
+
+    // Player::UpdatePvP's real effect lasts until explicitly reverted --
+    // this is the fixed duration this plan reverts it after.
+    inline constexpr uint32_t TEMPORARY_PVP_FLAG_DURATION_MS = 60000; // 60 seconds
 }
