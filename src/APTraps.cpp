@@ -6,8 +6,11 @@
 
 #include "APDelivery.h"
 #include "APTrapsPure.h"
+#include "CellImpl.h"
+#include "Creature.h"
 #include "DatabaseEnv.h"
 #include "EventProcessor.h"
+#include "GridNotifiers.h"
 #include "Log.h"
 #include "Map.h"
 #include "ObjectAccessor.h"
@@ -230,6 +233,46 @@ namespace
         }, Milliseconds(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DURATION_MS));
     }
 
+    void ApplyAggroNearby(Player* target)
+    {
+        // Real, in-tree precedent for this exact search+engage pattern:
+        // src/server/game/Spells/SpellEffects.cpp:4051-4057 (and again at
+        // :4813-4816) builds a UnitList (Unit.h:78) via
+        // Acore::AnyUnfriendlyUnitInObjectRangeCheck (GridNotifiers.h:
+        // 883-899, already excludes IsCritter() units and anything
+        // IsFriendlyTo the target) + Acore::UnitListSearcher, then
+        // Cell::VisitObjects (CellImpl.h) to actually run the grid query --
+        // note the spec's own "Trinity::AnyUnfriendlyUnitInObjectRangeCheck"
+        // is "Acore::" in this checkout (namespace rename, see this plan's
+        // Global Constraints). A fixed 20-yard radius (not
+        // GetVisibilityRange(), which can be 90+ yards) plus an explicit
+        // engaged-count cap keep this "a few nearby mobs notice you," not
+        // "everything on the screen dogpiles you." Filtering to
+        // unit->ToCreature() (rather than engaging every Unit* the search
+        // returns) is not just a type-narrowing convenience -- it is the
+        // ONLY thing preventing this trap from forcibly PvP-engaging a
+        // bystander real player: AnyUnfriendlyUnitInObjectRangeCheck's own
+        // filter has no player/creature distinction, only
+        // IsFriendlyTo/IsCritter/IsAlive.
+        UnitList targets;
+        Acore::AnyUnfriendlyUnitInObjectRangeCheck check(target, target, Archipelago::Traps::Pure::AGGRO_NEARBY_RADIUS_YARDS);
+        Acore::UnitListSearcher<Acore::AnyUnfriendlyUnitInObjectRangeCheck> searcher(target, targets, check);
+        Cell::VisitObjects(target, searcher, Archipelago::Traps::Pure::AGGRO_NEARBY_RADIUS_YARDS);
+
+        size_t engageCount = Archipelago::Traps::Pure::ClampAggroCount(targets.size(), Archipelago::Traps::Pure::AGGRO_NEARBY_MAX_ENGAGED);
+        size_t engaged = 0;
+        for (Unit* unit : targets)
+        {
+            if (engaged >= engageCount)
+                break;
+            if (Creature* creature = unit->ToCreature())
+            {
+                creature->EngageWithTarget(target);
+                ++engaged;
+            }
+        }
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -268,6 +311,8 @@ namespace
             ApplyRandomDebuff(target);
         else if (effect == "random_transform")
             ApplyRandomTransform(target);
+        else if (effect == "aggro_nearby")
+            ApplyAggroNearby(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

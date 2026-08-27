@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 
 // M4.9 Sec1 (traps' 9 remaining effects). Pure, AzerothCore/Player-
@@ -112,4 +113,12 @@ namespace Archipelago::Traps::Pure
     // scratch.
     inline constexpr uint32_t RANDOM_TRANSFORM_DISPLAY_ID = 304;
     inline constexpr uint32_t RANDOM_TRANSFORM_DURATION_MS = 90000; // 90 seconds
+
+    inline constexpr float AGGRO_NEARBY_RADIUS_YARDS = 20.0f;
+    inline constexpr size_t AGGRO_NEARBY_MAX_ENGAGED = 8;
+
+    inline size_t ClampAggroCount(size_t found, size_t cap)
+    {
+        return found < cap ? found : cap;
+    }
 }

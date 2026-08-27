@@ -95,3 +95,18 @@ TEST_CASE("APTraps::RandomTransformDurationIsNinetySeconds")
 {
     CHECK(Archipelago::Traps::Pure::RANDOM_TRANSFORM_DURATION_MS == 90000u);
 }
+
+TEST_CASE("APTraps::ClampAggroCountReturnsFoundCountWhenUnderTheCap")
+{
+    CHECK(Archipelago::Traps::Pure::ClampAggroCount(3, 8) == 3u);
+}
+
+TEST_CASE("APTraps::ClampAggroCountCapsAtTheMaximum")
+{
+    CHECK(Archipelago::Traps::Pure::ClampAggroCount(50, 8) == 8u);
+}
+
+TEST_CASE("APTraps::ClampAggroCountReturnsZeroWhenNothingWasFound")
+{
+    CHECK(Archipelago::Traps::Pure::ClampAggroCount(0, 8) == 0u);
+}
