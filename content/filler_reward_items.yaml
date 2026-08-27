@@ -15850,14 +15850,6 @@ items:
     wow_item_entry: 5976
   tags:
     category:
-    - equipment
-- name: 'Filler: Guild Tabard (#5976)'
-  item_id: 8005976
-  delivery:
-    kind: mail
-    wow_item_entry: 5976
-  tags:
-    category:
     - tabard
 - name: 'Filler: Elixir of Water Breathing (#5996)'
   item_id: 8005996
@@ -30578,14 +30570,6 @@ items:
     wow_item_entry: 11364
   tags:
     category:
-    - equipment
-- name: 'Filler: Tabard of Stormwind (#11364)'
-  item_id: 8011364
-  delivery:
-    kind: mail
-    wow_item_entry: 11364
-  tags:
-    category:
     - tabard
 - name: 'Filler: Blood of the Mountain (#11382)'
   item_id: 8011382
@@ -41722,23 +41706,7 @@ items:
     wow_item_entry: 15196
   tags:
     category:
-    - equipment
-- name: 'Filler: Private''s Tabard (#15196)'
-  item_id: 8015196
-  delivery:
-    kind: mail
-    wow_item_entry: 15196
-  tags:
-    category:
     - tabard
-- name: 'Filler: Scout''s Tabard (#15197)'
-  item_id: 8015197
-  delivery:
-    kind: mail
-    wow_item_entry: 15197
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Scout''s Tabard (#15197)'
   item_id: 8015197
   delivery:
@@ -41754,23 +41722,7 @@ items:
     wow_item_entry: 15198
   tags:
     category:
-    - equipment
-- name: 'Filler: Knight''s Colors (#15198)'
-  item_id: 8015198
-  delivery:
-    kind: mail
-    wow_item_entry: 15198
-  tags:
-    category:
     - tabard
-- name: 'Filler: Stone Guard''s Herald (#15199)'
-  item_id: 8015199
-  delivery:
-    kind: mail
-    wow_item_entry: 15199
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Stone Guard''s Herald (#15199)'
   item_id: 8015199
   delivery:
@@ -49562,23 +49514,7 @@ items:
     wow_item_entry: 19031
   tags:
     category:
-    - equipment
-- name: 'Filler: Frostwolf Battle Tabard (#19031)'
-  item_id: 8019031
-  delivery:
-    kind: mail
-    wow_item_entry: 19031
-  tags:
-    category:
     - tabard
-- name: 'Filler: Stormpike Battle Tabard (#19032)'
-  item_id: 8019032
-  delivery:
-    kind: mail
-    wow_item_entry: 19032
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Stormpike Battle Tabard (#19032)'
   item_id: 8019032
   delivery:
@@ -49776,14 +49712,6 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 19141
-  tags:
-    category:
-    - equipment
-- name: 'Filler: Contest Winner''s Tabard (#19160)'
-  item_id: 8019160
-  delivery:
-    kind: mail
-    wow_item_entry: 19160
   tags:
     category:
     - equipment
@@ -50194,23 +50122,7 @@ items:
     wow_item_entry: 19505
   tags:
     category:
-    - equipment
-- name: 'Filler: Warsong Battle Tabard (#19505)'
-  item_id: 8019505
-  delivery:
-    kind: mail
-    wow_item_entry: 19505
-  tags:
-    category:
     - tabard
-- name: 'Filler: Silverwing Battle Tabard (#19506)'
-  item_id: 8019506
-  delivery:
-    kind: mail
-    wow_item_entry: 19506
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Silverwing Battle Tabard (#19506)'
   item_id: 8019506
   delivery:
@@ -50602,23 +50514,7 @@ items:
     wow_item_entry: 20131
   tags:
     category:
-    - equipment
-- name: 'Filler: Battle Tabard of the Defilers (#20131)'
-  item_id: 8020131
-  delivery:
-    kind: mail
-    wow_item_entry: 20131
-  tags:
-    category:
     - tabard
-- name: 'Filler: Arathor Battle Tabard (#20132)'
-  item_id: 8020132
-  delivery:
-    kind: mail
-    wow_item_entry: 20132
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Arathor Battle Tabard (#20132)'
   item_id: 8020132
   delivery:
@@ -56162,14 +56058,6 @@ items:
     wow_item_entry: 22999
   tags:
     category:
-    - equipment
-- name: 'Filler: Tabard of the Argent Dawn (#22999)'
-  item_id: 8022999
-  delivery:
-    kind: mail
-    wow_item_entry: 22999
-  tags:
-    category:
     - tabard
 - name: 'Filler: Curmudgeon''s Payoff (#23022)'
   item_id: 8023022
@@ -56643,14 +56531,6 @@ items:
   tags:
     category:
     - consumable
-- name: 'Filler: Tabard of the Scarlet Crusade (#23192)'
-  item_id: 8023192
-  delivery:
-    kind: mail
-    wow_item_entry: 23192
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Tabard of the Scarlet Crusade (#23192)'
   item_id: 8023192
   delivery:
@@ -57914,14 +57794,6 @@ items:
     wow_item_entry: 23710
   tags:
     category:
-    - equipment
-- name: 'Filler: Upperdeck Tabard #3 (#23710)'
-  item_id: 8023710
-  delivery:
-    kind: mail
-    wow_item_entry: 23710
-  tags:
-    category:
     - tabard
 - name: 'Filler: White Tiger Cub (#23712)'
   item_id: 8023712
@@ -58282,23 +58154,7 @@ items:
     wow_item_entry: 23999
   tags:
     category:
-    - equipment
-- name: 'Filler: Honor Hold Tabard (#23999)'
-  item_id: 8023999
-  delivery:
-    kind: mail
-    wow_item_entry: 23999
-  tags:
-    category:
     - tabard
-- name: 'Filler: Thrallmar Tabard (#24004)'
-  item_id: 8024004
-  delivery:
-    kind: mail
-    wow_item_entry: 24004
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Thrallmar Tabard (#24004)'
   item_id: 8024004
   delivery:
@@ -59536,14 +59392,6 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 24343
-  tags:
-    category:
-    - equipment
-- name: 'Filler: Tabard of the Hand (#24344)'
-  item_id: 8024344
-  delivery:
-    kind: mail
-    wow_item_entry: 24344
   tags:
     category:
     - equipment
@@ -66338,14 +66186,6 @@ items:
     wow_item_entry: 25549
   tags:
     category:
-    - equipment
-- name: 'Filler: Blood Knight Tabard (#25549)'
-  item_id: 8025549
-  delivery:
-    kind: mail
-    wow_item_entry: 25549
-  tags:
-    category:
     - tabard
 - name: 'Filler: Exodar Staff (#25553)'
   item_id: 8025553
@@ -70098,14 +69938,6 @@ items:
     wow_item_entry: 28788
   tags:
     category:
-    - equipment
-- name: 'Filler: Tabard of the Protector (#28788)'
-  item_id: 8028788
-  delivery:
-    kind: mail
-    wow_item_entry: 28788
-  tags:
-    category:
     - tabard
 - name: 'Filler: Light Throwing Knife (#28979)'
   item_id: 8028979
@@ -73450,14 +73282,6 @@ items:
     wow_item_entry: 31279
   tags:
     category:
-    - equipment
-- name: 'Filler: Enchanted Illidari Tabard (#31279)'
-  item_id: 8031279
-  delivery:
-    kind: mail
-    wow_item_entry: 31279
-  tags:
-    category:
     - tabard
 - name: 'Filler: Sinister Area 52 Boots (#31312)'
   item_id: 8031312
@@ -73570,23 +73394,7 @@ items:
     wow_item_entry: 31404
   tags:
     category:
-    - equipment
-- name: 'Filler: Green Trophy Tabard of the Illidari (#31404)'
-  item_id: 8031404
-  delivery:
-    kind: mail
-    wow_item_entry: 31404
-  tags:
-    category:
     - tabard
-- name: 'Filler: Purple Trophy Tabard of the Illidari (#31405)'
-  item_id: 8031405
-  delivery:
-    kind: mail
-    wow_item_entry: 31405
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Purple Trophy Tabard of the Illidari (#31405)'
   item_id: 8031405
   delivery:
@@ -74722,23 +74530,7 @@ items:
     wow_item_entry: 31773
   tags:
     category:
-    - equipment
-- name: 'Filler: Mag''har Tabard (#31773)'
-  item_id: 8031773
-  delivery:
-    kind: mail
-    wow_item_entry: 31773
-  tags:
-    category:
     - tabard
-- name: 'Filler: Kurenai Tabard (#31774)'
-  item_id: 8031774
-  delivery:
-    kind: mail
-    wow_item_entry: 31774
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Kurenai Tabard (#31774)'
   item_id: 8031774
   delivery:
@@ -74754,23 +74546,7 @@ items:
     wow_item_entry: 31775
   tags:
     category:
-    - equipment
-- name: 'Filler: Sporeggar Tabard (#31775)'
-  item_id: 8031775
-  delivery:
-    kind: mail
-    wow_item_entry: 31775
-  tags:
-    category:
     - tabard
-- name: 'Filler: Consortium Tabard (#31776)'
-  item_id: 8031776
-  delivery:
-    kind: mail
-    wow_item_entry: 31776
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Consortium Tabard (#31776)'
   item_id: 8031776
   delivery:
@@ -74786,23 +74562,7 @@ items:
     wow_item_entry: 31777
   tags:
     category:
-    - equipment
-- name: 'Filler: Keepers of Time Tabard (#31777)'
-  item_id: 8031777
-  delivery:
-    kind: mail
-    wow_item_entry: 31777
-  tags:
-    category:
     - tabard
-- name: 'Filler: Lower City Tabard (#31778)'
-  item_id: 8031778
-  delivery:
-    kind: mail
-    wow_item_entry: 31778
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Lower City Tabard (#31778)'
   item_id: 8031778
   delivery:
@@ -74818,14 +74578,6 @@ items:
     wow_item_entry: 31779
   tags:
     category:
-    - equipment
-- name: 'Filler: Aldor Tabard (#31779)'
-  item_id: 8031779
-  delivery:
-    kind: mail
-    wow_item_entry: 31779
-  tags:
-    category:
     - tabard
 - name: 'Filler: Scryers Tabard (#31780)'
   item_id: 8031780
@@ -74834,23 +74586,7 @@ items:
     wow_item_entry: 31780
   tags:
     category:
-    - equipment
-- name: 'Filler: Scryers Tabard (#31780)'
-  item_id: 8031780
-  delivery:
-    kind: mail
-    wow_item_entry: 31780
-  tags:
-    category:
     - tabard
-- name: 'Filler: Sha''tar Tabard (#31781)'
-  item_id: 8031781
-  delivery:
-    kind: mail
-    wow_item_entry: 31781
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Sha''tar Tabard (#31781)'
   item_id: 8031781
   delivery:
@@ -74995,14 +74731,6 @@ items:
   tags:
     category:
     - openable
-- name: 'Filler: Cenarion Expedition Tabard (#31804)'
-  item_id: 8031804
-  delivery:
-    kind: mail
-    wow_item_entry: 31804
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Cenarion Expedition Tabard (#31804)'
   item_id: 8031804
   delivery:
@@ -76154,14 +75882,6 @@ items:
     wow_item_entry: 32445
   tags:
     category:
-    - equipment
-- name: 'Filler: Skyguard Tabard (#32445)'
-  item_id: 8032445
-  delivery:
-    kind: mail
-    wow_item_entry: 32445
-  tags:
-    category:
     - tabard
 - name: 'Filler: Pattern: Night''s End (#32447)'
   item_id: 8032447
@@ -76667,14 +76387,6 @@ items:
   tags:
     category:
     - consumable
-- name: 'Filler: Ogri''la Tabard (#32828)'
-  item_id: 8032828
-  delivery:
-    kind: mail
-    wow_item_entry: 32828
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Ogri''la Tabard (#32828)'
   item_id: 8032828
   delivery:
@@ -78410,14 +78122,6 @@ items:
     wow_item_entry: 34158
   tags:
     category:
-    - equipment
-- name: 'Filler: Team A Tabard (#34158)'
-  item_id: 8034158
-  delivery:
-    kind: mail
-    wow_item_entry: 34158
-  tags:
-    category:
     - tabard
 - name: 'Filler: NPC Equip 34159 (#34159)'
   item_id: 8034159
@@ -79355,14 +79059,6 @@ items:
   tags:
     category:
     - recipe
-- name: 'Filler: Tabard of the Shattered Sun (#35221)'
-  item_id: 8035221
-  delivery:
-    kind: mail
-    wow_item_entry: 35221
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Tabard of the Shattered Sun (#35221)'
   item_id: 8035221
   delivery:
@@ -101506,23 +101202,7 @@ items:
     wow_item_entry: 43154
   tags:
     category:
-    - equipment
-- name: 'Filler: Tabard of the Argent Crusade (#43154)'
-  item_id: 8043154
-  delivery:
-    kind: mail
-    wow_item_entry: 43154
-  tags:
-    category:
     - tabard
-- name: 'Filler: Tabard of the Ebon Blade (#43155)'
-  item_id: 8043155
-  delivery:
-    kind: mail
-    wow_item_entry: 43155
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Tabard of the Ebon Blade (#43155)'
   item_id: 8043155
   delivery:
@@ -101538,23 +101218,7 @@ items:
     wow_item_entry: 43156
   tags:
     category:
-    - equipment
-- name: 'Filler: Tabard of the Wyrmrest Accord (#43156)'
-  item_id: 8043156
-  delivery:
-    kind: mail
-    wow_item_entry: 43156
-  tags:
-    category:
     - tabard
-- name: 'Filler: Tabard of the Kirin Tor (#43157)'
-  item_id: 8043157
-  delivery:
-    kind: mail
-    wow_item_entry: 43157
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Tabard of the Kirin Tor (#43157)'
   item_id: 8043157
   delivery:
@@ -104370,14 +104034,6 @@ items:
     wow_item_entry: 44791
   tags:
     category:
-    - consumable
-- name: 'Filler: Noblegarden Chocolate (#44791)'
-  item_id: 8044791
-  delivery:
-    kind: mail
-    wow_item_entry: 44791
-  tags:
-    category:
     - seasonal
 - name: 'Filler: Tome of Polymorph: Rabbit (#44793)'
   item_id: 8044793
@@ -104392,14 +104048,6 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 44800
-  tags:
-    category:
-    - equipment
-- name: 'Filler: Egg Basket (#44802)'
-  item_id: 8044802
-  delivery:
-    kind: mail
-    wow_item_entry: 44802
   tags:
     category:
     - equipment
@@ -104762,23 +104410,7 @@ items:
     wow_item_entry: 45067
   tags:
     category:
-    - equipment
-- name: 'Filler: Egg Basket (#45067)'
-  item_id: 8045067
-  delivery:
-    kind: mail
-    wow_item_entry: 45067
-  tags:
-    category:
     - seasonal
-- name: 'Filler: Brightly Colored Egg (#45072)'
-  item_id: 8045072
-  delivery:
-    kind: mail
-    wow_item_entry: 45072
-  tags:
-    category:
-    - openable
 - name: 'Filler: Brightly Colored Egg (#45072)'
   item_id: 8045072
   delivery:
@@ -104986,23 +104618,7 @@ items:
     wow_item_entry: 45574
   tags:
     category:
-    - equipment
-- name: 'Filler: Stormwind Tabard (#45574)'
-  item_id: 8045574
-  delivery:
-    kind: mail
-    wow_item_entry: 45574
-  tags:
-    category:
     - tabard
-- name: 'Filler: Ironforge Tabard (#45577)'
-  item_id: 8045577
-  delivery:
-    kind: mail
-    wow_item_entry: 45577
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Ironforge Tabard (#45577)'
   item_id: 8045577
   delivery:
@@ -105018,23 +104634,7 @@ items:
     wow_item_entry: 45578
   tags:
     category:
-    - equipment
-- name: 'Filler: Gnomeregan Tabard (#45578)'
-  item_id: 8045578
-  delivery:
-    kind: mail
-    wow_item_entry: 45578
-  tags:
-    category:
     - tabard
-- name: 'Filler: Darnassus Tabard (#45579)'
-  item_id: 8045579
-  delivery:
-    kind: mail
-    wow_item_entry: 45579
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Darnassus Tabard (#45579)'
   item_id: 8045579
   delivery:
@@ -105050,23 +104650,7 @@ items:
     wow_item_entry: 45580
   tags:
     category:
-    - equipment
-- name: 'Filler: Exodar Tabard (#45580)'
-  item_id: 8045580
-  delivery:
-    kind: mail
-    wow_item_entry: 45580
-  tags:
-    category:
     - tabard
-- name: 'Filler: Orgrimmar Tabard (#45581)'
-  item_id: 8045581
-  delivery:
-    kind: mail
-    wow_item_entry: 45581
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Orgrimmar Tabard (#45581)'
   item_id: 8045581
   delivery:
@@ -105082,23 +104666,7 @@ items:
     wow_item_entry: 45582
   tags:
     category:
-    - equipment
-- name: 'Filler: Sen''jin Tabard (#45582)'
-  item_id: 8045582
-  delivery:
-    kind: mail
-    wow_item_entry: 45582
-  tags:
-    category:
     - tabard
-- name: 'Filler: Undercity Tabard (#45583)'
-  item_id: 8045583
-  delivery:
-    kind: mail
-    wow_item_entry: 45583
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Undercity Tabard (#45583)'
   item_id: 8045583
   delivery:
@@ -105114,23 +104682,7 @@ items:
     wow_item_entry: 45584
   tags:
     category:
-    - equipment
-- name: 'Filler: Thunder Bluff Tabard (#45584)'
-  item_id: 8045584
-  delivery:
-    kind: mail
-    wow_item_entry: 45584
-  tags:
-    category:
     - tabard
-- name: 'Filler: Silvermoon City Tabard (#45585)'
-  item_id: 8045585
-  delivery:
-    kind: mail
-    wow_item_entry: 45585
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Silvermoon City Tabard (#45585)'
   item_id: 8045585
   delivery:
@@ -105706,23 +105258,7 @@ items:
     wow_item_entry: 46690
   tags:
     category:
-    - consumable
-- name: 'Filler: Candy Skull (#46690)'
-  item_id: 8046690
-  delivery:
-    kind: mail
-    wow_item_entry: 46690
-  tags:
-    category:
     - seasonal
-- name: 'Filler: Bread of the Dead (#46691)'
-  item_id: 8046691
-  delivery:
-    kind: mail
-    wow_item_entry: 46691
-  tags:
-    category:
-    - consumable
 - name: 'Filler: Bread of the Dead (#46691)'
   item_id: 8046691
   delivery:
@@ -105768,14 +105304,6 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 46723
-  tags:
-    category:
-    - equipment
-- name: 'Filler: Synthebrew Goggles (#46735)'
-  item_id: 8046735
-  delivery:
-    kind: mail
-    wow_item_entry: 46735
   tags:
     category:
     - equipment
@@ -105914,23 +105442,7 @@ items:
     wow_item_entry: 46817
   tags:
     category:
-    - equipment
-- name: 'Filler: Silver Covenant Tabard (#46817)'
-  item_id: 8046817
-  delivery:
-    kind: mail
-    wow_item_entry: 46817
-  tags:
-    category:
     - tabard
-- name: 'Filler: Sunreaver Tabard (#46818)'
-  item_id: 8046818
-  delivery:
-    kind: mail
-    wow_item_entry: 46818
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Sunreaver Tabard (#46818)'
   item_id: 8046818
   delivery:
@@ -105962,23 +105474,7 @@ items:
     wow_item_entry: 46860
   tags:
     category:
-    - equipment
-- name: 'Filler: Whimsical Skull Mask (#46860)'
-  item_id: 8046860
-  delivery:
-    kind: mail
-    wow_item_entry: 46860
-  tags:
-    category:
     - seasonal
-- name: 'Filler: Bouquet of Orange Marigolds (#46861)'
-  item_id: 8046861
-  delivery:
-    kind: mail
-    wow_item_entry: 46861
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Bouquet of Orange Marigolds (#46861)'
   item_id: 8046861
   delivery:
@@ -107354,14 +106850,6 @@ items:
     wow_item_entry: 49909
   tags:
     category:
-    - openable
-- name: 'Filler: Box of Chocolates (#49909)'
-  item_id: 8049909
-  delivery:
-    kind: mail
-    wow_item_entry: 49909
-  tags:
-    category:
     - seasonal
 - name: 'Filler: Perky Pug (#49912)'
   item_id: 8049912
@@ -107379,14 +106867,6 @@ items:
   tags:
     category:
     - seasonal
-- name: 'Filler: Lovely Charm Bracelet (#49916)'
-  item_id: 8049916
-  delivery:
-    kind: mail
-    wow_item_entry: 49916
-  tags:
-    category:
-    - equipment
 - name: 'Filler: Lovely Charm Bracelet (#49916)'
   item_id: 8049916
   delivery:
@@ -107962,14 +107442,6 @@ items:
     wow_item_entry: 54516
   tags:
     category:
-    - openable
-- name: 'Filler: Loot-Filled Pumpkin (#54516)'
-  item_id: 8054516
-  delivery:
-    kind: mail
-    wow_item_entry: 54516
-  tags:
-    category:
     - seasonal
 - name: 'Filler: Keg-Shaped Treasure Chest (#54535)'
   item_id: 8054535
@@ -107984,14 +107456,6 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 54536
-  tags:
-    category:
-    - openable
-- name: 'Filler: Heart-Shaped Box (#54537)'
-  item_id: 8054537
-  delivery:
-    kind: mail
-    wow_item_entry: 54537
   tags:
     category:
     - openable

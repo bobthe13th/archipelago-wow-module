@@ -35,7 +35,7 @@ _CATEGORY_QUERIES = {
     """,
     "consumable": f"""
         SELECT entry, name FROM item_template
-        WHERE class = 0 AND subclass IN (1,2,3,4,5) AND {_TEST_POLLUTION_FILTER}
+        WHERE class = 0 AND subclass IN (1,2,3,4,5) AND HolidayId = 0 AND {_TEST_POLLUTION_FILTER}
         ORDER BY entry
     """,
     "bag": f"""
@@ -55,12 +55,12 @@ _CATEGORY_QUERIES = {
     """,
     "equipment": f"""
         SELECT entry, name FROM item_template
-        WHERE class IN (2,4) AND Quality IN (1,2) AND {_TEST_POLLUTION_FILTER}
+        WHERE class IN (2,4) AND Quality IN (1,2) AND InventoryType != 19 AND HolidayId = 0 AND {_TEST_POLLUTION_FILTER}
         ORDER BY entry
     """,
     "openable": f"""
         SELECT entry, name FROM item_template
-        WHERE class = 15 AND subclass = 0 AND (Flags & 4) AND lockid = 0 AND {_TEST_POLLUTION_FILTER}
+        WHERE class = 15 AND subclass = 0 AND (Flags & 4) AND lockid = 0 AND HolidayId = 0 AND {_TEST_POLLUTION_FILTER}
         ORDER BY entry
     """,
     "seasonal": f"""
