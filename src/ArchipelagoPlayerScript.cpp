@@ -22,6 +22,8 @@
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoRealmState.h"
+#include "ArchipelagoRecipesContentTable.h"
+#include "ArchipelagoTrainerSpellsContentTable.h"
 #include "ArchipelagoTrapsContentTable.h"
 
 namespace
@@ -244,6 +246,30 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             // same generic flag-store reuse as fish's per-species flag.
             sArchipelagoRealmState->SetFlagTier("collection_received_" + std::to_string(received.item), 1);
             Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.9.3.1 fix: recipes.yaml/trainer_spells.yaml items use `mail`
+        // delivery exactly like fish/collections, but were never wired into
+        // this dispatch when M4.9.2 landed -- Task 1 of this plan gave the
+        // generic compiler path a real ApItemIdToWowItemEntry map (recipes/
+        // trainer_spells previously had no such map emitted at all), this
+        // is the runtime half of that fix.
+        auto recipeEntryIt = ArchipelagoRECIPESContent::ApItemIdToWowItemEntry.find(received.item);
+        if (recipeEntryIt != ArchipelagoRECIPESContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, recipeEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", recipeEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        auto trainerSpellEntryIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToWowItemEntry.find(received.item);
+        if (trainerSpellEntryIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, trainerSpellEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", trainerSpellEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
