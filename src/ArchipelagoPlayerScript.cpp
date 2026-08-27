@@ -11,11 +11,14 @@
 #include "WorldSessionMgr.h"
 #include "APCatchUp.h"
 #include "APDelivery.h"
+#include "APFillerRewardEffects.h"
 #include "APGating.h"
 #include "APProtocol.h"
 #include "APTraps.h"
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoFillerRewardEffectsContentTable.h"
+#include "ArchipelagoFillerRewardItemsContentTable.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGoals.h"
@@ -270,6 +273,33 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, trainerSpellEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", trainerSpellEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.9.3.1: filler_reward_items uses the same generic mail-delivery
+        // path as fish/collections/recipes/trainer_spells.
+        auto fillerItemEntryIt = ArchipelagoFILLER_REWARD_ITEMSContent::ApItemIdToWowItemEntry.find(received.item);
+        if (fillerItemEntryIt != ArchipelagoFILLER_REWARD_ITEMSContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, fillerItemEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", fillerItemEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.9.3.1: filler_reward_effects fires an instant effect on
+        // receipt, exactly like Traps -- same online-delivery-character
+        // resolution pattern as the traps lookup above.
+        auto fillerEffectIt = Archipelago::FillerRewardEffects::ApItemToEffect.find(received.item);
+        if (fillerEffectIt != Archipelago::FillerRewardEffects::ApItemToEffect.end())
+        {
+            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+            Player* onlineReceiver = receiverGuid.IsEmpty() ? nullptr : ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+            if (onlineReceiver)
+                Archipelago::FillerRewardEffects::ApplyFillerRewardEffect(onlineReceiver, fillerEffectIt->second);
+            else
+                LOG_INFO("module.archipelago_wow", "Archipelago: filler reward effect '{}' skipped, delivery character '{}' is offline", fillerEffectIt->second, deliveryCharacter);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
