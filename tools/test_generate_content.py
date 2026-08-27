@@ -681,5 +681,46 @@ class TestEmitCppItemDeliveryLookup(unittest.TestCase):
         self.assertNotIn("ApItemIdToWowItemEntry", cpp)
 
 
+class TestItemLevelTags(unittest.TestCase):
+    def test_validate_tags_rows_checks_items_when_locations_empty(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_tags_rows(
+                "filler_reward_items", [],
+                [{"name": "Filler: Test Item (#1)", "item_id": 8000001, "delivery": {"kind": "mail", "wow_item_entry": 1}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_validate_tags_rows_passes_with_a_real_item_tag(self) -> None:
+        generate_content._validate_tags_rows(
+            "filler_reward_items", [],
+            [{"name": "Filler: Test Item (#1)", "item_id": 8000001,
+              "delivery": {"kind": "mail", "wow_item_entry": 1}, "tags": {"category": ["consumable"]}}],
+            pathlib.Path("test.yaml"),
+        )
+
+    def test_validate_tags_rows_still_checks_locations_when_present(self) -> None:
+        # Unchanged behavior for every existing location-tagged family --
+        # confirms this extension doesn't regress quest_rewards/vendor_stock/
+        # recipes/trainer_spells' own existing location-keyed tags.
+        with self.assertRaises(ValidationError):
+            generate_content._validate_tags_rows(
+                "recipes",
+                [{"name": "Recipe: X (#1)", "location_id": 6000001, "trigger": {"kind": "learn_spell", "spell_id": 1}}],
+                [], pathlib.Path("test.yaml"),
+            )
+
+    def test_emit_python_generic_emits_item_keyed_tags_when_locations_empty(self) -> None:
+        data = {
+            "family": "filler_reward_items",
+            "locations": [],
+            "items": [
+                {"name": "Filler: Test Item (#1)", "item_id": 8000001,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1}, "tags": {"category": ["consumable"]}},
+            ],
+        }
+        text = emit_python_generic(data)
+        self.assertIn('"Filler: Test Item (#1)": {"category": frozenset({"consumable"})}', text)
+
+
 if __name__ == "__main__":
     unittest.main()

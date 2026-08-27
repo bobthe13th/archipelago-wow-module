@@ -53,7 +53,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
     _validate_learn_spell_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
-    _validate_tags_rows(data["family"], data["locations"], yaml_path)
+    _validate_tags_rows(data["family"], data["locations"], data["items"], yaml_path)
     _validate_level_milestone_tracks(data["family"], data["locations"], yaml_path)
     data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
         data["family"], data["locations"], data["items"], yaml_path
@@ -248,28 +248,38 @@ def _validate_trigger_lookup_uniqueness(
             seen_keys[key] = loc["name"]
 
 
-def _validate_tags_rows(family: str, locations: list, yaml_path: pathlib.Path) -> None:
-    """Every location in an export_tags family must carry a non-empty `tags`
+def _validate_tags_rows(family: str, locations: list, items: list, yaml_path: pathlib.Path) -> None:
+    """Every row in an export_tags family must carry a non-empty `tags`
     block, and every dimension inside it must resolve to at least one value
     -- the "never zero tags" invariant (spec §1: e.g. quest_reward_type_pools
-    always has at least `standard` as a fallback). A location that silently
-    has zero tags in some dimension would be permanently unreachable via any
+    always has at least `standard` as a fallback). A row that silently has
+    zero tags in some dimension would be permanently unreachable via any
     player selection for that dimension, which is a content-authoring bug,
-    not a valid state."""
+    not a valid state.
+
+    M4.9.3.1: extended to validate ITEM-level tags for items-only families
+    (no locations of their own, e.g. filler_reward_items's per-item
+    `category` tag) -- every export_tags family so far (quest_rewards,
+    vendor_stock, recipes, trainer_spells) has real locations, so `rows`
+    below resolves to `locations` for all of them, unchanged behavior.
+    Only a family with an empty `locations` list (filler_reward_items) hits
+    the new items-based branch."""
     schema = FAMILY_SCHEMAS.get(family)
     if schema is None or not schema.export_tags:
         return
-    for loc in locations:
-        tags = loc.get("tags")
+    rows = locations if locations else items
+    row_kind = "location" if locations else "item"
+    for row in rows:
+        tags = row.get("tags")
         if not tags:
             raise ValidationError(
-                f"{yaml_path}: location {loc['name']!r} is missing a 'tags' block, "
+                f"{yaml_path}: {row_kind} {row['name']!r} is missing a 'tags' block, "
                 f"required because family {family!r} has export_tags=True"
             )
         for dimension, values in tags.items():
             if not values:
                 raise ValidationError(
-                    f"{yaml_path}: location {loc['name']!r} has an empty tag list for "
+                    f"{yaml_path}: {row_kind} {row['name']!r} has an empty tag list for "
                     f"dimension {dimension!r} -- every dimension must resolve to at least "
                     f"one tag value"
                 )
@@ -407,6 +417,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
+    "filler_reward_items": FamilySchema(
+        valid_trigger_kinds=set(), valid_delivery_kinds={"mail"},
+        generic=True, export_tags=True, export_item_delivery=True,
+    ),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -542,13 +556,17 @@ def emit_python_generic(data: dict) -> str:
 
     if schema is not None and schema.export_tags:
         lines.append("TAGS: dict[str, dict[str, frozenset[str]]] = {")
-        for loc in data["locations"]:
-            dims = loc.get("tags", {})
+        # M4.9.3.1: item-keyed for a family with no locations of its own
+        # (e.g. filler_reward_items); every EXISTING export_tags family has
+        # real locations, so this is unchanged behavior for all of them.
+        tag_rows = data["locations"] if data["locations"] else data["items"]
+        for row in tag_rows:
+            dims = row.get("tags", {})
             dim_parts = [
                 f'{_string_literal(dim)}: frozenset({{{", ".join(_string_literal(v) for v in values)}}})'
                 for dim, values in dims.items()
             ]
-            lines.append(f'    {_string_literal(loc["name"])}: {{{", ".join(dim_parts)}}},')
+            lines.append(f'    {_string_literal(row["name"])}: {{{", ".join(dim_parts)}}},')
         lines.append("}")
         lines.append("")
 
