@@ -125,14 +125,24 @@ def extract() -> dict:
         profession = _profession_tag(spell_to_skill.get(taught_spell))
         expansion = _expansion_tag(required_skill_rank)
 
+        # Family-identifying prefix, applied unconditionally like every
+        # sibling family's synthetic prefix (quest_rewards' "Quest: ",
+        # trainer_spells' "Trainer Spell: "/"Trainer Spell Item: ") --
+        # except the real DB `name` already starts with "Recipe: " for
+        # 262 of 1,912 real rows (13.7%), so the location side guards
+        # against doubling to "Recipe: Recipe: ...". The item side has no
+        # real double-prefix case (0 of 1,912 real item names would ever
+        # start with "Recipe Item: "), so it prefixes unconditionally.
+        recipe_name = name if name.startswith("Recipe: ") else f"Recipe: {name}"
+
         locations.append({
-            "name": f"{name} (#{entry_int})",
+            "name": f"{recipe_name} (#{entry_int})",
             "location_id": _LOCATION_ID_BASE + entry_int,
             "trigger": {"kind": "learn_spell", "spell_id": taught_spell},
             "tags": {"profession": [profession], "expansion": [expansion]},
         })
         items.append({
-            "name": f"Item: {name} (#{entry_int})",
+            "name": f"Recipe Item: {name} (#{entry_int})",
             "item_id": _ITEM_ID_BASE + entry_int,
             "delivery": {"kind": "mail", "wow_item_entry": entry_int},
         })

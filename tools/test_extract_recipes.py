@@ -107,6 +107,25 @@ class TestExtract(unittest.TestCase):
     @patch("extract_recipes.parse_skill_line_abilities")
     @patch("extract_recipes.load_exclusion_rules")
     @patch("extract_recipes.run_query")
+    def test_name_without_existing_recipe_prefix_gets_prefixed_not_doubled(
+        self, mock_run_query, mock_load_rules, mock_parse_skills
+    ) -> None:
+        # Regression guard: most real recipe DB names (e.g. "Pattern: ...")
+        # do NOT already start with "Recipe: " -- the guard must still add
+        # the family prefix in that case, not skip it. Item names always
+        # get the unconditional "Recipe Item: " prefix regardless.
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_parse_skills.return_value = {7788: 165}
+        mock_run_query.return_value = [
+            ("12345", "Pattern: Fine Leather Boots", "0", "0", "0", "7788", "6", "0", "0", "0", "0", "0", "0"),
+        ]
+        result = extract()
+        self.assertEqual(result["locations"][0]["name"], "Recipe: Pattern: Fine Leather Boots (#12345)")
+        self.assertEqual(result["items"][0]["name"], "Recipe Item: Pattern: Fine Leather Boots (#12345)")
+
+    @patch("extract_recipes.parse_skill_line_abilities")
+    @patch("extract_recipes.load_exclusion_rules")
+    @patch("extract_recipes.run_query")
     def test_row_with_no_learn_spell_slot_is_excluded(
         self, mock_run_query, mock_load_rules, mock_parse_skills
     ) -> None:
