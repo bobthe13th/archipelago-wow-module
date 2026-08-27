@@ -36,3 +36,15 @@ TEST_CASE("APTraps::TemporaryPvpFlagDurationIsSixtySeconds")
 {
     CHECK(Archipelago::Traps::Pure::TEMPORARY_PVP_FLAG_DURATION_MS == 60000u);
 }
+
+TEST_CASE("APTraps::PickWeatherBurstTypeSelectsFromTheCuratedPool")
+{
+    CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(0) == 3u); // WEATHER_TYPE_STORM
+    CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(1) == 2u); // WEATHER_TYPE_SNOW
+}
+
+TEST_CASE("APTraps::PickWeatherBurstTypeWrapsOutOfRangeRolls")
+{
+    CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(2) == Archipelago::Traps::Pure::PickWeatherBurstType(0));
+    CHECK(Archipelago::Traps::Pure::PickWeatherBurstType(3) == Archipelago::Traps::Pure::PickWeatherBurstType(1));
+}

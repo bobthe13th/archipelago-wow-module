@@ -9,11 +9,14 @@
 #include "DatabaseEnv.h"
 #include "EventProcessor.h"
 #include "Log.h"
+#include "Map.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
+#include "Random.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
 #include "SpellAuras.h"
+#include "Weather.h"
 
 namespace
 {
@@ -153,6 +156,29 @@ namespace
         }, Milliseconds(Archipelago::Traps::Pure::TEMPORARY_PVP_FLAG_DURATION_MS));
     }
 
+    void ApplyRandomWeatherBurst(Player* target)
+    {
+        // Deviation from the M4.9 spec's own illustrative `Map::SetWeather(
+        // ...)` call: no such method exists on Map in this checkout. The
+        // real API (confirmed via cs_misc.cpp's `.weather` GM command,
+        // HandleChangeWeather,
+        // src/server/scripts/Commands/cs_misc.cpp:1976-1998) is
+        // Map::GetOrGenerateZoneDefaultWeather(zoneId) -> Weather*, then
+        // Weather::SetWeather(WeatherType, float grade) (Weather.h:76). See
+        // this plan's Global Constraints.
+        uint32_t zoneId = target->GetZoneId();
+        Weather* weather = target->GetMap()->GetOrGenerateZoneDefaultWeather(zoneId);
+        if (!weather)
+        {
+            LOG_INFO("module.archipelago_wow", "Archipelago: random_weather_burst for {} found no weather system for zone {}, skipped", target->GetName(), zoneId);
+            return;
+        }
+
+        uint32_t picked = Archipelago::Traps::Pure::PickWeatherBurstType(
+            urand(0, Archipelago::Traps::Pure::WEATHER_BURST_TYPE_POOL.size() - 1));
+        weather->SetWeather(WeatherType(picked), Archipelago::Traps::Pure::WEATHER_BURST_GRADE);
+    }
+
     // effect slugs with no verified real implementation yet -- each needs its
     // own dedicated API research pass (see docs/m4-plan.md's Task 17 outcome
     // note for specifics on why each was deferred rather than guessed at).
@@ -183,6 +209,8 @@ namespace
             ApplyRandomMobSpawn(target);
         else if (effect == "temporary_pvp_flag")
             ApplyTemporaryPvpFlag(target);
+        else if (effect == "random_weather_burst")
+            ApplyRandomWeatherBurst(target);
         else
             ApplyNotYetImplemented(target, effect);
     }

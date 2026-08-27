@@ -49,4 +49,21 @@ namespace Archipelago::Traps::Pure
     // Player::UpdatePvP's real effect lasts until explicitly reverted --
     // this is the fixed duration this plan reverts it after.
     inline constexpr uint32_t TEMPORARY_PVP_FLAG_DURATION_MS = 60000; // 60 seconds
+
+    // Raw WeatherType numeric values (SharedDefines.h), kept as plain
+    // uint32_t here rather than pulling SharedDefines.h into this
+    // deliberately AzerothCore-free header -- WEATHER_TYPE_STORM=3,
+    // WEATHER_TYPE_SNOW=2 (real, confirmed values). APTraps.cpp casts the
+    // picked value back to the real WeatherType enum.
+    inline constexpr std::array<uint32_t, 2> WEATHER_BURST_TYPE_POOL = { 3, 2 };
+
+    // Weather::GetWeatherState() (Weather.cpp:281) treats any grade below
+    // 0.27 as indistinguishable from "fine" (no visible effect) -- 1.0f
+    // (max intensity) is used so a "burst" is never invisible.
+    inline constexpr float WEATHER_BURST_GRADE = 1.0f;
+
+    inline uint32_t PickWeatherBurstType(uint32_t roll)
+    {
+        return WEATHER_BURST_TYPE_POOL[roll % WEATHER_BURST_TYPE_POOL.size()];
+    }
 }
