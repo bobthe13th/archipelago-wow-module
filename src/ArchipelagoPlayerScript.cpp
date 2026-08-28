@@ -318,18 +318,21 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.9.3.1: filler_reward_effects fires an instant effect on
+        // M4.9.3.1/M4.9.6: filler_reward_effects fires an instant effect on
         // receipt, exactly like Traps -- same online-delivery-character
-        // resolution pattern as the traps lookup above.
+        // resolution pattern as the traps lookup above, and the same
+        // structured-binding idiom that lookup already uses for its own
+        // pair-valued map.
         auto fillerEffectIt = Archipelago::FillerRewardEffects::ApItemToEffect.find(received.item);
         if (fillerEffectIt != Archipelago::FillerRewardEffects::ApItemToEffect.end())
         {
+            auto const& [effect, param] = fillerEffectIt->second;
             ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
             Player* onlineReceiver = receiverGuid.IsEmpty() ? nullptr : ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
             if (onlineReceiver)
-                Archipelago::FillerRewardEffects::ApplyFillerRewardEffect(onlineReceiver, fillerEffectIt->second);
+                Archipelago::FillerRewardEffects::ApplyFillerRewardEffect(onlineReceiver, effect, param);
             else
-                LOG_INFO("module.archipelago_wow", "Archipelago: filler reward effect '{}' skipped, delivery character '{}' is offline", fillerEffectIt->second, deliveryCharacter);
+                LOG_INFO("module.archipelago_wow", "Archipelago: filler reward effect '{}' skipped, delivery character '{}' is offline", effect, deliveryCharacter);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
