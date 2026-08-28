@@ -4,7 +4,9 @@
 #include "APGateDecision.h"
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
+#include "DBCStores.h"
 #include "DBCStructure.h"
+#include "GameObject.h"
 #include "ItemTemplate.h"
 #include "MiscScript.h"
 #include "Player.h"
@@ -353,6 +355,64 @@ public:
     }
 };
 
+class ArchipelagoGatheringGateScript : public AllSpellScript
+{
+public:
+    ArchipelagoGatheringGateScript() : AllSpellScript("ArchipelagoGatheringGateScript", { ALLSPELLHOOK_CAN_PREPARE }) { }
+
+    // Gates all three gathering skills as one "access_gathering" flag,
+    // matching the design's own "5 access types" framing (auction house,
+    // hearthstone, mailbox, bank, gathering). Skinning is a pure
+    // SpellInfo-structural check (SPELL_EFFECT_SKINNING, mirroring
+    // ArchipelagoMountSpellScript's own HasAura(SPELL_AURA_MOUNTED)
+    // precedent). Mining/Herbalism resolve the real target GameObject's
+    // Lock.dbc row and check its Skill[] cases against SKILL_HERBALISM/
+    // SKILL_MINING -- zero guessed spell ids for either. Fires at
+    // Spell::prepare()'s very start, before any effect handling, so a
+    // denied cast never reaches EffectSkinning/EffectOpenLock at all.
+    bool CanPrepare(Spell* spell, SpellCastTargets const* targets, AuraEffect const* /*triggeredByAura*/) override
+    {
+        if (!sArchipelagoRealmState->IsEnabled())
+            return true;
+        if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
+            return true;
+        if (Archipelago::Gating::IsAccessUnlocked("access_gathering"))
+            return true;
+
+        SpellInfo const* spellInfo = spell->GetSpellInfo();
+        if (!spellInfo)
+            return true;
+
+        bool isGatheringCast = spellInfo->HasEffect(SPELL_EFFECT_SKINNING);
+        if (!isGatheringCast && targets != nullptr)
+        {
+            if (GameObject* target = targets->GetGOTarget())
+            {
+                if (LockEntry const* lock = sLockStore.LookupEntry(target->GetGOInfo()->GetLockId()))
+                {
+                    for (uint32_t skill : lock->Skill)
+                    {
+                        if (skill == SKILL_HERBALISM || skill == SKILL_MINING)
+                        {
+                            isGatheringCast = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (!isGatheringCast)
+            return true;
+
+        if (Unit* caster = spell->GetCaster())
+        {
+            if (Player* player = caster->ToPlayer())
+                ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Gathering Access to use this.");
+        }
+        return false;
+    }
+};
+
 // Declared (not defined) directly in BankHandler.cpp, next to its own
 // patched call site (M4.9) -- deliberately no shared header, so core
 // src's only coupling to this module is this one bare function-pointer
@@ -371,6 +431,7 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoMailboxGateScript();
     new ArchipelagoAuctionHouseGateScript();
     new ArchipelagoTalentPointGateScript();
+    new ArchipelagoGatheringGateScript();
 
     ArchipelagoShouldSuppressBankAccess = []() {
         return Archipelago::Gating::ShouldSuppressGatedAction(
