@@ -736,19 +736,49 @@ class TestItemLevelTags(unittest.TestCase):
 
 
 class TestFillerRewardEffectsEmitter(unittest.TestCase):
-    def test_emits_effect_by_item_name_and_cpp_map(self) -> None:
+    def test_emits_param_by_item_name_and_pair_valued_cpp_map(self) -> None:
         data = {
             "family": "filler_reward_effects",
             "items": [
-                {"name": "Filler: Random Buff", "item_id": 8500000, "count": 30,
-                 "delivery": {"kind": "filler_effect", "effect": "cast_spell"}},
+                {"name": "Filler: Random Buff - Rejuvenation (#774)", "item_id": 8500000, "count": 1,
+                 "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": 774}},
             ],
         }
         py = emit_python(data)
-        self.assertIn('"Filler:RandomBuff":"cast_spell"', py.replace(" ", ""))
+        self.assertIn('"Filler: Random Buff - Rejuvenation (#774)": "cast_spell"', py)
+        self.assertIn('"Filler: Random Buff - Rejuvenation (#774)": 774', py)
         cpp = emit_cpp(data)
         self.assertIn("ApItemToEffect", cpp)
-        self.assertIn('{ 8500000, "cast_spell" }', cpp)
+        self.assertIn("std::pair<std::string, int32_t>", cpp)
+        self.assertIn('{ 8500000, { "cast_spell", 774 } }', cpp)
+
+
+class TestValidateFillerEffectRows(unittest.TestCase):
+    def test_raises_when_filler_effect_delivery_is_missing_param(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_filler_effect_rows(
+                [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell"}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_raises_when_param_is_not_an_int(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_filler_effect_rows(
+                [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": "774"}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_passes_with_a_real_int_param(self) -> None:
+        generate_content._validate_filler_effect_rows(
+            [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": 774}}],
+            pathlib.Path("test.yaml"),
+        )
+
+    def test_ignores_non_filler_effect_delivery_kinds(self) -> None:
+        generate_content._validate_filler_effect_rows(
+            [{"name": "Gate: X", "delivery": {"kind": "flag", "flag_key": "x", "tier": 1}}],
+            pathlib.Path("test.yaml"),
+        )
 
 
 class TestEmitAchievements(unittest.TestCase):

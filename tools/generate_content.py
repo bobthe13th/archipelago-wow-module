@@ -52,6 +52,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
     _validate_achievement_complete_rows(data["locations"], yaml_path)
+    _validate_filler_effect_rows(data["items"], yaml_path)
     _validate_learn_spell_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
     _validate_tags_rows(data["family"], data["locations"], data["items"], yaml_path)
@@ -157,6 +158,23 @@ def _validate_achievement_complete_rows(locations: list, yaml_path: pathlib.Path
             raise ValidationError(
                 f"{yaml_path}: location {loc['name']!r} has achievement_complete trigger "
                 f"but is missing required key 'achievement_id'"
+            )
+
+
+def _validate_filler_effect_rows(items: list, yaml_path: pathlib.Path) -> None:
+    for item in items:
+        delivery = item["delivery"]
+        if delivery["kind"] != "filler_effect":
+            continue
+        if "param" not in delivery:
+            raise ValidationError(
+                f"{yaml_path}: item {item['name']!r} has filler_effect delivery "
+                f"but is missing required key 'param'"
+            )
+        if not isinstance(delivery["param"], int):
+            raise ValidationError(
+                f"{yaml_path}: item {item['name']!r} delivery.param must be an int, "
+                f"got {type(delivery['param']).__name__}"
             )
 
 
@@ -777,6 +795,11 @@ def _emit_python_filler_reward_effects(data: dict) -> str:
     lines.append("EFFECT_BY_ITEM_NAME: dict[str, str] = {")
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": "{item["delivery"]["effect"]}",')
+    lines.append("}")
+    lines.append("")
+    lines.append("PARAM_BY_ITEM_NAME: dict[str, int] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": {item["delivery"]["param"]},')
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -1406,12 +1429,15 @@ def _emit_cpp_filler_reward_effects(data: dict) -> str:
         "#pragma once", "",
         "#include <cstdint>",
         "#include <string>",
-        "#include <unordered_map>", "",
+        "#include <unordered_map>",
+        "#include <utility>", "",
         "namespace Archipelago::FillerRewardEffects", "{",
     ]
-    lines.append("    inline std::unordered_map<int64_t, std::string> const ApItemToEffect = {")
+    lines.append("    // second = effect slug, third = param (spell id / copper amount / percent / title id, per effect)")
+    lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, int32_t>> const ApItemToEffect = {")
     for item in data["items"]:
-        lines.append(f'        {{ {item["item_id"]}, "{item["delivery"]["effect"]}" }}, // {item["name"]}')
+        delivery = item["delivery"]
+        lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["effect"]}", {delivery["param"]} }} }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")
