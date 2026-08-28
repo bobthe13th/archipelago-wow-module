@@ -2,7 +2,21 @@
 """DBC-driven extraction for the Achievement Hunt / Explorer content family
 (M4.9 Sec4). Run this to regenerate content/achievements.yaml; never
 hand-edit that file. Pure DBC parse -- unlike every other extraction script
-in this directory, this one needs NO acore_world SQL query at all."""
+in this directory, this one needs NO acore_world SQL query at all.
+
+M4.9.4 final review note: meta-achievements (achievements whose completion
+criteria require completing OTHER achievements, e.g. "Loremaster of
+Northrend", "Battlemaster") are deliberately NOT excluded from the pool here,
+even though the same "redundant location checks" rationale that excludes
+Feats of Strength below could arguably apply to them too. Left in for three
+reasons: (1) they DO genuinely fire OnPlayerAchievementComplete, so including
+them is not a correctness bug, just a curation choice; (2)
+WORLD_EXPLORER_ACHIEVEMENT_ID (id 46) is ITSELF a meta-achievement, so any
+blanket exclusion rule would have deleted Explorer's own required
+achievement -- this alone makes a blanket rule unsafe without much more
+careful per-case handling than this milestone's scope justified; (3) this
+was confirmed and deliberately deferred during this milestone's final
+review, not missed."""
 from __future__ import annotations
 
 import pathlib

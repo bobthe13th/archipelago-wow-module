@@ -2375,7 +2375,15 @@ namespace Archipelago::Achievements
     // Real achievement id -> its own subset name (only present for ids that
     // belong to one of the six named thematic subsets). Consumed by
     // ArchipelagoGoals.cpp's IsAchievementHuntComplete for named_subset tier.
-    inline std::unordered_map<uint32_t, std::string> const AchievementIdToSubset = {
+    // Raw-array-plus-runtime-builder pattern (not a bare aggregate initializer)
+    // -- same M4.7.1 stack-overflow crash-class rationale as
+    // ACHIEVEMENT_ID_TO_LOCATION_ID_RAW above: std::string is not trivially
+    // constructible, so a static/inline std::unordered_map<uint32_t, std::string>
+    // initialized directly as a bare aggregate at hundreds of rows is exactly
+    // the pattern that has crashed worldserver.exe at boot before (see
+    // _emit_cpp_large_string_map's own docstring). The raw array below uses
+    // char const* (a trivial type) for the subset value instead.
+    inline constexpr std::pair<uint32_t, char const*> ACHIEVEMENT_ID_TO_SUBSET_RAW[] = {
         { 42, "explorer" }, // "Achievement: Explore Eastern Kingdoms (#42)"
         { 116, "professions" }, // "Achievement: Professional Journeyman (#116)"
         { 121, "professions" }, // "Achievement: Journeyman Cook (#121)"
@@ -3235,6 +3243,14 @@ namespace Archipelago::Achievements
         { 3316, "raids" }, // "Achievement: Herald of the Titans (#3316)"
         { 2903, "raids" }, // "Achievement: Champion of Ulduar (#2903)"
     };
+    inline std::unordered_map<uint32_t, std::string> BuildAchievementIdToSubset()
+    {
+        std::unordered_map<uint32_t, std::string> result;
+        for (auto const& row : ACHIEVEMENT_ID_TO_SUBSET_RAW)
+            result.emplace(row.first, row.second);
+        return result;
+    }
+    inline std::unordered_map<uint32_t, std::string> const AchievementIdToSubset = BuildAchievementIdToSubset();
 
     // Real achievement ids hand-flagged extremely_hard (Task 3's curated
     // denylist) -- excluded from the ninety_nine_percent tier's target set.

@@ -174,6 +174,7 @@ namespace
             { "Professions", "professions" },
             { "Reputation", "reputation" },
             { "Pvp", "pvp" },
+            { "PvP", "pvp" },
         };
         auto it = subsets.find(value);
         if (it != subsets.end())

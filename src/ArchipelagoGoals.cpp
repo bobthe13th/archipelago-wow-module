@@ -136,9 +136,8 @@ namespace Archipelago::Goals
         // ArchipelagoWorldScript.cpp parses -- must match the connected
         // seed's own achievement_hunt_tier/achievement_hunt_subset options,
         // same manual-sync requirement as every other goal-shaping option.
-        bool IsAchievementIdRequired(uint32_t achievementId, uint32_t categoryId, std::string const& tier, std::string const& subset)
+        bool IsAchievementIdRequired(uint32_t achievementId, std::string const& tier, std::string const& subset)
         {
-            (void)categoryId;
             if (tier == "named_subset")
             {
                 auto it = Archipelago::Achievements::AchievementIdToSubset.find(achievementId);
@@ -156,7 +155,7 @@ namespace Archipelago::Goals
             for (auto const& [achievementId, locationId] : Archipelago::Achievements::AchievementIdToLocationId)
             {
                 (void)locationId;
-                if (!IsAchievementIdRequired(achievementId, 0, tier, subset))
+                if (!IsAchievementIdRequired(achievementId, tier, subset))
                     continue;
                 if (!sArchipelagoRealmState->IsFlagUnlocked("achievement_received_" + std::to_string(achievementId)))
                     return false;
