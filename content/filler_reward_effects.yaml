@@ -3090,869 +3090,841 @@ items:
     kind: filler_effect
     effect: cast_spell
     param: 53608
-- name: 'Filler: Random Buff - Increase Critical Strike Chance 100% (#54283)'
-  item_id: 8500441
-  count: 1
-  delivery:
-    kind: filler_effect
-    effect: cast_spell
-    param: 54283
-- name: 'Filler: Random Buff - Uber Spirit 80 Buff (#54303)'
-  item_id: 8500442
-  count: 1
-  delivery:
-    kind: filler_effect
-    effect: cast_spell
-    param: 54303
 - name: 'Filler: Random Buff - Whirling Winds (#54589)'
-  item_id: 8500443
+  item_id: 8500441
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 54589
 - name: 'Filler: Random Buff - Focus Magic (#54646)'
-  item_id: 8500444
+  item_id: 8500442
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 54646
 - name: 'Filler: Random Buff - Focus Magic (#54648)'
-  item_id: 8500445
+  item_id: 8500443
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 54648
-- name: 'Filler: Random Buff - 30% Crit 80 Buff (#54675)'
-  item_id: 8500446
-  count: 1
-  delivery:
-    kind: filler_effect
-    effect: cast_spell
-    param: 54675
 - name: 'Filler: Random Buff - Glyph of Flash of Light (#54957)'
-  item_id: 8500447
+  item_id: 8500444
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 54957
 - name: 'Filler: Random Buff - Hysteria (#55213)'
-  item_id: 8500448
+  item_id: 8500445
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 55213
 - name: 'Filler: Random Buff - Hysteria (#55975)'
-  item_id: 8500449
+  item_id: 8500446
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 55975
 - name: 'Filler: Random Buff - Broken Oath (#56310)'
-  item_id: 8500450
+  item_id: 8500447
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56310
 - name: 'Filler: Random Buff - Renew (#56332)'
-  item_id: 8500451
+  item_id: 8500448
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56332
 - name: 'Filler: Random Buff - Blessing of Might (#56520)'
-  item_id: 8500452
+  item_id: 8500449
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56520
 - name: 'Filler: Random Buff - Blessing of Wisdom (#56521)'
-  item_id: 8500453
+  item_id: 8500450
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56521
 - name: 'Filler: Random Buff - Icy Winds (#56716)'
-  item_id: 8500454
+  item_id: 8500451
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56716
 - name: 'Filler: Random Buff - Aura of Arcane Haste (#56827)'
-  item_id: 8500455
+  item_id: 8500452
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 56827
 - name: 'Filler: Random Buff - Haste (#57060)'
-  item_id: 8500456
+  item_id: 8500453
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57060
 - name: 'Filler: Random Buff - Arcane Potency (#57529)'
-  item_id: 8500457
+  item_id: 8500454
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57529
 - name: 'Filler: Random Buff - Arcane Potency (#57531)'
-  item_id: 8500458
+  item_id: 8500455
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57531
 - name: 'Filler: Random Buff - Fate Rune of Baneful Intent (#57672)'
-  item_id: 8500459
+  item_id: 8500456
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57672
 - name: 'Filler: Random Buff - Lifebloom (#57762)'
-  item_id: 8500460
+  item_id: 8500457
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57762
 - name: 'Filler: Random Buff - Renew (#57777)'
-  item_id: 8500461
+  item_id: 8500458
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57777
 - name: 'Filler: Random Buff - Mojo Empowered Fire Ward (#57843)'
-  item_id: 8500462
+  item_id: 8500459
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57843
 - name: 'Filler: Random Buff - Water Shield (#57960)'
-  item_id: 8500463
+  item_id: 8500460
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 57960
 - name: 'Filler: Random Buff - Strength (#58448)'
-  item_id: 8500464
+  item_id: 8500461
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58448
 - name: 'Filler: Random Buff - Strength (#58449)'
-  item_id: 8500465
+  item_id: 8500462
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58449
 - name: 'Filler: Random Buff - Agility (#58450)'
-  item_id: 8500466
+  item_id: 8500463
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58450
 - name: 'Filler: Random Buff - Agility (#58451)'
-  item_id: 8500467
+  item_id: 8500464
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58451
 - name: 'Filler: Random Buff - Armor (#58452)'
-  item_id: 8500468
+  item_id: 8500465
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58452
 - name: 'Filler: Random Buff - Armor (#58453)'
-  item_id: 8500469
+  item_id: 8500466
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58453
 - name: 'Filler: Random Buff - Arcane Empowerment (#58469)'
-  item_id: 8500470
+  item_id: 8500467
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58469
 - name: 'Filler: Random Buff - Power Word: Fortitude (#58921)'
-  item_id: 8500471
+  item_id: 8500468
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 58921
 - name: 'Filler: Random Buff - Lifebloom (#59990)'
-  item_id: 8500472
+  item_id: 8500469
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 59990
 - name: 'Filler: Random Buff - Renew (#60004)'
-  item_id: 8500473
+  item_id: 8500470
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 60004
 - name: 'Filler: Random Buff - Unholy Frenzy (#60300)'
-  item_id: 8500474
+  item_id: 8500471
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 60300
 - name: 'Filler: Random Buff - Blood of the Fallen Cultist (#60506)'
-  item_id: 8500475
+  item_id: 8500472
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 60506
 - name: 'Filler: Random Buff - Dalaran Intellect (#61024)'
-  item_id: 8500476
+  item_id: 8500473
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61024
 - name: 'Filler: Random Buff - Riptide (#61295)'
-  item_id: 8500477
+  item_id: 8500474
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61295
 - name: 'Filler: Random Buff - Riptide (#61299)'
-  item_id: 8500478
+  item_id: 8500475
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61299
 - name: 'Filler: Random Buff - Riptide (#61300)'
-  item_id: 8500479
+  item_id: 8500476
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61300
 - name: 'Filler: Random Buff - Riptide (#61301)'
-  item_id: 8500480
+  item_id: 8500477
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61301
 - name: 'Filler: Random Buff - Dalaran Brilliance (#61316)'
-  item_id: 8500481
+  item_id: 8500478
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61316
 - name: 'Filler: Random Buff - Infinite Replenishment + Wisdom (#61782)'
-  item_id: 8500482
+  item_id: 8500479
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61782
 - name: 'Filler: Random Buff - Renew (#61967)'
-  item_id: 8500483
+  item_id: 8500480
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 61967
 - name: 'Filler: Random Buff - Runic Mending (#62328)'
-  item_id: 8500484
+  item_id: 8500481
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 62328
 - name: 'Filler: Random Buff - Renew (#62333)'
-  item_id: 8500485
+  item_id: 8500482
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 62333
 - name: 'Filler: Random Buff - Renew (#62441)'
-  item_id: 8500486
+  item_id: 8500483
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 62441
 - name: 'Filler: Random Buff - Runic Mending (#62446)'
-  item_id: 8500487
+  item_id: 8500484
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 62446
 - name: 'Filler: Random Buff - Bind Life (#63082)'
-  item_id: 8500488
+  item_id: 8500485
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63082
 - name: 'Filler: Random Buff - Winter''s Embrace (#63136)'
-  item_id: 8500489
+  item_id: 8500486
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63136
 - name: 'Filler: Random Buff - Haste (#63150)'
-  item_id: 8500490
+  item_id: 8500487
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63150
 - name: 'Filler: Random Buff - Pyroclasm (#63243)'
-  item_id: 8500491
+  item_id: 8500488
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63243
 - name: 'Filler: Random Buff - Pyroclasm (#63244)'
-  item_id: 8500492
+  item_id: 8500489
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63244
 - name: 'Filler: Random Buff - Bind Life (#63559)'
-  item_id: 8500493
+  item_id: 8500490
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63559
 - name: 'Filler: Random Buff - Winter''s Embrace (#63564)'
-  item_id: 8500494
+  item_id: 8500491
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 63564
 - name: 'Filler: Random Buff - Body and Soul (#64128)'
-  item_id: 8500495
+  item_id: 8500492
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 64128
 - name: 'Filler: Random Buff - Holy Mending (#64891)'
-  item_id: 8500496
+  item_id: 8500493
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 64891
 - name: 'Filler: Random Buff - Body and Soul (#65081)'
-  item_id: 8500497
+  item_id: 8500494
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 65081
 - name: 'Filler: Random Buff - Avenging Wrath (#66011)'
-  item_id: 8500498
+  item_id: 8500495
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 66011
 - name: 'Filler: Random Buff - Haste (#66045)'
-  item_id: 8500499
+  item_id: 8500496
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 66045
 - name: 'Filler: Random Buff - Nether Power (#66228)'
-  item_id: 8500500
+  item_id: 8500497
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 66228
 - name: 'Filler: Random Buff - Renew (#66537)'
-  item_id: 8500501
+  item_id: 8500498
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 66537
 - name: 'Filler: Random Buff - Flash of Light (#66922)'
-  item_id: 8500502
+  item_id: 8500499
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 66922
-- name: 'Filler: Random Buff - Spell Steal Bug (#67007)'
-  item_id: 8500503
-  count: 1
-  delivery:
-    kind: filler_effect
-    effect: cast_spell
-    param: 67007
 - name: 'Filler: Random Buff - Nether Power (#67106)'
-  item_id: 8500504
+  item_id: 8500500
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 67106
 - name: 'Filler: Random Buff - Nether Power (#67107)'
-  item_id: 8500505
+  item_id: 8500501
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 67107
 - name: 'Filler: Random Buff - Nether Power (#67108)'
-  item_id: 8500506
+  item_id: 8500502
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 67108
 - name: 'Filler: Random Buff - Aegis (#67631)'
-  item_id: 8500507
+  item_id: 8500503
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 67631
 - name: 'Filler: Random Buff - Renew (#67675)'
-  item_id: 8500508
+  item_id: 8500504
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 67675
 - name: 'Filler: Random Buff - Regrowth (#69882)'
-  item_id: 8500509
+  item_id: 8500505
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 69882
 - name: 'Filler: Random Buff - Rejuvenation (#69898)'
-  item_id: 8500510
+  item_id: 8500506
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 69898
 - name: 'Filler: Random Buff - Brilliance (#69994)'
-  item_id: 8500511
+  item_id: 8500507
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 69994
 - name: 'Filler: Random Buff - Vampiric Might (#70674)'
-  item_id: 8500512
+  item_id: 8500508
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 70674
 - name: 'Filler: Random Buff - Rejuvenation (#70691)'
-  item_id: 8500513
+  item_id: 8500509
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 70691
 - name: 'Filler: Random Buff - Chained Heal (#70809)'
-  item_id: 8500514
+  item_id: 8500510
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 70809
 - name: 'Filler: Random Buff - Regrowth (#71141)'
-  item_id: 8500515
+  item_id: 8500511
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71141
 - name: 'Filler: Random Buff - Rejuvenation (#71142)'
-  item_id: 8500516
+  item_id: 8500512
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71142
 - name: 'Filler: Random Buff - Blessing of Light (#71870)'
-  item_id: 8500517
+  item_id: 8500513
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71870
 - name: 'Filler: Random Buff - Blessing of Light (#71872)'
-  item_id: 8500518
+  item_id: 8500514
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71872
 - name: 'Filler: Random Buff - Renew (#71932)'
-  item_id: 8500519
+  item_id: 8500515
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71932
 - name: 'Filler: Random Buff - Holy Champion (#71954)'
-  item_id: 8500520
+  item_id: 8500516
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 71954
 - name: 'Filler: Random Buff - Gift of the Wild (#72588)'
-  item_id: 8500521
+  item_id: 8500517
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 72588
 - name: 'Filler: Random Buff - Fortitude (#72590)'
-  item_id: 8500522
+  item_id: 8500518
   count: 1
   delivery:
     kind: filler_effect
     effect: cast_spell
     param: 72590
 - name: 'Filler: Gold Reward - 1 Copper'
-  item_id: 8500523
+  item_id: 8500519
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 1
 - name: 'Filler: Gold Reward - 5 Copper'
-  item_id: 8500524
+  item_id: 8500520
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 5
 - name: 'Filler: Gold Reward - 10 Copper'
-  item_id: 8500525
+  item_id: 8500521
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 10
 - name: 'Filler: Gold Reward - 50 Copper'
-  item_id: 8500526
+  item_id: 8500522
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 50
 - name: 'Filler: Gold Reward - 1 Silver'
-  item_id: 8500527
+  item_id: 8500523
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 100
 - name: 'Filler: Gold Reward - 5 Silver'
-  item_id: 8500528
+  item_id: 8500524
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 500
 - name: 'Filler: Gold Reward - 10 Silver'
-  item_id: 8500529
+  item_id: 8500525
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 1000
 - name: 'Filler: Gold Reward - 50 Silver'
-  item_id: 8500530
+  item_id: 8500526
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 5000
 - name: 'Filler: Gold Reward - 1 Gold'
-  item_id: 8500531
+  item_id: 8500527
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 10000
 - name: 'Filler: Gold Reward - 5 Gold'
-  item_id: 8500532
+  item_id: 8500528
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 50000
 - name: 'Filler: Gold Reward - 10 Gold'
-  item_id: 8500533
+  item_id: 8500529
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 100000
 - name: 'Filler: Gold Reward - 25 Gold'
-  item_id: 8500534
+  item_id: 8500530
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 250000
 - name: 'Filler: Gold Reward - 50 Gold'
-  item_id: 8500535
+  item_id: 8500531
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 500000
 - name: 'Filler: Gold Reward - 75 Gold'
-  item_id: 8500536
+  item_id: 8500532
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 750000
 - name: 'Filler: Gold Reward - 100 Gold'
-  item_id: 8500537
+  item_id: 8500533
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 1000000
 - name: 'Filler: Gold Reward - 125 Gold'
-  item_id: 8500538
+  item_id: 8500534
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 1250000
 - name: 'Filler: Gold Reward - 150 Gold'
-  item_id: 8500539
+  item_id: 8500535
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 1500000
 - name: 'Filler: Gold Reward - 200 Gold'
-  item_id: 8500540
+  item_id: 8500536
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 2000000
 - name: 'Filler: Gold Reward - 250 Gold'
-  item_id: 8500541
+  item_id: 8500537
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 2500000
 - name: 'Filler: Gold Reward - 500 Gold'
-  item_id: 8500542
+  item_id: 8500538
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 5000000
 - name: 'Filler: Gold Reward - 1000 Gold'
-  item_id: 8500543
+  item_id: 8500539
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_money
     param: 10000000
 - name: 'Filler: XP Reward - 1%'
-  item_id: 8500544
+  item_id: 8500540
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 1
 - name: 'Filler: XP Reward - 5%'
-  item_id: 8500545
+  item_id: 8500541
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 5
 - name: 'Filler: XP Reward - 10%'
-  item_id: 8500546
+  item_id: 8500542
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 10
 - name: 'Filler: XP Reward - 15%'
-  item_id: 8500547
+  item_id: 8500543
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 15
 - name: 'Filler: XP Reward - 20%'
-  item_id: 8500548
+  item_id: 8500544
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 20
 - name: 'Filler: XP Reward - 25%'
-  item_id: 8500549
+  item_id: 8500545
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 25
 - name: 'Filler: XP Reward - 30%'
-  item_id: 8500550
+  item_id: 8500546
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 30
 - name: 'Filler: XP Reward - 40%'
-  item_id: 8500551
+  item_id: 8500547
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 40
 - name: 'Filler: XP Reward - 50%'
-  item_id: 8500552
+  item_id: 8500548
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_xp_percent
     param: 50
 - name: 'Filler: Character Title - the Exalted'
-  item_id: 8500553
+  item_id: 8500549
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 77
 - name: 'Filler: Character Title - the Explorer'
-  item_id: 8500554
+  item_id: 8500550
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 78
 - name: 'Filler: Character Title - the Diplomat'
-  item_id: 8500555
+  item_id: 8500551
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 79
 - name: 'Filler: Character Title - Chef'
-  item_id: 8500556
+  item_id: 8500552
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 84
 - name: 'Filler: Character Title - Prophet'
-  item_id: 8500557
+  item_id: 8500553
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 89
 - name: 'Filler: Character Title - of the Ebon Blade'
-  item_id: 8500558
+  item_id: 8500554
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 92
 - name: 'Filler: Character Title - Archmage'
-  item_id: 8500559
+  item_id: 8500555
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 93
 - name: 'Filler: Character Title - Iron Chef'
-  item_id: 8500560
+  item_id: 8500556
   count: 1
   delivery:
     kind: filler_effect
     effect: grant_title
     param: 98
 - name: 'Filler: Portable Service - Jeeves'
-  item_id: 8500561
+  item_id: 8500557
   count: 1
   delivery:
     kind: filler_effect
     effect: portable_service
     param: 67826
 - name: 'Filler: Portable Service - Field Repair Bot 74A'
-  item_id: 8500562
+  item_id: 8500558
   count: 1
   delivery:
     kind: filler_effect
     effect: portable_service
     param: 22700
 - name: 'Filler: Portable Service - Remote Mail Terminal'
-  item_id: 8500563
+  item_id: 8500559
   count: 1
   delivery:
     kind: filler_effect
     effect: portable_service
     param: 30524
 - name: 'Filler: Portable Service - Field Repair Bot 110G'
-  item_id: 8500564
+  item_id: 8500560
   count: 1
   delivery:
     kind: filler_effect

@@ -72,3 +72,45 @@ name_denylist:
   # all internal (M4.9.6, filler_reward_effects buff-candidate
   # extraction).
   - '(?i)Test\d+'
+  # Internal QA/debug artifact spell literally named after the bug it was
+  # created to reproduce, e.g. "Spell Steal Bug" (id 67007, the exact spell
+  # this catches in the current filler-buff candidate set), "Charge Bug",
+  # "Explode Bug", "Mutate Bug", "Summon Dupe Bug", "Dig Up Disgruntled/
+  # Glinting Bug", "Bug 164364 Effect/Immunity", "Bug 180273"/"Bug 180273
+  # Effect", "Bug 181860 Effect"/"Effect Linked Aura"/"Proc" -- verified
+  # live against the FULL real Spell.dbc (all 49,839 name rows, not just
+  # the filler-buff candidate subset): exactly 16 rows match a bare
+  # \bBug\b, every one an internal QA/debug artifact, none player-facing
+  # (final whole-branch review finding I2, M4.9.6).
+  - '(?i)\bBug\b'
+  # Internal QA/dev slang "Uber" (developer shorthand for "way too
+  # strong/overpowered", never real Blizzard player-facing flavor text),
+  # e.g. "Uber Spirit 80 Buff" (id 54303, the exact spell this catches in
+  # the current filler-buff candidate set), "QA Uber Spell Debuff", "Shirt
+  # of Uber Aura/Hit Aura/Rating Aura", "Uber Spell Controller", "Uber
+  # Stealth", "Uber Heal Over Time"/"Debuff Uber Heal Over Time", "Shoot
+  # Uber Fireball"/"Uber Fireball Reflect" -- verified live against the
+  # FULL real Spell.dbc: exactly 15 rows match a bare \bUber\b, every one
+  # internal/QA, none player-facing (final whole-branch review finding
+  # I2, M4.9.6).
+  - '(?i)\bUber\b'
+  # Internal QA-style "<number> Buff" naming shape -- a bare numeric
+  # level/tier tag glued directly onto the literal word "Buff" with no
+  # other real-content framing (unlike a genuine Blizzard buff name, which
+  # never ends in a raw digit + "Buff"), e.g. "30% Crit 80 Buff" (id
+  # 54675) and "Uber Spirit 80 Buff" (id 54303, already caught by the
+  # \bUber\b pattern above too -- this pattern independently catches
+  # 54675, which no other pattern here matches). Verified live against
+  # the FULL real Spell.dbc: exactly 2 rows match, both internal QA
+  # testing-tier buffs (final whole-branch review finding I2, M4.9.6).
+  - '(?i)\d+\s+Buff\b'
+  # A single, severe balance-breaking permanent +100% critical strike
+  # chance buff -- spell 54283 "Increase Critical Strike Chance 100%".
+  # Verified live: this is the ONLY spell in the entire real Spell.dbc
+  # whose name contains "Increase Critical Strike Chance" at all (no
+  # lower/legitimate-tier sibling exists), consistent with an
+  # internal/debug balance-testing artifact rather than real player
+  # content -- randomly granting a permanent +100% crit buff as filler
+  # would be a severe, unintended power-level break (final whole-branch
+  # review finding I2, M4.9.6).
+  - '(?i)Increase Critical Strike Chance 100%'

@@ -442,13 +442,14 @@ class TestParseFillerBuffSpellCandidates(unittest.TestCase):
 
     def test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks(self) -> None:
         # Real-file integration check against this checkout's actual
-        # Spell.dbc. 568 confirmed live during M4.9.6 planning; 523
-        # re-confirmed live after the final whole-branch review's I1 fix
-        # (the cross-slot negative-aura veto pass, -45: 568 -> 523;
-        # re-run the extraction if the checked-in Spell.dbc or
-        # db_extract.py's aura denylist ever change).
+        # Spell.dbc. 568 confirmed live during M4.9.6 planning; 519
+        # re-confirmed live after the final whole-branch review's I1 (the
+        # cross-slot negative-aura veto pass, -45: 568 -> 523) and I2 (4
+        # new exclusion_rules.yaml patterns, -4: 523 -> 519) fixes
+        # (re-run the extraction if the checked-in Spell.dbc, db_extract.py's
+        # aura denylist, or exclusion_rules.yaml ever change).
         result = parse_filler_buff_spell_candidates()
-        self.assertEqual(len(result), 523)
+        self.assertEqual(len(result), 519)
         self.assertEqual(result[774], "Rejuvenation")
         self.assertEqual(result[1459], "Arcane Intellect")
         self.assertNotIn(469, result)    # not Magic-dispel
@@ -460,6 +461,20 @@ class TestParseFillerBuffSpellCandidates(unittest.TestCase):
         # slot alone would have passed the old positive-only check.
         self.assertNotIn(5782, result)   # "Fear" -- MOD_FEAR + MOD_INCREASE_SPEED
         self.assertNotIn(11020, result)  # "Petrify" -- MOD_STUN-bearing
+        # I2: new exclusion_rules.yaml patterns (final whole-branch review).
+        self.assertNotIn(67007, result)  # "Spell Steal Bug" -- \bBug\b
+        self.assertNotIn(54283, result)  # "Increase Critical Strike Chance 100%"
+        self.assertNotIn(54303, result)  # "Uber Spirit 80 Buff" -- \bUber\b
+        self.assertNotIn(54675, result)  # "30% Crit 80 Buff" -- \d+\s+Buff\b
+        # Real, legitimate Roman-numeral-tiered potion buffs investigated
+        # and deliberately left IN during I2 (final whole-branch review):
+        # no confident evidence they are internal/unused, so per that
+        # finding's own explicit guidance a false negative here is not
+        # asked for -- see the fix report for the full investigation.
+        self.assertIn(3369, result)   # "Potion Strength II"
+        self.assertIn(16884, result)  # "Health II"
+        self.assertIn(16885, result)  # "Agility VIII"
+        self.assertIn(16888, result)  # "Intellect IX"
 
 
 if __name__ == "__main__":

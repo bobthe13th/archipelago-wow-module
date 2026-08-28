@@ -453,129 +453,125 @@ namespace Archipelago::FillerRewardEffects
         { 8500438, { "cast_spell", 53251 } }, // Filler: Random Buff - Wild Growth (#53251)
         { 8500439, { "cast_spell", 53607 } }, // Filler: Random Buff - Rejuvenation (#53607)
         { 8500440, { "cast_spell", 53608 } }, // Filler: Random Buff - Lifebloom (#53608)
-        { 8500441, { "cast_spell", 54283 } }, // Filler: Random Buff - Increase Critical Strike Chance 100% (#54283)
-        { 8500442, { "cast_spell", 54303 } }, // Filler: Random Buff - Uber Spirit 80 Buff (#54303)
-        { 8500443, { "cast_spell", 54589 } }, // Filler: Random Buff - Whirling Winds (#54589)
-        { 8500444, { "cast_spell", 54646 } }, // Filler: Random Buff - Focus Magic (#54646)
-        { 8500445, { "cast_spell", 54648 } }, // Filler: Random Buff - Focus Magic (#54648)
-        { 8500446, { "cast_spell", 54675 } }, // Filler: Random Buff - 30% Crit 80 Buff (#54675)
-        { 8500447, { "cast_spell", 54957 } }, // Filler: Random Buff - Glyph of Flash of Light (#54957)
-        { 8500448, { "cast_spell", 55213 } }, // Filler: Random Buff - Hysteria (#55213)
-        { 8500449, { "cast_spell", 55975 } }, // Filler: Random Buff - Hysteria (#55975)
-        { 8500450, { "cast_spell", 56310 } }, // Filler: Random Buff - Broken Oath (#56310)
-        { 8500451, { "cast_spell", 56332 } }, // Filler: Random Buff - Renew (#56332)
-        { 8500452, { "cast_spell", 56520 } }, // Filler: Random Buff - Blessing of Might (#56520)
-        { 8500453, { "cast_spell", 56521 } }, // Filler: Random Buff - Blessing of Wisdom (#56521)
-        { 8500454, { "cast_spell", 56716 } }, // Filler: Random Buff - Icy Winds (#56716)
-        { 8500455, { "cast_spell", 56827 } }, // Filler: Random Buff - Aura of Arcane Haste (#56827)
-        { 8500456, { "cast_spell", 57060 } }, // Filler: Random Buff - Haste (#57060)
-        { 8500457, { "cast_spell", 57529 } }, // Filler: Random Buff - Arcane Potency (#57529)
-        { 8500458, { "cast_spell", 57531 } }, // Filler: Random Buff - Arcane Potency (#57531)
-        { 8500459, { "cast_spell", 57672 } }, // Filler: Random Buff - Fate Rune of Baneful Intent (#57672)
-        { 8500460, { "cast_spell", 57762 } }, // Filler: Random Buff - Lifebloom (#57762)
-        { 8500461, { "cast_spell", 57777 } }, // Filler: Random Buff - Renew (#57777)
-        { 8500462, { "cast_spell", 57843 } }, // Filler: Random Buff - Mojo Empowered Fire Ward (#57843)
-        { 8500463, { "cast_spell", 57960 } }, // Filler: Random Buff - Water Shield (#57960)
-        { 8500464, { "cast_spell", 58448 } }, // Filler: Random Buff - Strength (#58448)
-        { 8500465, { "cast_spell", 58449 } }, // Filler: Random Buff - Strength (#58449)
-        { 8500466, { "cast_spell", 58450 } }, // Filler: Random Buff - Agility (#58450)
-        { 8500467, { "cast_spell", 58451 } }, // Filler: Random Buff - Agility (#58451)
-        { 8500468, { "cast_spell", 58452 } }, // Filler: Random Buff - Armor (#58452)
-        { 8500469, { "cast_spell", 58453 } }, // Filler: Random Buff - Armor (#58453)
-        { 8500470, { "cast_spell", 58469 } }, // Filler: Random Buff - Arcane Empowerment (#58469)
-        { 8500471, { "cast_spell", 58921 } }, // Filler: Random Buff - Power Word: Fortitude (#58921)
-        { 8500472, { "cast_spell", 59990 } }, // Filler: Random Buff - Lifebloom (#59990)
-        { 8500473, { "cast_spell", 60004 } }, // Filler: Random Buff - Renew (#60004)
-        { 8500474, { "cast_spell", 60300 } }, // Filler: Random Buff - Unholy Frenzy (#60300)
-        { 8500475, { "cast_spell", 60506 } }, // Filler: Random Buff - Blood of the Fallen Cultist (#60506)
-        { 8500476, { "cast_spell", 61024 } }, // Filler: Random Buff - Dalaran Intellect (#61024)
-        { 8500477, { "cast_spell", 61295 } }, // Filler: Random Buff - Riptide (#61295)
-        { 8500478, { "cast_spell", 61299 } }, // Filler: Random Buff - Riptide (#61299)
-        { 8500479, { "cast_spell", 61300 } }, // Filler: Random Buff - Riptide (#61300)
-        { 8500480, { "cast_spell", 61301 } }, // Filler: Random Buff - Riptide (#61301)
-        { 8500481, { "cast_spell", 61316 } }, // Filler: Random Buff - Dalaran Brilliance (#61316)
-        { 8500482, { "cast_spell", 61782 } }, // Filler: Random Buff - Infinite Replenishment + Wisdom (#61782)
-        { 8500483, { "cast_spell", 61967 } }, // Filler: Random Buff - Renew (#61967)
-        { 8500484, { "cast_spell", 62328 } }, // Filler: Random Buff - Runic Mending (#62328)
-        { 8500485, { "cast_spell", 62333 } }, // Filler: Random Buff - Renew (#62333)
-        { 8500486, { "cast_spell", 62441 } }, // Filler: Random Buff - Renew (#62441)
-        { 8500487, { "cast_spell", 62446 } }, // Filler: Random Buff - Runic Mending (#62446)
-        { 8500488, { "cast_spell", 63082 } }, // Filler: Random Buff - Bind Life (#63082)
-        { 8500489, { "cast_spell", 63136 } }, // Filler: Random Buff - Winter's Embrace (#63136)
-        { 8500490, { "cast_spell", 63150 } }, // Filler: Random Buff - Haste (#63150)
-        { 8500491, { "cast_spell", 63243 } }, // Filler: Random Buff - Pyroclasm (#63243)
-        { 8500492, { "cast_spell", 63244 } }, // Filler: Random Buff - Pyroclasm (#63244)
-        { 8500493, { "cast_spell", 63559 } }, // Filler: Random Buff - Bind Life (#63559)
-        { 8500494, { "cast_spell", 63564 } }, // Filler: Random Buff - Winter's Embrace (#63564)
-        { 8500495, { "cast_spell", 64128 } }, // Filler: Random Buff - Body and Soul (#64128)
-        { 8500496, { "cast_spell", 64891 } }, // Filler: Random Buff - Holy Mending (#64891)
-        { 8500497, { "cast_spell", 65081 } }, // Filler: Random Buff - Body and Soul (#65081)
-        { 8500498, { "cast_spell", 66011 } }, // Filler: Random Buff - Avenging Wrath (#66011)
-        { 8500499, { "cast_spell", 66045 } }, // Filler: Random Buff - Haste (#66045)
-        { 8500500, { "cast_spell", 66228 } }, // Filler: Random Buff - Nether Power (#66228)
-        { 8500501, { "cast_spell", 66537 } }, // Filler: Random Buff - Renew (#66537)
-        { 8500502, { "cast_spell", 66922 } }, // Filler: Random Buff - Flash of Light (#66922)
-        { 8500503, { "cast_spell", 67007 } }, // Filler: Random Buff - Spell Steal Bug (#67007)
-        { 8500504, { "cast_spell", 67106 } }, // Filler: Random Buff - Nether Power (#67106)
-        { 8500505, { "cast_spell", 67107 } }, // Filler: Random Buff - Nether Power (#67107)
-        { 8500506, { "cast_spell", 67108 } }, // Filler: Random Buff - Nether Power (#67108)
-        { 8500507, { "cast_spell", 67631 } }, // Filler: Random Buff - Aegis (#67631)
-        { 8500508, { "cast_spell", 67675 } }, // Filler: Random Buff - Renew (#67675)
-        { 8500509, { "cast_spell", 69882 } }, // Filler: Random Buff - Regrowth (#69882)
-        { 8500510, { "cast_spell", 69898 } }, // Filler: Random Buff - Rejuvenation (#69898)
-        { 8500511, { "cast_spell", 69994 } }, // Filler: Random Buff - Brilliance (#69994)
-        { 8500512, { "cast_spell", 70674 } }, // Filler: Random Buff - Vampiric Might (#70674)
-        { 8500513, { "cast_spell", 70691 } }, // Filler: Random Buff - Rejuvenation (#70691)
-        { 8500514, { "cast_spell", 70809 } }, // Filler: Random Buff - Chained Heal (#70809)
-        { 8500515, { "cast_spell", 71141 } }, // Filler: Random Buff - Regrowth (#71141)
-        { 8500516, { "cast_spell", 71142 } }, // Filler: Random Buff - Rejuvenation (#71142)
-        { 8500517, { "cast_spell", 71870 } }, // Filler: Random Buff - Blessing of Light (#71870)
-        { 8500518, { "cast_spell", 71872 } }, // Filler: Random Buff - Blessing of Light (#71872)
-        { 8500519, { "cast_spell", 71932 } }, // Filler: Random Buff - Renew (#71932)
-        { 8500520, { "cast_spell", 71954 } }, // Filler: Random Buff - Holy Champion (#71954)
-        { 8500521, { "cast_spell", 72588 } }, // Filler: Random Buff - Gift of the Wild (#72588)
-        { 8500522, { "cast_spell", 72590 } }, // Filler: Random Buff - Fortitude (#72590)
-        { 8500523, { "grant_money", 1 } }, // Filler: Gold Reward - 1 Copper
-        { 8500524, { "grant_money", 5 } }, // Filler: Gold Reward - 5 Copper
-        { 8500525, { "grant_money", 10 } }, // Filler: Gold Reward - 10 Copper
-        { 8500526, { "grant_money", 50 } }, // Filler: Gold Reward - 50 Copper
-        { 8500527, { "grant_money", 100 } }, // Filler: Gold Reward - 1 Silver
-        { 8500528, { "grant_money", 500 } }, // Filler: Gold Reward - 5 Silver
-        { 8500529, { "grant_money", 1000 } }, // Filler: Gold Reward - 10 Silver
-        { 8500530, { "grant_money", 5000 } }, // Filler: Gold Reward - 50 Silver
-        { 8500531, { "grant_money", 10000 } }, // Filler: Gold Reward - 1 Gold
-        { 8500532, { "grant_money", 50000 } }, // Filler: Gold Reward - 5 Gold
-        { 8500533, { "grant_money", 100000 } }, // Filler: Gold Reward - 10 Gold
-        { 8500534, { "grant_money", 250000 } }, // Filler: Gold Reward - 25 Gold
-        { 8500535, { "grant_money", 500000 } }, // Filler: Gold Reward - 50 Gold
-        { 8500536, { "grant_money", 750000 } }, // Filler: Gold Reward - 75 Gold
-        { 8500537, { "grant_money", 1000000 } }, // Filler: Gold Reward - 100 Gold
-        { 8500538, { "grant_money", 1250000 } }, // Filler: Gold Reward - 125 Gold
-        { 8500539, { "grant_money", 1500000 } }, // Filler: Gold Reward - 150 Gold
-        { 8500540, { "grant_money", 2000000 } }, // Filler: Gold Reward - 200 Gold
-        { 8500541, { "grant_money", 2500000 } }, // Filler: Gold Reward - 250 Gold
-        { 8500542, { "grant_money", 5000000 } }, // Filler: Gold Reward - 500 Gold
-        { 8500543, { "grant_money", 10000000 } }, // Filler: Gold Reward - 1000 Gold
-        { 8500544, { "grant_xp_percent", 1 } }, // Filler: XP Reward - 1%
-        { 8500545, { "grant_xp_percent", 5 } }, // Filler: XP Reward - 5%
-        { 8500546, { "grant_xp_percent", 10 } }, // Filler: XP Reward - 10%
-        { 8500547, { "grant_xp_percent", 15 } }, // Filler: XP Reward - 15%
-        { 8500548, { "grant_xp_percent", 20 } }, // Filler: XP Reward - 20%
-        { 8500549, { "grant_xp_percent", 25 } }, // Filler: XP Reward - 25%
-        { 8500550, { "grant_xp_percent", 30 } }, // Filler: XP Reward - 30%
-        { 8500551, { "grant_xp_percent", 40 } }, // Filler: XP Reward - 40%
-        { 8500552, { "grant_xp_percent", 50 } }, // Filler: XP Reward - 50%
-        { 8500553, { "grant_title", 77 } }, // Filler: Character Title - the Exalted
-        { 8500554, { "grant_title", 78 } }, // Filler: Character Title - the Explorer
-        { 8500555, { "grant_title", 79 } }, // Filler: Character Title - the Diplomat
-        { 8500556, { "grant_title", 84 } }, // Filler: Character Title - Chef
-        { 8500557, { "grant_title", 89 } }, // Filler: Character Title - Prophet
-        { 8500558, { "grant_title", 92 } }, // Filler: Character Title - of the Ebon Blade
-        { 8500559, { "grant_title", 93 } }, // Filler: Character Title - Archmage
-        { 8500560, { "grant_title", 98 } }, // Filler: Character Title - Iron Chef
-        { 8500561, { "portable_service", 67826 } }, // Filler: Portable Service - Jeeves
-        { 8500562, { "portable_service", 22700 } }, // Filler: Portable Service - Field Repair Bot 74A
-        { 8500563, { "portable_service", 30524 } }, // Filler: Portable Service - Remote Mail Terminal
-        { 8500564, { "portable_service", 44389 } }, // Filler: Portable Service - Field Repair Bot 110G
+        { 8500441, { "cast_spell", 54589 } }, // Filler: Random Buff - Whirling Winds (#54589)
+        { 8500442, { "cast_spell", 54646 } }, // Filler: Random Buff - Focus Magic (#54646)
+        { 8500443, { "cast_spell", 54648 } }, // Filler: Random Buff - Focus Magic (#54648)
+        { 8500444, { "cast_spell", 54957 } }, // Filler: Random Buff - Glyph of Flash of Light (#54957)
+        { 8500445, { "cast_spell", 55213 } }, // Filler: Random Buff - Hysteria (#55213)
+        { 8500446, { "cast_spell", 55975 } }, // Filler: Random Buff - Hysteria (#55975)
+        { 8500447, { "cast_spell", 56310 } }, // Filler: Random Buff - Broken Oath (#56310)
+        { 8500448, { "cast_spell", 56332 } }, // Filler: Random Buff - Renew (#56332)
+        { 8500449, { "cast_spell", 56520 } }, // Filler: Random Buff - Blessing of Might (#56520)
+        { 8500450, { "cast_spell", 56521 } }, // Filler: Random Buff - Blessing of Wisdom (#56521)
+        { 8500451, { "cast_spell", 56716 } }, // Filler: Random Buff - Icy Winds (#56716)
+        { 8500452, { "cast_spell", 56827 } }, // Filler: Random Buff - Aura of Arcane Haste (#56827)
+        { 8500453, { "cast_spell", 57060 } }, // Filler: Random Buff - Haste (#57060)
+        { 8500454, { "cast_spell", 57529 } }, // Filler: Random Buff - Arcane Potency (#57529)
+        { 8500455, { "cast_spell", 57531 } }, // Filler: Random Buff - Arcane Potency (#57531)
+        { 8500456, { "cast_spell", 57672 } }, // Filler: Random Buff - Fate Rune of Baneful Intent (#57672)
+        { 8500457, { "cast_spell", 57762 } }, // Filler: Random Buff - Lifebloom (#57762)
+        { 8500458, { "cast_spell", 57777 } }, // Filler: Random Buff - Renew (#57777)
+        { 8500459, { "cast_spell", 57843 } }, // Filler: Random Buff - Mojo Empowered Fire Ward (#57843)
+        { 8500460, { "cast_spell", 57960 } }, // Filler: Random Buff - Water Shield (#57960)
+        { 8500461, { "cast_spell", 58448 } }, // Filler: Random Buff - Strength (#58448)
+        { 8500462, { "cast_spell", 58449 } }, // Filler: Random Buff - Strength (#58449)
+        { 8500463, { "cast_spell", 58450 } }, // Filler: Random Buff - Agility (#58450)
+        { 8500464, { "cast_spell", 58451 } }, // Filler: Random Buff - Agility (#58451)
+        { 8500465, { "cast_spell", 58452 } }, // Filler: Random Buff - Armor (#58452)
+        { 8500466, { "cast_spell", 58453 } }, // Filler: Random Buff - Armor (#58453)
+        { 8500467, { "cast_spell", 58469 } }, // Filler: Random Buff - Arcane Empowerment (#58469)
+        { 8500468, { "cast_spell", 58921 } }, // Filler: Random Buff - Power Word: Fortitude (#58921)
+        { 8500469, { "cast_spell", 59990 } }, // Filler: Random Buff - Lifebloom (#59990)
+        { 8500470, { "cast_spell", 60004 } }, // Filler: Random Buff - Renew (#60004)
+        { 8500471, { "cast_spell", 60300 } }, // Filler: Random Buff - Unholy Frenzy (#60300)
+        { 8500472, { "cast_spell", 60506 } }, // Filler: Random Buff - Blood of the Fallen Cultist (#60506)
+        { 8500473, { "cast_spell", 61024 } }, // Filler: Random Buff - Dalaran Intellect (#61024)
+        { 8500474, { "cast_spell", 61295 } }, // Filler: Random Buff - Riptide (#61295)
+        { 8500475, { "cast_spell", 61299 } }, // Filler: Random Buff - Riptide (#61299)
+        { 8500476, { "cast_spell", 61300 } }, // Filler: Random Buff - Riptide (#61300)
+        { 8500477, { "cast_spell", 61301 } }, // Filler: Random Buff - Riptide (#61301)
+        { 8500478, { "cast_spell", 61316 } }, // Filler: Random Buff - Dalaran Brilliance (#61316)
+        { 8500479, { "cast_spell", 61782 } }, // Filler: Random Buff - Infinite Replenishment + Wisdom (#61782)
+        { 8500480, { "cast_spell", 61967 } }, // Filler: Random Buff - Renew (#61967)
+        { 8500481, { "cast_spell", 62328 } }, // Filler: Random Buff - Runic Mending (#62328)
+        { 8500482, { "cast_spell", 62333 } }, // Filler: Random Buff - Renew (#62333)
+        { 8500483, { "cast_spell", 62441 } }, // Filler: Random Buff - Renew (#62441)
+        { 8500484, { "cast_spell", 62446 } }, // Filler: Random Buff - Runic Mending (#62446)
+        { 8500485, { "cast_spell", 63082 } }, // Filler: Random Buff - Bind Life (#63082)
+        { 8500486, { "cast_spell", 63136 } }, // Filler: Random Buff - Winter's Embrace (#63136)
+        { 8500487, { "cast_spell", 63150 } }, // Filler: Random Buff - Haste (#63150)
+        { 8500488, { "cast_spell", 63243 } }, // Filler: Random Buff - Pyroclasm (#63243)
+        { 8500489, { "cast_spell", 63244 } }, // Filler: Random Buff - Pyroclasm (#63244)
+        { 8500490, { "cast_spell", 63559 } }, // Filler: Random Buff - Bind Life (#63559)
+        { 8500491, { "cast_spell", 63564 } }, // Filler: Random Buff - Winter's Embrace (#63564)
+        { 8500492, { "cast_spell", 64128 } }, // Filler: Random Buff - Body and Soul (#64128)
+        { 8500493, { "cast_spell", 64891 } }, // Filler: Random Buff - Holy Mending (#64891)
+        { 8500494, { "cast_spell", 65081 } }, // Filler: Random Buff - Body and Soul (#65081)
+        { 8500495, { "cast_spell", 66011 } }, // Filler: Random Buff - Avenging Wrath (#66011)
+        { 8500496, { "cast_spell", 66045 } }, // Filler: Random Buff - Haste (#66045)
+        { 8500497, { "cast_spell", 66228 } }, // Filler: Random Buff - Nether Power (#66228)
+        { 8500498, { "cast_spell", 66537 } }, // Filler: Random Buff - Renew (#66537)
+        { 8500499, { "cast_spell", 66922 } }, // Filler: Random Buff - Flash of Light (#66922)
+        { 8500500, { "cast_spell", 67106 } }, // Filler: Random Buff - Nether Power (#67106)
+        { 8500501, { "cast_spell", 67107 } }, // Filler: Random Buff - Nether Power (#67107)
+        { 8500502, { "cast_spell", 67108 } }, // Filler: Random Buff - Nether Power (#67108)
+        { 8500503, { "cast_spell", 67631 } }, // Filler: Random Buff - Aegis (#67631)
+        { 8500504, { "cast_spell", 67675 } }, // Filler: Random Buff - Renew (#67675)
+        { 8500505, { "cast_spell", 69882 } }, // Filler: Random Buff - Regrowth (#69882)
+        { 8500506, { "cast_spell", 69898 } }, // Filler: Random Buff - Rejuvenation (#69898)
+        { 8500507, { "cast_spell", 69994 } }, // Filler: Random Buff - Brilliance (#69994)
+        { 8500508, { "cast_spell", 70674 } }, // Filler: Random Buff - Vampiric Might (#70674)
+        { 8500509, { "cast_spell", 70691 } }, // Filler: Random Buff - Rejuvenation (#70691)
+        { 8500510, { "cast_spell", 70809 } }, // Filler: Random Buff - Chained Heal (#70809)
+        { 8500511, { "cast_spell", 71141 } }, // Filler: Random Buff - Regrowth (#71141)
+        { 8500512, { "cast_spell", 71142 } }, // Filler: Random Buff - Rejuvenation (#71142)
+        { 8500513, { "cast_spell", 71870 } }, // Filler: Random Buff - Blessing of Light (#71870)
+        { 8500514, { "cast_spell", 71872 } }, // Filler: Random Buff - Blessing of Light (#71872)
+        { 8500515, { "cast_spell", 71932 } }, // Filler: Random Buff - Renew (#71932)
+        { 8500516, { "cast_spell", 71954 } }, // Filler: Random Buff - Holy Champion (#71954)
+        { 8500517, { "cast_spell", 72588 } }, // Filler: Random Buff - Gift of the Wild (#72588)
+        { 8500518, { "cast_spell", 72590 } }, // Filler: Random Buff - Fortitude (#72590)
+        { 8500519, { "grant_money", 1 } }, // Filler: Gold Reward - 1 Copper
+        { 8500520, { "grant_money", 5 } }, // Filler: Gold Reward - 5 Copper
+        { 8500521, { "grant_money", 10 } }, // Filler: Gold Reward - 10 Copper
+        { 8500522, { "grant_money", 50 } }, // Filler: Gold Reward - 50 Copper
+        { 8500523, { "grant_money", 100 } }, // Filler: Gold Reward - 1 Silver
+        { 8500524, { "grant_money", 500 } }, // Filler: Gold Reward - 5 Silver
+        { 8500525, { "grant_money", 1000 } }, // Filler: Gold Reward - 10 Silver
+        { 8500526, { "grant_money", 5000 } }, // Filler: Gold Reward - 50 Silver
+        { 8500527, { "grant_money", 10000 } }, // Filler: Gold Reward - 1 Gold
+        { 8500528, { "grant_money", 50000 } }, // Filler: Gold Reward - 5 Gold
+        { 8500529, { "grant_money", 100000 } }, // Filler: Gold Reward - 10 Gold
+        { 8500530, { "grant_money", 250000 } }, // Filler: Gold Reward - 25 Gold
+        { 8500531, { "grant_money", 500000 } }, // Filler: Gold Reward - 50 Gold
+        { 8500532, { "grant_money", 750000 } }, // Filler: Gold Reward - 75 Gold
+        { 8500533, { "grant_money", 1000000 } }, // Filler: Gold Reward - 100 Gold
+        { 8500534, { "grant_money", 1250000 } }, // Filler: Gold Reward - 125 Gold
+        { 8500535, { "grant_money", 1500000 } }, // Filler: Gold Reward - 150 Gold
+        { 8500536, { "grant_money", 2000000 } }, // Filler: Gold Reward - 200 Gold
+        { 8500537, { "grant_money", 2500000 } }, // Filler: Gold Reward - 250 Gold
+        { 8500538, { "grant_money", 5000000 } }, // Filler: Gold Reward - 500 Gold
+        { 8500539, { "grant_money", 10000000 } }, // Filler: Gold Reward - 1000 Gold
+        { 8500540, { "grant_xp_percent", 1 } }, // Filler: XP Reward - 1%
+        { 8500541, { "grant_xp_percent", 5 } }, // Filler: XP Reward - 5%
+        { 8500542, { "grant_xp_percent", 10 } }, // Filler: XP Reward - 10%
+        { 8500543, { "grant_xp_percent", 15 } }, // Filler: XP Reward - 15%
+        { 8500544, { "grant_xp_percent", 20 } }, // Filler: XP Reward - 20%
+        { 8500545, { "grant_xp_percent", 25 } }, // Filler: XP Reward - 25%
+        { 8500546, { "grant_xp_percent", 30 } }, // Filler: XP Reward - 30%
+        { 8500547, { "grant_xp_percent", 40 } }, // Filler: XP Reward - 40%
+        { 8500548, { "grant_xp_percent", 50 } }, // Filler: XP Reward - 50%
+        { 8500549, { "grant_title", 77 } }, // Filler: Character Title - the Exalted
+        { 8500550, { "grant_title", 78 } }, // Filler: Character Title - the Explorer
+        { 8500551, { "grant_title", 79 } }, // Filler: Character Title - the Diplomat
+        { 8500552, { "grant_title", 84 } }, // Filler: Character Title - Chef
+        { 8500553, { "grant_title", 89 } }, // Filler: Character Title - Prophet
+        { 8500554, { "grant_title", 92 } }, // Filler: Character Title - of the Ebon Blade
+        { 8500555, { "grant_title", 93 } }, // Filler: Character Title - Archmage
+        { 8500556, { "grant_title", 98 } }, // Filler: Character Title - Iron Chef
+        { 8500557, { "portable_service", 67826 } }, // Filler: Portable Service - Jeeves
+        { 8500558, { "portable_service", 22700 } }, // Filler: Portable Service - Field Repair Bot 74A
+        { 8500559, { "portable_service", 30524 } }, // Filler: Portable Service - Remote Mail Terminal
+        { 8500560, { "portable_service", 44389 } }, // Filler: Portable Service - Field Repair Bot 110G
     };
 }
