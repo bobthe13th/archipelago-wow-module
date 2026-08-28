@@ -125,4 +125,13 @@ namespace Archipelago
     // slot_data or the key is absent/malformed (wrong type, missing, no
     // Connected command in the frame).
     std::optional<std::string> ParseVendorCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["instance_clear_mode"] (a single string
+    // option, M4.9) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's
+    // exact shape (M4.7 Task 8): "don't crash the connection state machine
+    // on a shape it doesn't recognize". Returns std::nullopt (never throws)
+    // if slot_data or the key is absent/malformed. Replaces the
+    // Archipelago.InstanceClearMode manual worldserver.conf mirror outright
+    // -- see ArchipelagoWorldScript.cpp's OnUpdate for the consumer.
+    std::optional<std::string> ParseInstanceClearModeFromSlotData(std::string const& raw);
 }

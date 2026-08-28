@@ -320,6 +320,62 @@ TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when cmd i
     CHECK_FALSE(behavior.has_value());
 }
 
+TEST_CASE("ParseInstanceClearModeFromSlotData parses instance_clear_mode from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "instance_clear_mode": "final_boss_only"
+        }
+    }])";
+
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData(raw);
+
+    REQUIRE(mode.has_value());
+    CHECK(*mode == "final_boss_only");
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData(raw);
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt on malformed JSON")
+{
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData("not json");
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when the key is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "instance_clear_mode": 12345
+        }
+    }])";
+
+    std::optional<std::string> mode;
+    CHECK_NOTHROW(mode = Archipelago::ParseInstanceClearModeFromSlotData(raw));
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "instance_clear_mode": "all_bosses"
+        }
+    }])";
+
+    std::optional<std::string> mode;
+    CHECK_NOTHROW(mode = Archipelago::ParseInstanceClearModeFromSlotData(raw));
+    CHECK_FALSE(mode.has_value());
+}
+
 TEST_CASE("APInterception::ClassifiesEachSingleFlagBit")
 {
     using namespace Archipelago::Interception;
