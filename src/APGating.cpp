@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APGating.cpp
 #include "APGating.h"
 
+#include "APGateDecision.h"
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
 #include "DBCStructure.h"
@@ -352,6 +353,13 @@ public:
     }
 };
 
+// Declared (not defined) directly in BankHandler.cpp, next to its own
+// patched call site (M4.9) -- deliberately no shared header, so core
+// src's only coupling to this module is this one bare function-pointer
+// symbol. See this plan's Global Constraints for why a hard #include
+// wasn't used instead.
+extern bool (*ArchipelagoShouldSuppressBankAccess)();
+
 void AddArchipelagoGatingScripts()
 {
     new ArchipelagoRidingGateScript();
@@ -362,4 +370,11 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoMailboxGateScript();
     new ArchipelagoAuctionHouseGateScript();
     new ArchipelagoTalentPointGateScript();
+
+    ArchipelagoShouldSuppressBankAccess = []() {
+        return Archipelago::Gating::ShouldSuppressGatedAction(
+            sArchipelagoRealmState->IsEnabled(),
+            sArchipelagoRealmState->IsGateFamilyEnabled("access"),
+            Archipelago::Gating::IsAccessUnlocked("access_bank"));
+    };
 }
