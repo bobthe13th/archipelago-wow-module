@@ -244,6 +244,100 @@ def parse_spell_names(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> dict[int, str
     return result
 
 
+_FILLER_BUFF_SPELL_ID_FIELD = 0
+_FILLER_BUFF_DISPEL_FIELD = 2
+_FILLER_BUFF_ATTRIBUTES_FIELD = 4       # Attributes (Attr0) -- SharedDefines.h SPELL_ATTR0_*
+_FILLER_BUFF_ATTRIBUTES4_FIELD = 8      # AttributesEx4 (Attr4) -- SharedDefines.h SPELL_ATTR4_*
+_FILLER_BUFF_EFFECT_FIELDS = (71, 72, 73)
+_FILLER_BUFF_EFFECT_BASE_POINTS_FIELDS = (80, 81, 82)
+_FILLER_BUFF_EFFECT_APPLY_AURA_NAME_FIELDS = (95, 96, 97)
+
+_SPELL_ATTR0_PASSIVE = 0x00000040        # SharedDefines.h:376
+_SPELL_ATTR4_CANNOT_BE_STOLEN = 0x00000040  # SharedDefines.h:524
+_DISPEL_MAGIC = 1                         # SharedDefines.h:1376
+_SPELL_EFFECT_APPLY_AURA = 6              # SharedDefines.h:772
+
+# Curated allowlist of real AuraType values (src/server/game/Spells/Auras/
+# SpellAuraDefines.h) accepted as a genuine, player-facing POSITIVE buff --
+# PERIODIC_DAMAGE (3, a DoT) is deliberately NOT included even though some
+# DoTs are Magic-dispel. Reached via 3 real refinement passes against the
+# actual Spell.dbc during M4.9.6 planning (3,279 -> 1,857 -> 572 raw
+# candidates before the shared exclusion_rules.yaml denylist trims to the
+# final 568): PERIODIC_HEAL=8, MOD_DAMAGE_DONE=13, MOD_RESISTANCE=22,
+# MOD_STAT=29, MOD_INCREASE_SPEED=31, MOD_INCREASE_HEALTH=34,
+# MOD_SPELL_CRIT_CHANCE=57, MOD_DAMAGE_PERCENT_DONE=79, MOD_POWER_REGEN=85,
+# MOD_ATTACK_POWER=99, MOD_RESISTANCE_PCT=101, MOD_RANGED_ATTACK_POWER=124,
+# MOD_HEALING_DONE_PERCENT=136.
+_FILLER_BUFF_POSITIVE_AURA_TYPES = frozenset({
+    8, 13, 22, 29, 31, 34, 57, 79, 85, 99, 101, 124, 136,
+})
+
+
+def parse_filler_buff_spell_candidates(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> dict[int, str]:
+    """Parse Spell.dbc for a real, verified approximation of "anything
+    spellstealable" (explicit user direction, M4.9.6 brainstorming) --
+    SpellInfo::IsPositive() itself is a RUNTIME-COMPUTED field
+    (AttributesCu, set by SpellMgr::LoadSpellInfoCorrections()), not raw
+    DBC data, so it cannot be replicated by pure DBC parsing. This filter
+    instead mirrors Spell::EffectStealBeneficialBuff's real criteria
+    (src/server/game/Spells/SpellEffects.cpp): Dispel == DISPEL_MAGIC,
+    !SPELL_ATTR0_PASSIVE, !SPELL_ATTR4_CANNOT_BE_STOLEN, plus a curated
+    positive-AuraType allowlist with non-negative EffectBasePoints (a raw
+    dispel-type-only filter over-included real DoTs/debuffs like
+    Corruption -- confirmed against real data during planning). Field
+    offsets match parse_spell_names' own real, verified field_count=234/
+    record_size=936 Spell.dbc layout (DBCStructure.h's real SpellEntry
+    struct). Real result as of this checkout's Spell.dbc: 568 candidates
+    (see test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks)."""
+    with open(dbc_path, "rb") as f:
+        data = f.read()
+    magic = data[0:4]
+    if magic != b"WDBC":
+        raise ValueError(f"{dbc_path}: not a WDBC file (magic={magic!r})")
+    record_count, field_count, record_size, string_block_size = struct.unpack("<4I", data[4:20])
+    records_start = 20
+    string_block_start = records_start + record_count * record_size
+
+    def _read_string(offset: int) -> str:
+        if offset == 0:
+            return ""
+        start = string_block_start + offset
+        end = data.index(b"\x00", start)
+        return data[start:end].decode("utf-8", errors="replace")
+
+    rules = load_exclusion_rules()
+    result: dict[int, str] = {}
+    signed_fmt = "<" + "i" * field_count
+    for i in range(record_count):
+        rec_off = records_start + i * record_size
+        fields = struct.unpack(signed_fmt, data[rec_off:rec_off + record_size])
+        spell_id = fields[_FILLER_BUFF_SPELL_ID_FIELD]
+        if fields[_FILLER_BUFF_DISPEL_FIELD] != _DISPEL_MAGIC:
+            continue
+        if (fields[_FILLER_BUFF_ATTRIBUTES_FIELD] & 0xFFFFFFFF) & _SPELL_ATTR0_PASSIVE:
+            continue
+        if (fields[_FILLER_BUFF_ATTRIBUTES4_FIELD] & 0xFFFFFFFF) & _SPELL_ATTR4_CANNOT_BE_STOLEN:
+            continue
+        has_positive_aura = False
+        for eff_field, bp_field, aura_field in zip(
+            _FILLER_BUFF_EFFECT_FIELDS,
+            _FILLER_BUFF_EFFECT_BASE_POINTS_FIELDS,
+            _FILLER_BUFF_EFFECT_APPLY_AURA_NAME_FIELDS,
+        ):
+            if fields[eff_field] != _SPELL_EFFECT_APPLY_AURA:
+                continue
+            if fields[aura_field] in _FILLER_BUFF_POSITIVE_AURA_TYPES and fields[bp_field] >= 0:
+                has_positive_aura = True
+                break
+        if not has_positive_aura:
+            continue
+        name = _read_string(fields[_SPELL_NAME_FIELD_INDEX] & 0xFFFFFFFF)
+        if not name or is_denylisted(name, rules):
+            continue
+        result[spell_id] = name
+    return result
+
+
 def run_query(sql: str) -> list[tuple[str, ...]]:
     """Run one SQL statement against acore_world via the mysql.exe CLI
     (matching this project's existing MySQLExecutable-via-CLI convention --

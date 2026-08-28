@@ -56,3 +56,19 @@ name_denylist:
   # "Deep Sea Monsterbelly") do not start with it and are unaffected
   # (M4.9.3.1 final review fix).
   - '(?i)^Monster - '
+  # Legacy/superseded spell variant tagged with a literal "(OLD)" suffix,
+  # e.g. "Resistance (OLD)" (id 2381), "Rejuvenation (OLD)" (id 2598),
+  # "Demon Slayer (OLD)" (id 4651/4659) -- verified live against the full
+  # real Spell.dbc: exactly 7 rows match, every one an internal legacy
+  # duplicate of a real, still-live spell of the same base name (M4.9.6,
+  # filler_reward_effects buff-candidate extraction).
+  - '(?i)\(OLD\)'
+  # Internal QA/debug spell naming with a digit glued directly onto "Test"
+  # with no space, e.g. "MHTest01"/"MHTest02"/"MHTest03",
+  # "GGOODMANTEST2"/"GGOODMANTEST3", "Ignore All Gear Test2" -- the
+  # existing \btest\b pattern above requires "test" as an isolated word
+  # and misses these (no boundary between the glued prefix and "Test").
+  # Verified live against the full real Spell.dbc: exactly 8 rows match,
+  # all internal (M4.9.6, filler_reward_effects buff-candidate
+  # extraction).
+  - '(?i)Test\d+'

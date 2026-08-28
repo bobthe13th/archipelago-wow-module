@@ -8,6 +8,7 @@ from db_extract import (
     is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
     parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
     parse_achievements, parse_achievement_categories,
+    parse_filler_buff_spell_candidates,
 )
 
 
@@ -317,6 +318,121 @@ class TestParseAchievementCategories(unittest.TestCase):
         self.assertEqual(result[81], (81, "Feats of Strength"))
         self.assertEqual(result[14961][0], 168)  # Secrets of Ulduar 10-Player Raid -> Dungeons & Raids
         self.assertEqual(result[14961][1], "Secrets of Ulduar 10-Player Raid")
+
+
+class TestParseFillerBuffSpellCandidates(unittest.TestCase):
+    def _write_fake_dbc(self, tmpdir: str, records: list[dict]) -> pathlib.Path:
+        """records: list of dicts with optional keys id/name/dispel/
+        attributes/attributes4/effects (a list of up to 3
+        (effect, base_points, aura_name) tuples; unfilled effect slots
+        default to (0, 0, 0)) -- writes a minimal real WDBC file with
+        exactly 234 int32 fields per record, matching SpellEntry's real
+        field_count so field[2]/field[4]/field[8]/field[71-73]/[80-82]/
+        [95-97]/[136] are the real Dispel/Attributes/AttributesEx4/Effect/
+        EffectBasePoints/EffectApplyAuraName/SpellName offsets this
+        parser reads (DBCStructure.h, verified during M4.9.6 planning)."""
+        field_count = 234
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "Spell.dbc"
+        string_block = b"\x00"
+        offsets = []
+        for rec in records:
+            offsets.append(len(string_block))
+            string_block += rec.get("name", "").encode("utf-8") + b"\x00"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, len(string_block)))
+            for rec, offset in zip(records, offsets):
+                fields = [0] * field_count
+                fields[0] = rec.get("id", 1)
+                fields[2] = rec.get("dispel", 1)
+                fields[4] = rec.get("attributes", 0)
+                fields[8] = rec.get("attributes4", 0)
+                for idx, (effect, base_points, aura_name) in enumerate(rec.get("effects", [])[:3]):
+                    fields[71 + idx] = effect
+                    fields[80 + idx] = base_points
+                    fields[95 + idx] = aura_name
+                fields[136] = offset
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+            f.write(string_block)
+        return path
+
+    def test_includes_a_real_positive_periodic_heal_aura_dispellable_by_magic(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 774, "name": "Rejuvenation", "dispel": 1, "effects": [(6, 100, 8)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {774: "Rejuvenation"})
+
+    def test_excludes_non_magic_dispel(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 6673, "name": "Battle Shout", "dispel": 0, "effects": [(6, 100, 99)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_passive_spells(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 100, "name": "Fake Passive", "dispel": 1, "attributes": 0x40, "effects": [(6, 100, 8)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_cannot_be_stolen_spells(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 101, "name": "Fake Unstealable", "dispel": 1, "attributes4": 0x40, "effects": [(6, 100, 8)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_periodic_damage_aura_a_dot_not_a_buff(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 172, "name": "Fake DoT", "dispel": 1, "effects": [(6, 50, 3)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_negative_base_points_even_on_an_allowlisted_aura_type(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 348, "name": "Fake Debuff", "dispel": 1, "effects": [(6, -50, 13)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_names_matching_the_shared_denylist(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 2381, "name": "Resistance (OLD)", "dispel": 1, "effects": [(6, 10, 22)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_excludes_glued_test_digit_names_matching_the_shared_denylist(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 19362, "name": "MHTest03", "dispel": 1, "effects": [(6, 10, 22)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
+    def test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # Spell.dbc. 568 confirmed live during M4.9.6 planning (re-run the
+        # extraction if the checked-in Spell.dbc ever changes).
+        result = parse_filler_buff_spell_candidates()
+        self.assertEqual(len(result), 568)
+        self.assertEqual(result[774], "Rejuvenation")
+        self.assertEqual(result[1459], "Arcane Intellect")
+        self.assertNotIn(469, result)    # not Magic-dispel
+        self.assertNotIn(6673, result)   # not Magic-dispel (Battle Shout)
+        self.assertNotIn(2381, result)   # "Resistance (OLD)" -- denylisted
+        self.assertNotIn(19362, result)  # "MHTest03" -- denylisted
 
 
 if __name__ == "__main__":
