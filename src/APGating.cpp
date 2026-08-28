@@ -359,6 +359,7 @@ public:
 // symbol. See this plan's Global Constraints for why a hard #include
 // wasn't used instead.
 extern bool (*ArchipelagoShouldSuppressBankAccess)();
+extern bool (*ArchipelagoShouldSuppressGlyphSlot)(uint32 order);
 
 void AddArchipelagoGatingScripts()
 {
@@ -376,5 +377,13 @@ void AddArchipelagoGatingScripts()
             sArchipelagoRealmState->IsEnabled(),
             sArchipelagoRealmState->IsGateFamilyEnabled("access"),
             Archipelago::Gating::IsAccessUnlocked("access_bank"));
+    };
+
+    ArchipelagoShouldSuppressGlyphSlot = [](uint32 order) {
+        return Archipelago::Gating::ShouldSuppressGatedTier(
+            sArchipelagoRealmState->IsEnabled(),
+            sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+            order,
+            sArchipelagoRealmState->GetFlagTier("glyph_slots"));
     };
 }

@@ -18,4 +18,12 @@ namespace Archipelago::Gating
     // established discipline for anything requiring a live session (see
     // APTraps.cpp/APDelivery.cpp/every PlayerScript in APGating.cpp).
     bool ShouldSuppressGatedAction(bool moduleEnabled, bool gateFamilyEnabled, bool flagUnlocked);
+
+    // Pure decision logic for a progressive/tiered gate (e.g. bank bag
+    // slots, glyph slots): true means "this specific tier is not yet
+    // granted, skip applying it" -- matching SyncCharacterUnlocksToPlayer's
+    // existing monotonic-max shape (APGating.cpp) but as a per-tier
+    // predicate rather than a single grant call, since InitGlyphsForLevel
+    // needs to decide per-slot-index whether to call SetGlyphSlot at all.
+    bool ShouldSuppressGatedTier(bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
 }

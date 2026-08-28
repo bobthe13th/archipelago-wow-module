@@ -11,3 +11,13 @@ TEST_CASE("ShouldSuppressGatedAction suppresses only when module+family enabled 
     CHECK(ShouldSuppressGatedAction(false, true, false) == false);
     CHECK(ShouldSuppressGatedAction(false, false, false) == false);
 }
+
+TEST_CASE("ShouldSuppressGatedTier suppresses only when the granted tier is below the required tier")
+{
+    using namespace Archipelago::Gating;
+    CHECK(ShouldSuppressGatedTier(true, true, 3, 2) == true);
+    CHECK(ShouldSuppressGatedTier(true, true, 3, 3) == false);
+    CHECK(ShouldSuppressGatedTier(true, true, 3, 4) == false);
+    CHECK(ShouldSuppressGatedTier(true, false, 3, 0) == false);
+    CHECK(ShouldSuppressGatedTier(false, true, 3, 0) == false);
+}

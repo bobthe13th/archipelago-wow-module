@@ -7,4 +7,9 @@ namespace Archipelago::Gating
     {
         return moduleEnabled && gateFamilyEnabled && !flagUnlocked;
     }
+
+    bool ShouldSuppressGatedTier(bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier)
+    {
+        return moduleEnabled && gateFamilyEnabled && requiredTier > grantedTier;
+    }
 }
