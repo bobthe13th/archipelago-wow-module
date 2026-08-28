@@ -1293,7 +1293,8 @@ def _emit_cpp_core_loop(data: dict) -> str:
     lines.append("    // appear here -- Ragefire Chasm/Deadmines are absent, not present with a")
     lines.append("    // single-entry vector. Drives all_bosses InstanceClearMode; instances")
     lines.append("    // absent from this map always behave as final_boss_only, regardless of")
-    lines.append("    // the operator's InstanceClearMode setting (see ArchipelagoInstanceScript.cpp).")
+    lines.append("    // the connected seed's instance_clear_mode value (read from slot_data at")
+    lines.append("    // connect time, not a worldserver.conf setting -- see ArchipelagoInstanceScript.cpp).")
     lines.append("    inline std::unordered_map<std::string, std::vector<uint32_t>> const INSTANCE_BOSS_ENTRIES = {")
     for loc in clear_locs:
         trigger = loc["trigger"]
