@@ -20,7 +20,10 @@ namespace Archipelago::Goals
     // rules-evaluation engine, so unlike the reference Python client, this
     // module must independently re-derive "is the goal met" in C++ terms for
     // every mode it wants to actually report completion for. Modes with no
-    // entry here (key_hunt, artisan, ...) never report completion --
-    // matches goals.py's own _not_yet_implemented deferral for those modes.
+    // entry here (key_hunt, artisan, ...) never report completion -- matches
+    // goals.py's own _not_yet_implemented deferral for those modes.
+    // achievement_hunt and explorer both gained real entries in M4.9 Sec4;
+    // gladiator no longer exists as a GameMode value at all, so it was never
+    // a candidate for an entry here in the first place.
     void CheckAndSendGoalComplete();
 }

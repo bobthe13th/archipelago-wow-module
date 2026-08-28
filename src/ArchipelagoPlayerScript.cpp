@@ -15,6 +15,7 @@
 #include "APGating.h"
 #include "APProtocol.h"
 #include "APTraps.h"
+#include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFillerRewardEffectsContentTable.h"
@@ -230,6 +231,23 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         if (professionMilestoneIt != Archipelago::Professions::ApItemIdToMilestoneKey.end())
         {
             sArchipelagoRealmState->SetFlagTier(professionMilestoneIt->second, 1);
+            Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.9 Sec4 (Achievement Hunt/Explorer): achievements.yaml's items
+        // also use the record_milestone-shaped realm_state effect (named
+        // record_achievement) -- no real WoW item to mail, same shape as
+        // Archipelago::Professions' record_milestone. Keyed by the real
+        // achievement id (not the AP item id) so ArchipelagoGoals.cpp's
+        // IsAchievementHuntComplete/IsExplorerComplete can check the exact
+        // same "achievement_received_<id>" flag namespace this dispatch
+        // writes to.
+        auto achievementIt = Archipelago::Achievements::ApItemIdToAchievementId.find(received.item);
+        if (achievementIt != Archipelago::Achievements::ApItemIdToAchievementId.end())
+        {
+            sArchipelagoRealmState->SetFlagTier("achievement_received_" + std::to_string(achievementIt->second), 1);
             Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;

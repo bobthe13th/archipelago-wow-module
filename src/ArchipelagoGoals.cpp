@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFishContentTable.h"
@@ -123,6 +124,56 @@ namespace Archipelago::Goals
             }
             return receivedCount >= sArchipelagoRealmState->GetCollectorItemsRequired();
         }
+
+        // M4.9 Sec4 (Achievement Hunt): the SAME three-tier target-set logic
+        // goals.py's _achievement_hunt_target_item_names computes in Python,
+        // re-derived here in C++ terms against the same compiled
+        // Archipelago::Achievements table -- this bespoke C++ APClient has
+        // no rules-evaluation engine, so it must independently know which
+        // ids are required to ever report completion at all (see this
+        // file's own header comment). Reads the same
+        // Archipelago.AchievementHuntTier/AchievementHuntSubset conf mirror
+        // ArchipelagoWorldScript.cpp parses -- must match the connected
+        // seed's own achievement_hunt_tier/achievement_hunt_subset options,
+        // same manual-sync requirement as every other goal-shaping option.
+        bool IsAchievementIdRequired(uint32_t achievementId, uint32_t categoryId, std::string const& tier, std::string const& subset)
+        {
+            (void)categoryId;
+            if (tier == "named_subset")
+            {
+                auto it = Archipelago::Achievements::AchievementIdToSubset.find(achievementId);
+                return it != Archipelago::Achievements::AchievementIdToSubset.end() && it->second == subset;
+            }
+            if (tier == "ninety_nine_percent")
+                return !Archipelago::Achievements::ExtremelyHardAchievementIds.count(achievementId);
+            return true; // hundred_percent
+        }
+
+        bool IsAchievementHuntComplete()
+        {
+            std::string const& tier = sArchipelagoRealmState->GetAchievementHuntTier();
+            std::string const& subset = sArchipelagoRealmState->GetAchievementHuntSubset();
+            for (auto const& [achievementId, locationId] : Archipelago::Achievements::AchievementIdToLocationId)
+            {
+                (void)locationId;
+                if (!IsAchievementIdRequired(achievementId, 0, tier, subset))
+                    continue;
+                if (!sArchipelagoRealmState->IsFlagUnlocked("achievement_received_" + std::to_string(achievementId)))
+                    return false;
+            }
+            return true;
+        }
+
+        // M4.9 Sec4 (Explorer): complete the instant the single real World
+        // Explorer achievement (id 46) is received -- the exact same
+        // "achievement_received_<id>" flag namespace Achievement Hunt's own
+        // check reads, since both key off the same shared
+        // OnPlayerAchievementComplete hook and the same compiled table.
+        bool IsExplorerComplete()
+        {
+            return sArchipelagoRealmState->IsFlagUnlocked(
+                "achievement_received_" + std::to_string(Archipelago::Achievements::WORLD_EXPLORER_ACHIEVEMENT_ID));
+        }
     }
 
     void CheckAndSendGoalComplete()
@@ -156,11 +207,13 @@ namespace Archipelago::Goals
             complete = IsCompletionistComplete();
         else if (mode == "collector")
             complete = IsCollectorComplete();
-        // achievement_hunt/explorer/gladiator are all deferred entirely
-        // (not_buildable, see docs/m4-plan.md Task 27's outcome note) --
-        // goals.py's generate_early raises OptionError for all three before
-        // any of these GameMode values can ever reach a running worldserver,
-        // so this function never needs a branch for them.
+        else if (mode == "achievement_hunt")
+            complete = IsAchievementHuntComplete();
+        else if (mode == "explorer")
+            complete = IsExplorerComplete();
+        // gladiator no longer exists as a GameMode value at all (M4.9 Sec4) --
+        // removed from options.py's GameMode Choice entirely, not merely a
+        // deferred mode this dispatch needs a branch for.
 
         if (complete)
             sArchipelagoMgr->SendGoalComplete();

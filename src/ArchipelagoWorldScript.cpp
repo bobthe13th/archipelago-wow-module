@@ -149,6 +149,38 @@ namespace
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.CompletionistExpansion '{}', falling back to Vanilla", value);
         return "vanilla";
     }
+
+    // Values are PascalCase (this module's own conf convention), parsed into
+    // the bare snake_case strings the apworld's AchievementHuntTier/
+    // AchievementHuntSubset Choices use as current_key. Only meaningful when
+    // Archipelago.GameMode is AchievementHunt.
+    std::string ParseAchievementHuntTier(std::string const& value)
+    {
+        if (value == "NinetyNinePercent")
+            return "ninety_nine_percent";
+        if (value == "NamedSubset")
+            return "named_subset";
+        if (value != "HundredPercent")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AchievementHuntTier '{}', falling back to HundredPercent", value);
+        return "hundred_percent";
+    }
+
+    std::string ParseAchievementHuntSubset(std::string const& value)
+    {
+        static std::unordered_map<std::string, std::string> const subsets = {
+            { "Explorer", "explorer" },
+            { "Dungeons", "dungeons" },
+            { "Raids", "raids" },
+            { "Professions", "professions" },
+            { "Reputation", "reputation" },
+            { "Pvp", "pvp" },
+        };
+        auto it = subsets.find(value);
+        if (it != subsets.end())
+            return it->second;
+        LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AchievementHuntSubset '{}', falling back to Explorer", value);
+        return "explorer";
+    }
 }
 
 class ArchipelagoWorldScript : public WorldScript
@@ -239,6 +271,12 @@ public:
         // seed's own YAML.
         sArchipelagoRealmState->SetGameMode(ParseGameMode(sConfigMgr->GetOption<std::string>("Archipelago.GameMode", "Sprint")));
         sArchipelagoRealmState->SetCompletionistExpansion(ParseCompletionistExpansion(sConfigMgr->GetOption<std::string>("Archipelago.CompletionistExpansion", "Vanilla")));
+
+        // M4.9 Sec4 (Achievement Hunt): must match the connected seed's own
+        // achievement_hunt_tier/achievement_hunt_subset options -- same
+        // manual-sync requirement as GameMode/CompletionistExpansion above.
+        sArchipelagoRealmState->SetAchievementHuntTier(ParseAchievementHuntTier(sConfigMgr->GetOption<std::string>("Archipelago.AchievementHuntTier", "HundredPercent")));
+        sArchipelagoRealmState->SetAchievementHuntSubset(ParseAchievementHuntSubset(sConfigMgr->GetOption<std::string>("Archipelago.AchievementHuntSubset", "Explorer")));
 
         // Task 25 (Key Hunt): must match the connected seed's own
         // key_hunt_keys_required/key_hunt_instances_required options -- same

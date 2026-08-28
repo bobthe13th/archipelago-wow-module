@@ -206,6 +206,15 @@ public:
     std::string GetVendorCheckRepeatBehavior() const { return _vendorCheckRepeatBehavior; }
     void SetVendorCheckRepeatBehavior(std::string behavior) { _vendorCheckRepeatBehavior = std::move(behavior); }
 
+    // Cached mirror of Archipelago.AchievementHuntTier/AchievementHuntSubset
+    // (M4.9 Sec4), same not-persisted worldserver.conf-mirror convention as
+    // GameMode/CompletionistExpansion above -- consumed from
+    // ArchipelagoGoals.cpp's IsAchievementHuntComplete.
+    std::string GetAchievementHuntTier() const { return _achievementHuntTier; }
+    void SetAchievementHuntTier(std::string const& tier) { _achievementHuntTier = tier; }
+    std::string GetAchievementHuntSubset() const { return _achievementHuntSubset; }
+    void SetAchievementHuntSubset(std::string const& subset) { _achievementHuntSubset = subset; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -235,6 +244,8 @@ private:
     uint32_t _artisanPrimaryProfessionsRequired = 2;
     uint32_t _collectorItemsRequired = 264;
     std::string _vendorCheckRepeatBehavior = "suppress_entirely";
+    std::string _achievementHuntTier = "hundred_percent";
+    std::string _achievementHuntSubset = "explorer";
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

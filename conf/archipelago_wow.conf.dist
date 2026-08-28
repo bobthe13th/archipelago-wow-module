@@ -316,10 +316,10 @@ Archipelago.InstanceClearMode = "AllBosses"
 #                      goal-complete status update for anything but Sprint,
 #                      even if the connected seed's own game_mode option (and
 #                      its completion_condition) says otherwise. Modes with
-#                      no real content yet (KeyHunt, Artisan, Collector,
-#                      AchievementHunt, Explorer) are accepted here without
-#                      error but never report completion, matching the
-#                      apworld's own goals.py deferral for those modes.
+#                      no real content yet (KeyHunt, Artisan, Collector) are
+#                      accepted here without error but never report
+#                      completion, matching the apworld's own goals.py
+#                      deferral for those modes.
 #        Values:      "Sprint" (default) | "KeyHunt" | "Classic" |
 #                      "BurningCrusade" | "Wrath" | "Completionist" |
 #                      "Artisan" | "Collector" | "AchievementHunt" |
@@ -399,4 +399,31 @@ Archipelago.ArtisanPrimaryProfessionsRequired = 2
 #        Default:     264
 
 Archipelago.CollectorItemsRequired = 264
+###################################################################################################
+
+#
+#    Archipelago.AchievementHuntTier
+#        Description: Only relevant when Archipelago.GameMode is
+#                      "AchievementHunt" (M4.9) -- which of the three
+#                      curated tiers the completion rule requires.
+#                      Must match the connected seed's own
+#                      achievement_hunt_tier option.
+#        Values:      "HundredPercent" (default) | "NinetyNinePercent" |
+#                      "NamedSubset"
+#        Default:     "HundredPercent"
+
+Archipelago.AchievementHuntTier = "HundredPercent"
+
+#    Archipelago.AchievementHuntSubset
+#        Description: Only relevant when Archipelago.GameMode is
+#                      "AchievementHunt" and Archipelago.AchievementHuntTier
+#                      is "NamedSubset" -- which of the six real,
+#                      Achievement.dbc-category-derived thematic subsets is
+#                      required. Must match the connected seed's own
+#                      achievement_hunt_subset option.
+#        Values:      "Explorer" (default) | "Dungeons" | "Raids" |
+#                      "Professions" | "Reputation" | "Pvp"
+#        Default:     "Explorer"
+
+Archipelago.AchievementHuntSubset = "Explorer"
 ###################################################################################################

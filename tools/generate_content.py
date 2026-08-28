@@ -1547,7 +1547,9 @@ def _emit_cpp_achievements(data: dict) -> str:
         _GENERATED_HEADER_CPP.format(source="content/achievements.yaml"),
         "#pragma once", "",
         "#include <cstdint>",
+        "#include <string>",
         "#include <unordered_map>",
+        "#include <unordered_set>",
         "#include <utility>", "",
         "namespace Archipelago::Achievements", "{",
     ]
@@ -1591,6 +1593,24 @@ def _emit_cpp_achievements(data: dict) -> str:
     lines.append("        return result;")
     lines.append("    }")
     lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToAchievementId = BuildApItemIdToAchievementId();")
+    lines.append("")
+    lines.append("    // Real achievement id -> its own subset name (only present for ids that")
+    lines.append("    // belong to one of the six named thematic subsets). Consumed by")
+    lines.append("    // ArchipelagoGoals.cpp's IsAchievementHuntComplete for named_subset tier.")
+    lines.append("    inline std::unordered_map<uint32_t, std::string> const AchievementIdToSubset = {")
+    for loc in data["locations"]:
+        subset = loc["trigger"].get("subset")
+        if subset:
+            lines.append(f'        {{ {loc["trigger"]["achievement_id"]}, "{subset}" }}, // {_string_literal(loc["name"])}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // Real achievement ids hand-flagged extremely_hard (Task 3's curated")
+    lines.append("    // denylist) -- excluded from the ninety_nine_percent tier's target set.")
+    lines.append("    inline std::unordered_set<uint32_t> const ExtremelyHardAchievementIds = {")
+    for loc in data["locations"]:
+        if loc["trigger"].get("extremely_hard"):
+            lines.append(f'        {loc["trigger"]["achievement_id"]}, // {_string_literal(loc["name"])}')
+    lines.append("    };")
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
