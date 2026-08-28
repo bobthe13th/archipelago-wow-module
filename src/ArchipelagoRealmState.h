@@ -135,9 +135,10 @@ public:
     bool IsBossKillRecorded(std::string const& instanceKey, uint32_t bossEntry) const;
     void RecordBossKill(std::string const& instanceKey, uint32_t bossEntry);
 
-    // Cached mirror of Archipelago.InstanceClearMode (Task 23), same
-    // not-persisted worldserver.conf-mirror convention as CatchUpPolicy
-    // above -- consumed from ArchipelagoInstanceScript.cpp's kill hook.
+    // Cached value of instance_clear_mode (Task 23), read from the connected
+    // seed's own slot_data at connect time (M4.9.5 removed the old manual
+    // worldserver.conf mirror this used to have) -- consumed from
+    // ArchipelagoInstanceScript.cpp's kill hook.
     std::string GetInstanceClearMode() const { return _instanceClearMode; }
     void SetInstanceClearMode(std::string const& mode) { _instanceClearMode = mode; }
 

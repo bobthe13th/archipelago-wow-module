@@ -382,13 +382,17 @@ public:
             return true;
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
             return true;
-        if (Archipelago::Gating::IsAccessUnlocked("access_gathering"))
-            return true;
 
         SpellInfo const* spellInfo = spell->GetSpellInfo();
         if (!spellInfo)
             return true;
 
+        // Cheap structural pre-checks first, matching
+        // ArchipelagoMountSpellScript's own SpellInfo-check-before-flag-lookup
+        // precedent above -- this hook runs on every spell every unit on the
+        // realm prepares, so the string-keyed IsAccessUnlocked lookup below is
+        // deferred until we've confirmed the cast is even potentially
+        // gathering-shaped.
         bool isGatheringCast = spellInfo->HasEffect(SPELL_EFFECT_SKINNING);
         if (!isGatheringCast && targets != nullptr)
         {
@@ -409,6 +413,9 @@ public:
             }
         }
         if (!isGatheringCast)
+            return true;
+
+        if (Archipelago::Gating::IsAccessUnlocked("access_gathering"))
             return true;
 
         if (Unit* caster = spell->GetCaster())

@@ -77,30 +77,29 @@ Archipelago.ReconnectMaxSeconds = 60
 Archipelago.ProficiencyGating = 0
 
 #    Archipelago.AccessGating
-#        Description: Enable Auction House / Hearthstone / mailbox-send
-#                      access suppression (M4 gate family). Only turn this
-#                      on when the connected seed's player YAML also has
-#                      access_gating enabled -- same manual-sync
-#                      requirement and same "off is the safe direction" as
-#                      Archipelago.ProficiencyGating above. Note this only
-#                      covers 3 of the design's 5 access types: bank access
-#                      and gathering (mining/herbalism/skinning) have no
-#                      suppression hook in this AzerothCore checkout and are
-#                      not gated by this module (see content/gates.yaml's
-#                      comment for the research behind that).
+#        Description: Enable Auction House / Hearthstone / mailbox-send /
+#                      Bank / gathering (mining, herbalism, skinning, gated
+#                      as one access type) access suppression (M4 gate
+#                      family). Only turn this on when the connected seed's
+#                      player YAML also has access_gating enabled -- same
+#                      manual-sync requirement and same "off is the safe
+#                      direction" as Archipelago.ProficiencyGating above.
+#                      All 5 of the design's access types are gated when
+#                      this is on.
 #        Default:     0 (disabled)
 
 Archipelago.AccessGating = 0
 
 #    Archipelago.CharacterUnlockGating
-#        Description: Enable bank bag slot / dual spec / talent point
-#                      suppression (M4 gate family). Only turn this on when
-#                      the connected seed's player YAML also has
-#                      character_unlock_gating enabled -- same manual-sync
-#                      requirement and same "off is the safe direction" as
-#                      the other gate toggles above. Glyph Slot gating
-#                      (named in the design spec) is not implemented by
-#                      this module -- see content/gates.yaml's comment.
+#        Description: Enable bank bag slot / talent point / dual spec /
+#                      Glyph Slot suppression (M4 gate family). Only turn
+#                      this on when the connected seed's player YAML also
+#                      has character_unlock_gating enabled -- same
+#                      manual-sync requirement and same "off is the safe
+#                      direction" as the other gate toggles above. All four
+#                      character-unlock types named in the design (bank bag
+#                      slots, talent points, dual spec, Glyph Slots) are
+#                      gated when this is on.
 #        Default:     0 (disabled)
 
 Archipelago.CharacterUnlockGating = 0

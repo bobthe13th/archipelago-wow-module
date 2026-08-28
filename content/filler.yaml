@@ -17,7 +17,12 @@ family: filler
 # created) was tried first and was wrong for exactly this reason.
 #
 # Row count: 73 = 37 (29 + M4.9's 8 new gate items: Bank Access, Gathering
-# Access, 6x Progressive Glyph Slot) + 36 (unchanged trap ceiling) -- see
+# Access, 6x Progressive Glyph Slot) + 36 (the trap ceiling AS OF WHEN THIS
+# ROW COUNT WAS LAST SIZED -- NOTE: this baseline has since drifted from 36
+# due to an unrelated, separate milestone's per-level-milestone change to
+# items.py's _trap_baseline_location_count(); resizing this filler pool to
+# the current real ceiling is out of scope for this plan and is expected to
+# be handled by whichever effort is already tracking that drift) -- see
 # below for the original 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 +
 # Task 21's 2 combo-unlock items) + 36 (the absolute ceiling on
 # count_enabled_trap_items -- Task 17's trap_percentage_of_filler Range tops

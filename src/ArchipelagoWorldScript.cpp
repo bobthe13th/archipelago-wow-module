@@ -500,7 +500,18 @@ public:
             }
         }
         if (instanceClearMode)
-            sArchipelagoRealmState->SetInstanceClearMode(*instanceClearMode);
+        {
+            // M4.9.5 final review fix: restore the same validation discipline
+            // the old manual worldserver.conf mirror used to have (only
+            // recognized values accepted, logged error + fallback to the
+            // existing value otherwise) now that the raw string comes
+            // straight from slot_data instead -- adapted to the new
+            // snake_case value spellings.
+            if (*instanceClearMode == "all_bosses" || *instanceClearMode == "final_boss_only")
+                sArchipelagoRealmState->SetInstanceClearMode(*instanceClearMode);
+            else
+                LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized instance_clear_mode '{}' from slot_data, keeping existing value", *instanceClearMode);
+        }
     }
 
 private:
@@ -562,7 +573,7 @@ private:
     // above, for the one-shot instance_clear_mode slot_data string (M4.9).
     // Unlike vendor_check_repeat_behavior this REPLACES a previously manual
     // Archipelago.InstanceClearMode conf mirror outright -- see the removed
-    // block below and ArchipelagoRealmState's own "all_bosses" default,
+    // block above and ArchipelagoRealmState's own "all_bosses" default,
     // which now serves as the sole fallback until slot_data arrives.
     std::mutex _pendingInstanceClearModeMutex;
     std::optional<std::string> _pendingInstanceClearMode;

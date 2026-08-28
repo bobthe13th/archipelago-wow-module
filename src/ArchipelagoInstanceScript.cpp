@@ -50,10 +50,12 @@ public:
     // fire for the owner, so a pet-tanked/pet-finished final boss kill will
     // not send the instance-clear location check.
     //
-    // Task 23: Archipelago.InstanceClearMode splits behavior in two.
-    // final_boss_only (and every instance with no `bosses:` list at all --
-    // Ragefire Chasm/Deadmines, unconditionally, regardless of the operator's
-    // InstanceClearMode setting) keeps the original M2.1 behavior below:
+    // Task 23: instance_clear_mode (read from the connected seed's own
+    // slot_data at connect time -- no manual worldserver.conf mirror exists
+    // for this anymore) splits behavior in two. final_boss_only (and every
+    // instance with no `bosses:` list at all -- Ragefire Chasm/Deadmines,
+    // unconditionally, regardless of the connected seed's instance_clear_mode
+    // value) keeps the original M2.1 behavior below:
     // fire immediately the instant the configured final-boss entry dies, no
     // other boss kill matters. all_bosses instead records every recognized
     // boss kill into archipelago_boss_kills (realm-wide, survives restarts)

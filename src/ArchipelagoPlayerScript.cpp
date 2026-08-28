@@ -175,6 +175,18 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             {
                 Archipelago::Gating::ApplyComboUnlockMasks();
             }
+            // M4.9.5 final review fix: glyph_slots deliveries also need an
+            // immediate refresh for already-online characters, same reasoning
+            // as bank_bag_slots/dual_spec above. InitGlyphsForLevel() is the
+            // same call Player::GiveLevel already makes mid-session, so it's
+            // known-safe to call live here too.
+            else if (flagKey == "glyph_slots")
+            {
+                sWorldSessionMgr->DoForAllOnlinePlayers([](Player* onlinePlayer)
+                {
+                    onlinePlayer->InitGlyphsForLevel();
+                });
+            }
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

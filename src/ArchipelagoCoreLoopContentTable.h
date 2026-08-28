@@ -183,7 +183,9 @@ namespace Archipelago::CoreLoop
     // appear here -- Ragefire Chasm/Deadmines are absent, not present with a
     // single-entry vector. Drives all_bosses InstanceClearMode; instances
     // absent from this map always behave as final_boss_only, regardless of
-    // the operator's InstanceClearMode setting (see ArchipelagoInstanceScript.cpp).
+    // the connected seed's instance_clear_mode value (read from slot_data at
+    // connect time, not a worldserver.conf setting -- see
+    // ArchipelagoInstanceScript.cpp).
     inline std::unordered_map<std::string, std::vector<uint32_t>> const INSTANCE_BOSS_ENTRIES = {
         { INSTANCE_KEY_MOLTEN_CORE, { 12118, 11982, 12259, 12057, 12264, 12056, 12098, 11988, 12018, 11502 } },
         { INSTANCE_KEY_SUNWELL_PLATEAU, { 24892, 24882, 25038, 25165, 25166, 25840, 25315 } },
