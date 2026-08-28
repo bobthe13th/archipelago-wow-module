@@ -16,8 +16,10 @@ family: filler
 # reverse. A fixed "worst-case slack" location count (every row always
 # created) was tried first and was wrong for exactly this reason.
 #
-# Row count: 65 = 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task
-# 21's 2 combo-unlock items) + 36 (the absolute ceiling on
+# Row count: 73 = 37 (29 + M4.9's 8 new gate items: Bank Access, Gathering
+# Access, 6x Progressive Glyph Slot) + 36 (unchanged trap ceiling) -- see
+# below for the original 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 +
+# Task 21's 2 combo-unlock items) + 36 (the absolute ceiling on
 # count_enabled_trap_items -- Task 17's trap_percentage_of_filler Range tops
 # out at 100, and _trap_baseline_location_count() sums
 # len(content_data.LOCATIONS) [19 quest locations] +
@@ -245,4 +247,28 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 65"
     location_id: 740064
+    trigger: {kind: always_available}
+  - name: "Filler Check 66"
+    location_id: 740065
+    trigger: {kind: always_available}
+  - name: "Filler Check 67"
+    location_id: 740066
+    trigger: {kind: always_available}
+  - name: "Filler Check 68"
+    location_id: 740067
+    trigger: {kind: always_available}
+  - name: "Filler Check 69"
+    location_id: 740068
+    trigger: {kind: always_available}
+  - name: "Filler Check 70"
+    location_id: 740069
+    trigger: {kind: always_available}
+  - name: "Filler Check 71"
+    location_id: 740070
+    trigger: {kind: always_available}
+  - name: "Filler Check 72"
+    location_id: 740071
+    trigger: {kind: always_available}
+  - name: "Filler Check 73"
+    location_id: 740072
     trigger: {kind: always_available}
