@@ -272,6 +272,33 @@ _FILLER_BUFF_POSITIVE_AURA_TYPES = frozenset({
     8, 13, 22, 29, 31, 34, 57, 79, 85, 99, 101, 124, 136,
 })
 
+# I1 (final whole-branch review, M4.9.6): the positive-aura check above
+# accepts a spell as soon as ANY ONE of its 3 effect slots carries an
+# allowlisted positive aura type -- it never checks whether a DIFFERENT
+# slot on the SAME spell carries a genuinely negative/CC effect. Real
+# confirmed examples that slipped through before this veto existed: spell
+# 5782 "Fear" (slot1 MOD_FEAR bp=-1, slot2 MOD_INCREASE_SPEED bp=24 --
+# accepted on slot2 alone) and spell 11020 "Petrify" (MOD_STUN bundled
+# with a MOD_RESISTANCE-shaped slot). This is a curated NEGATIVE-aura
+# denylist (real AuraType values, verified against the real
+# src/server/game/Spells/Auras/SpellAuraDefines.h in this checkout) --
+# ANY effect slot matching one of these vetoes the whole spell,
+# regardless of what the positive-check loop above found:
+# PERIODIC_DAMAGE=3 (a real DoT), MOD_CHARM=6, MOD_FEAR=7, MOD_STUN=12,
+# MOD_DAMAGE_TAKEN=14 (distinct from the already-allowlisted
+# MOD_DAMAGE_PERCENT_DONE=79 -- this one increases damage the TARGET
+# takes, a debuff), MOD_ROOT=26, MOD_SILENCE=27, MOD_DECREASE_SPEED=33,
+# TRANSFORM=56, MOD_DAMAGE_PERCENT_TAKEN=87. Verified live against the
+# real Spell.dbc (parse_filler_buff_spell_candidates before this change:
+# 568 candidates): this veto alone removes 45 real rows (568 -> 523),
+# including real Fear/Psychic Scream/Scare Beast/Turn Evil/Dreamless
+# Sleep/Petrify/Poultryized!-family crowd control and Boiling
+# Blood/Unstable Magic/Arcane Residue-family damage-taken debuffs that
+# were previously slipping through on a positive-shaped side effect.
+_FILLER_BUFF_NEGATIVE_AURA_TYPES = frozenset({
+    3, 6, 7, 12, 14, 26, 27, 33, 56, 87,
+})
+
 
 def parse_filler_buff_spell_candidates(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> dict[int, str]:
     """Parse Spell.dbc for a real, verified approximation of "anything
@@ -287,8 +314,14 @@ def parse_filler_buff_spell_candidates(dbc_path: pathlib.Path = _SPELL_DBC_PATH)
     Corruption -- confirmed against real data during planning). Field
     offsets match parse_spell_names' own real, verified field_count=234/
     record_size=936 Spell.dbc layout (DBCStructure.h's real SpellEntry
-    struct). Real result as of this checkout's Spell.dbc: 568 candidates
-    (see test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks)."""
+    struct), plus a separate cross-slot NEGATIVE-AuraType veto pass (see
+    _FILLER_BUFF_NEGATIVE_AURA_TYPES -- final whole-branch review finding
+    I1) that rejects a spell outright if ANY effect slot carries a
+    genuine CC/debuff aura, even one that isn't the slot that satisfied
+    the positive-aura check. Real result as of this checkout's Spell.dbc:
+    519 candidates (568 originally, -45 from the I1 veto, -4 from I2's
+    exclusion_rules.yaml additions -- see
+    test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks)."""
     with open(dbc_path, "rb") as f:
         data = f.read()
     magic = data[0:4]
@@ -330,6 +363,22 @@ def parse_filler_buff_spell_candidates(dbc_path: pathlib.Path = _SPELL_DBC_PATH)
                 has_positive_aura = True
                 break
         if not has_positive_aura:
+            continue
+        # I1: separate veto pass -- independent of the positive-check loop
+        # above -- over all 3 effect slots. Reject the whole spell if ANY
+        # slot carries a negative/CC aura type, even one that isn't the
+        # slot that satisfied has_positive_aura.
+        has_negative_aura = False
+        for eff_field, aura_field in zip(
+            _FILLER_BUFF_EFFECT_FIELDS,
+            _FILLER_BUFF_EFFECT_APPLY_AURA_NAME_FIELDS,
+        ):
+            if fields[eff_field] != _SPELL_EFFECT_APPLY_AURA:
+                continue
+            if fields[aura_field] in _FILLER_BUFF_NEGATIVE_AURA_TYPES:
+                has_negative_aura = True
+                break
+        if has_negative_aura:
             continue
         name = _read_string(fields[_SPELL_NAME_FIELD_INDEX] & 0xFFFFFFFF)
         if not name or is_denylisted(name, rules):

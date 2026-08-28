@@ -405,6 +405,25 @@ class TestParseFillerBuffSpellCandidates(unittest.TestCase):
             result = parse_filler_buff_spell_candidates(path)
         self.assertEqual(result, {})
 
+    def test_excludes_a_spell_whose_other_slot_carries_a_negative_aura_even_though_one_slot_is_positive(self) -> None:
+        # I1 (final whole-branch review): real spell 5782 "Fear" has
+        # effect slots [MOD_FEAR (aura 7, bp=-1), MOD_INCREASE_SPEED
+        # (aura 31, bp=24)] -- the OLD has_positive_aura-only check
+        # accepted it purely on slot 2, never noticing slot 1's negative
+        # aura. This fake record reproduces that exact two-slot shape:
+        # slot 1 = MOD_FEAR (a denylisted negative aura type) with
+        # POSITIVE base points (so it isn't excluded merely for negative
+        # bp), slot 2 = MOD_INCREASE_SPEED (an allowlisted positive aura
+        # type) with positive base points -- slot 2 alone would satisfy
+        # the old positive-only check, so this proves the new veto pass
+        # rejects the whole spell regardless.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                {"id": 5782, "name": "Fake Fear", "dispel": 1, "effects": [(6, 1, 7), (6, 24, 31)]},
+            ])
+            result = parse_filler_buff_spell_candidates(path)
+        self.assertEqual(result, {})
+
     def test_excludes_names_matching_the_shared_denylist(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             path = self._write_fake_dbc(tmp, [
@@ -423,16 +442,24 @@ class TestParseFillerBuffSpellCandidates(unittest.TestCase):
 
     def test_real_spell_dbc_produces_the_verified_candidate_count_and_spot_checks(self) -> None:
         # Real-file integration check against this checkout's actual
-        # Spell.dbc. 568 confirmed live during M4.9.6 planning (re-run the
-        # extraction if the checked-in Spell.dbc ever changes).
+        # Spell.dbc. 568 confirmed live during M4.9.6 planning; 523
+        # re-confirmed live after the final whole-branch review's I1 fix
+        # (the cross-slot negative-aura veto pass, -45: 568 -> 523;
+        # re-run the extraction if the checked-in Spell.dbc or
+        # db_extract.py's aura denylist ever change).
         result = parse_filler_buff_spell_candidates()
-        self.assertEqual(len(result), 568)
+        self.assertEqual(len(result), 523)
         self.assertEqual(result[774], "Rejuvenation")
         self.assertEqual(result[1459], "Arcane Intellect")
         self.assertNotIn(469, result)    # not Magic-dispel
         self.assertNotIn(6673, result)   # not Magic-dispel (Battle Shout)
         self.assertNotIn(2381, result)   # "Resistance (OLD)" -- denylisted
         self.assertNotIn(19362, result)  # "MHTest03" -- denylisted
+        # I1: cross-slot negative-aura veto -- real spells whose OTHER
+        # effect slot carries a genuine CC/debuff aura even though one
+        # slot alone would have passed the old positive-only check.
+        self.assertNotIn(5782, result)   # "Fear" -- MOD_FEAR + MOD_INCREASE_SPEED
+        self.assertNotIn(11020, result)  # "Petrify" -- MOD_STUN-bearing
 
 
 if __name__ == "__main__":
