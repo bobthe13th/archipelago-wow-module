@@ -124,7 +124,6 @@ namespace
             { "Artisan", "artisan" },
             { "Collector", "collector" },
             { "AchievementHunt", "achievement_hunt" },
-            { "Gladiator", "gladiator" },
             { "Explorer", "explorer" },
             { "FishingQuest", "fishing_quest" },
         };

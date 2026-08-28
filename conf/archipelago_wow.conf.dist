@@ -317,14 +317,13 @@ Archipelago.InstanceClearMode = "AllBosses"
 #                      even if the connected seed's own game_mode option (and
 #                      its completion_condition) says otherwise. Modes with
 #                      no real content yet (KeyHunt, Artisan, Collector,
-#                      AchievementHunt, Gladiator, Explorer, FishingQuest) are
-#                      accepted here without error but never report
-#                      completion, matching the apworld's own
-#                      goals.py deferral for those modes.
+#                      AchievementHunt, Explorer) are accepted here without
+#                      error but never report completion, matching the
+#                      apworld's own goals.py deferral for those modes.
 #        Values:      "Sprint" (default) | "KeyHunt" | "Classic" |
 #                      "BurningCrusade" | "Wrath" | "Completionist" |
 #                      "Artisan" | "Collector" | "AchievementHunt" |
-#                      "Gladiator" | "Explorer" | "FishingQuest"
+#                      "Explorer" | "FishingQuest"
 #        Default:     "Sprint"
 
 Archipelago.GameMode = "Sprint"
