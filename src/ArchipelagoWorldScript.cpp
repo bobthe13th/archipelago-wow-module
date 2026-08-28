@@ -247,23 +247,6 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_tbc", tbcScopeActive);
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_wotlk", wotlkScopeActive);
 
-        // Task 23: consumed directly as a string by
-        // ArchipelagoInstanceScript.cpp's kill hook -- unlike DeliveryPolicy/
-        // CostTier, there is no C++ enum for this value anywhere else in the
-        // module, so no Parse* helper is needed, just validate it and warn on
-        // an unrecognized value the same way every Parse* helper's fallback
-        // branch does.
-        std::string instanceClearMode = sConfigMgr->GetOption<std::string>("Archipelago.InstanceClearMode", "AllBosses");
-        if (instanceClearMode == "AllBosses")
-            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
-        else if (instanceClearMode == "FinalBossOnly")
-            sArchipelagoRealmState->SetInstanceClearMode("final_boss_only");
-        else
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.InstanceClearMode '{}', falling back to AllBosses", instanceClearMode);
-            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
-        }
-
         // Found needed during Task 23/24's own review, not originally planned
         // for either task: ArchipelagoGoals.cpp's CheckAndSendGoalComplete
         // needs to know which mode is active to report completion at all
@@ -450,6 +433,10 @@ public:
             [this](std::string const& behavior) {
                 std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
                 _pendingVendorCheckRepeatBehavior = behavior;
+            },
+            [this](std::string const& mode) {
+                std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
+                _pendingInstanceClearMode = mode;
             });
     }
 
@@ -502,6 +489,18 @@ public:
         }
         if (vendorCheckRepeatBehavior)
             sArchipelagoRealmState->SetVendorCheckRepeatBehavior(*vendorCheckRepeatBehavior);
+
+        std::optional<std::string> instanceClearMode;
+        {
+            std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
+            if (!_instanceClearModeApplied && _pendingInstanceClearMode)
+            {
+                instanceClearMode = _pendingInstanceClearMode;
+                _instanceClearModeApplied = true;
+            }
+        }
+        if (instanceClearMode)
+            sArchipelagoRealmState->SetInstanceClearMode(*instanceClearMode);
     }
 
 private:
@@ -557,6 +556,17 @@ private:
     std::mutex _pendingVendorCheckRepeatBehaviorMutex;
     std::optional<std::string> _pendingVendorCheckRepeatBehavior;
     bool _vendorCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
+    // above, for the one-shot instance_clear_mode slot_data string (M4.9).
+    // Unlike vendor_check_repeat_behavior this REPLACES a previously manual
+    // Archipelago.InstanceClearMode conf mirror outright -- see the removed
+    // block below and ArchipelagoRealmState's own "all_bosses" default,
+    // which now serves as the sole fallback until slot_data arrives.
+    std::mutex _pendingInstanceClearModeMutex;
+    std::optional<std::string> _pendingInstanceClearMode;
+    bool _instanceClearModeApplied = false;
 };
 
 void AddArchipelagoWorldScripts()

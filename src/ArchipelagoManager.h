@@ -18,7 +18,8 @@ public:
         std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
         std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
         std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived,
-        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived);
+        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
+        std::function<void(std::string const&)> onInstanceClearModeReceived);
     void Shutdown();
 
     void SendLocationChecks(std::vector<int64_t> const& locationIds);

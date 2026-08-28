@@ -275,34 +275,6 @@ Archipelago.SpiritHealerVariant = "Vanilla"
 Archipelago.ComboUnlocksScope = "Off"
 ###################################################################################################
 
-#    Archipelago.InstanceClearMode
-#        Description: How much of Molten Core/Sunwell Plateau/Icecrown
-#                      Citadel (Task 23, M4 Sec5.4) must die before that
-#                      raid's instance-clear location check fires.
-#                      "AllBosses" (default) requires every boss configured
-#                      for that raid to have died at least once, across
-#                      however many attempts/raid nights it takes --
-#                      resurrection-prone or multi-phase fights (Sunwell's
-#                      Eredar Twins, Kalecgos, M'uru) are handled correctly
-#                      regardless of kill order. "FinalBossOnly" fires the
-#                      instant the raid's own final boss dies, matching how
-#                      the two M2 dungeons (Ragefire Chasm, Deadmines)
-#                      already behave -- those two dungeons are NOT affected
-#                      by this setting either way, since they have no
-#                      configured boss roster to track. Realm-wide, not
-#                      per-character; re-applied on both startup and
-#                      `.reload config` has no effect here since this value
-#                      is read live on every boss kill, not cached into a
-#                      pushed sWorld config value like ComboUnlocksScope
-#                      above. Only turn this away from the default when the
-#                      connected seed's player YAML also has a matching
-#                      instance_clear_mode option.
-#        Values:      "AllBosses" (default) | "FinalBossOnly"
-#        Default:     "AllBosses"
-
-Archipelago.InstanceClearMode = "AllBosses"
-###################################################################################################
-
 #    Archipelago.GameMode
 #        Description: Which goal-mode the connected AP seed is generated
 #                      for. Found necessary during Task 23/24's own review,
