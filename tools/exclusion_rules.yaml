@@ -15,3 +15,44 @@ name_denylist:
   - '(?i)\bdeveloper\b'
   - '(?i)\binvalid\b'
   - '(?i)\bdnt\b'
+  # Placeholder tag, e.g. "[PH] Hakkar'i Urn" / "Ahn'Qiraj Wand [PH]" --
+  # 141 real rows verified live, all internal/unfinished-art placeholder
+  # items, none player-facing (M4.9.3.1 final review fix).
+  - '(?i)\[PH\]'
+  # "OLD" glued directly onto the next word with no space, e.g.
+  # "OLDRecruit's Belt", "OLDMonster - Mace, Standard Basic Offhand" -- the
+  # \bunused\b-style word-boundary patterns above don't catch this (no
+  # boundary between "OLD" and the following capital letter). Anchored at
+  # the start of the name and requires a letter to immediately follow, so
+  # real items that legitimately use "Old " as a normal adjective (e.g.
+  # "Old Greatsword", "Old Gods' Blessing", "Old Whitebark's Pendant") are
+  # NOT matched -- verified live: 53 rows match a bare 'OLD%' prefix, of
+  # which exactly the ones with no space after OLD (this pattern's target)
+  # are internal starter-gear/totem/monster-model duplicates; every
+  # space-separated "Old <Name>" row is real, player-facing content
+  # (M4.9.3.1 final review fix).
+  - '(?i)^OLD[A-Z]'
+  # Internal NPC-only visual equipment, e.g. "NPC Equip 18732" -- verified
+  # live: 4,856 rows all conform exactly to the "NPC Equip <digits>" shape,
+  # none player-facing (M4.9.3.1 final review fix).
+  - '(?i)\bNPC Equip\b'
+  # Numeric-prefixed internal GM-testing gear naming, e.g. "90 Green
+  # Warrior Axe", "68 TEST Green Cloth Belt", "130 Test Caster Belt" -- a
+  # common AzerothCore/TrinityCore convention for level/quality/class
+  # test items. Verified live against all 225 real rows matching a bare
+  # "^[0-9]+ " prefix: the only real, player-facing rows in that set use
+  # a unit word right after the number ("10 Pound Mud Snapper", "500
+  # Pound Chicken", "2 Stone Sledgehammer" -- 38 rows); every row whose
+  # second word is "TEST"/"Test"/"Green"/"Epic" (187 rows) is internal
+  # test gear, so anchoring on those specific second words (rather than
+  # any numeric prefix) avoids excluding the real fish/novelty items
+  # (M4.9.3.1 final review fix).
+  - '(?i)^\d+\s+(?:test|green|epic)\b'
+  # Internal monster-weapon/prop model naming, e.g. "Monster - Sword2H,
+  # Standard Basic", "Monster - Item, Bag - Brown" -- verified live: 562
+  # rows start with this exact "Monster - " prefix, all internal
+  # NPC-display-only models; real items that merely contain the word
+  # "Monster" elsewhere (e.g. "Monster Omelet", "Monster Slayer's Kit",
+  # "Deep Sea Monsterbelly") do not start with it and are unaffected
+  # (M4.9.3.1 final review fix).
+  - '(?i)^Monster - '

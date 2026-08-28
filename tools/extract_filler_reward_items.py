@@ -1,12 +1,26 @@
 #!/usr/bin/env python3
 """DB-driven extraction for the Filler Reward Items content family (M4.9.3.1).
 Run this to regenerate content/filler_reward_items.yaml; never hand-edit
-that file. 13 categories total: this file implements 10 independent ones
-directly; the remaining 3 (recipe, mount, pet -- each cross-family-
-dependent) are added by a later pass over this same file (see the plan's
-Task 5). NOT the same family as the pre-existing content/filler.yaml
-(sink LOCATIONS with no items, the opposite mechanism, backfilling gates/
-traps' item surplus) -- see this plan's Global Constraints."""
+that file. 12 real categories total: 10 independent ones queried directly
+from item_template, plus mount/pet (each cross-family-dependent on
+Collections' own claimed-spell-id set, see _load_collections_claimed_spell_ids).
+
+A "recipe" category (reusing content/recipes.yaml's own real recipe pool)
+was implemented during an earlier pass but was REMOVED after a
+whole-branch review found a real multiworld-integrity risk: WoW's
+spell-learn hook (ArchipelagoLearnSpellScript.cpp) fires purely on
+spell_id, source-agnostic to how the spell was learned, so a
+Filler-delivered "duplicate" recipe item would silently complete that
+same real Recipes location check outside the normal randomizer flow.
+Mount/pet avoid this exact risk via Collections-exclusion (they skip any
+entry whose taught spell is already claimed by Collections' own map,
+leaving a real disjoint subset to draw from) -- but recipes.yaml claims
+its ENTIRE real recipe pool, leaving no safe disjoint subset for Filler
+to draw from, so recipe could not be made safe the same way and was
+dropped entirely rather than building a more invasive C++ fix. NOT the
+same family as the pre-existing content/filler.yaml (sink LOCATIONS with
+no items, the opposite mechanism, backfilling gates/traps' item surplus)
+-- see this plan's Global Constraints."""
 from __future__ import annotations
 
 import pathlib
@@ -97,40 +111,6 @@ _TOY_ENTRIES = {
 }
 
 
-def _load_recipes_yaml_items() -> list[dict]:
-    """Real (entry, name) pairs from content/recipes.yaml's own already-
-    extracted item list -- Filler's "recipe reward" category is a SEPARATE
-    random sample of the SAME real recipe pool extract_recipes.py already
-    draws from (2,034 real class=9 recipe items), delivered as a plain
-    filler mail item with NO learn_spell trigger attached (unlike Recipes'
-    own copies) -- so there is no location-check collision risk, a
-    filler-delivered recipe item just sits in the mailbox/inventory unless
-    separately used to learn it, a normal side-effect not a hidden trigger.
-    Reads content/recipes.yaml directly (must run after extract_recipes.py
-    has produced it, same ordering discipline extract_trainer_spells.py
-    already established for its own cross-family read)."""
-    recipes_path = pathlib.Path(__file__).parent.parent / "content" / "recipes.yaml"
-    with open(recipes_path, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    result = []
-    for item in data["items"]:
-        # recipes.yaml's item name is "Recipe Item: {name} (#{entry})" --
-        # extract the real entry from delivery.wow_item_entry directly
-        # rather than parsing it back out of the name string.
-        entry = item["delivery"]["wow_item_entry"]
-        # Strip "Recipe Item: " prefix and " (#N)" suffix to recover the
-        # real underlying item name for Filler's own "Filler: {name} (#N)"
-        # naming convention.
-        raw_name = item["name"][len("Recipe Item: "):].rsplit(" (#", 1)[0]
-        result.append({"entry": entry, "name": raw_name})
-    return result
-
-
-def _extract_recipe_category() -> list[dict]:
-    rows = _load_recipes_yaml_items()
-    return [{"entry": r["entry"], "name": r["name"], "category": "recipe"} for r in rows]
-
-
 def _load_collections_claimed_spell_ids() -> frozenset[int]:
     """Real spell_ids already claimed by Collections' own SpellIdToLocationId
     map (264 total: confirmed against ArchipelagoCollectionsContentTable.h's
@@ -218,11 +198,6 @@ def extract() -> dict:
         if is_denylisted(name, rules):
             continue
         all_rows.append({"entry": entry, "name": name, "category": "toy"})
-
-    for row in _extract_recipe_category():
-        if is_denylisted(row["name"], rules):
-            continue
-        all_rows.append(row)
 
     for row in _extract_mount_or_pet_category(subclass=5, category="mount"):
         if is_denylisted(row["name"], rules):
