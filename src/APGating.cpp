@@ -366,10 +366,16 @@ public:
     // SpellInfo-structural check (SPELL_EFFECT_SKINNING, mirroring
     // ArchipelagoMountSpellScript's own HasAura(SPELL_AURA_MOUNTED)
     // precedent). Mining/Herbalism resolve the real target GameObject's
-    // Lock.dbc row and check its Skill[] cases against SKILL_HERBALISM/
-    // SKILL_MINING -- zero guessed spell ids for either. Fires at
-    // Spell::prepare()'s very start, before any effect handling, so a
-    // denied cast never reaches EffectSkinning/EffectOpenLock at all.
+    // Lock.dbc row and check its Type[]/Index[] case pairs for a
+    // LOCK_KEY_SKILL case whose Index equals LOCKTYPE_HERBALISM/
+    // LOCKTYPE_MINING -- mirroring Spell::CanOpenLock's own real
+    // SkillByLockType(LockType(lockInfo->Index[j])) resolution. Skill[j]
+    // is NOT a skill id -- it's the numeric skill-level requirement for
+    // that case, a different column entirely, so it must never be
+    // compared against SKILL_HERBALISM/SKILL_MINING. Zero guessed spell
+    // ids for either. Fires at Spell::prepare()'s very start, before any
+    // effect handling, so a denied cast never reaches
+    // EffectSkinning/EffectOpenLock at all.
     bool CanPrepare(Spell* spell, SpellCastTargets const* targets, AuraEffect const* /*triggeredByAura*/) override
     {
         if (!sArchipelagoRealmState->IsEnabled())
@@ -390,9 +396,10 @@ public:
             {
                 if (LockEntry const* lock = sLockStore.LookupEntry(target->GetGOInfo()->GetLockId()))
                 {
-                    for (uint32_t skill : lock->Skill)
+                    for (uint32_t j = 0; j < MAX_LOCK_CASE; ++j)
                     {
-                        if (skill == SKILL_HERBALISM || skill == SKILL_MINING)
+                        if (lock->Type[j] == LOCK_KEY_SKILL &&
+                            (lock->Index[j] == LOCKTYPE_HERBALISM || lock->Index[j] == LOCKTYPE_MINING))
                         {
                             isGatheringCast = true;
                             break;
