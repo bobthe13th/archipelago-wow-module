@@ -61,6 +61,98 @@ def parse_map_expansions(dbc_path: pathlib.Path = _MAP_DBC_PATH) -> dict[int, st
     return result
 
 
+_ACHIEVEMENT_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Achievement.dbc"
+_ACHIEVEMENT_CATEGORY_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Achievement_Category.dbc"
+
+_ACHIEVEMENT_NAME_FIELD = 4       # first of 16 locale-string slots (enUS)
+_ACHIEVEMENT_CATEGORY_ID_FIELD = 38
+_ACHIEVEMENT_FLAGS_FIELD = 41
+
+
+def _read_wdbc(dbc_path: pathlib.Path) -> tuple[int, list[bytes], bytes]:
+    """Shared WDBC-file reader for the two new achievement-family parsers
+    below (parse_map_expansions above pre-dates this helper and is left
+    untouched -- see this plan's Global Constraints). Returns
+    (field_count, raw_record_bytes_per_row, string_block)."""
+    with open(dbc_path, "rb") as f:
+        data = f.read()
+    magic = data[0:4]
+    if magic != b"WDBC":
+        raise ValueError(f"{dbc_path}: not a WDBC file (magic={magic!r})")
+    record_count, field_count, record_size, string_block_size = struct.unpack("<4I", data[4:20])
+    records_start = 20
+    string_block_start = records_start + record_count * record_size
+    string_block = data[string_block_start:string_block_start + string_block_size]
+    records = [
+        data[records_start + i * record_size: records_start + (i + 1) * record_size]
+        for i in range(record_count)
+    ]
+    return field_count, records, string_block
+
+
+def _wdbc_string(string_block: bytes, offset: int) -> str:
+    if offset == 0:
+        return ""
+    end = string_block.index(b"\x00", offset)
+    return string_block[offset:end].decode("utf-8", errors="replace")
+
+
+def parse_achievements(dbc_path: pathlib.Path = _ACHIEVEMENT_DBC_PATH) -> list[dict]:
+    """Parse Achievement.dbc's real fields (Achievementfmt, 62 int32
+    fields/record, src/server/shared/DataStores/DBCfmt.h) into one dict per
+    real achievement row: {id, name, category_id, flags}. field[0]=ID,
+    field[4]=name (first of 16 locale-string slots -- only slot 0/enUS is
+    populated in this checkout's single-locale-extracted client data,
+    confirmed against all 1,817 real rows), field[38]=categoryId,
+    field[41]=flags (AchievementFlags bitmask, DBCEnums.h -- notably
+    ACHIEVEMENT_FLAG_COUNTER=0x1, which per AchievementMgr.cpp's
+    CompletedAchievement() means the row never fires
+    OnPlayerAchievementComplete at all; see extract_achievements.py)."""
+    field_count, records, string_block = _read_wdbc(dbc_path)
+    result = []
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        result.append({
+            "id": fields[0],
+            "name": _wdbc_string(string_block, fields[_ACHIEVEMENT_NAME_FIELD]),
+            "category_id": fields[_ACHIEVEMENT_CATEGORY_ID_FIELD],
+            "flags": fields[_ACHIEVEMENT_FLAGS_FIELD],
+        })
+    return result
+
+
+def parse_achievement_categories(dbc_path: pathlib.Path = _ACHIEVEMENT_CATEGORY_DBC_PATH) -> dict[int, tuple[int, str]]:
+    """Parse Achievement_Category.dbc's real fields (AchievementCategoryfmt,
+    20 int32 fields/record) into category_id -> (root_category_id,
+    own_name). field[0]=ID, field[1]=parentCategory (-1 for a root
+    category), field[2]=name (enUS locale offset). root_category_id is
+    resolved by walking the parentCategory chain up to a parentCategory==-1
+    row (a category that is already a root resolves to itself). Confirmed
+    against this checkout's real 86-row Achievement_Category.dbc: 10 real
+    roots (Statistics=1, Feats of Strength=81, General=92, Player vs.
+    Player=95, Quests=96, Exploration=97, World Events=155, Dungeons &
+    Raids=168, Professions=169, Reputation=201)."""
+    field_count, records, string_block = _read_wdbc(dbc_path)
+    parent_by_id: dict[int, int] = {}
+    name_by_id: dict[int, str] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        cat_id, parent, name_offset = fields[0], fields[1], fields[2]
+        parent_by_id[cat_id] = parent
+        name_by_id[cat_id] = _wdbc_string(string_block, name_offset)
+
+    def _root_of(cat_id: int) -> int:
+        seen: set[int] = set()
+        while parent_by_id.get(cat_id, -1) != -1:
+            if cat_id in seen:
+                break  # defensive against a malformed cycle; never seen in real data
+            seen.add(cat_id)
+            cat_id = parent_by_id[cat_id]
+        return cat_id
+
+    return {cat_id: (_root_of(cat_id), name_by_id[cat_id]) for cat_id in parent_by_id}
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )

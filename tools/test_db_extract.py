@@ -7,6 +7,7 @@ from unittest.mock import patch, MagicMock
 from db_extract import (
     is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
     parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
+    parse_achievements, parse_achievement_categories,
 )
 
 
@@ -220,3 +221,103 @@ class TestParseSpellNames(unittest.TestCase):
         self.assertEqual(result[72], "Shield Bash")
         self.assertEqual(result[100], "Charge")
         self.assertEqual(result[2543], "Westfall Stew")
+
+
+class TestParseAchievements(unittest.TestCase):
+    def _write_fake_achievement_dbc(self, tmpdir: str, records: list[tuple[int, str, int, int]]) -> pathlib.Path:
+        """records: list of (id, name, category_id, flags) -- writes a
+        minimal real WDBC file with exactly 62 int32 fields per record
+        (matching Achievementfmt's real field_count), name written into
+        field[4] (the first of 16 locale slots) as a string-block offset,
+        category_id into field[38], flags into field[41]."""
+        field_count = 62
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "Achievement.dbc"
+        string_block = b"\x00"  # offset 0 is always the empty string
+        offsets = []
+        for _id, name, _cat, _flags in records:
+            offsets.append(len(string_block))
+            string_block += name.encode("utf-8") + b"\x00"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, len(string_block)))
+            for (aid, _name, cat, flags), name_offset in zip(records, offsets):
+                fields = [0] * field_count
+                fields[0] = aid
+                fields[4] = name_offset
+                fields[38] = cat
+                fields[41] = flags
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+            f.write(string_block)
+        return path
+
+    def test_parses_id_name_category_flags(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_achievement_dbc(tmp, [(46, "World Explorer", 97, 0), (2336, "Insane in the Membrane", 81, 0)])
+            result = parse_achievements(path)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0], {"id": 46, "name": "World Explorer", "category_id": 97, "flags": 0})
+        self.assertEqual(result[1], {"id": 2336, "name": "Insane in the Membrane", "category_id": 81, "flags": 0})
+
+    def test_real_achievement_dbc_finds_world_explorer_by_id_46(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # Achievement.dbc -- confirms the field-offset assumptions above
+        # against known, human-verifiable real data, not just a synthetic
+        # fixture.
+        result = parse_achievements()
+        self.assertEqual(len(result), 1817)
+        by_id = {row["id"]: row for row in result}
+        self.assertEqual(by_id[46]["name"], "World Explorer")
+        self.assertEqual(by_id[46]["category_id"], 97)
+        self.assertEqual(by_id[46]["flags"], 0)
+
+
+class TestParseAchievementCategories(unittest.TestCase):
+    def _write_fake_category_dbc(self, tmpdir: str, records: list[tuple[int, int, str]]) -> pathlib.Path:
+        """records: list of (id, parent_category, name) -- 20 int32
+        fields/record (AchievementCategoryfmt), name in field[2]."""
+        field_count = 20
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "Achievement_Category.dbc"
+        string_block = b"\x00"
+        offsets = []
+        for _id, _parent, name in records:
+            offsets.append(len(string_block))
+            string_block += name.encode("utf-8") + b"\x00"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, len(string_block)))
+            for (cid, parent, _name), name_offset in zip(records, offsets):
+                fields = [0] * field_count
+                fields[0] = cid
+                fields[1] = parent
+                fields[2] = name_offset
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+            f.write(string_block)
+        return path
+
+    def test_a_root_category_resolves_to_itself(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_category_dbc(tmp, [(97, -1, "Exploration")])
+            result = parse_achievement_categories(path)
+        self.assertEqual(result[97], (97, "Exploration"))
+
+    def test_a_leaf_category_resolves_up_to_its_real_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_category_dbc(tmp, [
+                (168, -1, "Dungeons & Raids"),
+                (14961, 168, "Secrets of Ulduar 10-Player Raid"),
+            ])
+            result = parse_achievement_categories(path)
+        self.assertEqual(result[14961], (168, "Secrets of Ulduar 10-Player Raid"))
+
+    def test_real_achievement_category_dbc_resolves_known_roots(self) -> None:
+        result = parse_achievement_categories()
+        self.assertEqual(result[97], (97, "Exploration"))
+        self.assertEqual(result[81], (81, "Feats of Strength"))
+        self.assertEqual(result[14961][0], 168)  # Secrets of Ulduar 10-Player Raid -> Dungeons & Raids
+        self.assertEqual(result[14961][1], "Secrets of Ulduar 10-Player Raid")
+
+
+if __name__ == "__main__":
+    unittest.main()
