@@ -51,6 +51,7 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     _validate_boss_lists(data["locations"], yaml_path)
     _validate_quest_reward_rows(data["locations"], yaml_path)
     _validate_vendor_purchase_rows(data["locations"], yaml_path)
+    _validate_achievement_complete_rows(data["locations"], yaml_path)
     _validate_learn_spell_rows(data["locations"], yaml_path)
     _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
     _validate_tags_rows(data["family"], data["locations"], data["items"], yaml_path)
@@ -144,6 +145,18 @@ def _validate_quest_reward_rows(locations: list, yaml_path: pathlib.Path) -> Non
             raise ValidationError(
                 f"{yaml_path}: location {loc['name']!r} has quest_reward trigger "
                 f"but is missing required key(s): {missing_keys}"
+            )
+
+
+def _validate_achievement_complete_rows(locations: list, yaml_path: pathlib.Path) -> None:
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "achievement_complete":
+            continue
+        if "achievement_id" not in trigger:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has achievement_complete trigger "
+                f"but is missing required key 'achievement_id'"
             )
 
 
@@ -424,6 +437,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "filler_reward_effects": FamilySchema(
         valid_trigger_kinds=set(), valid_delivery_kinds={"filler_effect"},
     ),
+    "achievements": FamilySchema(valid_trigger_kinds={"achievement_complete"}, valid_delivery_kinds={"realm_state"}),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -433,6 +447,7 @@ _REALM_STATE_EFFECTS = {
     "unlock_northrend_passage",
     "grant_key",
     "record_milestone",
+    "record_achievement",
 }
 
 
@@ -599,6 +614,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_professions(data)
     if family == "collections":
         return _emit_python_collections(data)
+    if family == "achievements":
+        return _emit_python_achievements(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -855,6 +872,68 @@ def _emit_python_collections(data: dict) -> str:
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
     lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_python_achievements(data: dict) -> str:
+    constants = data["constants"]
+    lines = [_GENERATED_HEADER_PY.format(source="content/achievements.yaml"), ""]
+    lines.append(f'WORLD_EXPLORER_ACHIEVEMENT_ID = {constants["WORLD_EXPLORER_ACHIEVEMENT_ID"]}')
+    lines.append("")
+    lines.append("LOCATIONS: dict[str, int] = {")
+    for loc in data["locations"]:
+        lines.append(f'    {_string_literal(loc["name"])}: {loc["location_id"]},')
+    lines.append("}")
+    lines.append("")
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    {_string_literal(item["name"])}: ({item["item_id"]}, {item.get("count", 1)}),')
+    lines.append("}")
+    lines.append("")
+
+    # Locations and items are parallel-aligned by list index (one item per
+    # location, same achievement_id, same order) -- extract_achievements.py's
+    # own invariant.
+    item_name_by_index = [item["name"] for item in data["items"]]
+
+    world_explorer_location_name = None
+    world_explorer_item_name = None
+    by_subset: dict[str, list[str]] = {}
+    extremely_hard_item_names: list[str] = []
+    for idx, loc in enumerate(data["locations"]):
+        trigger = loc["trigger"]
+        item_name = item_name_by_index[idx]
+        subset = trigger.get("subset")
+        if subset:
+            by_subset.setdefault(subset, []).append(item_name)
+        if trigger.get("extremely_hard"):
+            extremely_hard_item_names.append(item_name)
+        if trigger["achievement_id"] == constants["WORLD_EXPLORER_ACHIEVEMENT_ID"]:
+            world_explorer_location_name = loc["name"]
+            world_explorer_item_name = item_name
+
+    if world_explorer_location_name is None:
+        raise ValidationError(
+            "content/achievements.yaml: no location's trigger.achievement_id matches "
+            "constants.WORLD_EXPLORER_ACHIEVEMENT_ID -- extraction must have dropped "
+            "achievement id 46 (e.g. via the counter-flag/Feats-of-Strength exclusion, "
+            "which must never apply to id 46 itself)"
+        )
+
+    lines.append("ACHIEVEMENTS_BY_SUBSET: dict[str, frozenset[str]] = {")
+    for subset, item_names in by_subset.items():
+        names = ", ".join(_string_literal(n) for n in item_names)
+        lines.append(f'    {_string_literal(subset)}: frozenset({{{names}}}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("EXTREMELY_HARD_ITEM_NAMES: frozenset[str] = frozenset({")
+    for name in extremely_hard_item_names:
+        lines.append(f'    {_string_literal(name)},')
+    lines.append("})")
+    lines.append("")
+    lines.append(f"WORLD_EXPLORER_LOCATION_NAME = {_string_literal(world_explorer_location_name)}")
+    lines.append(f"WORLD_EXPLORER_ITEM_NAME = {_string_literal(world_explorer_item_name)}")
     lines.append("")
     return "\n".join(lines)
 
@@ -1130,6 +1209,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_professions(data)
     if family == "collections":
         return _emit_cpp_collections(data)
+    if family == "achievements":
+        return _emit_cpp_achievements(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -1455,6 +1536,61 @@ def _emit_cpp_collections(data: dict) -> str:
     for item in data["items"]:
         lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // "{item["name"]}"')
     lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_achievements(data: dict) -> str:
+    constants = data["constants"]
+    lines = [
+        _GENERATED_HEADER_CPP.format(source="content/achievements.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>",
+        "#include <utility>", "",
+        "namespace Archipelago::Achievements", "{",
+    ]
+    lines.append(f'    inline constexpr uint32_t WORLD_EXPLORER_ACHIEVEMENT_ID = {constants["WORLD_EXPLORER_ACHIEVEMENT_ID"]};')
+    lines.append("")
+    lines.append("    // Real achievement id -> its own location id. Consumed by the shared")
+    lines.append("    // OnPlayerAchievementComplete hook (ArchipelagoAchievementScript.cpp) --")
+    lines.append("    // always sent unconditionally on a matching completion, same 'no match =")
+    lines.append("    // no-op'/'the AP server silently ignores a location id outside this slot's")
+    lines.append("    // actual location table' pattern as every other lookup-table hook in this")
+    lines.append("    // module (see Archipelago::Rares' CreatureEntryToLocationId precedent).")
+    lines.append("    // Raw-array-plus-runtime-builder pattern (not a bare aggregate initializer)")
+    lines.append("    // -- at 1,162 rows this is the same stack-overflow risk class M4.7.1's own")
+    lines.append("    // QUEST_ID_TO_LOCATION_ID crash already taught this project not to re-risk.")
+    lines.append("    inline constexpr std::pair<uint32_t, int64_t> ACHIEVEMENT_ID_TO_LOCATION_ID_RAW[] = {")
+    for loc in data["locations"]:
+        lines.append(f'        {{ {loc["trigger"]["achievement_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+    lines.append("    };")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> BuildAchievementIdToLocationId()")
+    lines.append("    {")
+    lines.append("        std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("        for (auto const& row : ACHIEVEMENT_ID_TO_LOCATION_ID_RAW)")
+    lines.append("            result.emplace(row.first, row.second);")
+    lines.append("        return result;")
+    lines.append("    }")
+    lines.append("    inline std::unordered_map<uint32_t, int64_t> const AchievementIdToLocationId = BuildAchievementIdToLocationId();")
+    lines.append("")
+    lines.append("    // AP item id -> the real achievement id to record a realm-state")
+    lines.append("    // 'achievement_received_<id>' flag for on receipt (this family's own")
+    lines.append("    // record_achievement realm_state effect -- no real WoW item to mail, same")
+    lines.append("    // shape as Archipelago::Professions' record_milestone).")
+    lines.append("    inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_ACHIEVEMENT_ID_RAW[] = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["achievement_id"]} }}, // {_string_literal(item["name"])}')
+    lines.append("    };")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToAchievementId()")
+    lines.append("    {")
+    lines.append("        std::unordered_map<int64_t, uint32_t> result;")
+    lines.append("        for (auto const& row : AP_ITEM_ID_TO_ACHIEVEMENT_ID_RAW)")
+    lines.append("            result.emplace(row.first, row.second);")
+    lines.append("        return result;")
+    lines.append("    }")
+    lines.append("    inline std::unordered_map<int64_t, uint32_t> const ApItemIdToAchievementId = BuildApItemIdToAchievementId();")
     lines.append("}")
     lines.append("")
     return "\n".join(lines)

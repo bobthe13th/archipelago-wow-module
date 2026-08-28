@@ -65,6 +65,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_items_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardItemsContentTable.h",
     },
+    "achievements": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "achievements_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoAchievementsContentTable.h",
+    },
 }
 
 

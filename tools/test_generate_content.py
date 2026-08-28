@@ -457,10 +457,23 @@ class TestLegacyEmitterSizeGuard(unittest.TestCase):
 
     LEGACY_FAMILY_ROW_LIMIT = 2000
 
+    # Families whose hand-rolled (non-generic) emitter already uses the safe
+    # raw-array-plus-runtime-builder pattern (not a bare aggregate
+    # initializer) despite not being dispatched via emit_*_generic --
+    # achievements (M4.9.4 Task 5) hand-rolls _emit_python_achievements/
+    # _emit_cpp_achievements (rather than opting into generic=True) because
+    # it needs bespoke exports (WORLD_EXPLORER_*, ACHIEVEMENTS_BY_SUBSET,
+    # EXTREMELY_HARD_ITEM_NAMES) the generic emitter doesn't produce, but its
+    # C++ side follows exactly the same raw-array-plus-builder pattern as
+    # _emit_cpp_trigger_lookup_quest_reward -- just as safe from the M4.7.1
+    # stack-overflow class as any generic=True family, at 1,162 rows each
+    # for LOCATIONS/ITEMS (2,324 combined, over this guard's 2000-row margin).
+    _SAFE_HAND_ROLLED_FAMILIES = {"achievements"}
+
     def test_no_legacy_family_exceeds_the_safe_row_count(self) -> None:
         content_dir = pathlib.Path(__file__).parent.parent / "content"
         for family, schema in FAMILY_SCHEMAS.items():
-            if schema.generic:
+            if schema.generic or family in self._SAFE_HAND_ROLLED_FAMILIES:
                 continue  # already on the safe raw-array-plus-builder pattern regardless of size
             yaml_path = content_dir / f"{family}.yaml"
             if not yaml_path.exists():
@@ -736,6 +749,95 @@ class TestFillerRewardEffectsEmitter(unittest.TestCase):
         cpp = emit_cpp(data)
         self.assertIn("ApItemToEffect", cpp)
         self.assertIn('{ 8500000, "cast_spell" }', cpp)
+
+
+class TestEmitAchievements(unittest.TestCase):
+    def _sample_data(self) -> dict:
+        return {
+            "family": "achievements",
+            "locations": [
+                {"name": "Achievement: World Explorer (#46)", "location_id": 3600046,
+                 "trigger": {"kind": "achievement_complete", "achievement_id": 46, "category_id": 97, "subset": "explorer"}},
+                {"name": "Achievement: Duelist (#2092)", "location_id": 3602092,
+                 "trigger": {"kind": "achievement_complete", "achievement_id": 2092, "category_id": 165, "subset": "pvp", "extremely_hard": True}},
+            ],
+            "items": [
+                {"name": "Achievement Complete: World Explorer (#46)", "item_id": 3800046,
+                 "delivery": {"kind": "realm_state", "effect": "record_achievement", "achievement_id": 46}},
+                {"name": "Achievement Complete: Duelist (#2092)", "item_id": 3802092,
+                 "delivery": {"kind": "realm_state", "effect": "record_achievement", "achievement_id": 2092}},
+            ],
+            "constants": {"WORLD_EXPLORER_ACHIEVEMENT_ID": 46},
+        }
+
+    def test_emit_python_produces_valid_python_with_expected_exports(self) -> None:
+        data = self._sample_data()
+        output = emit_python(data)
+        compile(output, "<test>", "exec")
+        namespace: dict = {}
+        exec(output, namespace)
+        self.assertEqual(namespace["WORLD_EXPLORER_ACHIEVEMENT_ID"], 46)
+        self.assertEqual(namespace["LOCATIONS"]["Achievement: World Explorer (#46)"], 3600046)
+        self.assertEqual(namespace["ITEMS"]["Achievement Complete: Duelist (#2092)"], (3802092, 1))
+        self.assertEqual(
+            namespace["ACHIEVEMENTS_BY_SUBSET"]["pvp"],
+            frozenset({"Achievement Complete: Duelist (#2092)"}),
+        )
+        self.assertEqual(
+            namespace["EXTREMELY_HARD_ITEM_NAMES"],
+            frozenset({"Achievement Complete: Duelist (#2092)"}),
+        )
+        self.assertEqual(namespace["WORLD_EXPLORER_LOCATION_NAME"], "Achievement: World Explorer (#46)")
+        self.assertEqual(namespace["WORLD_EXPLORER_ITEM_NAME"], "Achievement Complete: World Explorer (#46)")
+
+    def test_emit_python_raises_if_world_explorer_id_has_no_matching_location(self) -> None:
+        data = self._sample_data()
+        data["constants"]["WORLD_EXPLORER_ACHIEVEMENT_ID"] = 999999
+        with self.assertRaises(ValidationError):
+            emit_python(data)
+
+    def test_emit_cpp_produces_expected_lookup_tables(self) -> None:
+        data = self._sample_data()
+        output = emit_cpp(data)
+        self.assertIn("namespace Archipelago::Achievements", output)
+        self.assertIn("WORLD_EXPLORER_ACHIEVEMENT_ID = 46", output)
+        self.assertIn("ACHIEVEMENT_ID_TO_LOCATION_ID_RAW", output)
+        self.assertIn("{ 46, 3600046 }", output)
+        self.assertIn("AP_ITEM_ID_TO_ACHIEVEMENT_ID_RAW", output)
+        self.assertIn("{ 3800046, 46 }", output)
+
+    def test_load_family_rejects_achievement_complete_trigger_missing_achievement_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "test.yaml"
+            path.write_text(textwrap.dedent("""
+                family: achievements
+                locations:
+                  - name: 'Achievement: Bad Row (#1)'
+                    location_id: 3600001
+                    trigger: {kind: achievement_complete}
+                items: []
+                constants: {WORLD_EXPLORER_ACHIEVEMENT_ID: 46}
+            """), encoding="utf-8")
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_load_family_accepts_a_well_formed_achievements_row(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "test.yaml"
+            path.write_text(textwrap.dedent("""
+                family: achievements
+                locations:
+                  - name: 'Achievement: World Explorer (#46)'
+                    location_id: 3600046
+                    trigger: {kind: achievement_complete, achievement_id: 46, category_id: 97, subset: explorer}
+                items:
+                  - name: 'Achievement Complete: World Explorer (#46)'
+                    item_id: 3800046
+                    delivery: {kind: realm_state, effect: record_achievement, achievement_id: 46}
+                constants: {WORLD_EXPLORER_ACHIEVEMENT_ID: 46}
+            """), encoding="utf-8")
+            data = load_family(path)  # must not raise
+        self.assertEqual(len(data["locations"]), 1)
 
 
 if __name__ == "__main__":
