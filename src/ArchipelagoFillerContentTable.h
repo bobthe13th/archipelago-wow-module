@@ -90,5 +90,54 @@ namespace Archipelago::Filler
         740070, // Filler Check 71
         740071, // Filler Check 72
         740072, // Filler Check 73
+        740073, // Filler Check 74
+        740074, // Filler Check 75
+        740075, // Filler Check 76
+        740076, // Filler Check 77
+        740077, // Filler Check 78
+        740078, // Filler Check 79
+        740079, // Filler Check 80
+        740080, // Filler Check 81
+        740081, // Filler Check 82
+        740082, // Filler Check 83
+        740083, // Filler Check 84
+        740084, // Filler Check 85
+        740085, // Filler Check 86
+        740086, // Filler Check 87
+        740087, // Filler Check 88
+        740088, // Filler Check 89
+        740089, // Filler Check 90
+        740090, // Filler Check 91
+        740091, // Filler Check 92
+        740092, // Filler Check 93
+        740093, // Filler Check 94
+        740094, // Filler Check 95
+        740095, // Filler Check 96
+        740096, // Filler Check 97
+        740097, // Filler Check 98
+        740098, // Filler Check 99
+        740099, // Filler Check 100
+        740100, // Filler Check 101
+        740101, // Filler Check 102
+        740102, // Filler Check 103
+        740103, // Filler Check 104
+        740104, // Filler Check 105
+        740105, // Filler Check 106
+        740106, // Filler Check 107
+        740107, // Filler Check 108
+        740108, // Filler Check 109
+        740109, // Filler Check 110
+        740110, // Filler Check 111
+        740111, // Filler Check 112
+        740112, // Filler Check 113
+        740113, // Filler Check 114
+        740114, // Filler Check 115
+        740115, // Filler Check 116
+        740116, // Filler Check 117
+        740117, // Filler Check 118
+        740118, // Filler Check 119
+        740119, // Filler Check 120
+        740120, // Filler Check 121
+        740121, // Filler Check 122
     };
 }
