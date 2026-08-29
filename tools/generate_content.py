@@ -483,11 +483,11 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
     "quest_rewards": FamilySchema(
         valid_trigger_kinds={"quest_reward"}, valid_delivery_kinds={"mail"},
-        generic=True, export_triggers=True, export_tags=True,
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "vendor_stock": FamilySchema(
         valid_trigger_kinds={"vendor_purchase"}, valid_delivery_kinds={"mail"},
-        generic=True, export_triggers=True, export_tags=True,
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "recipes": FamilySchema(
         valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},

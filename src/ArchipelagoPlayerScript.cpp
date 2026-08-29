@@ -25,11 +25,13 @@
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGoals.h"
 #include "ArchipelagoProfessionsContentTable.h"
+#include "ArchipelagoQuestRewardsContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoRecipesContentTable.h"
 #include "ArchipelagoTrainerSpellsContentTable.h"
 #include "ArchipelagoTrapsContentTable.h"
+#include "ArchipelagoVendorStockContentTable.h"
 
 namespace
 {
@@ -355,12 +357,45 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.8.0: the standalone `quests` family (the only thing that ever
-        // reached this final fallback -- every other family's items are
-        // caught by their own lookup table above, and quest_rewards/
-        // vendor_stock items are delivered via item-synthesis interception,
-        // never through this AP-ReceivedItems-mail path at all) is retired.
-        // Reaching this point now means a genuinely unrecognized AP item id.
+        // M4.10.2 fix: quest_rewards/vendor_stock items also use the same
+        // generic mail-delivery path as recipes/trainer_spells/
+        // containersanity -- ArchipelagoQUEST_REWARDSContent::
+        // ApItemIdToWowItemEntry (9,239 entries) and
+        // ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry (37,750
+        // entries) were real and already built by generate_content.py's
+        // export_item_delivery path once flipped on for these two families,
+        // but nothing consumed them here. The retired comment this replaces
+        // claimed these items were "delivered via item-synthesis
+        // interception, never through this AP-ReceivedItems-mail path at
+        // all" -- that doesn't hold up: item-synthesis interception only
+        // explains how the *location* gets checked when the owning player
+        // interacts with the real in-game quest/vendor NPC, not how the
+        // *item* (which the normal AP fill algorithm may place on a
+        // completely different player's world) ever reaches whoever it was
+        // actually assigned to. A quest_rewards/vendor_stock item received
+        // cross-world fell all the way through to the "unknown AP item id"
+        // log below and the receiving player got nothing.
+        auto questRewardEntryIt = ArchipelagoQUEST_REWARDSContent::ApItemIdToWowItemEntry.find(received.item);
+        if (questRewardEntryIt != ArchipelagoQUEST_REWARDSContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, questRewardEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", questRewardEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        auto vendorStockEntryIt = ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry.find(received.item);
+        if (vendorStockEntryIt != ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, vendorStockEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", vendorStockEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.8.0: the standalone `quests` family is retired. Every real
+        // family's items are now caught by their own lookup table above --
+        // reaching this point means a genuinely unrecognized AP item id.
         LOG_ERROR("module.archipelago_wow", "Archipelago: received unknown AP item id {}, skipping", received.item);
         highestSeen = std::max(highestSeen, received.index);
     }

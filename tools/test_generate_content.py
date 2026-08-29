@@ -700,8 +700,26 @@ class TestEmitCppItemDeliveryLookup(unittest.TestCase):
                  "delivery": {"kind": "mail", "wow_item_entry": 1}},
             ],
         }
-        cpp = emit_cpp_generic(data)
-        self.assertNotIn("ApItemIdToWowItemEntry", cpp)
+        # vendor_stock's real FAMILY_SCHEMAS entry now sets
+        # export_item_delivery=True (cross-world mail-delivery dispatch fix --
+        # quest_rewards/vendor_stock items were compiled with no
+        # ApItemIdToWowItemEntry map at all, so an item assigned to a
+        # different player's world than the one that unlocked it silently
+        # vanished instead of ever being mailed). Temporarily override the
+        # registry entry here so this test still exercises emit_cpp_generic's
+        # OWN gate in isolation, same pattern as TestAlwaysPresentAndTags's
+        # export_tags override tests above.
+        original_schema = FAMILY_SCHEMAS["vendor_stock"]
+        FAMILY_SCHEMAS["vendor_stock"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=True, export_item_delivery=False,
+        )
+        try:
+            cpp = emit_cpp_generic(data)
+            self.assertNotIn("ApItemIdToWowItemEntry", cpp)
+        finally:
+            FAMILY_SCHEMAS["vendor_stock"] = original_schema
 
 
 class TestItemLevelTags(unittest.TestCase):
