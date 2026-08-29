@@ -339,11 +339,13 @@ namespace Archipelago::ItemDisplay
         // SetInitialWorldSettings() has already loaded item_template/
         // npc_vendor/quest_template into their in-memory caches at startup.
         // The DB rows just written above are correct, but this AzerothCore
-        // checkout has no live-reload path for any of those three tables
-        // (no bare `.reload item_template`, confirmed against
-        // src/server/scripts/Commands/cs_reload.cpp), so the vendor/quest
-        // slot this run just rewrote still shows the REAL WoW item in-game
-        // until the process restarts and reloads those caches from disk.
+        // checkout has no live-reload path for any of those tables (no bare
+        // `.reload item_template`, confirmed against
+        // src/server/scripts/Commands/cs_reload.cpp), so the vendor/quest/
+        // loot slot this run just rewrote still shows the REAL WoW item
+        // in-game until the process restarts and reloads those caches from
+        // disk. gameobject_loot_template (M4.10.1's Containersanity synthesis
+        // branch above) is cached in-memory too, same restart requirement.
         // Without this log, that looks like the feature silently did
         // nothing rather than "worked, but needs a restart to show." M4.7.1
         // finding #2: this used to fire on EVERY connection with non-empty
@@ -353,10 +355,10 @@ namespace Archipelago::ItemDisplay
         if (newlySynthesizedCount > 0)
         {
             LOG_WARN("module.archipelago_wow",
-                "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward "
-                "data -- a worldserver RESTART is required before these changes take effect "
-                "(item_template/npc_vendor/quest_template are cached in memory and have no live-"
-                "reload path)",
+                "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward/"
+                "loot slot data -- a worldserver RESTART is required before these changes take "
+                "effect (item_template/npc_vendor/quest_template/gameobject_loot_template are "
+                "cached in memory and have no live-reload path)",
                 newlySynthesizedCount);
         }
         else if (!display.empty())

@@ -78,8 +78,7 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_achievement_complete_rows(locations, path)
     _validate_filler_effect_rows(items, path)
     _validate_learn_spell_rows(locations, path)
-    if family == "containersanity":
-        _validate_gameobject_loot_rows(data)
+    _validate_gameobject_loot_rows(locations)
     _validate_trigger_lookup_uniqueness(family, locations, items, path)
     _validate_tags_rows(family, locations, items, path)
     _validate_level_milestone_tracks(family, locations, path)
@@ -228,16 +227,26 @@ def _validate_learn_spell_rows(locations: list, yaml_path: pathlib.Path) -> None
             )
 
 
-def _validate_gameobject_loot_rows(data: dict) -> None:
+def _validate_gameobject_loot_rows(locations: list) -> None:
     """gameobject_loot_template's real PK is (Entry, Item) -- confirmed
     unique at the DB level (M4.10.1 plan research), so a (loot_id,
     item_entry) collision in extracted data means a genuine extraction bug,
     not a legitimate real-world duplicate the way npc_vendor's
     (npc_entry, item) pairs can be. Hard-fail, same discipline as
-    _validate_quest_reward_rows."""
+    _validate_quest_reward_rows.
+
+    Final whole-branch review fix (M1): this used to be gated behind
+    `if family == "containersanity":` in validate_family, unlike every
+    other row validator in this file, which are called unconditionally and
+    filter internally by checking trigger["kind"] first -- so a future
+    family reusing the gameobject_loot trigger kind would otherwise hit a
+    KeyError from this validator never even running for it. Now follows
+    the same internal-kind-check convention as its siblings."""
     seen: dict[tuple[int, int], str] = {}
-    for loc in data["locations"]:
+    for loc in locations:
         trigger = loc["trigger"]
+        if trigger["kind"] != "gameobject_loot":
+            continue
         key = (trigger["loot_id"], trigger["item_entry"])
         if key in seen:
             raise ValidationError(

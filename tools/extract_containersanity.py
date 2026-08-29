@@ -46,11 +46,25 @@ def extract() -> dict:
     # returns zero rows. Requiring a real item_template match excludes
     # Item=0 "nothing" chance-slots and any dangling item references (real
     # verified count with this exact join: 17,594 rows).
+    #
+    # Final whole-branch review fix (C2/I1): two more classes of rows are
+    # real but permanently unlootable once Item gets rewritten to a
+    # synthesized entry, so both are now excluded up front:
+    #   - QuestRequired = 1 (761 real rows): LootItem::AllowedForPlayer
+    #     requires the looting player to already have a quest that
+    #     references the ORIGINAL item id -- once Item is rewritten to
+    #     point at a synthesized entry no quest references, the row can
+    #     never show in the loot window again.
+    #   - Reference != 0 (23 real rows): for these rows the item that
+    #     actually drops comes from reference_loot_template, not this row's
+    #     own Item column at all -- rewriting Item here changes nothing
+    #     that actually drops.
     loot_rows = run_query(f"""
         SELECT glt.Entry, glt.Item, MIN(gt.name), it.name
         FROM gameobject_loot_template glt
         JOIN gameobject_template gt ON gt.Data1 = glt.Entry AND gt.type = {_GAMEOBJECT_TYPE_CHEST}
         JOIN item_template it ON it.entry = glt.Item
+        WHERE glt.QuestRequired = 0 AND glt.Reference = 0
         GROUP BY glt.Entry, glt.Item, it.name
         ORDER BY glt.Entry, glt.Item
     """)

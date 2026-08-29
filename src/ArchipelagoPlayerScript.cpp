@@ -17,6 +17,7 @@
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoCollectionsContentTable.h"
+#include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFillerRewardEffectsContentTable.h"
 #include "ArchipelagoFillerRewardItemsContentTable.h"
@@ -303,6 +304,23 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, trainerSpellEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", trainerSpellEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.10.1 final review fix (C1): containersanity's items also use
+        // the same generic mail-delivery path as recipes/trainer_spells --
+        // ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry (16,810
+        // entries as of this fix, compiled by generate_content.py's
+        // export_item_delivery path) was real and already built, but
+        // nothing consumed it here, so a Container Item another player
+        // received cross-world fell all the way through to the "unknown AP
+        // item id" log below and the player got nothing.
+        auto containersanityEntryIt = ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry.find(received.item);
+        if (containersanityEntryIt != ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, containersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", containersanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

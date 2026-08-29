@@ -32,12 +32,15 @@ namespace Archipelago::ItemDisplay
     // constant without re-deriving that arithmetic against the CURRENT max
     // location_id across content/*.yaml.
     //
-    // Re-derived M4.10.1: real max location_id is now 8,017,593
-    // (containersanity's highest assigned id, base 8,000,000 + 17,594
-    // rows), up from the 2,037,749 this comment previously cited (which
-    // was already stale before this milestone -- recipes/trainer_spells
-    // had independently pushed the real max to 7,070,164). At
-    // AP_ITEM_SYNTH_BASE (3,000,000) + 8,017,593 ~= 11,017,593, the
+    // Re-derived M4.10.1 (final whole-branch review fix, C2/I1): real max
+    // location_id is now 8,016,809 (containersanity's highest assigned id,
+    // base 8,000,000 + 16,810 rows -- down from the 17,594 originally
+    // extracted, after excluding 784 real-but-permanently-unlootable rows:
+    // 761 QuestRequired=1 and 23 Reference!=0, see extract_containersanity.py),
+    // up from the 2,037,749 this comment previously cited (which was
+    // already stale before this milestone -- recipes/trainer_spells had
+    // independently pushed the real max to 7,070,164). At
+    // AP_ITEM_SYNTH_BASE (3,000,000) + 8,016,809 ~= 11,016,809, the
     // item_template vector tops out around 88 MB -- same order of
     // magnitude as this comment's own original worked example (5.04M
     // entries ~= 40 MB, called "a normal, safe size"), so no change to
