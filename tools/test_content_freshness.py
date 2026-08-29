@@ -1,3 +1,4 @@
+import os
 import pathlib
 import unittest
 
@@ -7,6 +8,20 @@ _TOOLS_DIR = pathlib.Path(__file__).parent
 _MODULE_DIR = _TOOLS_DIR.parent
 _CONTENT_DIR = _MODULE_DIR / "content"
 _ARCHIPELAGO_WOW_DIR = _MODULE_DIR.parent.parent.parent / "Archipelago" / "worlds" / "wow"
+
+# M4.10.1: containersanity's regenerated Python file was intentionally written
+# into an isolated git worktree checkout of the Archipelago repo rather than
+# the shared sibling checkout above (_ARCHIPELAGO_WOW_DIR), to avoid a
+# multi-agent session silently writing into the main checkout other sessions
+# also use. This lets that verification run point at the worktree via an env
+# var instead of a path hardcoded to one session's worktree name; every other
+# family is unaffected and keeps using _ARCHIPELAGO_WOW_DIR directly. Once
+# the worktree's branch is merged (see the nested submodule bump chain
+# convention), a normal run with this env var unset resolves to the same
+# sibling-checkout directory as every other family.
+_CONTAINERSANITY_WOW_DIR = pathlib.Path(
+    os.environ.get("ARCHIPELAGO_WOW_WORLDS_DIR", str(_ARCHIPELAGO_WOW_DIR))
+)
 
 _FAMILIES = {
     "core_loop": {
@@ -68,6 +83,10 @@ _FAMILIES = {
     "achievements": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "achievements_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoAchievementsContentTable.h",
+    },
+    "containersanity": {
+        "py_out": _CONTAINERSANITY_WOW_DIR / "containersanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCONTAINERSANITYContent.h",
     },
 }
 

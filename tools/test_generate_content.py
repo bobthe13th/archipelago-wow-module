@@ -4,7 +4,17 @@ import textwrap
 import unittest
 
 import generate_content
-from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError, FAMILY_SCHEMAS
+from generate_content import (
+    load_family,
+    emit_python,
+    emit_cpp,
+    emit_python_generic,
+    emit_cpp_generic,
+    validate_family,
+    _emit_cpp_trigger_lookup,
+    ValidationError,
+    FAMILY_SCHEMAS,
+)
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -868,6 +878,66 @@ class TestEmitAchievements(unittest.TestCase):
             """), encoding="utf-8")
             data = load_family(path)  # must not raise
         self.assertEqual(len(data["locations"]), 1)
+
+
+class TestGameobjectLootTriggerLookup(unittest.TestCase):
+    def test_validate_gameobject_loot_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "containersanity",
+            "locations": [
+                # containersanity is export_tags=True (same "never zero tags"
+                # invariant _validate_tags_rows enforces for every other
+                # export_tags family), so this fixture uses a real tag shape
+                # (matching the actual extracted `expansion` dimension) --
+                # not an empty {} placeholder, which would fail that
+                # pre-existing invariant on its own, independent of anything
+                # gameobject_loot-specific.
+                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"]}},
+            ],
+            "items": [{"name": "Container Item: A (#1/2)", "item_id": 8500000,
+                       "delivery": {"kind": "mail", "wow_item_entry": 2}}],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_loot_id_item_entry_pair_is_a_hard_validation_error(self) -> None:
+        # gameobject_loot_template's real PK is (Entry, Item) -- a real
+        # extraction collision on that key would mean a genuine extraction
+        # bug (unlike vendor_purchase's soft dedup, which exists because
+        # npc_vendor legitimately allows repeated (npc,item) pairs via
+        # ExtendedCost variations). This must hard-fail, same as quest_reward.
+        data = {
+            "family": "containersanity",
+            "locations": [
+                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"]}},
+                {"name": "Container: B (#1/2)", "location_id": 8000001,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Container Item: A (#1/2)", "item_id": 8500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "Container Item: B (#1/2)", "item_id": 8500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+            ],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_emit_cpp_trigger_lookup_gameobject_loot_shape(self) -> None:
+        data = {
+            "family": "containersanity",
+            "locations": [
+                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2}, "tags": {}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1, 2 }, 8000000 }", joined)
+        self.assertIn("std::map<std::pair<uint32_t, uint32_t>, int64_t> GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID", joined)
 
 
 if __name__ == "__main__":

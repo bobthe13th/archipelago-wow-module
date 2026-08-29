@@ -30,6 +30,18 @@ namespace Archipelago::ItemDisplay
     // 5.04M entries (~40 MB) -- a normal, safe size. Do not raise this
     // constant without re-deriving that arithmetic against the CURRENT max
     // location_id across content/*.yaml.
+    //
+    // Re-derived M4.10.1: real max location_id is now 8,017,593
+    // (containersanity's highest assigned id, base 8,000,000 + 17,594
+    // rows), up from the 2,037,749 this comment previously cited (which
+    // was already stale before this milestone -- recipes/trainer_spells
+    // had independently pushed the real max to 7,070,164). At
+    // AP_ITEM_SYNTH_BASE (3,000,000) + 8,017,593 ~= 11,017,593, the
+    // item_template vector tops out around 88 MB -- same order of
+    // magnitude as this comment's own original worked example (5.04M
+    // entries ~= 40 MB, called "a normal, safe size"), so no change to
+    // the constant itself is needed here. Re-derive again before the next
+    // large family (Itemsanity, M4.10.6) lands.
     inline constexpr int64_t AP_ITEM_SYNTH_BASE = 3000000;
 
     // Pure function of location_id -- this is the entire idempotency

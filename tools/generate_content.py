@@ -43,25 +43,46 @@ def load_family(yaml_path: pathlib.Path) -> dict:
     data.setdefault("items", [])
     data.setdefault("constants", {})
 
-    _validate_unique_ids(data["locations"], "location_id", yaml_path, "location")
-    _validate_unique_ids(data["items"], "item_id", yaml_path, "item")
-    _validate_unique_names(data["locations"], data["items"], yaml_path)
-    _validate_instance_unlock_references(data["locations"], data["items"], yaml_path)
-    _validate_recognized_kinds(data["family"], data["locations"], data["items"], yaml_path)
-    _validate_boss_lists(data["locations"], yaml_path)
-    _validate_quest_reward_rows(data["locations"], yaml_path)
-    _validate_vendor_purchase_rows(data["locations"], yaml_path)
-    _validate_achievement_complete_rows(data["locations"], yaml_path)
-    _validate_filler_effect_rows(data["items"], yaml_path)
-    _validate_learn_spell_rows(data["locations"], yaml_path)
-    _validate_trigger_lookup_uniqueness(data["family"], data["locations"], data["items"], yaml_path)
-    _validate_tags_rows(data["family"], data["locations"], data["items"], yaml_path)
-    _validate_level_milestone_tracks(data["family"], data["locations"], yaml_path)
+    validate_family(data, yaml_path)
     data["locations"], data["items"] = _dedupe_vendor_trigger_collisions(
         data["family"], data["locations"], data["items"], yaml_path
     )
 
     return data
+
+
+def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
+    """Run every locations/items validator against a family dict (M4.10.1).
+
+    Pulled out of load_family's body so a hand-built in-memory dict can be
+    validated directly -- e.g. by this module's own test suite, or by any
+    other caller that already has a dict and no on-disk YAML file --
+    without duplicating the validator call sequence. `yaml_path` is optional
+    and used only to make error messages point at a real file when one
+    exists; load_family always passes its own real path, so on-disk error
+    messages are unchanged from before this refactor. Direct/test callers
+    that omit it get a generic placeholder in error text instead."""
+    path = yaml_path if yaml_path is not None else pathlib.Path("<in-memory>")
+    family = data["family"]
+    locations = data.get("locations", [])
+    items = data.get("items", [])
+
+    _validate_unique_ids(locations, "location_id", path, "location")
+    _validate_unique_ids(items, "item_id", path, "item")
+    _validate_unique_names(locations, items, path)
+    _validate_instance_unlock_references(locations, items, path)
+    _validate_recognized_kinds(family, locations, items, path)
+    _validate_boss_lists(locations, path)
+    _validate_quest_reward_rows(locations, path)
+    _validate_vendor_purchase_rows(locations, path)
+    _validate_achievement_complete_rows(locations, path)
+    _validate_filler_effect_rows(items, path)
+    _validate_learn_spell_rows(locations, path)
+    if family == "containersanity":
+        _validate_gameobject_loot_rows(data)
+    _validate_trigger_lookup_uniqueness(family, locations, items, path)
+    _validate_tags_rows(family, locations, items, path)
+    _validate_level_milestone_tracks(family, locations, path)
 
 
 def _validate_unique_ids(rows: list, key: str, yaml_path: pathlib.Path, row_kind: str) -> None:
@@ -205,6 +226,25 @@ def _validate_learn_spell_rows(locations: list, yaml_path: pathlib.Path) -> None
                 f"{yaml_path}: location {loc['name']!r} has learn_spell trigger "
                 f"but is missing required key: spell_id"
             )
+
+
+def _validate_gameobject_loot_rows(data: dict) -> None:
+    """gameobject_loot_template's real PK is (Entry, Item) -- confirmed
+    unique at the DB level (M4.10.1 plan research), so a (loot_id,
+    item_entry) collision in extracted data means a genuine extraction bug,
+    not a legitimate real-world duplicate the way npc_vendor's
+    (npc_entry, item) pairs can be. Hard-fail, same discipline as
+    _validate_quest_reward_rows."""
+    seen: dict[tuple[int, int], str] = {}
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        key = (trigger["loot_id"], trigger["item_entry"])
+        if key in seen:
+            raise ValidationError(
+                f"containersanity: duplicate (loot_id, item_entry) {key} -- "
+                f"{seen[key]!r} and {loc['name']!r} both claim it"
+            )
+        seen[key] = loc["name"]
 
 
 def _validate_trigger_lookup_uniqueness(
@@ -456,6 +496,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds=set(), valid_delivery_kinds={"filler_effect"},
     ),
     "achievements": FamilySchema(valid_trigger_kinds={"achievement_complete"}, valid_delivery_kinds={"realm_state"}),
+    "containersanity": FamilySchema(
+        valid_trigger_kinds={"gameobject_loot"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+    ),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -1146,6 +1190,41 @@ def _emit_cpp_trigger_lookup_learn_spell(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_gameobject_loot(locations: list) -> list[str]:
+    """GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID via the same raw-constexpr-
+    array-plus-runtime-builder pattern as
+    _emit_cpp_trigger_lookup_vendor_purchase (M4.10.1) -- 17,594 rows,
+    past the M4.7.1 stack-overflow threshold a bare aggregate initializer
+    proved unsafe at. Unlike vendor_purchase, both key components
+    (loot_id, item_entry) live directly in the trigger dict itself --
+    no parallel-indexed items list lookup needed."""
+    lines = [
+        "inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> "
+        "GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW[] = {"
+    ]
+    for loc in locations:
+        trigger = loc["trigger"]
+        lines.append(
+            f'    {{ {{ {trigger["loot_id"]}, {trigger["item_entry"]} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append(
+        "inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildGAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID()"
+    )
+    lines.append("{")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID = "
+        "BuildGAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
     FamilySchema.export_triggers. Unlike emit_python_generic's TRIGGERS (a
@@ -1157,7 +1236,8 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     are the kinds that exist as of M4.9.2. A new branch's map MUST use the
     same raw-constexpr-array-plus-runtime-builder pattern as
     `_emit_cpp_trigger_lookup_quest_reward`/`_emit_cpp_trigger_lookup_vendor_purchase`/
-    `_emit_cpp_trigger_lookup_learn_spell` below, never a bare aggregate initializer -- that exact mistake is what
+    `_emit_cpp_trigger_lookup_learn_spell`/`_emit_cpp_trigger_lookup_gameobject_loot`
+    below, never a bare aggregate initializer -- that exact mistake is what
     caused a real production stack-overflow crash (M4.7.1 finding #1), twice,
     before this project learned that lesson."""
     locations = data["locations"]
@@ -1173,6 +1253,9 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
 
     if kind == "learn_spell":
         return _emit_cpp_trigger_lookup_learn_spell(locations)
+
+    if kind == "gameobject_loot":
+        return _emit_cpp_trigger_lookup_gameobject_loot(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "
