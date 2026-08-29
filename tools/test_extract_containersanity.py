@@ -113,5 +113,32 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(result["locations"][0]["tags"], {"expansion": ["vanilla", "wotlk"]})
 
 
+class TestGatheringNodeExclusion(unittest.TestCase):
+    @patch("extract_containersanity.parse_map_expansions")
+    @patch("extract_containersanity.load_exclusion_rules")
+    @patch("extract_containersanity.run_query")
+    def test_real_gathering_node_name_is_excluded_even_though_it_is_type_3(
+        self, mock_run_query, mock_load_rules, mock_map_expansions
+    ) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_map_expansions.return_value = {0: "vanilla"}
+        # Real values verified live: Copper Vein IS gameobject_template.type=3
+        # and DOES join cleanly against gameobject_loot_template -- it must
+        # be excluded by name, not by type, since Containersanity's own
+        # type=3 join can't distinguish it from a real chest.
+        mock_run_query.side_effect = [
+            [
+                ("1502", "774", "Copper Vein", "Malachite"),
+                ("1731", "999", "Mossy Footlocker", "Some Real Container Item"),
+            ],
+            [("1502", "0"), ("1731", "0")],
+        ]
+        result = extract()
+        names = [loc["name"] for loc in result["locations"]]
+        self.assertEqual(len(names), 1)
+        self.assertIn("Mossy Footlocker", names[0])
+        self.assertNotIn("Copper Vein", " ".join(names))
+
+
 if __name__ == "__main__":
     unittest.main()

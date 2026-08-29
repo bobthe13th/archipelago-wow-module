@@ -10,6 +10,7 @@ import pathlib
 import yaml
 
 from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
+from gathersanity_node_names import GATHERING_NODE_NAMES
 
 _LOCATION_ID_BASE = 8_000_000
 _ITEM_ID_BASE = 7_600_000
@@ -87,6 +88,14 @@ def extract() -> dict:
     for loot_id_str, item_entry_str, chest_name, item_name in loot_rows:
         loot_id, item_entry = int(loot_id_str), int(item_entry_str)
         if not chest_name or is_denylisted(chest_name, rules):
+            continue
+        if chest_name in GATHERING_NODE_NAMES:
+            # M4.10.2 regression fix: this checkout's real gathering nodes
+            # (Copper Vein, Silverleaf, etc.) are GAMEOBJECT_TYPE_CHEST
+            # (type=3) -- the same type this query already matches -- and
+            # exclusion_rules.yaml's denylist never excluded them. These
+            # rows now belong to Gathersanity's own extraction
+            # (extract_gathersanity.py), not Containersanity's.
             continue
         if not item_name or is_denylisted(item_name, rules):
             continue
