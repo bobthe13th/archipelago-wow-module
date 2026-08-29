@@ -176,7 +176,13 @@ locations:
 # progression item, tracked by ArchipelagoRealmState::GetKeyCount()/GrantKey(),
 # not a boolean.
 items:
+  # item_id 730040 (one past this family's own 730000-730039 location_id
+  # range, verified against every content/*.yaml family's real id ranges
+  # before assigning) -- previously 830029, which silently collided with
+  # gates.yaml's "Bank Access" (both names then resolved to the same real
+  # AP item id in the merged item_name_to_id map). Found during M4.9.6's
+  # final whole-branch review; fixed as a standalone follow-up.
   - name: "Key Hunt: Key"
-    item_id: 830029
+    item_id: 730040
     count: 40
     delivery: {kind: realm_state, effect: grant_key, step: 1}

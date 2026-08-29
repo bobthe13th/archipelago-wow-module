@@ -9,7 +9,7 @@
 namespace Archipelago::Rares
 {
     // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).
-    inline constexpr int64_t AP_ITEM_KEY_HUNT_KEY = 830029;
+    inline constexpr int64_t AP_ITEM_KEY_HUNT_KEY = 730040;
 
     // Every curated rare's real creature entry -> its own location id.
     // Sent unconditionally on a matching kill, same as every other
