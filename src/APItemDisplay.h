@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "APProtocol.h"
+#include "ArchipelagoCONTAINERSANITYContent.h"
 
 namespace Archipelago::ItemDisplay
 {
@@ -156,6 +157,34 @@ namespace Archipelago::ItemDisplay
     inline std::pair<std::string, uint32_t> FallbackRewardColumnForFillerQuest()
     {
         return std::make_pair(std::string("RewardItem1"), uint32_t(0));
+    }
+
+    // location_id -> (loot_id, original_item_entry). Named generically
+    // (not "Gameobject"-specific in the outward map name) because
+    // M4.10.2's creature_loot_template (skinning-loot) slots reuse this
+    // exact function's SHAPE -- not this function itself, since the two
+    // source tables differ -- but share archipelago_lootslot_original_items
+    // and ArchipelagoLootSlotScript downstream.
+    //
+    // Defined inline here (not in APItemDisplay.cpp alongside its
+    // quest/vendor-map siblings, BuildLocationIdToQuestId/
+    // BuildLocationIdToVendorSlot) so it stays independently unit-testable
+    // from test_APItemDisplay.cpp's standalone doctest harness, which links
+    // only this header plus doctest -- never APItemDisplay.cpp itself,
+    // since that translation unit pulls in DatabaseEnv.h/QueryResult.h
+    // (the real AzerothCore DB layer, requiring the full server build,
+    // MySQL connector, etc.), unlike this function or
+    // ArchipelagoCONTAINERSANITYContent.h, both of which have zero DB
+    // dependency. Every other pure/testable function in this file
+    // (SynthesizedEntryFor, PickRewardColumn, RewardColumnsToRewrite,
+    // FallbackRewardColumnForFillerQuest) is inline here for exactly this
+    // reason.
+    inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToGameobjectLootSlot()
+    {
+        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
+        for (auto const& [key, locationId] : ArchipelagoCONTAINERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
+            result.emplace(locationId, key);
+        return result;
     }
 
     // Called once, from ArchipelagoWorldScript::OnUpdate, the first time

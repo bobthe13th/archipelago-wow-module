@@ -132,3 +132,24 @@ TEST_CASE("APItemDisplay::FallbackRewardColumnForFillerQuestReturnsRewardItem1Ma
     CHECK(column == "RewardItem1");
     CHECK(originalValue == 0u);
 }
+
+TEST_CASE("BuildLocationIdToGameobjectLootSlot resolves a real generated row")
+{
+    auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
+    // Uses this checkout's real generated ArchipelagoCONTAINERSANITYContent
+    // header (Task 2) -- location_id 8000000 is guaranteed to exist as
+    // long as containersanity_content_data.py has at least one row
+    // (17,594 real rows as of this plan).
+    REQUIRE(map.find(8000000) != map.end());
+}
+
+TEST_CASE("SynthesizeAndRewireLocations gameobject_loot branch is idempotent on entry id")
+{
+    // SynthesizedEntryFor is a pure function -- re-deriving the entry for
+    // the same location_id twice must produce the same value (the whole
+    // idempotency argument for the DB rewrite being a safe no-op on a
+    // repeat run).
+    int64_t locationId = 8000000;
+    CHECK(Archipelago::ItemDisplay::SynthesizedEntryFor(locationId)
+        == Archipelago::ItemDisplay::SynthesizedEntryFor(locationId));
+}

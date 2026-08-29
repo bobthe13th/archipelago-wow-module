@@ -96,6 +96,7 @@ namespace Archipelago::ItemDisplay
     {
         auto locationToQuestId = BuildLocationIdToQuestId();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
+        auto locationToGameobjectLootSlot = BuildLocationIdToGameobjectLootSlot();
         uint32_t newlySynthesizedCount = 0;
 
         for (auto const& [locationId, itemDisplay] : display)
@@ -298,9 +299,38 @@ namespace Archipelago::ItemDisplay
                 continue;
             }
 
+            if (auto it = locationToGameobjectLootSlot.find(locationId); it != locationToGameobjectLootSlot.end())
+            {
+                auto const& [lootId, originalItemEntry] = it->second;
+
+                // gameobject_loot_template's real PK is (Entry, Item) ONLY --
+                // NOT (Entry, Item, Reference, GroupId) like creature_loot_template
+                // (M4.7 spec's Sec9 assumption was wrong for this table; see this
+                // milestone's plan, Global Constraints). Matching on the PK's
+                // old value in the WHERE clause is safe and naturally
+                // idempotent, same as every other synthesis branch here.
+                WorldDatabase.Execute(
+                    "UPDATE gameobject_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
+                    entry, lootId, originalItemEntry
+                );
+
+                // Persist the ORIGINAL wow item entry, same rationale/shape
+                // as archipelago_vendor_original_items above --
+                // ArchipelagoLootSlotScript.cpp's repeat-loot behaviors
+                // (vanilla_item/gold_conversion) need it back after Item has
+                // been overwritten to point at the synthesized entry.
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, originalItemEntry
+                );
+                continue;
+            }
+
             LOG_ERROR("module.archipelago_wow",
                 "Archipelago: slot_data ap_item_display had location {} with no matching "
-                "quest_reward or vendor_purchase trigger -- skipped, no row to rewrite",
+                "quest_reward, vendor_purchase, or gameobject_loot trigger -- skipped, no row "
+                "to rewrite",
                 locationId);
         }
 
