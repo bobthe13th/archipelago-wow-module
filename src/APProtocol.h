@@ -134,4 +134,13 @@ namespace Archipelago
     // Archipelago.InstanceClearMode manual worldserver.conf mirror outright
     // -- see ArchipelagoWorldScript.cpp's OnUpdate for the consumer.
     std::optional<std::string> ParseInstanceClearModeFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["loot_slot_check_repeat_behavior"] (a
+    // single string option, M4.10.1) -- mirrors
+    // ParseVendorCheckRepeatBehaviorFromSlotData's exact shape (M4.7 Task
+    // 8): "don't crash the connection state machine on a shape it doesn't
+    // recognize". Returns std::nullopt (never throws) if slot_data or the
+    // key is absent/malformed. Consumed by ArchipelagoLootSlotScript.cpp
+    // (Task 7), shared with M4.10.2's Gathersanity gather-node slots.
+    std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw);
 }

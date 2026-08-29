@@ -207,6 +207,16 @@ public:
     std::string GetVendorCheckRepeatBehavior() const { return _vendorCheckRepeatBehavior; }
     void SetVendorCheckRepeatBehavior(std::string behavior) { _vendorCheckRepeatBehavior = std::move(behavior); }
 
+    // Cached mirror of slot_data["loot_slot_check_repeat_behavior"]
+    // (M4.10.1), same not-persisted, set-once-from-slot_data convention as
+    // GetVendorCheckRepeatBehavior above -- consumed from
+    // ArchipelagoLootSlotScript.cpp's loot hook to decide what happens on
+    // a REPEAT loot of an already-checked Containersanity/Gathersanity
+    // slot. Defaults to "suppress_entirely" (matching the apworld option's
+    // own default).
+    std::string GetLootSlotCheckRepeatBehavior() const { return _lootSlotCheckRepeatBehavior; }
+    void SetLootSlotCheckRepeatBehavior(std::string behavior) { _lootSlotCheckRepeatBehavior = std::move(behavior); }
+
     // Cached mirror of Archipelago.AchievementHuntTier/AchievementHuntSubset
     // (M4.9 Sec4), same not-persisted worldserver.conf-mirror convention as
     // GameMode/CompletionistExpansion above -- consumed from
@@ -245,6 +255,7 @@ private:
     uint32_t _artisanPrimaryProfessionsRequired = 2;
     uint32_t _collectorItemsRequired = 264;
     std::string _vendorCheckRepeatBehavior = "suppress_entirely";
+    std::string _lootSlotCheckRepeatBehavior = "suppress_entirely";
     std::string _achievementHuntTier = "hundred_percent";
     std::string _achievementHuntSubset = "explorer";
 };

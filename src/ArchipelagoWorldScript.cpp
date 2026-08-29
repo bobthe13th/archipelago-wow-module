@@ -437,6 +437,10 @@ public:
             [this](std::string const& mode) {
                 std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
                 _pendingInstanceClearMode = mode;
+            },
+            [this](std::string const& behavior) {
+                std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
+                _pendingLootSlotCheckRepeatBehavior = behavior;
             });
     }
 
@@ -512,6 +516,18 @@ public:
             else
                 LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized instance_clear_mode '{}' from slot_data, keeping existing value", *instanceClearMode);
         }
+
+        std::optional<std::string> lootSlotCheckRepeatBehavior;
+        {
+            std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
+            if (!_lootSlotCheckRepeatBehaviorApplied && _pendingLootSlotCheckRepeatBehavior)
+            {
+                lootSlotCheckRepeatBehavior = _pendingLootSlotCheckRepeatBehavior;
+                _lootSlotCheckRepeatBehaviorApplied = true;
+            }
+        }
+        if (lootSlotCheckRepeatBehavior)
+            sArchipelagoRealmState->SetLootSlotCheckRepeatBehavior(*lootSlotCheckRepeatBehavior);
     }
 
 private:
@@ -578,6 +594,18 @@ private:
     std::mutex _pendingInstanceClearModeMutex;
     std::optional<std::string> _pendingInstanceClearMode;
     bool _instanceClearModeApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
+    // above, for the one-shot loot_slot_check_repeat_behavior slot_data
+    // string (M4.10.1). A separate mutex/optional rather than folding into
+    // an existing queue's: logically unrelated slot_data key, parsed by a
+    // completely separate Parse* function
+    // (ParseLootSlotCheckRepeatBehaviorFromSlotData), so no reason to let
+    // one queue's lock contention block another.
+    std::mutex _pendingLootSlotCheckRepeatBehaviorMutex;
+    std::optional<std::string> _pendingLootSlotCheckRepeatBehavior;
+    bool _lootSlotCheckRepeatBehaviorApplied = false;
 };
 
 void AddArchipelagoWorldScripts()

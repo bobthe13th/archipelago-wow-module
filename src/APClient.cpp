@@ -51,7 +51,8 @@ namespace Archipelago
             std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived,
             std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& onSlotDataReceived,
             std::function<void(std::string const&)> const& onVendorCheckRepeatBehaviorReceived,
-            std::function<void(std::string const&)> const& onInstanceClearModeReceived)
+            std::function<void(std::string const&)> const& onInstanceClearModeReceived,
+            std::function<void(std::string const&)> const& onLootSlotCheckRepeatBehaviorReceived)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -65,6 +66,7 @@ namespace Archipelago
             , _onSlotDataReceived(onSlotDataReceived)
             , _onVendorCheckRepeatBehaviorReceived(onVendorCheckRepeatBehaviorReceived)
             , _onInstanceClearModeReceived(onInstanceClearModeReceived)
+            , _onLootSlotCheckRepeatBehaviorReceived(onLootSlotCheckRepeatBehaviorReceived)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -362,6 +364,12 @@ namespace Archipelago
             if (instanceClearMode && _onInstanceClearModeReceived)
                 _onInstanceClearModeReceived(*instanceClearMode);
 
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
+            // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.10.1).
+            auto lootSlotCheckRepeatBehavior = ParseLootSlotCheckRepeatBehaviorFromSlotData(message);
+            if (lootSlotCheckRepeatBehavior && _onLootSlotCheckRepeatBehaviorReceived)
+                _onLootSlotCheckRepeatBehaviorReceived(*lootSlotCheckRepeatBehavior);
+
             ReadNext(false);
         }
 
@@ -485,6 +493,7 @@ namespace Archipelago
         std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& _onSlotDataReceived;
         std::function<void(std::string const&)> const& _onVendorCheckRepeatBehaviorReceived;
         std::function<void(std::string const&)> const& _onInstanceClearModeReceived;
+        std::function<void(std::string const&)> const& _onLootSlotCheckRepeatBehaviorReceived;
     };
 
     APClient::APClient(ClientOptions options,
@@ -493,7 +502,8 @@ namespace Archipelago
         std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived,
         std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived,
         std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
-        std::function<void(std::string const&)> onInstanceClearModeReceived)
+        std::function<void(std::string const&)> onInstanceClearModeReceived,
+        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived)
         : _options(std::move(options))
         , _onItemsReceived(std::move(onItemsReceived))
         , _onConnected(std::move(onConnected))
@@ -501,6 +511,7 @@ namespace Archipelago
         , _onSlotDataReceived(std::move(onSlotDataReceived))
         , _onVendorCheckRepeatBehaviorReceived(std::move(onVendorCheckRepeatBehaviorReceived))
         , _onInstanceClearModeReceived(std::move(onInstanceClearModeReceived))
+        , _onLootSlotCheckRepeatBehaviorReceived(std::move(onLootSlotCheckRepeatBehaviorReceived))
     {
     }
 
@@ -519,7 +530,8 @@ namespace Archipelago
             std::lock_guard<std::mutex> lock(_sessionMutex);
             _session = std::make_shared<APClientSession>(
                 _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived,
-                _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived, _onInstanceClearModeReceived);
+                _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived, _onInstanceClearModeReceived,
+                _onLootSlotCheckRepeatBehaviorReceived);
             session = _session;
         }
         session->Run();
@@ -627,7 +639,7 @@ namespace Archipelago
                         _session = std::make_shared<APClientSession>(
                             _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected,
                             _onDeathLinkReceived, _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived,
-                            _onInstanceClearModeReceived);
+                            _onInstanceClearModeReceived, _onLootSlotCheckRepeatBehaviorReceived);
                         session = _session;
                     }
                     session->Run();

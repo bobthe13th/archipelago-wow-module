@@ -376,6 +376,62 @@ TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when cmd is wrong-
     CHECK_FALSE(mode.has_value());
 }
 
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData parses loot_slot_check_repeat_behavior from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": "gold_conversion"
+        }
+    }])";
+
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw);
+
+    REQUIRE(behavior.has_value());
+    CHECK(*behavior == "gold_conversion");
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw);
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt on malformed JSON")
+{
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData("not json");
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when the key is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": 12345
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": "gold_conversion"
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
 TEST_CASE("APInterception::ClassifiesEachSingleFlagBit")
 {
     using namespace Archipelago::Interception;
