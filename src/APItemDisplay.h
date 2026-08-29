@@ -32,20 +32,16 @@ namespace Archipelago::ItemDisplay
     // constant without re-deriving that arithmetic against the CURRENT max
     // location_id across content/*.yaml.
     //
-    // Re-derived M4.10.1 (final whole-branch review fix, C2/I1): real max
-    // location_id is now 8,016,809 (containersanity's highest assigned id,
-    // base 8,000,000 + 16,810 rows -- down from the 17,594 originally
-    // extracted, after excluding 784 real-but-permanently-unlootable rows:
-    // 761 QuestRequired=1 and 23 Reference!=0, see extract_containersanity.py),
-    // up from the 2,037,749 this comment previously cited (which was
-    // already stale before this milestone -- recipes/trainer_spells had
-    // independently pushed the real max to 7,070,164). At
-    // AP_ITEM_SYNTH_BASE (3,000,000) + 8,016,809 ~= 11,016,809, the
-    // item_template vector tops out around 88 MB -- same order of
-    // magnitude as this comment's own original worked example (5.04M
-    // entries ~= 40 MB, called "a normal, safe size"), so no change to
-    // the constant itself is needed here. Re-derive again before the next
-    // large family (Itemsanity, M4.10.6) lands.
+    // Re-derived M4.10.2: real max location_id is now 9,002,301
+    // (gathersanity's highest assigned id, base 9,000,000 + 2,302 rows),
+    // up from 8,017,593 (M4.10.1) -- Containersanity's own max actually
+    // DROPPED to 8,016,525 after M4.10.2's Task 1 carved 284 rows out of
+    // it, but Gathersanity's new range is higher regardless. At
+    // AP_ITEM_SYNTH_BASE (3,000,000) + 9,002,301 ~= 12,002,301, the
+    // item_template vector tops out around 96 MB -- same safe order of
+    // magnitude as before, so no change to the constant itself is needed
+    // here. Re-derive again before the next large family (Itemsanity,
+    // M4.10.6).
     inline constexpr int64_t AP_ITEM_SYNTH_BASE = 3000000;
 
     // Pure function of location_id -- this is the entire idempotency

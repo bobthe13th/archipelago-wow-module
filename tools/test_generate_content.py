@@ -959,5 +959,63 @@ class TestGameobjectLootTriggerLookup(unittest.TestCase):
         self.assertIn("std::map<std::pair<uint32_t, uint32_t>, int64_t> GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID", joined)
 
 
+class TestSkinningAndDisenchantLootTriggerLookup(unittest.TestCase):
+    def test_validate_skinning_loot_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "Gathersanity: A (skinning #1/2)", "location_id": 9000000,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+            ],
+            "items": [{"name": "Gathersanity Item: A", "item_id": 9500000,
+                       "delivery": {"kind": "mail", "wow_item_entry": 2}}],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_skinning_loot_id_item_entry_pair_is_a_hard_validation_error(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "A", "location_id": 9000000,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+                {"name": "B", "location_id": 9000001,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+            ],
+            "items": [
+                {"name": "A item", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "B item", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+            ],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_mixed_kind_family_emits_one_map_per_kind(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "Node", "location_id": 9000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1502, "item_entry": 774},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+                {"name": "Skin", "location_id": 9000001,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 193, "item_entry": 4304},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+                {"name": "Dis", "location_id": 9000002,
+                 "trigger": {"kind": "disenchant_loot", "loot_id": 1, "item_entry": 10938},
+                 "tags": {"expansion": ["vanilla"], "source": ["disenchant"]}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1502, 774 }, 9000000 }", joined)
+        self.assertIn("SKINNING_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 193, 4304 }, 9000001 }", joined)
+        self.assertIn("DISENCHANT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1, 10938 }, 9000002 }", joined)
+
+
 if __name__ == "__main__":
     unittest.main()

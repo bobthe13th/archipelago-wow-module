@@ -79,6 +79,8 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_filler_effect_rows(items, path)
     _validate_learn_spell_rows(locations, path)
     _validate_gameobject_loot_rows(locations)
+    _validate_skinning_loot_rows(data)
+    _validate_disenchant_loot_rows(data)
     _validate_trigger_lookup_uniqueness(family, locations, items, path)
     _validate_tags_rows(family, locations, items, path)
     _validate_level_milestone_tracks(family, locations, path)
@@ -251,6 +253,44 @@ def _validate_gameobject_loot_rows(locations: list) -> None:
         if key in seen:
             raise ValidationError(
                 f"containersanity: duplicate (loot_id, item_entry) {key} -- "
+                f"{seen[key]!r} and {loc['name']!r} both claim it"
+            )
+        seen[key] = loc["name"]
+
+
+def _validate_skinning_loot_rows(data: dict) -> None:
+    """skinning_loot_template's real PK is (Entry, Item, GroupId), but
+    GroupId is never part of the trigger key -- confirmed live during
+    planning that zero real (Entry, Item) pairs span more than one
+    GroupId, so a (loot_id, item_entry) collision here means a genuine
+    extraction bug, same discipline as _validate_gameobject_loot_rows."""
+    seen: dict[tuple[int, int], str] = {}
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "skinning_loot":
+            continue
+        key = (trigger["loot_id"], trigger["item_entry"])
+        if key in seen:
+            raise ValidationError(
+                f"gathersanity: duplicate skinning_loot (loot_id, item_entry) {key} -- "
+                f"{seen[key]!r} and {loc['name']!r} both claim it"
+            )
+        seen[key] = loc["name"]
+
+
+def _validate_disenchant_loot_rows(data: dict) -> None:
+    """disenchant_loot_template's real PK is (Entry, Item, GroupId), same
+    shape and same discipline as _validate_skinning_loot_rows above --
+    GroupId never appears in the key here either, same real justification."""
+    seen: dict[tuple[int, int], str] = {}
+    for loc in data["locations"]:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "disenchant_loot":
+            continue
+        key = (trigger["loot_id"], trigger["item_entry"])
+        if key in seen:
+            raise ValidationError(
+                f"gathersanity: duplicate disenchant_loot (loot_id, item_entry) {key} -- "
                 f"{seen[key]!r} and {loc['name']!r} both claim it"
             )
         seen[key] = loc["name"]
@@ -507,6 +547,11 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "achievements": FamilySchema(valid_trigger_kinds={"achievement_complete"}, valid_delivery_kinds={"realm_state"}),
     "containersanity": FamilySchema(
         valid_trigger_kinds={"gameobject_loot"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+    ),
+    "gathersanity": FamilySchema(
+        valid_trigger_kinds={"gameobject_loot", "skinning_loot", "disenchant_loot"},
+        valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
 }
@@ -1234,26 +1279,102 @@ def _emit_cpp_trigger_lookup_gameobject_loot(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_skinning_loot(locations: list) -> list[str]:
+    """SKINNING_LOOT_SLOT_TO_LOCATION_ID via the same raw-constexpr-
+    array-plus-runtime-builder pattern as
+    _emit_cpp_trigger_lookup_gameobject_loot (M4.10.1) -- keyed
+    (loot_id, item_entry) against skinning_loot_template's real rows
+    (M4.10.2)."""
+    lines = [
+        "inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> "
+        "SKINNING_LOOT_SLOT_TO_LOCATION_ID_RAW[] = {"
+    ]
+    for loc in locations:
+        trigger = loc["trigger"]
+        lines.append(
+            f'    {{ {{ {trigger["loot_id"]}, {trigger["item_entry"]} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append(
+        "inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildSKINNING_LOOT_SLOT_TO_LOCATION_ID()"
+    )
+    lines.append("{")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : SKINNING_LOOT_SLOT_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> SKINNING_LOOT_SLOT_TO_LOCATION_ID = "
+        "BuildSKINNING_LOOT_SLOT_TO_LOCATION_ID();"
+    )
+    return lines
+
+
+def _emit_cpp_trigger_lookup_disenchant_loot(locations: list) -> list[str]:
+    """DISENCHANT_LOOT_SLOT_TO_LOCATION_ID, same pattern, keyed against
+    disenchant_loot_template's real rows (M4.10.2)."""
+    lines = [
+        "inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> "
+        "DISENCHANT_LOOT_SLOT_TO_LOCATION_ID_RAW[] = {"
+    ]
+    for loc in locations:
+        trigger = loc["trigger"]
+        lines.append(
+            f'    {{ {{ {trigger["loot_id"]}, {trigger["item_entry"]} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append(
+        "inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildDISENCHANT_LOOT_SLOT_TO_LOCATION_ID()"
+    )
+    lines.append("{")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : DISENCHANT_LOOT_SLOT_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> DISENCHANT_LOOT_SLOT_TO_LOCATION_ID = "
+        "BuildDISENCHANT_LOOT_SLOT_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
-    FamilySchema.export_triggers. Unlike emit_python_generic's TRIGGERS (a
-    dynamic dict[str, dict] -- fine in Python), C++ needs a real key type per
-    trigger kind, so this dispatches on the family's own trigger.kind rather
-    than trying to emit one generic dict-of-dicts shape. New export_triggers
-    families register a new branch here when they need one -- quest_reward,
-    vendor_purchase, and learn_spell (added M4.9 for recipes/trainer_spells)
-    are the kinds that exist as of M4.9.2. A new branch's map MUST use the
-    same raw-constexpr-array-plus-runtime-builder pattern as
-    `_emit_cpp_trigger_lookup_quest_reward`/`_emit_cpp_trigger_lookup_vendor_purchase`/
-    `_emit_cpp_trigger_lookup_learn_spell`/`_emit_cpp_trigger_lookup_gameobject_loot`
-    below, never a bare aggregate initializer -- that exact mistake is what
-    caused a real production stack-overflow crash (M4.7.1 finding #1), twice,
-    before this project learned that lesson."""
+    FamilySchema.export_triggers. Every family through M4.10.1 had exactly
+    one uniform trigger.kind across its whole locations list, so a single
+    locations[0]-based dispatch was sufficient. Gathersanity (M4.10.2) is
+    the first generic family with a genuinely MIXED-kind locations list
+    (gameobject_loot/skinning_loot/disenchant_loot all in one family) --
+    this groups locations by kind first and emits one map per kind found,
+    in first-seen order, each blank-line-separated. A new export_triggers
+    family registers a new per-kind branch in _emit_cpp_trigger_lookup_one_kind
+    below, same as before."""
     locations = data["locations"]
     if not locations:
         return []
-    kind = locations[0]["trigger"]["kind"]
 
+    kinds_in_order: list[str] = []
+    by_kind: dict[str, list] = {}
+    for loc in locations:
+        kind = loc["trigger"]["kind"]
+        if kind not in by_kind:
+            kinds_in_order.append(kind)
+            by_kind[kind] = []
+        by_kind[kind].append(loc)
+
+    lines: list[str] = []
+    for i, kind in enumerate(kinds_in_order):
+        if i > 0:
+            lines.append("")
+        lines.extend(_emit_cpp_trigger_lookup_one_kind(data, kind, by_kind[kind]))
+    return lines
+
+
+def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) -> list[str]:
     if kind == "quest_reward":
         return _emit_cpp_trigger_lookup_quest_reward(locations)
 
@@ -1266,10 +1387,16 @@ def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     if kind == "gameobject_loot":
         return _emit_cpp_trigger_lookup_gameobject_loot(locations)
 
+    if kind == "skinning_loot":
+        return _emit_cpp_trigger_lookup_skinning_loot(locations)
+
+    if kind == "disenchant_loot":
+        return _emit_cpp_trigger_lookup_disenchant_loot(locations)
+
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "
         f"{kind!r} has no C++ trigger-lookup emission registered in "
-        f"_emit_cpp_trigger_lookup -- add a branch for it"
+        f"_emit_cpp_trigger_lookup_one_kind -- add a branch for it"
     )
 
 

@@ -21,6 +21,11 @@ _ARCHIPELAGO_WOW_DIR = _MODULE_DIR.parent.parent.parent / "Archipelago" / "world
 # chain convention and commit db869d0's revert. Once this worktree's branch
 # is merged, a normal run with this env var unset resolves to the same
 # sibling-checkout directory as every other family.
+#
+# Task 3 (M4.10.2): gathersanity's own regenerated Python file lands in the
+# SAME worktree as containersanity's (this milestone's whole branch lives in
+# one worktree) -- reuse this exact variable for gathersanity's py_out below
+# rather than inventing a second env-var escape hatch for the same directory.
 _CONTAINERSANITY_WOW_DIR = pathlib.Path(
     os.environ.get("ARCHIPELAGO_WOW_WORLDS_DIR", str(_ARCHIPELAGO_WOW_DIR))
 )
@@ -89,6 +94,10 @@ _FAMILIES = {
     "containersanity": {
         "py_out": _CONTAINERSANITY_WOW_DIR / "containersanity_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCONTAINERSANITYContent.h",
+    },
+    "gathersanity": {
+        "py_out": _CONTAINERSANITY_WOW_DIR / "gathersanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGATHERSANITYContent.h",
     },
 }
 
