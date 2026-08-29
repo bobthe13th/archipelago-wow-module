@@ -186,7 +186,7 @@ namespace Archipelago::ItemDisplay
     {
         std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
         for (auto const& [key, locationId] : ArchipelagoCONTAINERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
-            result.emplace(locationId, key);
+            result[locationId] = key;
         return result;
     }
 

@@ -15,7 +15,7 @@
 // upstream of this file. This coexists safely with the pre-existing
 // ArchipelagoLootScript.cpp (Fishing Quest's curated real-item-entry
 // hook on the same PLAYERHOOK_ON_LOOT_ITEM) since the entry ranges never
-// overlap (see this file's own test above).
+// overlap (see the regression test for this in test_APItemDisplay.cpp).
 #include "Chat.h"
 #include "Item.h"
 #include "Player.h"
