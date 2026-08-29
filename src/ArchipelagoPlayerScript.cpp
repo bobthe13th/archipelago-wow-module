@@ -357,12 +357,14 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.10.2 fix: quest_rewards/vendor_stock items also use the same
-        // generic mail-delivery path as recipes/trainer_spells/
+        // M4.10.1 follow-up fix: quest_rewards/vendor_stock items also use
+        // the same generic mail-delivery path as recipes/trainer_spells/
         // containersanity -- ArchipelagoQUEST_REWARDSContent::
         // ApItemIdToWowItemEntry (9,239 entries) and
-        // ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry (37,750
-        // entries) were real and already built by generate_content.py's
+        // ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry (37,738
+        // entries -- 37,750 real rows minus 12 dropped as duplicate
+        // locations, same count every other emitted export agrees on)
+        // were real and already built by generate_content.py's
         // export_item_delivery path once flipped on for these two families,
         // but nothing consumed them here. The retired comment this replaces
         // claimed these items were "delivered via item-synthesis

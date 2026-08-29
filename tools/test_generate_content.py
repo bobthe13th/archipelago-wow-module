@@ -576,10 +576,11 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
             FAMILY_SCHEMAS["quest_rewards"] = original_schema
 
     def test_load_family_rejects_missing_tags_block_when_export_tags_is_on(self) -> None:
-        # As of this task, the REAL FAMILY_SCHEMAS["quest_rewards"] still has
-        # export_tags=False (flipped in Task 3, alongside real tags data) --
-        # temporarily override it here so this test exercises the validator
-        # gate itself, not the real registry's current (pre-Task-3) state.
+        # The REAL FAMILY_SCHEMAS["quest_rewards"] already has export_tags=True
+        # (since Task 3) -- temporarily override it here anyway so this test
+        # exercises the validator gate itself in isolation, not incidentally
+        # depending on the registry's current real config (same pattern as
+        # TestAlwaysPresentAndTags's own export_tags override tests).
         original_schema = FAMILY_SCHEMAS["quest_rewards"]
         FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
             valid_trigger_kinds=original_schema.valid_trigger_kinds,
