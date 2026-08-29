@@ -153,3 +153,13 @@ TEST_CASE("SynthesizeAndRewireLocations gameobject_loot branch is idempotent on 
     CHECK(Archipelago::ItemDisplay::SynthesizedEntryFor(locationId)
         == Archipelago::ItemDisplay::SynthesizedEntryFor(locationId));
 }
+
+TEST_CASE("Containersanity synthesized entry range never overlaps ArchipelagoLootScript's real fish entries")
+{
+    // Regression guard: ArchipelagoLootScript.cpp (Fishing Quest) and the
+    // new ArchipelagoLootSlotScript both hook PLAYERHOOK_ON_LOOT_ITEM: this
+    // is only safe because their entry ranges never overlap. Real WotLK
+    // item entries top out at 56,806 in this checkout's item_template --
+    // AP_ITEM_SYNTH_BASE (3,000,000) is far above that, by construction.
+    CHECK(Archipelago::ItemDisplay::AP_ITEM_SYNTH_BASE > 56806u);
+}
