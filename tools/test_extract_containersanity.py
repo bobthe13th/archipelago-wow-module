@@ -80,7 +80,7 @@ class TestExtract(unittest.TestCase):
         ]
         result = extract()
         self.assertEqual([loc["location_id"] for loc in result["locations"]], [8_000_000, 8_000_001, 8_000_002, 8_000_003])
-        self.assertEqual([item["item_id"] for item in result["items"]], [8_500_000, 8_500_001, 8_500_002, 8_500_003])
+        self.assertEqual([item["item_id"] for item in result["items"]], [7_600_000, 7_600_001, 7_600_002, 7_600_003])
 
     @patch("extract_containersanity.parse_map_expansions")
     @patch("extract_containersanity.load_exclusion_rules")

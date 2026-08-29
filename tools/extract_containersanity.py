@@ -12,7 +12,7 @@ import yaml
 from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
 
 _LOCATION_ID_BASE = 8_000_000
-_ITEM_ID_BASE = 8_500_000
+_ITEM_ID_BASE = 7_600_000
 
 _GAMEOBJECT_TYPE_CHEST = 3  # SharedDefines.h:1565
 
