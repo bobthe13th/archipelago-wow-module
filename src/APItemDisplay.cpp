@@ -97,6 +97,8 @@ namespace Archipelago::ItemDisplay
         auto locationToQuestId = BuildLocationIdToQuestId();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
         auto locationToGameobjectLootSlot = BuildLocationIdToGameobjectLootSlot();
+        auto locationToSkinningLootSlot = BuildLocationIdToSkinningLootSlot();
+        auto locationToDisenchantLootSlot = BuildLocationIdToDisenchantLootSlot();
         uint32_t newlySynthesizedCount = 0;
 
         for (auto const& [locationId, itemDisplay] : display)
@@ -327,10 +329,61 @@ namespace Archipelago::ItemDisplay
                 continue;
             }
 
+            if (auto it = locationToSkinningLootSlot.find(locationId); it != locationToSkinningLootSlot.end())
+            {
+                auto const& [lootId, originalItemEntry] = it->second;
+
+                // skinning_loot_template's real PK is (Entry, Item, GroupId),
+                // but GroupId is deliberately NOT in this WHERE clause --
+                // confirmed live during planning that GroupId is AzerothCore's
+                // normal multi-group loot mechanic here (most real rows use
+                // GroupId=1, not 0) and that zero real (Entry, Item) pairs
+                // span more than one GroupId, so matching on (Entry, Item)
+                // alone is safe, unambiguous, and correctly reaches every real
+                // row regardless of its GroupId -- same idempotent shape as
+                // every other synthesis branch here.
+                WorldDatabase.Execute(
+                    "UPDATE skinning_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
+                    entry, lootId, originalItemEntry
+                );
+
+                // Persist the ORIGINAL wow item entry, same rationale/shape
+                // as the gameobject-loot branch above -- ArchipelagoLootSlotScript.cpp's
+                // repeat-loot behaviors need it back after Item has been
+                // overwritten to point at the synthesized entry.
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, originalItemEntry
+                );
+                continue;
+            }
+
+            if (auto it = locationToDisenchantLootSlot.find(locationId); it != locationToDisenchantLootSlot.end())
+            {
+                auto const& [lootId, originalItemEntry] = it->second;
+
+                // Same GroupId reasoning as the skinning branch above --
+                // disenchant_loot_template's real rows split 18/GroupId=0 vs
+                // 105/GroupId=1, zero (Entry, Item) collisions across groups,
+                // so GroupId is deliberately omitted from this WHERE clause too.
+                WorldDatabase.Execute(
+                    "UPDATE disenchant_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
+                    entry, lootId, originalItemEntry
+                );
+
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, originalItemEntry
+                );
+                continue;
+            }
+
             LOG_ERROR("module.archipelago_wow",
                 "Archipelago: slot_data ap_item_display had location {} with no matching "
-                "quest_reward, vendor_purchase, or gameobject_loot trigger -- skipped, no row "
-                "to rewrite",
+                "quest_reward, vendor_purchase, gameobject_loot, skinning_loot, or "
+                "disenchant_loot trigger -- skipped, no row to rewrite",
                 locationId);
         }
 
@@ -345,7 +398,9 @@ namespace Archipelago::ItemDisplay
         // loot slot this run just rewrote still shows the REAL WoW item
         // in-game until the process restarts and reloads those caches from
         // disk. gameobject_loot_template (M4.10.1's Containersanity synthesis
-        // branch above) is cached in-memory too, same restart requirement.
+        // branch above) is cached in-memory too, same restart requirement --
+        // as are skinning_loot_template/disenchant_loot_template (M4.10.2's
+        // Gathersanity synthesis branches above).
         // Without this log, that looks like the feature silently did
         // nothing rather than "worked, but needs a restart to show." M4.7.1
         // finding #2: this used to fire on EVERY connection with non-empty
@@ -357,8 +412,9 @@ namespace Archipelago::ItemDisplay
             LOG_WARN("module.archipelago_wow",
                 "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward/"
                 "loot slot data -- a worldserver RESTART is required before these changes take "
-                "effect (item_template/npc_vendor/quest_template/gameobject_loot_template are "
-                "cached in memory and have no live-reload path)",
+                "effect (item_template/npc_vendor/quest_template/gameobject_loot_template/"
+                "skinning_loot_template/disenchant_loot_template are cached in memory and have "
+                "no live-reload path)",
                 newlySynthesizedCount);
         }
         else if (!display.empty())

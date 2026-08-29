@@ -11,6 +11,7 @@
 
 #include "APProtocol.h"
 #include "ArchipelagoCONTAINERSANITYContent.h"
+#include "ArchipelagoGATHERSANITYContent.h"
 
 namespace Archipelago::ItemDisplay
 {
@@ -160,10 +161,12 @@ namespace Archipelago::ItemDisplay
 
     // location_id -> (loot_id, original_item_entry). Named generically
     // (not "Gameobject"-specific in the outward map name) because
-    // M4.10.2's creature_loot_template (skinning-loot) slots reuse this
-    // exact function's SHAPE -- not this function itself, since the two
-    // source tables differ -- but share archipelago_lootslot_original_items
-    // and ArchipelagoLootSlotScript downstream.
+    // M4.10.2's skinning_loot_template/disenchant_loot_template slots
+    // (BuildLocationIdToSkinningLootSlot/BuildLocationIdToDisenchantLootSlot
+    // below) reuse this exact function's SHAPE -- not this function itself,
+    // since the source tables differ -- but share
+    // archipelago_lootslot_original_items and ArchipelagoLootSlotScript
+    // downstream.
     //
     // Defined inline here (not in APItemDisplay.cpp alongside its
     // quest/vendor-map siblings, BuildLocationIdToQuestId/
@@ -178,11 +181,40 @@ namespace Archipelago::ItemDisplay
     // (SynthesizedEntryFor, PickRewardColumn, RewardColumnsToRewrite,
     // FallbackRewardColumnForFillerQuest) is inline here for exactly this
     // reason.
+    // M4.10.2: Containersanity's own map shrank (284 gathering-node rows
+    // carved out, Task 1) and Gathersanity gained its own gameobject_loot
+    // rows (the same 284, re-extracted under a new family/location_id
+    // range) -- the two maps' keys never overlap post-Task-1 (a real
+    // (loot_id, item_entry) pair now belongs to exactly one family), so a
+    // plain merge is safe.
     inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToGameobjectLootSlot()
     {
         std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
         for (auto const& [key, locationId] : ArchipelagoCONTAINERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
-            result[locationId] = key;
+            result.emplace(locationId, key);
+        for (auto const& [key, locationId] : ArchipelagoGATHERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
+            result.emplace(locationId, key);
+        return result;
+    }
+
+    // location_id -> (loot_id, original_item_entry) for skinning_loot_template
+    // rows (M4.10.2) -- same shape as BuildLocationIdToGameobjectLootSlot,
+    // different backing table. Inline here for the same standalone-testability
+    // reason documented on BuildLocationIdToGameobjectLootSlot above.
+    inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToSkinningLootSlot()
+    {
+        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
+        for (auto const& [key, locationId] : ArchipelagoGATHERSANITYContent::SKINNING_LOOT_SLOT_TO_LOCATION_ID)
+            result.emplace(locationId, key);
+        return result;
+    }
+
+    // Same shape again, for disenchant_loot_template (M4.10.2).
+    inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToDisenchantLootSlot()
+    {
+        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
+        for (auto const& [key, locationId] : ArchipelagoGATHERSANITYContent::DISENCHANT_LOOT_SLOT_TO_LOCATION_ID)
+            result.emplace(locationId, key);
         return result;
     }
 

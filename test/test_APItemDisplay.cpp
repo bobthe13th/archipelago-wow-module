@@ -163,3 +163,33 @@ TEST_CASE("Containersanity synthesized entry range never overlaps ArchipelagoLoo
     // AP_ITEM_SYNTH_BASE (3,000,000) is far above that, by construction.
     CHECK(Archipelago::ItemDisplay::AP_ITEM_SYNTH_BASE > 56806u);
 }
+
+TEST_CASE("BuildLocationIdToGameobjectLootSlot merges Containersanity and Gathersanity")
+{
+    // Task 1 shrunk Containersanity to 16,526 rows (base 8,000,000); Task 3
+    // added Gathersanity's own gameobject_loot rows (base 9,000,000,
+    // gathering_node source only, 284 of them) -- both must resolve
+    // through the SAME merged map after this task's change.
+    auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
+    REQUIRE(map.find(8000000) != map.end());  // still-real Containersanity row
+    REQUIRE(map.find(9000000) != map.end());  // real Gathersanity gathering_node row
+}
+
+TEST_CASE("BuildLocationIdToSkinningLootSlot resolves a real generated row")
+{
+    auto map = Archipelago::ItemDisplay::BuildLocationIdToSkinningLootSlot();
+    // Real: 284 gathering_node rows come first in extraction order (Task
+    // 2), so the first skinning_loot row's location_id is 9,000,000 + 284
+    // = 9,000,284 -- guaranteed to exist as long as gathersanity_content_data.py
+    // has at least one skinning_loot row (1,895 real rows as of this plan).
+    REQUIRE(map.find(9000284) != map.end());
+}
+
+TEST_CASE("BuildLocationIdToDisenchantLootSlot resolves a real generated row")
+{
+    auto map = Archipelago::ItemDisplay::BuildLocationIdToDisenchantLootSlot();
+    // Real: 284 (gathering_node) + 1,895 (skinning, all four source tags
+    // combined) = 2,179 rows precede the first disenchant row, so its
+    // location_id is 9,000,000 + 2,179 = 9,002,179.
+    REQUIRE(map.find(9002179) != map.end());
+}
