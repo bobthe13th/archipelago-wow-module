@@ -486,7 +486,10 @@ public:
             }
         }
         if (!slotData.empty())
+        {
             Archipelago::ItemDisplay::SynthesizeAndRewireLocations(slotData);
+            Archipelago::ItemDisplay::SetSynthesizedDisplayData(slotData);
+        }
 
         std::optional<std::string> vendorCheckRepeatBehavior;
         {

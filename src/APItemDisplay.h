@@ -227,4 +227,12 @@ namespace Archipelago::ItemDisplay
     // icons picked by Archipelago::Interception::ClassifyItem) and rewrites
     // the underlying vendor slot / quest reward slot to point at it.
     void SynthesizeAndRewireLocations(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display);
+
+    // Persistent store for the display data SynthesizeAndRewireLocations
+    // consumes once and previously discarded (M4.13). Populated at the same
+    // call site as SynthesizeAndRewireLocations (ArchipelagoWorldScript::OnUpdate)
+    // the first time non-empty slot_data arrives; queried later, at any time,
+    // by ".ap missing" (ArchipelagoCommandScript.cpp).
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& GetSynthesizedDisplayData();
+    void SetSynthesizedDisplayData(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display);
 }

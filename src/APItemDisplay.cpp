@@ -90,8 +90,23 @@ namespace
     }
 }
 
+namespace
+{
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> g_synthesizedDisplayData;
+}
+
 namespace Archipelago::ItemDisplay
 {
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& GetSynthesizedDisplayData()
+    {
+        return g_synthesizedDisplayData;
+    }
+
+    void SetSynthesizedDisplayData(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display)
+    {
+        g_synthesizedDisplayData = display;
+    }
+
     void SynthesizeAndRewireLocations(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display)
     {
         auto locationToQuestId = BuildLocationIdToQuestId();
