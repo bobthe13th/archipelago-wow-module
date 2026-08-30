@@ -53,6 +53,13 @@ namespace Archipelago
         void SendGoalComplete();
         void SendDeathLink(std::string const& cause, std::string const& source);
 
+        // GM-triggered reconnect to a different port (M4.13, .ap port). Reuses the
+        // exact same reconnect-timer/session-construction path RunIoContext already
+        // runs for a dropped connection -- does NOT tear down and rebuild this
+        // APClient. Safe to call from any thread; the actual reconnect happens on
+        // _ioThread once the current session's Stop() unblocks _ioc.run().
+        void Reconnect(uint16_t newPort);
+
         ConnectionState GetState() const { return _state.load(); }
 
     private:
@@ -81,6 +88,9 @@ namespace Archipelago
         std::thread _ioThread;
         std::atomic<bool> _stoppingAll{ false };
         std::unique_ptr<boost::asio::steady_timer> _reconnectTimer;
-        int32_t _currentBackoffSeconds = 0;
+        // Written from RunIoContext (io thread) and, as of M4.13's Reconnect(), also
+        // from the world thread -- must be atomic for that cross-thread write to be
+        // well-defined, matching _state/_reachedHandshake's identical reasoning above.
+        std::atomic<int32_t> _currentBackoffSeconds{ 0 };
     };
 }

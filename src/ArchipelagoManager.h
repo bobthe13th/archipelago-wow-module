@@ -29,6 +29,11 @@ public:
     void ResendAllChecksAndGoal();
     Archipelago::ConnectionState GetConnectionState() const;
 
+    // GM-triggered reconnect to a different port (M4.13, .ap port). See
+    // Archipelago::APClient::Reconnect's own comment for why this reuses the
+    // existing backoff/session machinery rather than tearing down the client.
+    void Reconnect(uint16_t newPort);
+
 private:
     std::unique_ptr<Archipelago::APClient> _client;
 };

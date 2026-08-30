@@ -530,6 +530,22 @@ namespace Archipelago
             _ioThread.join();
     }
 
+    void APClient::Reconnect(uint16_t newPort)
+    {
+        std::shared_ptr<APClientSession> sessionToStop;
+        {
+            std::lock_guard<std::mutex> lock(_sessionMutex);
+            _options.port = newPort;
+            sessionToStop = _session;
+        }
+        // Force the next reconnect attempt to use reconnectMinSeconds rather than
+        // whatever backoff a prior, unrelated drop may have climbed to.
+        _currentBackoffSeconds = 0;
+        if (sessionToStop)
+            sessionToStop->Stop();
+        LOG_INFO("module.archipelago_wow", "Archipelago: GM-triggered reconnect to port {}", newPort);
+    }
+
     void APClient::SendLocationChecks(std::vector<int64_t> const& locationIds)
     {
         std::lock_guard<std::mutex> lock(_sessionMutex);

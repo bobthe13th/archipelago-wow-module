@@ -76,3 +76,9 @@ Archipelago::ConnectionState ArchipelagoManager::GetConnectionState() const
     return _client ? _client->GetState() : Archipelago::ConnectionState::Disconnected;
 }
 
+void ArchipelagoManager::Reconnect(uint16_t newPort)
+{
+    if (_client)
+        _client->Reconnect(newPort);
+}
+
