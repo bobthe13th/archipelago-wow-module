@@ -78,7 +78,7 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_achievement_complete_rows(locations, path)
     _validate_filler_effect_rows(items, path)
     _validate_learn_spell_rows(locations, path)
-    _validate_gameobject_loot_rows(locations)
+    _validate_gameobject_loot_rows(family, locations)
     _validate_skinning_loot_rows(data)
     _validate_disenchant_loot_rows(data)
     _validate_trigger_lookup_uniqueness(family, locations, items, path)
@@ -229,7 +229,7 @@ def _validate_learn_spell_rows(locations: list, yaml_path: pathlib.Path) -> None
             )
 
 
-def _validate_gameobject_loot_rows(locations: list) -> None:
+def _validate_gameobject_loot_rows(family: str, locations: list) -> None:
     """gameobject_loot_template's real PK is (Entry, Item) -- confirmed
     unique at the DB level (M4.10.1 plan research), so a (loot_id,
     item_entry) collision in extracted data means a genuine extraction bug,
@@ -243,7 +243,14 @@ def _validate_gameobject_loot_rows(locations: list) -> None:
     filter internally by checking trigger["kind"] first -- so a future
     family reusing the gameobject_loot trigger kind would otherwise hit a
     KeyError from this validator never even running for it. Now follows
-    the same internal-kind-check convention as its siblings."""
+    the same internal-kind-check convention as its siblings.
+
+    M4.10.2 final whole-branch review fix (M1): that same de-gating made the
+    hardcoded "containersanity:" prefix on the error below actively wrong --
+    gathersanity's own 284 gameobject_loot rows are validated here too, so a
+    real gathersanity duplicate would have raised a message blaming
+    containersanity. Takes `family` now purely so the message names the
+    family that actually owns the colliding rows."""
     seen: dict[tuple[int, int], str] = {}
     for loc in locations:
         trigger = loc["trigger"]
@@ -252,7 +259,7 @@ def _validate_gameobject_loot_rows(locations: list) -> None:
         key = (trigger["loot_id"], trigger["item_entry"])
         if key in seen:
             raise ValidationError(
-                f"containersanity: duplicate (loot_id, item_entry) {key} -- "
+                f"{family}: duplicate gameobject_loot (loot_id, item_entry) {key} -- "
                 f"{seen[key]!r} and {loc['name']!r} both claim it"
             )
         seen[key] = loc["name"]
@@ -272,7 +279,7 @@ def _validate_skinning_loot_rows(data: dict) -> None:
         key = (trigger["loot_id"], trigger["item_entry"])
         if key in seen:
             raise ValidationError(
-                f"gathersanity: duplicate skinning_loot (loot_id, item_entry) {key} -- "
+                f"{data['family']}: duplicate skinning_loot (loot_id, item_entry) {key} -- "
                 f"{seen[key]!r} and {loc['name']!r} both claim it"
             )
         seen[key] = loc["name"]
@@ -290,7 +297,7 @@ def _validate_disenchant_loot_rows(data: dict) -> None:
         key = (trigger["loot_id"], trigger["item_entry"])
         if key in seen:
             raise ValidationError(
-                f"gathersanity: duplicate disenchant_loot (loot_id, item_entry) {key} -- "
+                f"{data['family']}: duplicate disenchant_loot (loot_id, item_entry) {key} -- "
                 f"{seen[key]!r} and {loc['name']!r} both claim it"
             )
         seen[key] = loc["name"]
@@ -301,18 +308,75 @@ def _validate_trigger_lookup_uniqueness(
 ) -> None:
     """Validate that all locations in an export_triggers family would produce
     unique keys in the emitted trigger-lookup map. Raises ValidationError if
-    any collision would occur, preventing silent data loss from map initialization."""
+    any collision would occur, preventing silent data loss from map initialization.
+
+    M4.10.2 final whole-branch review fix (I2): this used to read
+    `locations[0]["trigger"]["kind"]` ONCE and dispatch the whole locations
+    list on that single value -- the exact single-kind assumption
+    _emit_cpp_trigger_lookup carried until M4.10.2 Task 3 generalized IT to
+    group-by-kind, but its sibling validator here was left behind. Gathersanity
+    was safe from that only by accident (this function has no branch at all
+    for gameobject_loot/skinning_loot/disenchant_loot, so it no-ops for the
+    whole family; those three kinds are validated by the dedicated
+    _validate_gameobject_loot_rows/_validate_skinning_loot_rows/
+    _validate_disenchant_loot_rows above instead). The next family mixing two
+    kinds this function DOES branch on would have had locations[0]'s key
+    extraction applied to EVERY row regardless of that row's own kind --
+    empirically (see TestValidateTriggerLookupUniquenessMixedKinds, run
+    against the pre-fix code) a KeyError crash the moment a row of a different
+    kind lacked the first kind's trigger key, and, for any two kinds that
+    happened to share a key name, a silently wrong cross-kind uniqueness check
+    instead. Now grouped by kind in first-seen order and validated one subset
+    at a time, each with its own seen_keys scope, exactly mirroring
+    _emit_cpp_trigger_lookup's own generalization."""
     schema = FAMILY_SCHEMAS.get(family)
     if schema is None or not schema.export_triggers:
         return
     if not locations:
         return
 
-    kind = locations[0]["trigger"]["kind"]
+    kinds_in_order: list[str] = []
+    by_kind: dict[str, list] = {}
+    for index, loc in enumerate(locations):
+        kind = loc["trigger"]["kind"]
+        if kind not in by_kind:
+            kinds_in_order.append(kind)
+            by_kind[kind] = []
+        # Carries each location's ORIGINAL index alongside it: the
+        # vendor_purchase branch below reads items[index], which is aligned
+        # against the full, ungrouped locations list -- indexing into a
+        # per-kind subset instead would silently pair the wrong item with the
+        # wrong location.
+        by_kind[kind].append((index, loc))
+
+    for kind in kinds_in_order:
+        _validate_trigger_lookup_uniqueness_one_kind(
+            family, kind, by_kind[kind], locations, items, yaml_path
+        )
+
+
+def _validate_trigger_lookup_uniqueness_one_kind(
+    family: str,
+    kind: str,
+    indexed_locations: list,
+    locations: list,
+    items: list,
+    yaml_path: pathlib.Path,
+) -> None:
+    """One kind's worth of trigger-lookup uniqueness checking, split out by
+    the M4.10.2 I2 fix above so each kind present in a mixed-kind family gets
+    its own independent `seen_keys` scope. `indexed_locations` is a list of
+    (original_index, location) pairs for just this kind; `locations`/`items`
+    remain the full, parallel-aligned family lists.
+
+    A kind with no branch here is a deliberate no-op (that has always been
+    true -- e.g. the three loot kinds, covered by their own dedicated row
+    validators), NOT an error, unlike _emit_cpp_trigger_lookup_one_kind which
+    raises for an unregistered kind."""
     seen_keys: dict = {}
 
     if kind == "quest_reward":
-        for loc in locations:
+        for _index, loc in indexed_locations:
             key = loc["trigger"]["quest_id"]
             if key in seen_keys:
                 raise ValidationError(
@@ -337,7 +401,7 @@ def _validate_trigger_lookup_uniqueness(
         # edge case: std::map keeps the last value, and Task 8/9 can still reverse-lookup
         # the representative location. Report collisions clearly for visibility.
         colliding_keys = {}
-        for idx, loc in enumerate(locations):
+        for idx, loc in indexed_locations:
             npc_entry = loc["trigger"]["npc_entry"]
             wow_item_entry = items[idx]["delivery"]["wow_item_entry"]
             key = (npc_entry, wow_item_entry)
@@ -357,7 +421,7 @@ def _validate_trigger_lookup_uniqueness(
                   f"the rest are excluded from the emitted pool entirely (see _dedupe_vendor_trigger_collisions).\n")
 
     elif kind == "learn_spell":
-        for loc in locations:
+        for _index, loc in indexed_locations:
             key = loc["trigger"]["spell_id"]
             if key in seen_keys:
                 raise ValidationError(

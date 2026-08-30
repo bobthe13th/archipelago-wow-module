@@ -1,3 +1,5 @@
+import contextlib
+import io
 import pathlib
 import tempfile
 import textwrap
@@ -944,6 +946,32 @@ class TestGameobjectLootTriggerLookup(unittest.TestCase):
         with self.assertRaises(ValidationError):
             validate_family(data)
 
+    def test_duplicate_gameobject_loot_error_names_the_owning_family(self) -> None:
+        # M4.10.2 final whole-branch review fix (M1): this message hardcoded
+        # the literal "containersanity", but _validate_gameobject_loot_rows is
+        # called unconditionally and also validates gathersanity's own 284
+        # gameobject_loot rows -- a real gathersanity duplicate raised an
+        # error blaming the wrong family.
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+                {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+            ],
+            "items": [
+                {"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "Gathersanity Item: B (#1/2)", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+            ],
+        }
+        with self.assertRaises(ValidationError) as ctx:
+            validate_family(data)
+        self.assertIn("gathersanity:", str(ctx.exception))
+        self.assertNotIn("containersanity", str(ctx.exception))
+
     def test_emit_cpp_trigger_lookup_gameobject_loot_shape(self) -> None:
         data = {
             "family": "containersanity",
@@ -1015,6 +1043,101 @@ class TestSkinningAndDisenchantLootTriggerLookup(unittest.TestCase):
         self.assertIn("{ { 193, 4304 }, 9000001 }", joined)
         self.assertIn("DISENCHANT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
         self.assertIn("{ { 1, 10938 }, 9000002 }", joined)
+
+
+class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
+    """M4.10.2 final whole-branch review fix (I2): _validate_trigger_lookup_
+    uniqueness used to read locations[0]["trigger"]["kind"] once and dispatch
+    the ENTIRE locations list on that single value, so in a mixed-kind family
+    only the first kind was ever validated and every other kind was silently
+    skipped. Uses a synthetic two-kind `recipes` fixture (recipes is
+    export_triggers=True, and quest_reward/learn_spell are two kinds this
+    function actually has branches for -- gathersanity's own three loot kinds
+    have no branch here at all and are covered by the dedicated
+    _validate_*_loot_rows validators instead)."""
+
+    def test_second_kind_is_validated_not_just_the_first(self) -> None:
+        # quest_reward first (all unique, so the old code found nothing),
+        # duplicate learn_spell rows second. Pre-fix this returned silently.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+            {"name": "S: B (#2)", "location_id": 2,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+            {"name": "S: C (#3)", "location_id": 3,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+        ]
+        with self.assertRaises(generate_content.ValidationError) as ctx:
+            generate_content._validate_trigger_lookup_uniqueness(
+                "recipes", locations, [], pathlib.Path("test.yaml")
+            )
+        self.assertIn("spell_id=100", str(ctx.exception))
+
+    def test_first_kind_is_still_validated_in_a_mixed_family(self) -> None:
+        # Mirror image of the above: the duplicate is now in the FIRST kind,
+        # with a clean second kind following it.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+            {"name": "Q: B (#2)", "location_id": 2,
+             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+            {"name": "S: C (#3)", "location_id": 3,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+        ]
+        with self.assertRaises(generate_content.ValidationError) as ctx:
+            generate_content._validate_trigger_lookup_uniqueness(
+                "recipes", locations, [], pathlib.Path("test.yaml")
+            )
+        self.assertIn("quest_id=10", str(ctx.exception))
+
+    def test_each_kind_gets_its_own_seen_keys_scope(self) -> None:
+        # A quest_id and a spell_id that happen to share the same numeric
+        # value are NOT a collision -- they land in two different emitted C++
+        # maps. The single shared `seen_keys` dict the pre-fix code used would
+        # only ever have compared them if one dispatch branch had processed
+        # both kinds, which it could not; this locks the correct behavior in
+        # now that both kinds really are processed in one call.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 42}},
+            {"name": "S: B (#2)", "location_id": 2,
+             "trigger": {"kind": "learn_spell", "spell_id": 42}},
+        ]
+        generate_content._validate_trigger_lookup_uniqueness(
+            "recipes", locations, [], pathlib.Path("test.yaml")
+        )  # must not raise
+
+    def test_vendor_purchase_indexes_items_by_original_position(self) -> None:
+        # The vendor_purchase branch pairs locations[i] with items[i]. Grouping
+        # by kind must therefore carry each location's ORIGINAL index, not its
+        # index within the per-kind subset: with subset indices the two vendor
+        # rows below would read items[0]/items[1] (wow entries 100/200), see no
+        # collision, and silently mispair every vendor row with someone else's
+        # item. With original indices they read items[1]/items[2] (200/200) and
+        # the real (npc_entry=5, wow_item_entry=200) collision is reported.
+        locations = [
+            {"name": "S: A (#1)", "location_id": 1,
+             "trigger": {"kind": "learn_spell", "spell_id": 7}},
+            {"name": "V: B (#2)", "location_id": 2,
+             "trigger": {"kind": "vendor_purchase", "npc_entry": 5}},
+            {"name": "V: C (#3)", "location_id": 3,
+             "trigger": {"kind": "vendor_purchase", "npc_entry": 5}},
+        ]
+        items = [
+            {"name": "S item", "item_id": 11, "delivery": {"kind": "mail", "wow_item_entry": 100}},
+            {"name": "V item B", "item_id": 12, "delivery": {"kind": "mail", "wow_item_entry": 200}},
+            {"name": "V item C", "item_id": 13, "delivery": {"kind": "mail", "wow_item_entry": 200}},
+        ]
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            generate_content._validate_trigger_lookup_uniqueness(
+                "vendor_stock", locations, items, pathlib.Path("test.yaml")
+            )
+        output = buffer.getvalue()
+        self.assertIn("1 trigger-lookup collisions", output)
+        self.assertIn("(npc_entry=5, wow_item_entry=200)", output)
+        self.assertIn("V: B (#2)", output)
+        self.assertIn("V: C (#3)", output)
 
 
 if __name__ == "__main__":
