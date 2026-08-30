@@ -23,6 +23,7 @@
 #include "ArchipelagoFillerRewardItemsContentTable.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
+#include "ArchipelagoGATHERSANITYContent.h"
 #include "ArchipelagoGoals.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
@@ -323,6 +324,29 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, containersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", containersanityEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.10.2 final whole-branch review fix (C2): gathersanity is the
+        // SECOND family to ship with a real, compiled
+        // ApItemIdToWowItemEntry map that nothing here consumed -- the exact
+        // same gap the M4.10.1 fix directly above closed for containersanity,
+        // recurring one milestone later.
+        // ArchipelagoGATHERSANITYContent::ApItemIdToWowItemEntry (2,302
+        // entries, compiled by generate_content.py's export_item_delivery
+        // path) was real and already built, but a Gathersanity Item the
+        // normal AP fill algorithm placed in a DIFFERENT player's world than
+        // the one who unlocked it fell all the way through to the "unknown AP
+        // item id" log below and the receiving player got nothing. Item id
+        // ranges are disjoint across every family, so this block's position
+        // in the chain is purely a readability choice -- kept adjacent to
+        // containersanity's, the other M4.10.x loot-slot family.
+        auto gathersanityEntryIt = ArchipelagoGATHERSANITYContent::ApItemIdToWowItemEntry.find(received.item);
+        if (gathersanityEntryIt != ArchipelagoGATHERSANITYContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, gathersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", gathersanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
