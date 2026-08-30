@@ -1140,5 +1140,63 @@ class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
         self.assertIn("V: C (#3)", output)
 
 
+class TestCreatureKillTriggerLookup(unittest.TestCase):
+    def test_validate_creature_kill_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448},
+                 "tags": {"type": ["regular"], "expansion": ["vanilla"]}},
+            ],
+            "items": [],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_creature_entry_is_a_hard_validation_error(self) -> None:
+        # creature_template.entry is a real PRIMARY KEY -- a duplicate here
+        # would mean a genuine extraction bug, not a legitimate real-world
+        # collision. Hard-fail, same discipline as _validate_quest_reward_rows
+        # / the learn_spell branch.
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: A (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+                {"name": "Enemy: B (#448)", "location_id": 10500001,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+            ],
+            "items": [],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_emit_cpp_trigger_lookup_creature_kill_shape(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("CREATURE_ENTRY_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ 448, 10500000 }", joined)
+        self.assertIn("std::unordered_map<uint32_t, int64_t> CREATURE_ENTRY_TO_LOCATION_ID", joined)
+
+    def test_emit_python_generic_emits_empty_items_dict_for_a_locations_only_family(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {"type": ["regular"]}},
+            ],
+            "items": [],
+        }
+        source = emit_python(data)
+        self.assertIn("ITEMS: dict[str, tuple[int, int]] = {\n}", source)
+
+
 if __name__ == "__main__":
     unittest.main()

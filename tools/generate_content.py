@@ -431,6 +431,17 @@ def _validate_trigger_lookup_uniqueness_one_kind(
                 )
             seen_keys[key] = loc["name"]
 
+    elif kind == "creature_kill":
+        for _index, loc in indexed_locations:
+            key = loc["trigger"]["creature_entry"]
+            if key in seen_keys:
+                raise ValidationError(
+                    f"{yaml_path}: locations {seen_keys[key]!r} and {loc['name']!r} "
+                    f"both have creature_entry={key}, which would produce a collision in "
+                    f"CREATURE_ENTRY_TO_LOCATION_ID trigger-lookup map"
+                )
+            seen_keys[key] = loc["name"]
+
 
 def _validate_tags_rows(family: str, locations: list, items: list, yaml_path: pathlib.Path) -> None:
     """Every row in an export_tags family must carry a non-empty `tags`
@@ -617,6 +628,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"gameobject_loot", "skinning_loot", "disenchant_loot"},
         valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+    ),
+    "enemysanity": FamilySchema(
+        valid_trigger_kinds={"creature_kill"}, valid_delivery_kinds=set(),
+        generic=True, export_triggers=True, export_tags=True,
     ),
 }
 
@@ -1406,6 +1421,32 @@ def _emit_cpp_trigger_lookup_disenchant_loot(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_creature_kill(locations: list) -> list[str]:
+    """CREATURE_ENTRY_TO_LOCATION_ID via the same raw-constexpr-array-plus-
+    runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.10.3)
+    -- same single-uint32-key shape, just a different real-world column
+    (creature_template.entry instead of a spell id)."""
+    lines = ["inline constexpr std::pair<uint32_t, int64_t> CREATURE_ENTRY_TO_LOCATION_ID_RAW[] = {"]
+    for loc in locations:
+        lines.append(
+            f'    {{ {loc["trigger"]["creature_entry"]}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildCREATURE_ENTRY_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("    for (auto const& row : CREATURE_ENTRY_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint32_t, int64_t> CREATURE_ENTRY_TO_LOCATION_ID = "
+        "BuildCREATURE_ENTRY_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
     FamilySchema.export_triggers. Every family through M4.10.1 had exactly
@@ -1456,6 +1497,9 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
     if kind == "disenchant_loot":
         return _emit_cpp_trigger_lookup_disenchant_loot(locations)
+
+    if kind == "creature_kill":
+        return _emit_cpp_trigger_lookup_creature_kill(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "

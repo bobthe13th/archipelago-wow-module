@@ -37,6 +37,7 @@
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
+#include "ArchipelagoENEMYSANITYContent.h"
 
 class ArchipelagoInstanceKillScript : public PlayerScript
 {
@@ -120,6 +121,31 @@ public:
         auto rareIt = Archipelago::Rares::CreatureEntryToLocationId.find(entry);
         if (rareIt != Archipelago::Rares::CreatureEntryToLocationId.end())
             sArchipelagoMgr->SendLocationChecks({ rareIt->second });
+
+        // M4.10.3 (Enemysanity): one location per real mob SPECIES,
+        // released on every kill of that species -- sent unconditionally,
+        // same safety argument as the Rares lookup immediately above (the
+        // AP server silently ignores a location id that was never sampled
+        // into this seed's pool, and tolerates a location being checked
+        // more than once across a species' many kills -- see this
+        // milestone's plan for the M4 finding this cites). No "first kill"
+        // bookkeeping is needed here for the same reason none exists for
+        // the Rares lookup or ArchipelagoLearnSpellScript's spell-learned
+        // hook: AP's own dedup on the multiworld server side already makes
+        // repeat sends a no-op.
+        //
+        // Namespace note: unlike the older, hand-written
+        // Archipelago::Rares nested namespace above, every generated
+        // content header (ArchipelagoGATHERSANITYContent,
+        // ArchipelagoCONTAINERSANITYContent, and this one) uses a flat
+        // top-level ArchipelagoENEMYSANITYContent namespace, confirmed
+        // against the real generated header and ArchipelagoPlayerScript.cpp's
+        // existing ArchipelagoGATHERSANITYContent::/
+        // ArchipelagoCONTAINERSANITYContent:: usage -- not nested under
+        // Archipelago::.
+        auto enemysanityIt = ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.find(entry);
+        if (enemysanityIt != ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.end())
+            sArchipelagoMgr->SendLocationChecks({ enemysanityIt->second });
     }
 };
 
