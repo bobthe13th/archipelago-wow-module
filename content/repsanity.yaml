@@ -1,0 +1,4943 @@
+# GENERATED FILE - do not hand-edit.
+# Regenerate with: python tools/extract_repsanity.py
+family: repsanity
+locations:
+- name: 'Reputation: Booty Bay (Friendly)'
+  location_id: 11000000
+  trigger:
+    kind: reputation_rank
+    faction_id: 21
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Booty Bay (Honored)'
+  location_id: 11000001
+  trigger:
+    kind: reputation_rank
+    faction_id: 21
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Booty Bay (Revered)'
+  location_id: 11000002
+  trigger:
+    kind: reputation_rank
+    faction_id: 21
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Booty Bay (Exalted)'
+  location_id: 11000003
+  trigger:
+    kind: reputation_rank
+    faction_id: 21
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Armorsmithing (Friendly)'
+  location_id: 11000004
+  trigger:
+    kind: reputation_rank
+    faction_id: 46
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Armorsmithing (Honored)'
+  location_id: 11000005
+  trigger:
+    kind: reputation_rank
+    faction_id: 46
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Armorsmithing (Revered)'
+  location_id: 11000006
+  trigger:
+    kind: reputation_rank
+    faction_id: 46
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Armorsmithing (Exalted)'
+  location_id: 11000007
+  trigger:
+    kind: reputation_rank
+    faction_id: 46
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ironforge (Friendly)'
+  location_id: 11000008
+  trigger:
+    kind: reputation_rank
+    faction_id: 47
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ironforge (Honored)'
+  location_id: 11000009
+  trigger:
+    kind: reputation_rank
+    faction_id: 47
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ironforge (Revered)'
+  location_id: 11000010
+  trigger:
+    kind: reputation_rank
+    faction_id: 47
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ironforge (Exalted)'
+  location_id: 11000011
+  trigger:
+    kind: reputation_rank
+    faction_id: 47
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gnomeregan Exiles (Friendly)'
+  location_id: 11000012
+  trigger:
+    kind: reputation_rank
+    faction_id: 54
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gnomeregan Exiles (Honored)'
+  location_id: 11000013
+  trigger:
+    kind: reputation_rank
+    faction_id: 54
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gnomeregan Exiles (Revered)'
+  location_id: 11000014
+  trigger:
+    kind: reputation_rank
+    faction_id: 54
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gnomeregan Exiles (Exalted)'
+  location_id: 11000015
+  trigger:
+    kind: reputation_rank
+    faction_id: 54
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thorium Brotherhood (Friendly)'
+  location_id: 11000016
+  trigger:
+    kind: reputation_rank
+    faction_id: 59
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thorium Brotherhood (Honored)'
+  location_id: 11000017
+  trigger:
+    kind: reputation_rank
+    faction_id: 59
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thorium Brotherhood (Revered)'
+  location_id: 11000018
+  trigger:
+    kind: reputation_rank
+    faction_id: 59
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thorium Brotherhood (Exalted)'
+  location_id: 11000019
+  trigger:
+    kind: reputation_rank
+    faction_id: 59
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde (Friendly)'
+  location_id: 11000020
+  trigger:
+    kind: reputation_rank
+    faction_id: 67
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde (Honored)'
+  location_id: 11000021
+  trigger:
+    kind: reputation_rank
+    faction_id: 67
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde (Revered)'
+  location_id: 11000022
+  trigger:
+    kind: reputation_rank
+    faction_id: 67
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde (Exalted)'
+  location_id: 11000023
+  trigger:
+    kind: reputation_rank
+    faction_id: 67
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Undercity (Friendly)'
+  location_id: 11000024
+  trigger:
+    kind: reputation_rank
+    faction_id: 68
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Undercity (Honored)'
+  location_id: 11000025
+  trigger:
+    kind: reputation_rank
+    faction_id: 68
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Undercity (Revered)'
+  location_id: 11000026
+  trigger:
+    kind: reputation_rank
+    faction_id: 68
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Undercity (Exalted)'
+  location_id: 11000027
+  trigger:
+    kind: reputation_rank
+    faction_id: 68
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darnassus (Friendly)'
+  location_id: 11000028
+  trigger:
+    kind: reputation_rank
+    faction_id: 69
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darnassus (Honored)'
+  location_id: 11000029
+  trigger:
+    kind: reputation_rank
+    faction_id: 69
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darnassus (Revered)'
+  location_id: 11000030
+  trigger:
+    kind: reputation_rank
+    faction_id: 69
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darnassus (Exalted)'
+  location_id: 11000031
+  trigger:
+    kind: reputation_rank
+    faction_id: 69
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Syndicate (Hostile)'
+  location_id: 11000032
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 1
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Syndicate (Unfriendly)'
+  location_id: 11000033
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 2
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Syndicate (Neutral)'
+  location_id: 11000034
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 3
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Syndicate (Friendly)'
+  location_id: 11000035
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Syndicate (Honored)'
+  location_id: 11000036
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Syndicate (Revered)'
+  location_id: 11000037
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Syndicate (Exalted)'
+  location_id: 11000038
+  trigger:
+    kind: reputation_rank
+    faction_id: 70
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormwind (Friendly)'
+  location_id: 11000039
+  trigger:
+    kind: reputation_rank
+    faction_id: 72
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormwind (Honored)'
+  location_id: 11000040
+  trigger:
+    kind: reputation_rank
+    faction_id: 72
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormwind (Revered)'
+  location_id: 11000041
+  trigger:
+    kind: reputation_rank
+    faction_id: 72
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormwind (Exalted)'
+  location_id: 11000042
+  trigger:
+    kind: reputation_rank
+    faction_id: 72
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Orgrimmar (Friendly)'
+  location_id: 11000043
+  trigger:
+    kind: reputation_rank
+    faction_id: 76
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Orgrimmar (Honored)'
+  location_id: 11000044
+  trigger:
+    kind: reputation_rank
+    faction_id: 76
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Orgrimmar (Revered)'
+  location_id: 11000045
+  trigger:
+    kind: reputation_rank
+    faction_id: 76
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Orgrimmar (Exalted)'
+  location_id: 11000046
+  trigger:
+    kind: reputation_rank
+    faction_id: 76
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thunder Bluff (Friendly)'
+  location_id: 11000047
+  trigger:
+    kind: reputation_rank
+    faction_id: 81
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thunder Bluff (Honored)'
+  location_id: 11000048
+  trigger:
+    kind: reputation_rank
+    faction_id: 81
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thunder Bluff (Revered)'
+  location_id: 11000049
+  trigger:
+    kind: reputation_rank
+    faction_id: 81
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Thunder Bluff (Exalted)'
+  location_id: 11000050
+  trigger:
+    kind: reputation_rank
+    faction_id: 81
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Elemental (Friendly)'
+  location_id: 11000051
+  trigger:
+    kind: reputation_rank
+    faction_id: 83
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Elemental (Honored)'
+  location_id: 11000052
+  trigger:
+    kind: reputation_rank
+    faction_id: 83
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Elemental (Revered)'
+  location_id: 11000053
+  trigger:
+    kind: reputation_rank
+    faction_id: 83
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Elemental (Exalted)'
+  location_id: 11000054
+  trigger:
+    kind: reputation_rank
+    faction_id: 83
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Dragonscale (Friendly)'
+  location_id: 11000055
+  trigger:
+    kind: reputation_rank
+    faction_id: 86
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Dragonscale (Honored)'
+  location_id: 11000056
+  trigger:
+    kind: reputation_rank
+    faction_id: 86
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Dragonscale (Revered)'
+  location_id: 11000057
+  trigger:
+    kind: reputation_rank
+    faction_id: 86
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Dragonscale (Exalted)'
+  location_id: 11000058
+  trigger:
+    kind: reputation_rank
+    faction_id: 86
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Bloodsail Buccaneers (Hostile)'
+  location_id: 11000059
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 1
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Bloodsail Buccaneers (Unfriendly)'
+  location_id: 11000060
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 2
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Bloodsail Buccaneers (Neutral)'
+  location_id: 11000061
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 3
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Bloodsail Buccaneers (Friendly)'
+  location_id: 11000062
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Bloodsail Buccaneers (Honored)'
+  location_id: 11000063
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Bloodsail Buccaneers (Revered)'
+  location_id: 11000064
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Bloodsail Buccaneers (Exalted)'
+  location_id: 11000065
+  trigger:
+    kind: reputation_rank
+    faction_id: 87
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gelkis Clan Centaur (Friendly)'
+  location_id: 11000066
+  trigger:
+    kind: reputation_rank
+    faction_id: 92
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gelkis Clan Centaur (Honored)'
+  location_id: 11000067
+  trigger:
+    kind: reputation_rank
+    faction_id: 92
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gelkis Clan Centaur (Revered)'
+  location_id: 11000068
+  trigger:
+    kind: reputation_rank
+    faction_id: 92
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gelkis Clan Centaur (Exalted)'
+  location_id: 11000069
+  trigger:
+    kind: reputation_rank
+    faction_id: 92
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Magram Clan Centaur (Friendly)'
+  location_id: 11000070
+  trigger:
+    kind: reputation_rank
+    faction_id: 93
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Magram Clan Centaur (Honored)'
+  location_id: 11000071
+  trigger:
+    kind: reputation_rank
+    faction_id: 93
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Magram Clan Centaur (Revered)'
+  location_id: 11000072
+  trigger:
+    kind: reputation_rank
+    faction_id: 93
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Magram Clan Centaur (Exalted)'
+  location_id: 11000073
+  trigger:
+    kind: reputation_rank
+    faction_id: 93
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Steamwheedle Cartel (Friendly)'
+  location_id: 11000074
+  trigger:
+    kind: reputation_rank
+    faction_id: 169
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Steamwheedle Cartel (Honored)'
+  location_id: 11000075
+  trigger:
+    kind: reputation_rank
+    faction_id: 169
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Steamwheedle Cartel (Revered)'
+  location_id: 11000076
+  trigger:
+    kind: reputation_rank
+    faction_id: 169
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Steamwheedle Cartel (Exalted)'
+  location_id: 11000077
+  trigger:
+    kind: reputation_rank
+    faction_id: 169
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Zandalar Tribe (Friendly)'
+  location_id: 11000078
+  trigger:
+    kind: reputation_rank
+    faction_id: 270
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Zandalar Tribe (Honored)'
+  location_id: 11000079
+  trigger:
+    kind: reputation_rank
+    faction_id: 270
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Zandalar Tribe (Revered)'
+  location_id: 11000080
+  trigger:
+    kind: reputation_rank
+    faction_id: 270
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Zandalar Tribe (Exalted)'
+  location_id: 11000081
+  trigger:
+    kind: reputation_rank
+    faction_id: 270
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Weaponsmithing (Friendly)'
+  location_id: 11000082
+  trigger:
+    kind: reputation_rank
+    faction_id: 289
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Weaponsmithing (Honored)'
+  location_id: 11000083
+  trigger:
+    kind: reputation_rank
+    faction_id: 289
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Weaponsmithing (Revered)'
+  location_id: 11000084
+  trigger:
+    kind: reputation_rank
+    faction_id: 289
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Weaponsmithing (Exalted)'
+  location_id: 11000085
+  trigger:
+    kind: reputation_rank
+    faction_id: 289
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ravenholdt (Friendly)'
+  location_id: 11000086
+  trigger:
+    kind: reputation_rank
+    faction_id: 349
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ravenholdt (Honored)'
+  location_id: 11000087
+  trigger:
+    kind: reputation_rank
+    faction_id: 349
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ravenholdt (Revered)'
+  location_id: 11000088
+  trigger:
+    kind: reputation_rank
+    faction_id: 349
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ravenholdt (Exalted)'
+  location_id: 11000089
+  trigger:
+    kind: reputation_rank
+    faction_id: 349
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gadgetzan (Friendly)'
+  location_id: 11000090
+  trigger:
+    kind: reputation_rank
+    faction_id: 369
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gadgetzan (Honored)'
+  location_id: 11000091
+  trigger:
+    kind: reputation_rank
+    faction_id: 369
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gadgetzan (Revered)'
+  location_id: 11000092
+  trigger:
+    kind: reputation_rank
+    faction_id: 369
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Gadgetzan (Exalted)'
+  location_id: 11000093
+  trigger:
+    kind: reputation_rank
+    faction_id: 369
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance (Friendly)'
+  location_id: 11000094
+  trigger:
+    kind: reputation_rank
+    faction_id: 469
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance (Honored)'
+  location_id: 11000095
+  trigger:
+    kind: reputation_rank
+    faction_id: 469
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance (Revered)'
+  location_id: 11000096
+  trigger:
+    kind: reputation_rank
+    faction_id: 469
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance (Exalted)'
+  location_id: 11000097
+  trigger:
+    kind: reputation_rank
+    faction_id: 469
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ratchet (Friendly)'
+  location_id: 11000098
+  trigger:
+    kind: reputation_rank
+    faction_id: 470
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ratchet (Honored)'
+  location_id: 11000099
+  trigger:
+    kind: reputation_rank
+    faction_id: 470
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ratchet (Revered)'
+  location_id: 11000100
+  trigger:
+    kind: reputation_rank
+    faction_id: 470
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Ratchet (Exalted)'
+  location_id: 11000101
+  trigger:
+    kind: reputation_rank
+    faction_id: 470
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wildhammer Clan (Friendly)'
+  location_id: 11000102
+  trigger:
+    kind: reputation_rank
+    faction_id: 471
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wildhammer Clan (Honored)'
+  location_id: 11000103
+  trigger:
+    kind: reputation_rank
+    faction_id: 471
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wildhammer Clan (Revered)'
+  location_id: 11000104
+  trigger:
+    kind: reputation_rank
+    faction_id: 471
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wildhammer Clan (Exalted)'
+  location_id: 11000105
+  trigger:
+    kind: reputation_rank
+    faction_id: 471
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The League of Arathor (Friendly)'
+  location_id: 11000106
+  trigger:
+    kind: reputation_rank
+    faction_id: 509
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The League of Arathor (Honored)'
+  location_id: 11000107
+  trigger:
+    kind: reputation_rank
+    faction_id: 509
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The League of Arathor (Revered)'
+  location_id: 11000108
+  trigger:
+    kind: reputation_rank
+    faction_id: 509
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The League of Arathor (Exalted)'
+  location_id: 11000109
+  trigger:
+    kind: reputation_rank
+    faction_id: 509
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Defilers (Friendly)'
+  location_id: 11000110
+  trigger:
+    kind: reputation_rank
+    faction_id: 510
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Defilers (Honored)'
+  location_id: 11000111
+  trigger:
+    kind: reputation_rank
+    faction_id: 510
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Defilers (Revered)'
+  location_id: 11000112
+  trigger:
+    kind: reputation_rank
+    faction_id: 510
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Defilers (Exalted)'
+  location_id: 11000113
+  trigger:
+    kind: reputation_rank
+    faction_id: 510
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Dawn (Friendly)'
+  location_id: 11000114
+  trigger:
+    kind: reputation_rank
+    faction_id: 529
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Dawn (Honored)'
+  location_id: 11000115
+  trigger:
+    kind: reputation_rank
+    faction_id: 529
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Dawn (Revered)'
+  location_id: 11000116
+  trigger:
+    kind: reputation_rank
+    faction_id: 529
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Dawn (Exalted)'
+  location_id: 11000117
+  trigger:
+    kind: reputation_rank
+    faction_id: 529
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkspear Trolls (Friendly)'
+  location_id: 11000118
+  trigger:
+    kind: reputation_rank
+    faction_id: 530
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkspear Trolls (Honored)'
+  location_id: 11000119
+  trigger:
+    kind: reputation_rank
+    faction_id: 530
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkspear Trolls (Revered)'
+  location_id: 11000120
+  trigger:
+    kind: reputation_rank
+    faction_id: 530
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkspear Trolls (Exalted)'
+  location_id: 11000121
+  trigger:
+    kind: reputation_rank
+    faction_id: 530
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Tribal (Friendly)'
+  location_id: 11000122
+  trigger:
+    kind: reputation_rank
+    faction_id: 549
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Tribal (Honored)'
+  location_id: 11000123
+  trigger:
+    kind: reputation_rank
+    faction_id: 549
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Tribal (Revered)'
+  location_id: 11000124
+  trigger:
+    kind: reputation_rank
+    faction_id: 549
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Leatherworking - Tribal (Exalted)'
+  location_id: 11000125
+  trigger:
+    kind: reputation_rank
+    faction_id: 549
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Goblin (Friendly)'
+  location_id: 11000126
+  trigger:
+    kind: reputation_rank
+    faction_id: 550
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Goblin (Honored)'
+  location_id: 11000127
+  trigger:
+    kind: reputation_rank
+    faction_id: 550
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Goblin (Revered)'
+  location_id: 11000128
+  trigger:
+    kind: reputation_rank
+    faction_id: 550
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Goblin (Exalted)'
+  location_id: 11000129
+  trigger:
+    kind: reputation_rank
+    faction_id: 550
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Gnome (Friendly)'
+  location_id: 11000130
+  trigger:
+    kind: reputation_rank
+    faction_id: 551
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Gnome (Honored)'
+  location_id: 11000131
+  trigger:
+    kind: reputation_rank
+    faction_id: 551
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Gnome (Revered)'
+  location_id: 11000132
+  trigger:
+    kind: reputation_rank
+    faction_id: 551
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Engineering - Gnome (Exalted)'
+  location_id: 11000133
+  trigger:
+    kind: reputation_rank
+    faction_id: 551
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Hammersmithing (Friendly)'
+  location_id: 11000134
+  trigger:
+    kind: reputation_rank
+    faction_id: 569
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Hammersmithing (Honored)'
+  location_id: 11000135
+  trigger:
+    kind: reputation_rank
+    faction_id: 569
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Hammersmithing (Revered)'
+  location_id: 11000136
+  trigger:
+    kind: reputation_rank
+    faction_id: 569
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Hammersmithing (Exalted)'
+  location_id: 11000137
+  trigger:
+    kind: reputation_rank
+    faction_id: 569
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Axesmithing (Friendly)'
+  location_id: 11000138
+  trigger:
+    kind: reputation_rank
+    faction_id: 570
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Axesmithing (Honored)'
+  location_id: 11000139
+  trigger:
+    kind: reputation_rank
+    faction_id: 570
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Axesmithing (Revered)'
+  location_id: 11000140
+  trigger:
+    kind: reputation_rank
+    faction_id: 570
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Axesmithing (Exalted)'
+  location_id: 11000141
+  trigger:
+    kind: reputation_rank
+    faction_id: 570
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Swordsmithing (Friendly)'
+  location_id: 11000142
+  trigger:
+    kind: reputation_rank
+    faction_id: 571
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Swordsmithing (Honored)'
+  location_id: 11000143
+  trigger:
+    kind: reputation_rank
+    faction_id: 571
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Swordsmithing (Revered)'
+  location_id: 11000144
+  trigger:
+    kind: reputation_rank
+    faction_id: 571
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation:  Blacksmithing - Swordsmithing (Exalted)'
+  location_id: 11000145
+  trigger:
+    kind: reputation_rank
+    faction_id: 571
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Caer Darrow (Friendly)'
+  location_id: 11000146
+  trigger:
+    kind: reputation_rank
+    faction_id: 574
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Caer Darrow (Honored)'
+  location_id: 11000147
+  trigger:
+    kind: reputation_rank
+    faction_id: 574
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Caer Darrow (Revered)'
+  location_id: 11000148
+  trigger:
+    kind: reputation_rank
+    faction_id: 574
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Caer Darrow (Exalted)'
+  location_id: 11000149
+  trigger:
+    kind: reputation_rank
+    faction_id: 574
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Timbermaw Hold (Unfriendly)'
+  location_id: 11000150
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 2
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Timbermaw Hold (Neutral)'
+  location_id: 11000151
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 3
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Timbermaw Hold (Friendly)'
+  location_id: 11000152
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Timbermaw Hold (Honored)'
+  location_id: 11000153
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Timbermaw Hold (Revered)'
+  location_id: 11000154
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Timbermaw Hold (Exalted)'
+  location_id: 11000155
+  trigger:
+    kind: reputation_rank
+    faction_id: 576
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Everlook (Friendly)'
+  location_id: 11000156
+  trigger:
+    kind: reputation_rank
+    faction_id: 577
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Everlook (Honored)'
+  location_id: 11000157
+  trigger:
+    kind: reputation_rank
+    faction_id: 577
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Everlook (Revered)'
+  location_id: 11000158
+  trigger:
+    kind: reputation_rank
+    faction_id: 577
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Everlook (Exalted)'
+  location_id: 11000159
+  trigger:
+    kind: reputation_rank
+    faction_id: 577
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Trainers (Hostile)'
+  location_id: 11000160
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 1
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Wintersaber Trainers (Unfriendly)'
+  location_id: 11000161
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 2
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Wintersaber Trainers (Neutral)'
+  location_id: 11000162
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 3
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Trainers (Friendly)'
+  location_id: 11000163
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Trainers (Honored)'
+  location_id: 11000164
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Trainers (Revered)'
+  location_id: 11000165
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Trainers (Exalted)'
+  location_id: 11000166
+  trigger:
+    kind: reputation_rank
+    faction_id: 589
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Circle (Friendly)'
+  location_id: 11000167
+  trigger:
+    kind: reputation_rank
+    faction_id: 609
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Circle (Honored)'
+  location_id: 11000168
+  trigger:
+    kind: reputation_rank
+    faction_id: 609
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Circle (Revered)'
+  location_id: 11000169
+  trigger:
+    kind: reputation_rank
+    faction_id: 609
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Circle (Exalted)'
+  location_id: 11000170
+  trigger:
+    kind: reputation_rank
+    faction_id: 609
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Frostwolf Clan (Friendly)'
+  location_id: 11000171
+  trigger:
+    kind: reputation_rank
+    faction_id: 729
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Frostwolf Clan (Honored)'
+  location_id: 11000172
+  trigger:
+    kind: reputation_rank
+    faction_id: 729
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Frostwolf Clan (Revered)'
+  location_id: 11000173
+  trigger:
+    kind: reputation_rank
+    faction_id: 729
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Frostwolf Clan (Exalted)'
+  location_id: 11000174
+  trigger:
+    kind: reputation_rank
+    faction_id: 729
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormpike Guard (Friendly)'
+  location_id: 11000175
+  trigger:
+    kind: reputation_rank
+    faction_id: 730
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormpike Guard (Honored)'
+  location_id: 11000176
+  trigger:
+    kind: reputation_rank
+    faction_id: 730
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormpike Guard (Revered)'
+  location_id: 11000177
+  trigger:
+    kind: reputation_rank
+    faction_id: 730
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Stormpike Guard (Exalted)'
+  location_id: 11000178
+  trigger:
+    kind: reputation_rank
+    faction_id: 730
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Hydraxian Waterlords (Friendly)'
+  location_id: 11000179
+  trigger:
+    kind: reputation_rank
+    faction_id: 749
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Hydraxian Waterlords (Honored)'
+  location_id: 11000180
+  trigger:
+    kind: reputation_rank
+    faction_id: 749
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Hydraxian Waterlords (Revered)'
+  location_id: 11000181
+  trigger:
+    kind: reputation_rank
+    faction_id: 749
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Hydraxian Waterlords (Exalted)'
+  location_id: 11000182
+  trigger:
+    kind: reputation_rank
+    faction_id: 749
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shen''dralar (Friendly)'
+  location_id: 11000183
+  trigger:
+    kind: reputation_rank
+    faction_id: 809
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shen''dralar (Honored)'
+  location_id: 11000184
+  trigger:
+    kind: reputation_rank
+    faction_id: 809
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shen''dralar (Revered)'
+  location_id: 11000185
+  trigger:
+    kind: reputation_rank
+    faction_id: 809
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shen''dralar (Exalted)'
+  location_id: 11000186
+  trigger:
+    kind: reputation_rank
+    faction_id: 809
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Outriders (Friendly)'
+  location_id: 11000187
+  trigger:
+    kind: reputation_rank
+    faction_id: 889
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Outriders (Honored)'
+  location_id: 11000188
+  trigger:
+    kind: reputation_rank
+    faction_id: 889
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Outriders (Revered)'
+  location_id: 11000189
+  trigger:
+    kind: reputation_rank
+    faction_id: 889
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Outriders (Exalted)'
+  location_id: 11000190
+  trigger:
+    kind: reputation_rank
+    faction_id: 889
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silverwing Sentinels (Friendly)'
+  location_id: 11000191
+  trigger:
+    kind: reputation_rank
+    faction_id: 890
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silverwing Sentinels (Honored)'
+  location_id: 11000192
+  trigger:
+    kind: reputation_rank
+    faction_id: 890
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silverwing Sentinels (Revered)'
+  location_id: 11000193
+  trigger:
+    kind: reputation_rank
+    faction_id: 890
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silverwing Sentinels (Exalted)'
+  location_id: 11000194
+  trigger:
+    kind: reputation_rank
+    faction_id: 890
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Forces (Friendly)'
+  location_id: 11000195
+  trigger:
+    kind: reputation_rank
+    faction_id: 891
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Forces (Honored)'
+  location_id: 11000196
+  trigger:
+    kind: reputation_rank
+    faction_id: 891
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Forces (Revered)'
+  location_id: 11000197
+  trigger:
+    kind: reputation_rank
+    faction_id: 891
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Forces (Exalted)'
+  location_id: 11000198
+  trigger:
+    kind: reputation_rank
+    faction_id: 891
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Forces (Friendly)'
+  location_id: 11000199
+  trigger:
+    kind: reputation_rank
+    faction_id: 892
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Forces (Honored)'
+  location_id: 11000200
+  trigger:
+    kind: reputation_rank
+    faction_id: 892
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Forces (Revered)'
+  location_id: 11000201
+  trigger:
+    kind: reputation_rank
+    faction_id: 892
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Forces (Exalted)'
+  location_id: 11000202
+  trigger:
+    kind: reputation_rank
+    faction_id: 892
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkmoon Faire (Friendly)'
+  location_id: 11000203
+  trigger:
+    kind: reputation_rank
+    faction_id: 909
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkmoon Faire (Honored)'
+  location_id: 11000204
+  trigger:
+    kind: reputation_rank
+    faction_id: 909
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkmoon Faire (Revered)'
+  location_id: 11000205
+  trigger:
+    kind: reputation_rank
+    faction_id: 909
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Darkmoon Faire (Exalted)'
+  location_id: 11000206
+  trigger:
+    kind: reputation_rank
+    faction_id: 909
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Brood of Nozdormu (Hostile)'
+  location_id: 11000207
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 1
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Brood of Nozdormu (Unfriendly)'
+  location_id: 11000208
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 2
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - negative
+- name: 'Reputation: Brood of Nozdormu (Neutral)'
+  location_id: 11000209
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 3
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Brood of Nozdormu (Friendly)'
+  location_id: 11000210
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Brood of Nozdormu (Honored)'
+  location_id: 11000211
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Brood of Nozdormu (Revered)'
+  location_id: 11000212
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Brood of Nozdormu (Exalted)'
+  location_id: 11000213
+  trigger:
+    kind: reputation_rank
+    faction_id: 910
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silvermoon City (Friendly)'
+  location_id: 11000214
+  trigger:
+    kind: reputation_rank
+    faction_id: 911
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silvermoon City (Honored)'
+  location_id: 11000215
+  trigger:
+    kind: reputation_rank
+    faction_id: 911
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silvermoon City (Revered)'
+  location_id: 11000216
+  trigger:
+    kind: reputation_rank
+    faction_id: 911
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silvermoon City (Exalted)'
+  location_id: 11000217
+  trigger:
+    kind: reputation_rank
+    faction_id: 911
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien (Friendly)'
+  location_id: 11000218
+  trigger:
+    kind: reputation_rank
+    faction_id: 922
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien (Honored)'
+  location_id: 11000219
+  trigger:
+    kind: reputation_rank
+    faction_id: 922
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien (Revered)'
+  location_id: 11000220
+  trigger:
+    kind: reputation_rank
+    faction_id: 922
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien (Exalted)'
+  location_id: 11000221
+  trigger:
+    kind: reputation_rank
+    faction_id: 922
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Exodar (Friendly)'
+  location_id: 11000222
+  trigger:
+    kind: reputation_rank
+    faction_id: 930
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Exodar (Honored)'
+  location_id: 11000223
+  trigger:
+    kind: reputation_rank
+    faction_id: 930
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Exodar (Revered)'
+  location_id: 11000224
+  trigger:
+    kind: reputation_rank
+    faction_id: 930
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Exodar (Exalted)'
+  location_id: 11000225
+  trigger:
+    kind: reputation_rank
+    faction_id: 930
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Aldor (Hostile)'
+  location_id: 11000226
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 1
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: The Aldor (Unfriendly)'
+  location_id: 11000227
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 2
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: The Aldor (Neutral)'
+  location_id: 11000228
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Aldor (Friendly)'
+  location_id: 11000229
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Aldor (Honored)'
+  location_id: 11000230
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Aldor (Revered)'
+  location_id: 11000231
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Aldor (Exalted)'
+  location_id: 11000232
+  trigger:
+    kind: reputation_rank
+    faction_id: 932
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Consortium (Friendly)'
+  location_id: 11000233
+  trigger:
+    kind: reputation_rank
+    faction_id: 933
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Consortium (Honored)'
+  location_id: 11000234
+  trigger:
+    kind: reputation_rank
+    faction_id: 933
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Consortium (Revered)'
+  location_id: 11000235
+  trigger:
+    kind: reputation_rank
+    faction_id: 933
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Consortium (Exalted)'
+  location_id: 11000236
+  trigger:
+    kind: reputation_rank
+    faction_id: 933
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scryers (Hostile)'
+  location_id: 11000237
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 1
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: The Scryers (Unfriendly)'
+  location_id: 11000238
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 2
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: The Scryers (Neutral)'
+  location_id: 11000239
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scryers (Friendly)'
+  location_id: 11000240
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scryers (Honored)'
+  location_id: 11000241
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scryers (Revered)'
+  location_id: 11000242
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scryers (Exalted)'
+  location_id: 11000243
+  trigger:
+    kind: reputation_rank
+    faction_id: 934
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sha''tar (Friendly)'
+  location_id: 11000244
+  trigger:
+    kind: reputation_rank
+    faction_id: 935
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sha''tar (Honored)'
+  location_id: 11000245
+  trigger:
+    kind: reputation_rank
+    faction_id: 935
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sha''tar (Revered)'
+  location_id: 11000246
+  trigger:
+    kind: reputation_rank
+    faction_id: 935
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sha''tar (Exalted)'
+  location_id: 11000247
+  trigger:
+    kind: reputation_rank
+    faction_id: 935
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattrath City (Friendly)'
+  location_id: 11000248
+  trigger:
+    kind: reputation_rank
+    faction_id: 936
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattrath City (Honored)'
+  location_id: 11000249
+  trigger:
+    kind: reputation_rank
+    faction_id: 936
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattrath City (Revered)'
+  location_id: 11000250
+  trigger:
+    kind: reputation_rank
+    faction_id: 936
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattrath City (Exalted)'
+  location_id: 11000251
+  trigger:
+    kind: reputation_rank
+    faction_id: 936
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Mag''har (Neutral)'
+  location_id: 11000252
+  trigger:
+    kind: reputation_rank
+    faction_id: 941
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Mag''har (Friendly)'
+  location_id: 11000253
+  trigger:
+    kind: reputation_rank
+    faction_id: 941
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Mag''har (Honored)'
+  location_id: 11000254
+  trigger:
+    kind: reputation_rank
+    faction_id: 941
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Mag''har (Revered)'
+  location_id: 11000255
+  trigger:
+    kind: reputation_rank
+    faction_id: 941
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Mag''har (Exalted)'
+  location_id: 11000256
+  trigger:
+    kind: reputation_rank
+    faction_id: 941
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Expedition (Friendly)'
+  location_id: 11000257
+  trigger:
+    kind: reputation_rank
+    faction_id: 942
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Expedition (Honored)'
+  location_id: 11000258
+  trigger:
+    kind: reputation_rank
+    faction_id: 942
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Expedition (Revered)'
+  location_id: 11000259
+  trigger:
+    kind: reputation_rank
+    faction_id: 942
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Cenarion Expedition (Exalted)'
+  location_id: 11000260
+  trigger:
+    kind: reputation_rank
+    faction_id: 942
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Honor Hold (Friendly)'
+  location_id: 11000261
+  trigger:
+    kind: reputation_rank
+    faction_id: 946
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Honor Hold (Honored)'
+  location_id: 11000262
+  trigger:
+    kind: reputation_rank
+    faction_id: 946
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Honor Hold (Revered)'
+  location_id: 11000263
+  trigger:
+    kind: reputation_rank
+    faction_id: 946
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Honor Hold (Exalted)'
+  location_id: 11000264
+  trigger:
+    kind: reputation_rank
+    faction_id: 946
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Thrallmar (Friendly)'
+  location_id: 11000265
+  trigger:
+    kind: reputation_rank
+    faction_id: 947
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Thrallmar (Honored)'
+  location_id: 11000266
+  trigger:
+    kind: reputation_rank
+    faction_id: 947
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Thrallmar (Revered)'
+  location_id: 11000267
+  trigger:
+    kind: reputation_rank
+    faction_id: 947
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Thrallmar (Exalted)'
+  location_id: 11000268
+  trigger:
+    kind: reputation_rank
+    faction_id: 947
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 2 (Friendly)'
+  location_id: 11000269
+  trigger:
+    kind: reputation_rank
+    faction_id: 948
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 2 (Honored)'
+  location_id: 11000270
+  trigger:
+    kind: reputation_rank
+    faction_id: 948
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 2 (Revered)'
+  location_id: 11000271
+  trigger:
+    kind: reputation_rank
+    faction_id: 948
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 2 (Exalted)'
+  location_id: 11000272
+  trigger:
+    kind: reputation_rank
+    faction_id: 948
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 1 (Friendly)'
+  location_id: 11000273
+  trigger:
+    kind: reputation_rank
+    faction_id: 949
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 1 (Honored)'
+  location_id: 11000274
+  trigger:
+    kind: reputation_rank
+    faction_id: 949
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 1 (Revered)'
+  location_id: 11000275
+  trigger:
+    kind: reputation_rank
+    faction_id: 949
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 1 (Exalted)'
+  location_id: 11000276
+  trigger:
+    kind: reputation_rank
+    faction_id: 949
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 3 (Friendly)'
+  location_id: 11000277
+  trigger:
+    kind: reputation_rank
+    faction_id: 952
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 3 (Honored)'
+  location_id: 11000278
+  trigger:
+    kind: reputation_rank
+    faction_id: 952
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 3 (Revered)'
+  location_id: 11000279
+  trigger:
+    kind: reputation_rank
+    faction_id: 952
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Test Faction 3 (Exalted)'
+  location_id: 11000280
+  trigger:
+    kind: reputation_rank
+    faction_id: 952
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Violet Eye (Friendly)'
+  location_id: 11000281
+  trigger:
+    kind: reputation_rank
+    faction_id: 967
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Violet Eye (Honored)'
+  location_id: 11000282
+  trigger:
+    kind: reputation_rank
+    faction_id: 967
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Violet Eye (Revered)'
+  location_id: 11000283
+  trigger:
+    kind: reputation_rank
+    faction_id: 967
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Violet Eye (Exalted)'
+  location_id: 11000284
+  trigger:
+    kind: reputation_rank
+    faction_id: 967
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sporeggar (Neutral)'
+  location_id: 11000285
+  trigger:
+    kind: reputation_rank
+    faction_id: 970
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Sporeggar (Friendly)'
+  location_id: 11000286
+  trigger:
+    kind: reputation_rank
+    faction_id: 970
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Sporeggar (Honored)'
+  location_id: 11000287
+  trigger:
+    kind: reputation_rank
+    faction_id: 970
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Sporeggar (Revered)'
+  location_id: 11000288
+  trigger:
+    kind: reputation_rank
+    faction_id: 970
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Sporeggar (Exalted)'
+  location_id: 11000289
+  trigger:
+    kind: reputation_rank
+    faction_id: 970
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Kurenai (Neutral)'
+  location_id: 11000290
+  trigger:
+    kind: reputation_rank
+    faction_id: 978
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Kurenai (Friendly)'
+  location_id: 11000291
+  trigger:
+    kind: reputation_rank
+    faction_id: 978
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Kurenai (Honored)'
+  location_id: 11000292
+  trigger:
+    kind: reputation_rank
+    faction_id: 978
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Kurenai (Revered)'
+  location_id: 11000293
+  trigger:
+    kind: reputation_rank
+    faction_id: 978
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Kurenai (Exalted)'
+  location_id: 11000294
+  trigger:
+    kind: reputation_rank
+    faction_id: 978
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Burning Crusade (Friendly)'
+  location_id: 11000295
+  trigger:
+    kind: reputation_rank
+    faction_id: 980
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Burning Crusade (Honored)'
+  location_id: 11000296
+  trigger:
+    kind: reputation_rank
+    faction_id: 980
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Burning Crusade (Revered)'
+  location_id: 11000297
+  trigger:
+    kind: reputation_rank
+    faction_id: 980
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Burning Crusade (Exalted)'
+  location_id: 11000298
+  trigger:
+    kind: reputation_rank
+    faction_id: 980
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Keepers of Time (Friendly)'
+  location_id: 11000299
+  trigger:
+    kind: reputation_rank
+    faction_id: 989
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Keepers of Time (Honored)'
+  location_id: 11000300
+  trigger:
+    kind: reputation_rank
+    faction_id: 989
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Keepers of Time (Revered)'
+  location_id: 11000301
+  trigger:
+    kind: reputation_rank
+    faction_id: 989
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Keepers of Time (Exalted)'
+  location_id: 11000302
+  trigger:
+    kind: reputation_rank
+    faction_id: 989
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scale of the Sands (Friendly)'
+  location_id: 11000303
+  trigger:
+    kind: reputation_rank
+    faction_id: 990
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scale of the Sands (Honored)'
+  location_id: 11000304
+  trigger:
+    kind: reputation_rank
+    faction_id: 990
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scale of the Sands (Revered)'
+  location_id: 11000305
+  trigger:
+    kind: reputation_rank
+    faction_id: 990
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Scale of the Sands (Exalted)'
+  location_id: 11000306
+  trigger:
+    kind: reputation_rank
+    faction_id: 990
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Friendly, Hidden (Friendly)'
+  location_id: 11000307
+  trigger:
+    kind: reputation_rank
+    faction_id: 1005
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Friendly, Hidden (Honored)'
+  location_id: 11000308
+  trigger:
+    kind: reputation_rank
+    faction_id: 1005
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Friendly, Hidden (Revered)'
+  location_id: 11000309
+  trigger:
+    kind: reputation_rank
+    faction_id: 1005
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Friendly, Hidden (Exalted)'
+  location_id: 11000310
+  trigger:
+    kind: reputation_rank
+    faction_id: 1005
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Lower City (Friendly)'
+  location_id: 11000311
+  trigger:
+    kind: reputation_rank
+    faction_id: 1011
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Lower City (Honored)'
+  location_id: 11000312
+  trigger:
+    kind: reputation_rank
+    faction_id: 1011
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Lower City (Revered)'
+  location_id: 11000313
+  trigger:
+    kind: reputation_rank
+    faction_id: 1011
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Lower City (Exalted)'
+  location_id: 11000314
+  trigger:
+    kind: reputation_rank
+    faction_id: 1011
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ashtongue Deathsworn (Friendly)'
+  location_id: 11000315
+  trigger:
+    kind: reputation_rank
+    faction_id: 1012
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ashtongue Deathsworn (Honored)'
+  location_id: 11000316
+  trigger:
+    kind: reputation_rank
+    faction_id: 1012
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ashtongue Deathsworn (Revered)'
+  location_id: 11000317
+  trigger:
+    kind: reputation_rank
+    faction_id: 1012
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ashtongue Deathsworn (Exalted)'
+  location_id: 11000318
+  trigger:
+    kind: reputation_rank
+    faction_id: 1012
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Netherwing (Hostile)'
+  location_id: 11000319
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 1
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: Netherwing (Unfriendly)'
+  location_id: 11000320
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 2
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - negative
+- name: 'Reputation: Netherwing (Neutral)'
+  location_id: 11000321
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 3
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Netherwing (Friendly)'
+  location_id: 11000322
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Netherwing (Honored)'
+  location_id: 11000323
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Netherwing (Revered)'
+  location_id: 11000324
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Netherwing (Exalted)'
+  location_id: 11000325
+  trigger:
+    kind: reputation_rank
+    faction_id: 1015
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Sha''tari Skyguard (Friendly)'
+  location_id: 11000326
+  trigger:
+    kind: reputation_rank
+    faction_id: 1031
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sha''tari Skyguard (Honored)'
+  location_id: 11000327
+  trigger:
+    kind: reputation_rank
+    faction_id: 1031
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sha''tari Skyguard (Revered)'
+  location_id: 11000328
+  trigger:
+    kind: reputation_rank
+    faction_id: 1031
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sha''tari Skyguard (Exalted)'
+  location_id: 11000329
+  trigger:
+    kind: reputation_rank
+    faction_id: 1031
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Vanguard (Friendly)'
+  location_id: 11000330
+  trigger:
+    kind: reputation_rank
+    faction_id: 1037
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Vanguard (Honored)'
+  location_id: 11000331
+  trigger:
+    kind: reputation_rank
+    faction_id: 1037
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Vanguard (Revered)'
+  location_id: 11000332
+  trigger:
+    kind: reputation_rank
+    faction_id: 1037
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Alliance Vanguard (Exalted)'
+  location_id: 11000333
+  trigger:
+    kind: reputation_rank
+    faction_id: 1037
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Ogri''la (Friendly)'
+  location_id: 11000334
+  trigger:
+    kind: reputation_rank
+    faction_id: 1038
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ogri''la (Honored)'
+  location_id: 11000335
+  trigger:
+    kind: reputation_rank
+    faction_id: 1038
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ogri''la (Revered)'
+  location_id: 11000336
+  trigger:
+    kind: reputation_rank
+    faction_id: 1038
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Ogri''la (Exalted)'
+  location_id: 11000337
+  trigger:
+    kind: reputation_rank
+    faction_id: 1038
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Valiance Expedition (Friendly)'
+  location_id: 11000338
+  trigger:
+    kind: reputation_rank
+    faction_id: 1050
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Valiance Expedition (Honored)'
+  location_id: 11000339
+  trigger:
+    kind: reputation_rank
+    faction_id: 1050
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Valiance Expedition (Revered)'
+  location_id: 11000340
+  trigger:
+    kind: reputation_rank
+    faction_id: 1050
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Valiance Expedition (Exalted)'
+  location_id: 11000341
+  trigger:
+    kind: reputation_rank
+    faction_id: 1050
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Expedition (Friendly)'
+  location_id: 11000342
+  trigger:
+    kind: reputation_rank
+    faction_id: 1052
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Expedition (Honored)'
+  location_id: 11000343
+  trigger:
+    kind: reputation_rank
+    faction_id: 1052
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Expedition (Revered)'
+  location_id: 11000344
+  trigger:
+    kind: reputation_rank
+    faction_id: 1052
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Horde Expedition (Exalted)'
+  location_id: 11000345
+  trigger:
+    kind: reputation_rank
+    faction_id: 1052
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Taunka (Friendly)'
+  location_id: 11000346
+  trigger:
+    kind: reputation_rank
+    faction_id: 1064
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Taunka (Honored)'
+  location_id: 11000347
+  trigger:
+    kind: reputation_rank
+    faction_id: 1064
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Taunka (Revered)'
+  location_id: 11000348
+  trigger:
+    kind: reputation_rank
+    faction_id: 1064
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Taunka (Exalted)'
+  location_id: 11000349
+  trigger:
+    kind: reputation_rank
+    faction_id: 1064
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Hand of Vengeance (Friendly)'
+  location_id: 11000350
+  trigger:
+    kind: reputation_rank
+    faction_id: 1067
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Hand of Vengeance (Honored)'
+  location_id: 11000351
+  trigger:
+    kind: reputation_rank
+    faction_id: 1067
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Hand of Vengeance (Revered)'
+  location_id: 11000352
+  trigger:
+    kind: reputation_rank
+    faction_id: 1067
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Hand of Vengeance (Exalted)'
+  location_id: 11000353
+  trigger:
+    kind: reputation_rank
+    faction_id: 1067
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Explorers'' League (Friendly)'
+  location_id: 11000354
+  trigger:
+    kind: reputation_rank
+    faction_id: 1068
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Explorers'' League (Honored)'
+  location_id: 11000355
+  trigger:
+    kind: reputation_rank
+    faction_id: 1068
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Explorers'' League (Revered)'
+  location_id: 11000356
+  trigger:
+    kind: reputation_rank
+    faction_id: 1068
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Explorers'' League (Exalted)'
+  location_id: 11000357
+  trigger:
+    kind: reputation_rank
+    faction_id: 1068
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Kalu''ak (Friendly)'
+  location_id: 11000358
+  trigger:
+    kind: reputation_rank
+    faction_id: 1073
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Kalu''ak (Honored)'
+  location_id: 11000359
+  trigger:
+    kind: reputation_rank
+    faction_id: 1073
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Kalu''ak (Revered)'
+  location_id: 11000360
+  trigger:
+    kind: reputation_rank
+    faction_id: 1073
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Kalu''ak (Exalted)'
+  location_id: 11000361
+  trigger:
+    kind: reputation_rank
+    faction_id: 1073
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattered Sun Offensive (Friendly)'
+  location_id: 11000362
+  trigger:
+    kind: reputation_rank
+    faction_id: 1077
+    rank: 4
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattered Sun Offensive (Honored)'
+  location_id: 11000363
+  trigger:
+    kind: reputation_rank
+    faction_id: 1077
+    rank: 5
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattered Sun Offensive (Revered)'
+  location_id: 11000364
+  trigger:
+    kind: reputation_rank
+    faction_id: 1077
+    rank: 6
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: Shattered Sun Offensive (Exalted)'
+  location_id: 11000365
+  trigger:
+    kind: reputation_rank
+    faction_id: 1077
+    rank: 7
+  tags:
+    expansion:
+    - tbc
+    rank_tier:
+    - standard
+- name: 'Reputation: REUSE (Friendly)'
+  location_id: 11000366
+  trigger:
+    kind: reputation_rank
+    faction_id: 1082
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: REUSE (Honored)'
+  location_id: 11000367
+  trigger:
+    kind: reputation_rank
+    faction_id: 1082
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: REUSE (Revered)'
+  location_id: 11000368
+  trigger:
+    kind: reputation_rank
+    faction_id: 1082
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: REUSE (Exalted)'
+  location_id: 11000369
+  trigger:
+    kind: reputation_rank
+    faction_id: 1082
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Offensive (Friendly)'
+  location_id: 11000370
+  trigger:
+    kind: reputation_rank
+    faction_id: 1085
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Offensive (Honored)'
+  location_id: 11000371
+  trigger:
+    kind: reputation_rank
+    faction_id: 1085
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Offensive (Revered)'
+  location_id: 11000372
+  trigger:
+    kind: reputation_rank
+    faction_id: 1085
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Warsong Offensive (Exalted)'
+  location_id: 11000373
+  trigger:
+    kind: reputation_rank
+    faction_id: 1085
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Kirin Tor (Friendly)'
+  location_id: 11000374
+  trigger:
+    kind: reputation_rank
+    faction_id: 1090
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Kirin Tor (Honored)'
+  location_id: 11000375
+  trigger:
+    kind: reputation_rank
+    faction_id: 1090
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Kirin Tor (Revered)'
+  location_id: 11000376
+  trigger:
+    kind: reputation_rank
+    faction_id: 1090
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Kirin Tor (Exalted)'
+  location_id: 11000377
+  trigger:
+    kind: reputation_rank
+    faction_id: 1090
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Wyrmrest Accord (Friendly)'
+  location_id: 11000378
+  trigger:
+    kind: reputation_rank
+    faction_id: 1091
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Wyrmrest Accord (Honored)'
+  location_id: 11000379
+  trigger:
+    kind: reputation_rank
+    faction_id: 1091
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Wyrmrest Accord (Revered)'
+  location_id: 11000380
+  trigger:
+    kind: reputation_rank
+    faction_id: 1091
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Wyrmrest Accord (Exalted)'
+  location_id: 11000381
+  trigger:
+    kind: reputation_rank
+    faction_id: 1091
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Silver Covenant (Friendly)'
+  location_id: 11000382
+  trigger:
+    kind: reputation_rank
+    faction_id: 1094
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Silver Covenant (Honored)'
+  location_id: 11000383
+  trigger:
+    kind: reputation_rank
+    faction_id: 1094
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Silver Covenant (Revered)'
+  location_id: 11000384
+  trigger:
+    kind: reputation_rank
+    faction_id: 1094
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Silver Covenant (Exalted)'
+  location_id: 11000385
+  trigger:
+    kind: reputation_rank
+    faction_id: 1094
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Wrath of the Lich King (Friendly)'
+  location_id: 11000386
+  trigger:
+    kind: reputation_rank
+    faction_id: 1097
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wrath of the Lich King (Honored)'
+  location_id: 11000387
+  trigger:
+    kind: reputation_rank
+    faction_id: 1097
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wrath of the Lich King (Revered)'
+  location_id: 11000388
+  trigger:
+    kind: reputation_rank
+    faction_id: 1097
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wrath of the Lich King (Exalted)'
+  location_id: 11000389
+  trigger:
+    kind: reputation_rank
+    faction_id: 1097
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Knights of the Ebon Blade (Friendly)'
+  location_id: 11000390
+  trigger:
+    kind: reputation_rank
+    faction_id: 1098
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Knights of the Ebon Blade (Honored)'
+  location_id: 11000391
+  trigger:
+    kind: reputation_rank
+    faction_id: 1098
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Knights of the Ebon Blade (Revered)'
+  location_id: 11000392
+  trigger:
+    kind: reputation_rank
+    faction_id: 1098
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Knights of the Ebon Blade (Exalted)'
+  location_id: 11000393
+  trigger:
+    kind: reputation_rank
+    faction_id: 1098
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Frenzyheart Tribe (Friendly)'
+  location_id: 11000394
+  trigger:
+    kind: reputation_rank
+    faction_id: 1104
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Frenzyheart Tribe (Honored)'
+  location_id: 11000395
+  trigger:
+    kind: reputation_rank
+    faction_id: 1104
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Frenzyheart Tribe (Revered)'
+  location_id: 11000396
+  trigger:
+    kind: reputation_rank
+    faction_id: 1104
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Frenzyheart Tribe (Exalted)'
+  location_id: 11000397
+  trigger:
+    kind: reputation_rank
+    faction_id: 1104
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Oracles (Friendly)'
+  location_id: 11000398
+  trigger:
+    kind: reputation_rank
+    faction_id: 1105
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Oracles (Honored)'
+  location_id: 11000399
+  trigger:
+    kind: reputation_rank
+    faction_id: 1105
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Oracles (Revered)'
+  location_id: 11000400
+  trigger:
+    kind: reputation_rank
+    faction_id: 1105
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Oracles (Exalted)'
+  location_id: 11000401
+  trigger:
+    kind: reputation_rank
+    faction_id: 1105
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Crusade (Friendly)'
+  location_id: 11000402
+  trigger:
+    kind: reputation_rank
+    faction_id: 1106
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Crusade (Honored)'
+  location_id: 11000403
+  trigger:
+    kind: reputation_rank
+    faction_id: 1106
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Crusade (Revered)'
+  location_id: 11000404
+  trigger:
+    kind: reputation_rank
+    faction_id: 1106
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Argent Crusade (Exalted)'
+  location_id: 11000405
+  trigger:
+    kind: reputation_rank
+    faction_id: 1106
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Sholazar Basin (Friendly)'
+  location_id: 11000406
+  trigger:
+    kind: reputation_rank
+    faction_id: 1117
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sholazar Basin (Honored)'
+  location_id: 11000407
+  trigger:
+    kind: reputation_rank
+    faction_id: 1117
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sholazar Basin (Revered)'
+  location_id: 11000408
+  trigger:
+    kind: reputation_rank
+    faction_id: 1117
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sholazar Basin (Exalted)'
+  location_id: 11000409
+  trigger:
+    kind: reputation_rank
+    faction_id: 1117
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Classic (Friendly)'
+  location_id: 11000410
+  trigger:
+    kind: reputation_rank
+    faction_id: 1118
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Classic (Honored)'
+  location_id: 11000411
+  trigger:
+    kind: reputation_rank
+    faction_id: 1118
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Classic (Revered)'
+  location_id: 11000412
+  trigger:
+    kind: reputation_rank
+    faction_id: 1118
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Classic (Exalted)'
+  location_id: 11000413
+  trigger:
+    kind: reputation_rank
+    faction_id: 1118
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sons of Hodir (Hostile)'
+  location_id: 11000414
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 1
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - negative
+- name: 'Reputation: The Sons of Hodir (Unfriendly)'
+  location_id: 11000415
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 2
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - negative
+- name: 'Reputation: The Sons of Hodir (Neutral)'
+  location_id: 11000416
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 3
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sons of Hodir (Friendly)'
+  location_id: 11000417
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sons of Hodir (Honored)'
+  location_id: 11000418
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sons of Hodir (Revered)'
+  location_id: 11000419
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sons of Hodir (Exalted)'
+  location_id: 11000420
+  trigger:
+    kind: reputation_rank
+    faction_id: 1119
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sunreavers (Friendly)'
+  location_id: 11000421
+  trigger:
+    kind: reputation_rank
+    faction_id: 1124
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sunreavers (Honored)'
+  location_id: 11000422
+  trigger:
+    kind: reputation_rank
+    faction_id: 1124
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sunreavers (Revered)'
+  location_id: 11000423
+  trigger:
+    kind: reputation_rank
+    faction_id: 1124
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Sunreavers (Exalted)'
+  location_id: 11000424
+  trigger:
+    kind: reputation_rank
+    faction_id: 1124
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Frostborn (Friendly)'
+  location_id: 11000425
+  trigger:
+    kind: reputation_rank
+    faction_id: 1126
+    rank: 4
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Frostborn (Honored)'
+  location_id: 11000426
+  trigger:
+    kind: reputation_rank
+    faction_id: 1126
+    rank: 5
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Frostborn (Revered)'
+  location_id: 11000427
+  trigger:
+    kind: reputation_rank
+    faction_id: 1126
+    rank: 6
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: The Frostborn (Exalted)'
+  location_id: 11000428
+  trigger:
+    kind: reputation_rank
+    faction_id: 1126
+    rank: 7
+  tags:
+    expansion:
+    - wotlk
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien Conversion (Friendly)'
+  location_id: 11000429
+  trigger:
+    kind: reputation_rank
+    faction_id: 1136
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien Conversion (Honored)'
+  location_id: 11000430
+  trigger:
+    kind: reputation_rank
+    faction_id: 1136
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien Conversion (Revered)'
+  location_id: 11000431
+  trigger:
+    kind: reputation_rank
+    faction_id: 1136
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Tranquillien Conversion (Exalted)'
+  location_id: 11000432
+  trigger:
+    kind: reputation_rank
+    faction_id: 1136
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Conversion (Friendly)'
+  location_id: 11000433
+  trigger:
+    kind: reputation_rank
+    faction_id: 1137
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Conversion (Honored)'
+  location_id: 11000434
+  trigger:
+    kind: reputation_rank
+    faction_id: 1137
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Conversion (Revered)'
+  location_id: 11000435
+  trigger:
+    kind: reputation_rank
+    faction_id: 1137
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Wintersaber Conversion (Exalted)'
+  location_id: 11000436
+  trigger:
+    kind: reputation_rank
+    faction_id: 1137
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silver Covenant Conversion (Friendly)'
+  location_id: 11000437
+  trigger:
+    kind: reputation_rank
+    faction_id: 1154
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silver Covenant Conversion (Honored)'
+  location_id: 11000438
+  trigger:
+    kind: reputation_rank
+    faction_id: 1154
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silver Covenant Conversion (Revered)'
+  location_id: 11000439
+  trigger:
+    kind: reputation_rank
+    faction_id: 1154
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Silver Covenant Conversion (Exalted)'
+  location_id: 11000440
+  trigger:
+    kind: reputation_rank
+    faction_id: 1154
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sunreavers Conversion (Friendly)'
+  location_id: 11000441
+  trigger:
+    kind: reputation_rank
+    faction_id: 1155
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sunreavers Conversion (Honored)'
+  location_id: 11000442
+  trigger:
+    kind: reputation_rank
+    faction_id: 1155
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sunreavers Conversion (Revered)'
+  location_id: 11000443
+  trigger:
+    kind: reputation_rank
+    faction_id: 1155
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: Sunreavers Conversion (Exalted)'
+  location_id: 11000444
+  trigger:
+    kind: reputation_rank
+    faction_id: 1155
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Ashen Verdict (Friendly)'
+  location_id: 11000445
+  trigger:
+    kind: reputation_rank
+    faction_id: 1156
+    rank: 4
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Ashen Verdict (Honored)'
+  location_id: 11000446
+  trigger:
+    kind: reputation_rank
+    faction_id: 1156
+    rank: 5
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Ashen Verdict (Revered)'
+  location_id: 11000447
+  trigger:
+    kind: reputation_rank
+    faction_id: 1156
+    rank: 6
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
+- name: 'Reputation: The Ashen Verdict (Exalted)'
+  location_id: 11000448
+  trigger:
+    kind: reputation_rank
+    faction_id: 1156
+    rank: 7
+  tags:
+    expansion:
+    - vanilla
+    rank_tier:
+    - standard
