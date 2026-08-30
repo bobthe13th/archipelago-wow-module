@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from dbc_reader import load_dbc
 
 _DEFAULT_DBC_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "..", "..", "azerothcore-wotlk", "var", "extractors", "dbc", "Faction.dbc"
+    os.path.dirname(__file__), "..", "..", "..", "var", "extractors", "dbc", "Faction.dbc"
 )
 
 # ReputationMgr.cpp:28-30 (real, confirmed): index = ReputationRank (0=Hated..7=Exalted).

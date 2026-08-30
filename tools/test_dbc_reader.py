@@ -4,9 +4,10 @@ import unittest
 
 from dbc_reader import load_dbc
 
-_FACTION_DBC_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "..", "..", "azerothcore-wotlk", "var", "extractors", "dbc", "Faction.dbc"
+_DEFAULT_FACTION_DBC_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "..", "..", "var", "extractors", "dbc", "Faction.dbc"
 )
+_FACTION_DBC_PATH = os.environ.get("ARCHIPELAGO_WOW_FACTION_DBC_PATH", _DEFAULT_FACTION_DBC_PATH)
 
 
 class TestLoadDbc(unittest.TestCase):
