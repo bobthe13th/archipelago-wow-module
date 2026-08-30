@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -60,6 +61,26 @@ namespace Archipelago
     {
         std::string name;
         int32_t flags = 0;
+    };
+
+    // Bundles every APClient/ArchipelagoManager callback. Introduced M4.13 when
+    // adding a 7th callback (onPrintJsonReceived) would have made Initialize's
+    // positional-lambda parameter list unreadable -- see the M4.13 plan's "Real
+    // corrections" section for the real parameter count this replaces.
+    struct ArchipelagoCallbacks
+    {
+        std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived = nullptr;
+        std::function<void()> onConnected = nullptr;
+        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr;
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr;
+        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr;
+        std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
+        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
+        // Connected's top-level missing_locations array (M4.13, ".ap missing" --
+        // see ArchipelagoManager::GetLastKnownMissingLocations/
+        // SetLastKnownMissingLocations and ArchipelagoCommandScript.cpp's consumer).
+        std::function<void(std::vector<int64_t> const&)> onMissingLocationsReceived = nullptr;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
@@ -143,4 +164,25 @@ namespace Archipelago
     // key is absent/malformed. Consumed by ArchipelagoLootSlotScript.cpp
     // (Task 7), shared with M4.10.2's Gathersanity gather-node slots.
     std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
+    // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors
+    // BuildLocationChecksPacket's exact shape.
+    std::string BuildSayPacket(std::string const& text);
+
+    // Parses Connected's real, top-level "missing_locations" array (a sibling of
+    // slot_data, NOT nested under it -- confirmed against Archipelago/MultiServer.py's
+    // real connected_packet shape) into location ids. Returns an empty vector
+    // (never throws) if Connected/missing_locations is absent or malformed,
+    // matching every other Parse* function's discipline.
+    std::vector<int64_t> ParseMissingLocationsFromConnected(std::string const& raw);
+
+    // Parses every "PrintJSON" command in a (possibly batched) frame into one
+    // combined display string per message -- concatenating each data part's
+    // literal "text" field in order. NOTE: for player_id/item_id/location_id-typed
+    // parts, AP's own wire format carries a raw numeric id in "text" (real client
+    // name resolution requires a per-game DataPackage this module doesn't cache)
+    // -- those ids are surfaced as-is, not resolved to names. Returns an empty
+    // vector (never throws) on malformed JSON.
+    std::vector<std::string> ParsePrintJSONText(std::string const& raw);
 }

@@ -44,14 +44,7 @@ namespace Archipelago
     class APClient
     {
     public:
-        APClient(ClientOptions options,
-            std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
-            std::function<void()> onConnected = nullptr,
-            std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr,
-            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr,
-            std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr,
-            std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr,
-            std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr);
+        APClient(ClientOptions options, ArchipelagoCallbacks callbacks);
         ~APClient();
 
         void Start();
@@ -59,6 +52,14 @@ namespace Archipelago
         void SendLocationChecks(std::vector<int64_t> const& locationIds);
         void SendGoalComplete();
         void SendDeathLink(std::string const& cause, std::string const& source);
+        void SendChatCommand(std::string const& text);
+
+        // GM-triggered reconnect to a different port (M4.13, .ap port). Reuses the
+        // exact same reconnect-timer/session-construction path RunIoContext already
+        // runs for a dropped connection -- does NOT tear down and rebuild this
+        // APClient. Safe to call from any thread; the actual reconnect happens on
+        // _ioThread once the current session's Stop() unblocks _ioc.run().
+        void Reconnect(uint16_t newPort);
 
         ConnectionState GetState() const { return _state.load(); }
 
@@ -66,13 +67,7 @@ namespace Archipelago
         void RunIoContext();
 
         ClientOptions _options;
-        std::function<void(std::vector<ReceivedItem> const&)> _onItemsReceived;
-        std::function<void()> _onConnected;
-        std::function<void(std::vector<IncomingDeathLink> const&)> _onDeathLinkReceived;
-        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> _onSlotDataReceived;
-        std::function<void(std::string const&)> _onVendorCheckRepeatBehaviorReceived;
-        std::function<void(std::string const&)> _onInstanceClearModeReceived;
-        std::function<void(std::string const&)> _onLootSlotCheckRepeatBehaviorReceived;
+        ArchipelagoCallbacks _callbacks;
 
         std::atomic<ConnectionState> _state{ ConnectionState::Disconnected };
         // Set by APClientSession the moment a session reaches HandshakeComplete, and
@@ -94,6 +89,9 @@ namespace Archipelago
         std::thread _ioThread;
         std::atomic<bool> _stoppingAll{ false };
         std::unique_ptr<boost::asio::steady_timer> _reconnectTimer;
-        int32_t _currentBackoffSeconds = 0;
+        // Written from RunIoContext (io thread) and, as of M4.13's Reconnect(), also
+        // from the world thread -- must be atomic for that cross-thread write to be
+        // well-defined, matching _state/_reachedHandshake's identical reasoning above.
+        std::atomic<int32_t> _currentBackoffSeconds{ 0 };
     };
 }

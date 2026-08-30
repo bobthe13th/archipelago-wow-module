@@ -10,6 +10,7 @@
 #include "Log.h"
 #include "ScriptMgr.h"
 #include "World.h"
+#include "WorldSessionMgr.h"
 #include "APDelivery.h"
 #include "APGating.h"
 #include "APItemDisplay.h"
@@ -417,31 +418,40 @@ public:
         // only ever push the received items into this lock-guarded queue; the
         // actual mail/DB work happens in OnUpdate below, which always runs on
         // the world thread.
-        sArchipelagoMgr->Initialize(options,
-            [this](std::vector<Archipelago::ReceivedItem> const& items) {
-                std::lock_guard<std::mutex> lock(_pendingItemsMutex);
-                _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
-            },
-            [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
-                std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
-                _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
-            },
-            [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
-                std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
-                _pendingSlotData = display;
-            },
-            [this](std::string const& behavior) {
-                std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
-                _pendingVendorCheckRepeatBehavior = behavior;
-            },
-            [this](std::string const& mode) {
-                std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
-                _pendingInstanceClearMode = mode;
-            },
-            [this](std::string const& behavior) {
-                std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
-                _pendingLootSlotCheckRepeatBehavior = behavior;
-            });
+        Archipelago::ArchipelagoCallbacks callbacks;
+        callbacks.onItemsReceived = [this](std::vector<Archipelago::ReceivedItem> const& items) {
+            std::lock_guard<std::mutex> lock(_pendingItemsMutex);
+            _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
+        };
+        callbacks.onDeathLinkReceived = [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
+            std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
+            _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
+        };
+        callbacks.onSlotDataReceived = [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
+            std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
+            _pendingSlotData = display;
+        };
+        callbacks.onVendorCheckRepeatBehaviorReceived = [this](std::string const& behavior) {
+            std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
+            _pendingVendorCheckRepeatBehavior = behavior;
+        };
+        callbacks.onInstanceClearModeReceived = [this](std::string const& mode) {
+            std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
+            _pendingInstanceClearMode = mode;
+        };
+        callbacks.onLootSlotCheckRepeatBehaviorReceived = [this](std::string const& behavior) {
+            std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
+            _pendingLootSlotCheckRepeatBehavior = behavior;
+        };
+        callbacks.onPrintJsonReceived = [this](std::vector<std::string> const& texts) {
+            std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
+            _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
+        };
+        callbacks.onMissingLocationsReceived = [this](std::vector<int64_t> const& locations) {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            _pendingMissingLocations = locations;
+        };
+        sArchipelagoMgr->Initialize(options, std::move(callbacks));
     }
 
     void OnShutdown() override
@@ -480,7 +490,10 @@ public:
             }
         }
         if (!slotData.empty())
+        {
             Archipelago::ItemDisplay::SynthesizeAndRewireLocations(slotData);
+            Archipelago::ItemDisplay::SetSynthesizedDisplayData(slotData);
+        }
 
         std::optional<std::string> vendorCheckRepeatBehavior;
         {
@@ -528,6 +541,27 @@ public:
         }
         if (lootSlotCheckRepeatBehavior)
             sArchipelagoRealmState->SetLootSlotCheckRepeatBehavior(*lootSlotCheckRepeatBehavior);
+
+        std::vector<std::string> printJsonText;
+        {
+            std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
+            printJsonText.swap(_pendingPrintJsonText);
+        }
+        // Broadcast to all online players, per spec Sec2.
+        for (std::string const& text : printJsonText)
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, text);
+
+        std::optional<std::vector<int64_t>> missingLocations;
+        {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            if (_pendingMissingLocations)
+            {
+                missingLocations = std::move(_pendingMissingLocations);
+                _pendingMissingLocations.reset();
+            }
+        }
+        if (missingLocations)
+            sArchipelagoMgr->SetLastKnownMissingLocations(*missingLocations);
     }
 
 private:
@@ -606,6 +640,24 @@ private:
     std::mutex _pendingLootSlotCheckRepeatBehaviorMutex;
     std::optional<std::string> _pendingLootSlotCheckRepeatBehavior;
     bool _lootSlotCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingItems above,
+    // for incoming PrintJSON display text (M4.13, ".ap hint"'s response). Unlike
+    // the "apply-once" queues above, this is drained and re-broadcast every
+    // OnUpdate tick -- a PrintJSON message (e.g. a hint result) can legitimately
+    // arrive many times over a realm's lifetime, not just once at connect.
+    std::mutex _pendingPrintJsonTextMutex;
+    std::vector<std::string> _pendingPrintJsonText;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingPrintJsonText
+    // above, for Connected/RoomUpdate's missing_locations snapshot (M4.13,
+    // ".ap missing"). std::optional (rather than a bare vector) distinguishes "no
+    // new snapshot arrived this tick" from "the new snapshot is a real empty
+    // vector" (all locations checked) -- the latter must still overwrite
+    // ArchipelagoManager's stored snapshot via SetLastKnownMissingLocations below,
+    // not be mistaken for "nothing to drain".
+    std::mutex _pendingMissingLocationsMutex;
+    std::optional<std::vector<int64_t>> _pendingMissingLocations;
 };
 
 void AddArchipelagoWorldScripts()

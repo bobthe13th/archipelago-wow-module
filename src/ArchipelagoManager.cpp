@@ -9,26 +9,13 @@ ArchipelagoManager* ArchipelagoManager::instance()
     return &instance;
 }
 
-void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
-    std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
-    std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
-    std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived,
-    std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
-    std::function<void(std::string const&)> onInstanceClearModeReceived,
-    std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived)
+void ArchipelagoManager::Initialize(Archipelago::ClientOptions options, Archipelago::ArchipelagoCallbacks callbacks)
 {
     if (_client)
         return;
 
-    _client = std::make_unique<Archipelago::APClient>(
-        std::move(options),
-        std::move(onItemsReceived),
-        [this]() { ResendAllChecksAndGoal(); },
-        std::move(onDeathLinkReceived),
-        std::move(onSlotDataReceived),
-        std::move(onVendorCheckRepeatBehaviorReceived),
-        std::move(onInstanceClearModeReceived),
-        std::move(onLootSlotCheckRepeatBehaviorReceived));
+    callbacks.onConnected = [this]() { ResendAllChecksAndGoal(); };
+    _client = std::make_unique<Archipelago::APClient>(std::move(options), std::move(callbacks));
     _client->Start();
 }
 
@@ -61,6 +48,12 @@ void ArchipelagoManager::SendDeathLink(std::string const& cause, std::string con
         _client->SendDeathLink(cause, source);
 }
 
+void ArchipelagoManager::SendChatCommand(std::string const& text)
+{
+    if (_client)
+        _client->SendChatCommand(text);
+}
+
 void ArchipelagoManager::ResendAllChecksAndGoal()
 {
     auto const& checks = sArchipelagoRealmState->GetSentLocationChecks();
@@ -87,5 +80,23 @@ void ArchipelagoManager::ResendAllChecksAndGoal()
 Archipelago::ConnectionState ArchipelagoManager::GetConnectionState() const
 {
     return _client ? _client->GetState() : Archipelago::ConnectionState::Disconnected;
+}
+
+void ArchipelagoManager::Reconnect(uint16_t newPort)
+{
+    if (_client)
+        _client->Reconnect(newPort);
+}
+
+void ArchipelagoManager::SetLastKnownMissingLocations(std::vector<int64_t> const& locations)
+{
+    std::lock_guard<std::mutex> lock(_missingLocationsMutex);
+    _lastKnownMissingLocations = locations;
+}
+
+std::vector<int64_t> ArchipelagoManager::GetLastKnownMissingLocations() const
+{
+    std::lock_guard<std::mutex> lock(_missingLocationsMutex);
+    return _lastKnownMissingLocations;
 }
 

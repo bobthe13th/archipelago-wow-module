@@ -290,4 +290,59 @@ namespace Archipelago
         }
         return std::nullopt;
     }
+
+    std::string BuildSayPacket(std::string const& text)
+    {
+        json packet = json::array({ json{
+            { "cmd", "Say" },
+            { "text", text }
+        } });
+        return packet.dump();
+    }
+
+    std::vector<int64_t> ParseMissingLocationsFromConnected(std::string const& raw)
+    {
+        std::vector<int64_t> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("missing_locations") || !element["missing_locations"].is_array())
+                continue;
+
+            for (json const& idJson : element["missing_locations"])
+                if (idJson.is_number_integer())
+                    result.push_back(idJson.get<int64_t>());
+        }
+        return result;
+    }
+
+    std::vector<std::string> ParsePrintJSONText(std::string const& raw)
+    {
+        std::vector<std::string> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "PrintJSON")
+                continue;
+            if (!element.contains("data") || !element["data"].is_array())
+                continue;
+
+            std::string combined;
+            for (json const& part : element["data"])
+                if (part.is_object() && part.contains("text") && part["text"].is_string())
+                    combined += part["text"].get<std::string>();
+            result.push_back(std::move(combined));
+        }
+        return result;
+    }
 }
