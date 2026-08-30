@@ -447,6 +447,10 @@ public:
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
             _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
         };
+        callbacks.onMissingLocationsReceived = [this](std::vector<int64_t> const& locations) {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            _pendingMissingLocations = locations;
+        };
         sArchipelagoMgr->Initialize(options, std::move(callbacks));
     }
 
@@ -546,6 +550,18 @@ public:
         // Broadcast to all online players, per spec Sec2.
         for (std::string const& text : printJsonText)
             sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, text);
+
+        std::optional<std::vector<int64_t>> missingLocations;
+        {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            if (_pendingMissingLocations)
+            {
+                missingLocations = std::move(_pendingMissingLocations);
+                _pendingMissingLocations.reset();
+            }
+        }
+        if (missingLocations)
+            sArchipelagoMgr->SetLastKnownMissingLocations(*missingLocations);
     }
 
 private:
@@ -632,6 +648,16 @@ private:
     // arrive many times over a realm's lifetime, not just once at connect.
     std::mutex _pendingPrintJsonTextMutex;
     std::vector<std::string> _pendingPrintJsonText;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingPrintJsonText
+    // above, for Connected/RoomUpdate's missing_locations snapshot (M4.13,
+    // ".ap missing"). std::optional (rather than a bare vector) distinguishes "no
+    // new snapshot arrived this tick" from "the new snapshot is a real empty
+    // vector" (all locations checked) -- the latter must still overwrite
+    // ArchipelagoManager's stored snapshot via SetLastKnownMissingLocations below,
+    // not be mistaken for "nothing to drain".
+    std::mutex _pendingMissingLocationsMutex;
+    std::optional<std::vector<int64_t>> _pendingMissingLocations;
 };
 
 void AddArchipelagoWorldScripts()

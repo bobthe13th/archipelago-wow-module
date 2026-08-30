@@ -52,6 +52,7 @@ namespace Archipelago
         void SendLocationChecks(std::vector<int64_t> const& locationIds);
         void SendGoalComplete();
         void SendDeathLink(std::string const& cause, std::string const& source);
+        void SendChatCommand(std::string const& text);
 
         // GM-triggered reconnect to a different port (M4.13, .ap port). Reuses the
         // exact same reconnect-timer/session-construction path RunIoContext already

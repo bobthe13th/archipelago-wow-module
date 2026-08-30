@@ -77,6 +77,10 @@ namespace Archipelago
         std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
         std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
+        // Connected's top-level missing_locations array (M4.13, ".ap missing" --
+        // see ArchipelagoManager::GetLastKnownMissingLocations/
+        // SetLastKnownMissingLocations and ArchipelagoCommandScript.cpp's consumer).
+        std::function<void(std::vector<int64_t> const&)> onMissingLocationsReceived = nullptr;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago

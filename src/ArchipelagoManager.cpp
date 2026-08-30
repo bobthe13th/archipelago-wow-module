@@ -48,6 +48,12 @@ void ArchipelagoManager::SendDeathLink(std::string const& cause, std::string con
         _client->SendDeathLink(cause, source);
 }
 
+void ArchipelagoManager::SendChatCommand(std::string const& text)
+{
+    if (_client)
+        _client->SendChatCommand(text);
+}
+
 void ArchipelagoManager::ResendAllChecksAndGoal()
 {
     auto const& checks = sArchipelagoRealmState->GetSentLocationChecks();
@@ -80,5 +86,17 @@ void ArchipelagoManager::Reconnect(uint16_t newPort)
 {
     if (_client)
         _client->Reconnect(newPort);
+}
+
+void ArchipelagoManager::SetLastKnownMissingLocations(std::vector<int64_t> const& locations)
+{
+    std::lock_guard<std::mutex> lock(_missingLocationsMutex);
+    _lastKnownMissingLocations = locations;
+}
+
+std::vector<int64_t> ArchipelagoManager::GetLastKnownMissingLocations() const
+{
+    std::lock_guard<std::mutex> lock(_missingLocationsMutex);
+    return _lastKnownMissingLocations;
 }
 

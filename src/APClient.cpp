@@ -148,6 +148,30 @@ namespace Archipelago
                 });
         }
 
+        void SendChatCommand(std::string const& text)
+        {
+            // Same _outbox/WriteNextQueued serialization as SendLocationChecks/
+            // SendGoalComplete/SendDeathLink above. Deliberately NOT durably queued
+            // for reconnect-resend (same reasoning as SendDeathLink -- a hint
+            // request is a one-off interactive action tied to the command
+            // invocation that triggered it, not state to replay later): if the
+            // socket isn't connected right now, this send is simply dropped.
+            auto payload = std::make_shared<std::string>(BuildSayPacket(text));
+            net::dispatch(_options.useTls ? _sslWs.get_executor() : _plainWs.get_executor(),
+                [self = shared_from_this(), payload]
+                {
+                    if (self->_state.load() != ConnectionState::HandshakeComplete)
+                    {
+                        LOG_INFO("module.archipelago_wow",
+                            "Archipelago: socket not connected, chat command dropped (best-effort by design)");
+                        return;
+                    }
+                    self->_outbox.push_back(payload);
+                    if (self->_outbox.size() == 1)
+                        self->WriteNextQueued();
+                });
+        }
+
     private:
         void OnResolve(error_code ec, tcp::resolver::results_type results)
         {
@@ -366,6 +390,13 @@ namespace Archipelago
             if (!printJsonText.empty() && _callbacks.onPrintJsonReceived)
                 _callbacks.onPrintJsonReceived(printJsonText);
 
+            // Connected's real, top-level missing_locations array (M4.13, ".ap missing")
+            // -- ParseMissingLocationsFromConnected internally checks cmd == "Connected"
+            // itself, same unconditional-parse rationale as every other Parse* call above.
+            auto missingLocations = ParseMissingLocationsFromConnected(message);
+            if (!missingLocations.empty() && _callbacks.onMissingLocationsReceived)
+                _callbacks.onMissingLocationsReceived(missingLocations);
+
             ReadNext(false);
         }
 
@@ -565,6 +596,13 @@ namespace Archipelago
         std::lock_guard<std::mutex> lock(_sessionMutex);
         if (_session)
             _session->SendDeathLink(cause, source);
+    }
+
+    void APClient::SendChatCommand(std::string const& text)
+    {
+        std::lock_guard<std::mutex> lock(_sessionMutex);
+        if (_session)
+            _session->SendChatCommand(text);
     }
 
     void APClient::RunIoContext()
