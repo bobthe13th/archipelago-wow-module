@@ -9,26 +9,13 @@ ArchipelagoManager* ArchipelagoManager::instance()
     return &instance;
 }
 
-void ArchipelagoManager::Initialize(Archipelago::ClientOptions options,
-    std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
-    std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
-    std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived,
-    std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
-    std::function<void(std::string const&)> onInstanceClearModeReceived,
-    std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived)
+void ArchipelagoManager::Initialize(Archipelago::ClientOptions options, Archipelago::ArchipelagoCallbacks callbacks)
 {
     if (_client)
         return;
 
-    _client = std::make_unique<Archipelago::APClient>(
-        std::move(options),
-        std::move(onItemsReceived),
-        [this]() { ResendAllChecksAndGoal(); },
-        std::move(onDeathLinkReceived),
-        std::move(onSlotDataReceived),
-        std::move(onVendorCheckRepeatBehaviorReceived),
-        std::move(onInstanceClearModeReceived),
-        std::move(onLootSlotCheckRepeatBehaviorReceived));
+    callbacks.onConnected = [this]() { ResendAllChecksAndGoal(); };
+    _client = std::make_unique<Archipelago::APClient>(std::move(options), std::move(callbacks));
     _client->Start();
 }
 

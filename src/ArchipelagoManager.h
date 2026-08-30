@@ -14,13 +14,7 @@ class ArchipelagoManager
 public:
     static ArchipelagoManager* instance();
 
-    void Initialize(Archipelago::ClientOptions options,
-        std::function<void(std::vector<Archipelago::ReceivedItem> const&)> onItemsReceived,
-        std::function<void(std::vector<Archipelago::IncomingDeathLink> const&)> onDeathLinkReceived,
-        std::function<void(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const&)> onSlotDataReceived,
-        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
-        std::function<void(std::string const&)> onInstanceClearModeReceived,
-        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived);
+    void Initialize(Archipelago::ClientOptions options, Archipelago::ArchipelagoCallbacks callbacks);
     void Shutdown();
 
     void SendLocationChecks(std::vector<int64_t> const& locationIds);

@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -60,6 +61,22 @@ namespace Archipelago
     {
         std::string name;
         int32_t flags = 0;
+    };
+
+    // Bundles every APClient/ArchipelagoManager callback. Introduced M4.13 when
+    // adding a 7th callback (onPrintJsonReceived) would have made Initialize's
+    // positional-lambda parameter list unreadable -- see the M4.13 plan's "Real
+    // corrections" section for the real parameter count this replaces.
+    struct ArchipelagoCallbacks
+    {
+        std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived = nullptr;
+        std::function<void()> onConnected = nullptr;
+        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr;
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr;
+        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr;
+        std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
+        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago

@@ -46,13 +46,7 @@ namespace Archipelago
     public:
         APClientSession(net::io_context& ioc, ClientOptions const& options,
             std::atomic<ConnectionState>& state, std::atomic<bool>& reachedHandshake,
-            std::function<void(std::vector<ReceivedItem> const&)> const& onItemsReceived,
-            std::function<void()> const& onConnected,
-            std::function<void(std::vector<IncomingDeathLink> const&)> const& onDeathLinkReceived,
-            std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& onSlotDataReceived,
-            std::function<void(std::string const&)> const& onVendorCheckRepeatBehaviorReceived,
-            std::function<void(std::string const&)> const& onInstanceClearModeReceived,
-            std::function<void(std::string const&)> const& onLootSlotCheckRepeatBehaviorReceived)
+            ArchipelagoCallbacks const& callbacks)
             : _resolver(net::make_strand(ioc))
             , _plainWs(net::make_strand(ioc))
             , _sslCtx(ssl::context::tlsv12_client)
@@ -60,13 +54,7 @@ namespace Archipelago
             , _options(options)
             , _state(state)
             , _reachedHandshake(reachedHandshake)
-            , _onItemsReceived(onItemsReceived)
-            , _onConnected(onConnected)
-            , _onDeathLinkReceived(onDeathLinkReceived)
-            , _onSlotDataReceived(onSlotDataReceived)
-            , _onVendorCheckRepeatBehaviorReceived(onVendorCheckRepeatBehaviorReceived)
-            , _onInstanceClearModeReceived(onInstanceClearModeReceived)
-            , _onLootSlotCheckRepeatBehaviorReceived(onLootSlotCheckRepeatBehaviorReceived)
+            , _callbacks(callbacks)
         {
             _sslCtx.set_verify_mode(ssl::verify_none); // see plan's Global Constraints
         }
@@ -305,8 +293,8 @@ namespace Archipelago
                         _state = ConnectionState::HandshakeComplete;
                         _reachedHandshake = true; // consumed by APClient::RunIoContext to reset backoff
                         LOG_INFO("module.archipelago_wow", "Archipelago: handshake complete, connected to multiworld server");
-                        if (_onConnected)
-                            _onConnected();
+                        if (_callbacks.onConnected)
+                            _callbacks.onConnected();
                     }
                 }
                 else if (type == ServerMessageType::ConnectionRefused)
@@ -331,16 +319,16 @@ namespace Archipelago
                     [](ServerMessageType type) { return type == ServerMessageType::ReceivedItems; }))
             {
                 auto items = ParseReceivedItems(message);
-                if (!items.empty() && _onItemsReceived)
-                    _onItemsReceived(items);
+                if (!items.empty() && _callbacks.onItemsReceived)
+                    _callbacks.onItemsReceived(items);
             }
 
             if (std::any_of(types.begin(), types.end(),
                     [](ServerMessageType type) { return type == ServerMessageType::DeathLinkBounce; }))
             {
                 auto bounces = ParseIncomingDeathLinks(message);
-                if (!bounces.empty() && _onDeathLinkReceived)
-                    _onDeathLinkReceived(bounces);
+                if (!bounces.empty() && _callbacks.onDeathLinkReceived)
+                    _callbacks.onDeathLinkReceived(bounces);
             }
 
             // ParseApItemDisplayFromSlotData internally checks cmd == "Connected"
@@ -348,27 +336,35 @@ namespace Archipelago
             // parsing the raw frame unconditionally is simplest and matches the M4.7
             // design spec's plumbing task (Task 4).
             auto slotData = ParseApItemDisplayFromSlotData(message);
-            if (!slotData.empty() && _onSlotDataReceived)
-                _onSlotDataReceived(slotData);
+            if (!slotData.empty() && _callbacks.onSlotDataReceived)
+                _callbacks.onSlotDataReceived(slotData);
 
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData
             // above -- ParseVendorCheckRepeatBehaviorFromSlotData internally checks
             // cmd == "Connected" itself (M4.7 Task 8).
             auto vendorCheckRepeatBehavior = ParseVendorCheckRepeatBehaviorFromSlotData(message);
-            if (vendorCheckRepeatBehavior && _onVendorCheckRepeatBehaviorReceived)
-                _onVendorCheckRepeatBehaviorReceived(*vendorCheckRepeatBehavior);
+            if (vendorCheckRepeatBehavior && _callbacks.onVendorCheckRepeatBehaviorReceived)
+                _callbacks.onVendorCheckRepeatBehaviorReceived(*vendorCheckRepeatBehavior);
 
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
             // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.9).
             auto instanceClearMode = ParseInstanceClearModeFromSlotData(message);
-            if (instanceClearMode && _onInstanceClearModeReceived)
-                _onInstanceClearModeReceived(*instanceClearMode);
+            if (instanceClearMode && _callbacks.onInstanceClearModeReceived)
+                _callbacks.onInstanceClearModeReceived(*instanceClearMode);
 
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
             // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.10.1).
             auto lootSlotCheckRepeatBehavior = ParseLootSlotCheckRepeatBehaviorFromSlotData(message);
-            if (lootSlotCheckRepeatBehavior && _onLootSlotCheckRepeatBehaviorReceived)
-                _onLootSlotCheckRepeatBehaviorReceived(*lootSlotCheckRepeatBehavior);
+            if (lootSlotCheckRepeatBehavior && _callbacks.onLootSlotCheckRepeatBehaviorReceived)
+                _callbacks.onLootSlotCheckRepeatBehaviorReceived(*lootSlotCheckRepeatBehavior);
+
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData above
+            // (M4.13): PrintJSON text is meaningful even when the surrounding frame has
+            // no Connected command in it at all (a live hint response arrives on its own,
+            // long after connect).
+            auto printJsonText = ParsePrintJSONText(message);
+            if (!printJsonText.empty() && _callbacks.onPrintJsonReceived)
+                _callbacks.onPrintJsonReceived(printJsonText);
 
             ReadNext(false);
         }
@@ -487,31 +483,12 @@ namespace Archipelago
         ClientOptions _options;
         std::atomic<ConnectionState>& _state;
         std::atomic<bool>& _reachedHandshake;
-        std::function<void(std::vector<ReceivedItem> const&)> const& _onItemsReceived;
-        std::function<void()> const& _onConnected;
-        std::function<void(std::vector<IncomingDeathLink> const&)> const& _onDeathLinkReceived;
-        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> const& _onSlotDataReceived;
-        std::function<void(std::string const&)> const& _onVendorCheckRepeatBehaviorReceived;
-        std::function<void(std::string const&)> const& _onInstanceClearModeReceived;
-        std::function<void(std::string const&)> const& _onLootSlotCheckRepeatBehaviorReceived;
+        ArchipelagoCallbacks const& _callbacks;
     };
 
-    APClient::APClient(ClientOptions options,
-        std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived,
-        std::function<void()> onConnected,
-        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived,
-        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived,
-        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived,
-        std::function<void(std::string const&)> onInstanceClearModeReceived,
-        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived)
+    APClient::APClient(ClientOptions options, ArchipelagoCallbacks callbacks)
         : _options(std::move(options))
-        , _onItemsReceived(std::move(onItemsReceived))
-        , _onConnected(std::move(onConnected))
-        , _onDeathLinkReceived(std::move(onDeathLinkReceived))
-        , _onSlotDataReceived(std::move(onSlotDataReceived))
-        , _onVendorCheckRepeatBehaviorReceived(std::move(onVendorCheckRepeatBehaviorReceived))
-        , _onInstanceClearModeReceived(std::move(onInstanceClearModeReceived))
-        , _onLootSlotCheckRepeatBehaviorReceived(std::move(onLootSlotCheckRepeatBehaviorReceived))
+        , _callbacks(std::move(callbacks))
     {
     }
 
@@ -528,10 +505,7 @@ namespace Archipelago
         std::shared_ptr<APClientSession> session;
         {
             std::lock_guard<std::mutex> lock(_sessionMutex);
-            _session = std::make_shared<APClientSession>(
-                _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected, _onDeathLinkReceived,
-                _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived, _onInstanceClearModeReceived,
-                _onLootSlotCheckRepeatBehaviorReceived);
+            _session = std::make_shared<APClientSession>(_ioc, _options, _state, _reachedHandshake, _callbacks);
             session = _session;
         }
         session->Run();
@@ -637,9 +611,7 @@ namespace Archipelago
                         // _sessionMutex comment on the member in APClient.h.
                         std::lock_guard<std::mutex> lock(_sessionMutex);
                         _session = std::make_shared<APClientSession>(
-                            _ioc, _options, _state, _reachedHandshake, _onItemsReceived, _onConnected,
-                            _onDeathLinkReceived, _onSlotDataReceived, _onVendorCheckRepeatBehaviorReceived,
-                            _onInstanceClearModeReceived, _onLootSlotCheckRepeatBehaviorReceived);
+                            _ioc, _options, _state, _reachedHandshake, _callbacks);
                         session = _session;
                     }
                     session->Run();
