@@ -143,4 +143,25 @@ namespace Archipelago
     // key is absent/malformed. Consumed by ArchipelagoLootSlotScript.cpp
     // (Task 7), shared with M4.10.2's Gathersanity gather-node slots.
     std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
+    // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors
+    // BuildLocationChecksPacket's exact shape.
+    std::string BuildSayPacket(std::string const& text);
+
+    // Parses Connected's real, top-level "missing_locations" array (a sibling of
+    // slot_data, NOT nested under it -- confirmed against Archipelago/MultiServer.py's
+    // real connected_packet shape) into location ids. Returns an empty vector
+    // (never throws) if Connected/missing_locations is absent or malformed,
+    // matching every other Parse* function's discipline.
+    std::vector<int64_t> ParseMissingLocationsFromConnected(std::string const& raw);
+
+    // Parses every "PrintJSON" command in a (possibly batched) frame into one
+    // combined display string per message -- concatenating each data part's
+    // literal "text" field in order. NOTE: for player_id/item_id/location_id-typed
+    // parts, AP's own wire format carries a raw numeric id in "text" (real client
+    // name resolution requires a per-game DataPackage this module doesn't cache)
+    // -- those ids are surfaced as-is, not resolved to names. Returns an empty
+    // vector (never throws) on malformed JSON.
+    std::vector<std::string> ParsePrintJSONText(std::string const& raw);
 }
