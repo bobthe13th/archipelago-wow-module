@@ -40,6 +40,7 @@ namespace Archipelago::HolidayRoster
         { "holiday_harvest_festival",  "Harvest Festival",        { 11 },                         1,  false },
         { "holiday_new_years_eve",     "New Year's Eve",          { 6 },                          1,  false },
         { "holiday_darkmoon_faire",    "Darkmoon Faire",          { 3, 4, 5 },                    3,  false },
-        { "holiday_scourge_invasion",  "Scourge Invasion",        { 17, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130 }, 12, false },
+        { "holiday_scourge_invasion",  "Scourge Invasion",
+          { 17, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130 }, 12, false },
     } };
 }
