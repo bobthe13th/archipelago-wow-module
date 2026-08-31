@@ -23,7 +23,15 @@ namespace Archipelago::HolidayRoster
         std::string_view displayName;      // shown in the gossip menu
         std::array<uint16_t, 12> eventIds; // real game_event.eventId values; unused slots are 0
         uint8_t eventIdCount;
-        bool requiresComboScopeBoth;       // Task 4's five combo_unlocks_scope-gated holidays
+        // Task 4's five combo_unlocks_scope-gated holidays. M4.10.7 final
+        // review note (M1): DOCUMENTATION ONLY -- no C++ in this module
+        // reads this field. The real gating happens entirely at generation
+        // time in the apworld (Archipelago/worlds/wow/items.py's
+        // _COMBO_SCOPE_GATED_HOLIDAYS, which decides whether the item is
+        // put in the pool at all); the server only ever sees flags for
+        // items that were actually generated and received. Kept here so
+        // this roster stays a complete, readable description of the family.
+        bool requiresComboScopeBoth;
     };
 
     inline constexpr std::array<Entry, 14> ENTRIES = { {

@@ -26,6 +26,7 @@
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGATHERSANITYContent.h"
 #include "ArchipelagoGoals.h"
+#include "ArchipelagoHOLIDAYSANITYContent.h"
 #include "ArchipelagoITEMSANITYContent.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
@@ -193,6 +194,36 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
                     onlinePlayer->InitGlyphsForLevel();
                 });
             }
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.10.7 final whole-branch review fix (C2): holidaysanity is the
+        // FIFTH family to ship with a real, compiled lookup map that
+        // nothing here consumed -- the same dispatch-wiring gap the
+        // M4.10.1/M4.10.2/M4.10.5 fixes below closed for containersanity,
+        // gathersanity and craftsanity (M4.10.6's itemsanity avoided it by
+        // catching the omission in its own pre-flight review). Its map is
+        // flag-shaped rather than mail-shaped, so this branch mirrors the
+        // gates branch directly above instead of the DeliverItem ones:
+        // Archipelago::Holidaysanity::ApItemToFlagKeyAndTier (14 entries,
+        // compiled by generate_content.py from content/holidaysanity.yaml)
+        // was real and already built, but a received "Holiday Unlock: ..."
+        // item fell all the way through to the "unknown AP item id" log
+        // below, so its holiday_* flag was never set and the Archipelago
+        // Holiday Herald never listed the holiday.
+        //
+        // No per-character refresh is needed here (unlike gates'
+        // bank_bag_slots/dual_spec/glyph_slots special cases above): the
+        // holiday_* flags are realm-wide-only state, re-read live every
+        // time a player interacts with the Archipelago Holiday Herald
+        // gossip NPC (ArchipelagoHolidayHeraldScript.cpp's
+        // OnGossipHello/OnGossipSelect), never cached on a Player.
+        auto holidayIt = Archipelago::Holidaysanity::ApItemToFlagKeyAndTier.find(received.item);
+        if (holidayIt != Archipelago::Holidaysanity::ApItemToFlagKeyAndTier.end())
+        {
+            auto const& [flagKey, tier] = holidayIt->second;
+            sArchipelagoRealmState->SetFlagTier(flagKey, tier);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
