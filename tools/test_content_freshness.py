@@ -39,6 +39,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "gates_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGatesContentTable.h",
     },
+    "holidaysanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "holidaysanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoHOLIDAYSANITYContent.h",
+    },
     "filler": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerContentTable.h",

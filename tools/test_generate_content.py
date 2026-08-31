@@ -1302,5 +1302,21 @@ class TestItemFirstHeldTriggerLookup(unittest.TestCase):
         self.assertIn("std::unordered_map<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID", joined)
 
 
+class TestHolidaysanityFamilySchema(unittest.TestCase):
+    def test_holidaysanity_registered_with_flag_delivery_only(self) -> None:
+        schema = FAMILY_SCHEMAS["holidaysanity"]
+        self.assertEqual(schema.valid_trigger_kinds, set())
+        self.assertEqual(schema.valid_delivery_kinds, {"flag"})
+        self.assertFalse(schema.generic)  # 14 rows, nowhere near the 2000-row hand-rolled-emitter threshold
+
+    def test_holidaysanity_yaml_has_no_locations(self) -> None:
+        import pathlib
+        import yaml
+        path = pathlib.Path(__file__).parent.parent / "content" / "holidaysanity.yaml"
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        self.assertEqual(data["locations"], [])
+        self.assertEqual(len(data["items"]), 14)
+
+
 if __name__ == "__main__":
     unittest.main()

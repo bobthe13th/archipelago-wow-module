@@ -634,6 +634,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_delivery_kinds={"realm_state"},
     ),
     "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
+    "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
     "traps": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"trap"}),
     "rares": FamilySchema(valid_trigger_kinds={"rare_kill"}, valid_delivery_kinds={"realm_state"}),
@@ -849,7 +850,7 @@ def emit_python(data: dict) -> str:
         return emit_python_generic(data)
     if family == "core_loop":
         return _emit_python_core_loop(data)
-    if family == "gates":
+    if family in ("gates", "holidaysanity"):
         return _emit_python_gates(data)
     if family == "filler":
         return _emit_python_filler(data)
@@ -969,7 +970,8 @@ def _emit_python_core_loop(data: dict) -> str:
 
 
 def _emit_python_gates(data: dict) -> str:
-    lines = [_GENERATED_HEADER_PY.format(source="content/gates.yaml"), ""]
+    family = data["family"]
+    lines = [_GENERATED_HEADER_PY.format(source=f"content/{family}.yaml"), ""]
     lines.append("ITEMS: dict[str, tuple[int, int]] = {")
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
@@ -1694,7 +1696,7 @@ def emit_cpp(data: dict) -> str:
         return emit_cpp_generic(data)
     if family == "core_loop":
         return _emit_cpp_core_loop(data)
-    if family == "gates":
+    if family in ("gates", "holidaysanity"):
         return _emit_cpp_gates(data)
     if family == "filler":
         return _emit_cpp_filler(data)
@@ -1827,14 +1829,16 @@ def _emit_cpp_core_loop(data: dict) -> str:
 
 
 def _emit_cpp_gates(data: dict) -> str:
+    family = data["family"]
+    namespace = "Archipelago::" + family.title()
     lines = [
-        _GENERATED_HEADER_CPP.format(source="content/gates.yaml"),
+        _GENERATED_HEADER_CPP.format(source=f"content/{family}.yaml"),
         "#pragma once", "",
         "#include <cstdint>",
         "#include <string>",
         "#include <unordered_map>",
         "#include <utility>", "",
-        "namespace Archipelago::Gates", "{",
+        f"namespace {namespace}", "{",
     ]
     for item in data["items"]:
         const_name = _cpp_const_name(item["name"])
