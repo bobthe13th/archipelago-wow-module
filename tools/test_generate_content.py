@@ -14,6 +14,8 @@ from generate_content import (
     emit_cpp_generic,
     validate_family,
     _emit_cpp_trigger_lookup,
+    _validate_recipe_craft_rows,
+    _emit_cpp_trigger_lookup_recipe_craft,
     ValidationError,
     FAMILY_SCHEMAS,
 )
@@ -1217,6 +1219,34 @@ class TestCreatureKillTriggerLookup(unittest.TestCase):
             "std::map<std::pair<uint32_t, uint32_t>, int64_t> FACTION_RANK_TO_LOCATION_ID",
             cpp,
         )
+
+
+class TestCraftsanityFamily(unittest.TestCase):
+    def test_craftsanity_registered_as_generic_with_recipe_craft_trigger(self) -> None:
+        schema = FAMILY_SCHEMAS["craftsanity"]
+        self.assertTrue(schema.generic)
+        self.assertEqual(schema.valid_trigger_kinds, {"recipe_craft"})
+        self.assertEqual(schema.valid_delivery_kinds, {"mail"})
+        self.assertTrue(schema.export_triggers)
+        self.assertTrue(schema.export_tags)
+        self.assertTrue(schema.export_item_delivery)
+
+    def test_duplicate_item_entry_in_recipe_craft_rows_is_rejected(self) -> None:
+        locations = [
+            {"name": "Craft: A (#1)", "location_id": 1, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+            {"name": "Craft: B (#2)", "location_id": 2, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recipe_craft_rows("craftsanity", locations)
+
+    def test_emit_cpp_trigger_lookup_recipe_craft_produces_item_entry_map(self) -> None:
+        locations = [
+            {"name": "Craft: A (#500)", "location_id": 11_500_000, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+        ]
+        lines = _emit_cpp_trigger_lookup_recipe_craft(locations)
+        text = "\n".join(lines)
+        self.assertIn("ITEM_ENTRY_TO_LOCATION_ID", text)
+        self.assertIn("{ 500, 11500000 }", text)
 
 
 if __name__ == "__main__":

@@ -81,6 +81,7 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_gameobject_loot_rows(family, locations)
     _validate_skinning_loot_rows(data)
     _validate_disenchant_loot_rows(data)
+    _validate_recipe_craft_rows(family, locations)
     _validate_trigger_lookup_uniqueness(family, locations, items, path)
     _validate_tags_rows(family, locations, items, path)
     _validate_level_milestone_tracks(family, locations, path)
@@ -298,6 +299,25 @@ def _validate_disenchant_loot_rows(data: dict) -> None:
         if key in seen:
             raise ValidationError(
                 f"{data['family']}: duplicate disenchant_loot (loot_id, item_entry) {key} -- "
+                f"{seen[key]!r} and {loc['name']!r} both claim it"
+            )
+        seen[key] = loc["name"]
+
+
+def _validate_recipe_craft_rows(family: str, locations: list) -> None:
+    """recipe_craft's key is the produced item's real entry -- extract_craftsanity.py
+    already collapses multi-spell-produces-same-item cases into one row (see
+    that script's build_craftsanity_rows), so a duplicate item_entry here means
+    a genuine extraction bug, same discipline as _validate_gameobject_loot_rows."""
+    seen: dict[int, str] = {}
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "recipe_craft":
+            continue
+        key = trigger["item_entry"]
+        if key in seen:
+            raise ValidationError(
+                f"{family}: duplicate recipe_craft item_entry {key} -- "
                 f"{seen[key]!r} and {loc['name']!r} both claim it"
             )
         seen[key] = loc["name"]
@@ -636,6 +656,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "repsanity": FamilySchema(
         valid_trigger_kinds={"reputation_rank"}, valid_delivery_kinds=set(),
         generic=True, export_triggers=True, export_tags=True,
+    ),
+    "craftsanity": FamilySchema(
+        valid_trigger_kinds={"recipe_craft"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
 }
 
@@ -1327,6 +1351,32 @@ def _emit_cpp_trigger_lookup_learn_spell(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_recipe_craft(locations: list) -> list[str]:
+    """ITEM_ENTRY_TO_LOCATION_ID via the same raw-constexpr-array-plus-
+    runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.10.5)
+    -- keyed by the real produced wow item entry (OnPlayerCreateItem gives no
+    spell id, only the resulting Item*), 1,698 rows, past the M4.7.1
+    stack-overflow threshold."""
+    lines = ["inline constexpr std::pair<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID_RAW[] = {"]
+    for loc in locations:
+        lines.append(
+            f'    {{ {loc["trigger"]["item_entry"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildITEM_ENTRY_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("    for (auto const& row : ITEM_ENTRY_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID = "
+        "BuildITEM_ENTRY_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup_gameobject_loot(locations: list) -> list[str]:
     """GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID via the same raw-constexpr-
     array-plus-runtime-builder pattern as
@@ -1539,6 +1589,9 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
     if kind == "reputation_rank":
         return _emit_cpp_trigger_lookup_reputation_rank(locations)
+
+    if kind == "recipe_craft":
+        return _emit_cpp_trigger_lookup_recipe_craft(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "

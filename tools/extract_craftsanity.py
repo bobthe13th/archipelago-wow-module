@@ -53,7 +53,20 @@ def build_craftsanity_rows(
     checkout's live data are produced by 2 different spells each).
     Item entries with no real item_template row are skipped (item_names
     only contains real, confirmed rows -- see extract_craftsanity_yaml's
-    caller). Deterministic: sorted by item entry."""
+    caller). Deterministic: sorted by item entry.
+
+    Tag dimensions are unioned generically rather than hardcoded to
+    profession+expansion: recipes.yaml-sourced spells carry a `profession`
+    dimension, but trainer_spells.yaml-sourced spells (e.g. class spells
+    like Conjure Food/Water that also have a CreateItem effect) carry
+    `class` instead and have no `profession` key at all. Hardcoding
+    `profession`/`expansion` here used to silently produce an empty
+    `profession: []` list for every item produced only by a class spell --
+    a "never zero tags" invariant violation caught by _validate_tags_rows
+    once craftsanity was registered in FAMILY_SCHEMAS (M4.10.5 Task 2).
+    Unioning whatever dimensions each contributing spell's own tags dict
+    actually has means a row only ever carries a dimension key when at
+    least one contributing spell had a real value for it."""
     tags_by_item: dict[int, dict[str, set[str]]] = {}
     for spell_id, produced_items in create_item_effects.items():
         tags = spell_tags.get(spell_id)
@@ -62,9 +75,15 @@ def build_craftsanity_rows(
         for item_entry in produced_items:
             if item_entry not in item_names:
                 continue
-            merged = tags_by_item.setdefault(item_entry, {"profession": set(), "expansion": set()})
-            merged["profession"].update(tags.get("profession", []))
-            merged["expansion"].update(tags.get("expansion", []))
+            merged = tags_by_item.setdefault(item_entry, {})
+            for dimension, values in tags.items():
+                merged.setdefault(dimension, set()).update(values)
+
+    # Fixed dimension order (rather than alphabetical) keeps output stable
+    # and matches the original profession-then-expansion ordering for rows
+    # that only ever had those two; `class` (trainer_spells-sourced, e.g.
+    # Conjure Food/Water) sorts after profession, before expansion.
+    _DIMENSION_ORDER = ("profession", "class", "expansion")
 
     locations: list[dict] = []
     items: list[dict] = []
@@ -73,14 +92,13 @@ def build_craftsanity_rows(
         name = item_names[item_entry]
         location_id = _LOCATION_ID_BASE + index
         item_id = _ITEM_ID_BASE + index
+        ordered_dims = [d for d in _DIMENSION_ORDER if d in merged_tags]
+        ordered_dims += [d for d in merged_tags if d not in _DIMENSION_ORDER]
         locations.append({
             "name": f"Craft: {name} (#{item_entry})",
             "location_id": location_id,
             "trigger": {"kind": "recipe_craft", "item_entry": item_entry},
-            "tags": {
-                "profession": sorted(merged_tags["profession"]),
-                "expansion": sorted(merged_tags["expansion"]),
-            },
+            "tags": {dim: sorted(merged_tags[dim]) for dim in ordered_dims},
         })
         items.append({
             "name": f"Craftsanity Item: {name} (#{item_entry})",

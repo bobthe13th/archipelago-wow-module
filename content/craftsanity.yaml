@@ -58,7 +58,8 @@ locations:
     kind: recipe_craft
     item_entry: 1113
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Rye (#1114)'
@@ -67,7 +68,8 @@ locations:
     kind: recipe_craft
     item_entry: 1114
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Pumpernickel (#1487)'
@@ -76,7 +78,8 @@ locations:
     kind: recipe_craft
     item_entry: 1487
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Purified Water (#2136)'
@@ -85,7 +88,8 @@ locations:
     kind: recipe_craft
     item_entry: 2136
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Fresh Water (#2288)'
@@ -94,7 +98,8 @@ locations:
     kind: recipe_craft
     item_entry: 2288
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Fine Leather Boots (#2307)'
@@ -463,7 +468,8 @@ locations:
     kind: recipe_craft
     item_entry: 3772
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Shadow Oil (#3824)'
@@ -1232,7 +1238,8 @@ locations:
     kind: recipe_craft
     item_entry: 5232
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Conjured Muffin (#5349)'
@@ -1241,7 +1248,8 @@ locations:
     kind: recipe_craft
     item_entry: 5349
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Water (#5350)'
@@ -1250,7 +1258,8 @@ locations:
     kind: recipe_craft
     item_entry: 5350
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Kaldorei Spider Kabob (#5472)'
@@ -1339,7 +1348,8 @@ locations:
     kind: recipe_craft
     item_entry: 5513
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Mana Agate (#5514)'
@@ -1348,7 +1358,8 @@ locations:
     kind: recipe_craft
     item_entry: 5514
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Clam Chowder (#5526)'
@@ -2337,7 +2348,8 @@ locations:
     kind: recipe_craft
     item_entry: 8007
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Mana Ruby (#8008)'
@@ -2346,7 +2358,8 @@ locations:
     kind: recipe_craft
     item_entry: 8008
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Sourdough (#8075)'
@@ -2355,7 +2368,8 @@ locations:
     kind: recipe_craft
     item_entry: 8075
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Sweet Roll (#8076)'
@@ -2364,7 +2378,8 @@ locations:
     kind: recipe_craft
     item_entry: 8076
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Mineral Water (#8077)'
@@ -2373,7 +2388,8 @@ locations:
     kind: recipe_craft
     item_entry: 8077
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Sparkling Water (#8078)'
@@ -2382,7 +2398,8 @@ locations:
     kind: recipe_craft
     item_entry: 8078
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Crystal Water (#8079)'
@@ -2391,7 +2408,8 @@ locations:
     kind: recipe_craft
     item_entry: 8079
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Comfortable Leather Hat (#8174)'
@@ -5270,7 +5288,8 @@ locations:
     kind: recipe_craft
     item_entry: 16892
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Soulstone (#16893)'
@@ -5279,7 +5298,8 @@ locations:
     kind: recipe_craft
     item_entry: 16893
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Greater Soulstone (#16895)'
@@ -5288,7 +5308,8 @@ locations:
     kind: recipe_craft
     item_entry: 16895
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Major Soulstone (#16896)'
@@ -5297,7 +5318,8 @@ locations:
     kind: recipe_craft
     item_entry: 16896
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Flarecore Gloves (#16979)'
@@ -7366,7 +7388,8 @@ locations:
     kind: recipe_craft
     item_entry: 22044
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Master Soulstone (#22116)'
@@ -7375,7 +7398,8 @@ locations:
     kind: recipe_craft
     item_entry: 22116
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Obsidian Mail Tunic (#22191)'
@@ -10814,7 +10838,8 @@ locations:
     kind: recipe_craft
     item_entry: 30703
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Ring of Arcane Shielding (#30825)'
@@ -11963,7 +11988,8 @@ locations:
     kind: recipe_craft
     item_entry: 33312
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Steady Talasite (#33782)'
@@ -12842,7 +12868,8 @@ locations:
     kind: recipe_craft
     item_entry: 36895
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Purified Shadowsong Amethyst (#37503)'
@@ -14361,7 +14388,8 @@ locations:
     kind: recipe_craft
     item_entry: 40773
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Reinforced Cobalt Shoulders (#40956)'
@@ -14410,7 +14438,8 @@ locations:
     kind: recipe_craft
     item_entry: 41169
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Lesser Firestone (#41170)'
@@ -14419,7 +14448,8 @@ locations:
     kind: recipe_craft
     item_entry: 41170
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Greater Firestone (#41171)'
@@ -14428,7 +14458,8 @@ locations:
     kind: recipe_craft
     item_entry: 41171
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Major Firestone (#41172)'
@@ -14437,7 +14468,8 @@ locations:
     kind: recipe_craft
     item_entry: 41172
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Fel Firestone (#41173)'
@@ -14446,7 +14478,8 @@ locations:
     kind: recipe_craft
     item_entry: 41173
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Grand Firestone (#41174)'
@@ -14455,7 +14488,8 @@ locations:
     kind: recipe_craft
     item_entry: 41174
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Spellstone (#41191)'
@@ -14464,7 +14498,8 @@ locations:
     kind: recipe_craft
     item_entry: 41191
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Greater Spellstone (#41192)'
@@ -14473,7 +14508,8 @@ locations:
     kind: recipe_craft
     item_entry: 41192
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Major Spellstone (#41193)'
@@ -14482,7 +14518,8 @@ locations:
     kind: recipe_craft
     item_entry: 41193
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Master Spellstone (#41194)'
@@ -14491,7 +14528,8 @@ locations:
     kind: recipe_craft
     item_entry: 41194
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Demonic Spellstone (#41195)'
@@ -14500,7 +14538,8 @@ locations:
     kind: recipe_craft
     item_entry: 41195
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Grand Spellstone (#41196)'
@@ -14509,7 +14548,8 @@ locations:
     kind: recipe_craft
     item_entry: 41196
   tags:
-    profession: []
+    class:
+    - warlock
     expansion:
     - vanilla
 - name: 'Craft: Red Lumberjack Shirt (#41248)'
@@ -15908,7 +15948,8 @@ locations:
     kind: recipe_craft
     item_entry: 43518
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Conjured Mana Strudel (#43523)'
@@ -15917,7 +15958,8 @@ locations:
     kind: recipe_craft
     item_entry: 43523
   tags:
-    profession: []
+    class:
+    - mage
     expansion:
     - vanilla
 - name: 'Craft: Titanium Frostguard Ring (#43582)'

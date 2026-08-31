@@ -107,6 +107,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "repsanity_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoREPSANITYContent.h",
     },
+    "craftsanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "craftsanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCRAFTSANITYContent.h",
+    },
 }
 
 
