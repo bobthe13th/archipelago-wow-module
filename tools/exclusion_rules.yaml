@@ -37,8 +37,11 @@ name_denylist:
   # existing \bdeprecated\b word-boundary pattern doesn't catch these
   # because there's no boundary between "zz" and the following capital
   # letter. Anchored at the start and requires a letter to follow.
-  # Verified live: exactly 5 rows match this pattern, all internal
-  # test/deprecated items (M4.10.6 itemsanity fix).
+  # Verified live: 39 rows match this pattern (entry<4000000 universe),
+  # all internal test/deprecated items -- e.g. zzOLD.../ZZOLD.../
+  # zzDEPRECATED.../zzoldSwift Warstrider (M4.10.6 itemsanity fix;
+  # count corrected during scoped re-review after an initial
+  # under-count of 5).
   - '(?i)^zz[A-Z]'
   # Internal NPC-only visual equipment, e.g. "NPC Equip 18732" -- verified
   # live: 4,856 rows all conform exactly to the "NPC Equip <digits>" shape,
