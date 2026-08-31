@@ -76,6 +76,9 @@ namespace Archipelago
         std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr;
         std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
         std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
+        // bool is a primitive, so passed by value rather than by const& (M4.10.7),
+        // unlike the string-valued slot_data callbacks above.
+        std::function<void(bool)> onHolidaysanityStackingReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
         // Connected's top-level missing_locations array (M4.13, ".ap missing" --
         // see ArchipelagoManager::GetLastKnownMissingLocations/
@@ -164,6 +167,15 @@ namespace Archipelago
     // key is absent/malformed. Consumed by ArchipelagoLootSlotScript.cpp
     // (Task 7), shared with M4.10.2's Gathersanity gather-node slots.
     std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["holidaysanity_stacking"] (a single
+    // boolean option, M4.10.7) -- mirrors
+    // ParseLootSlotCheckRepeatBehaviorFromSlotData's exact shape (M4.10.1),
+    // adapted for a bool instead of a string: "don't crash the connection
+    // state machine on a shape it doesn't recognize". Returns std::nullopt
+    // (never throws) if slot_data or the key is absent/malformed. Consumed
+    // by ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic.
+    std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw);
 
     // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
     // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors

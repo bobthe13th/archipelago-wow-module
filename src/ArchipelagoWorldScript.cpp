@@ -443,6 +443,10 @@ public:
             std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
             _pendingLootSlotCheckRepeatBehavior = behavior;
         };
+        callbacks.onHolidaysanityStackingReceived = [this](bool stacking) {
+            std::lock_guard<std::mutex> lock(_pendingHolidaysanityStackingMutex);
+            _pendingHolidaysanityStacking = stacking;
+        };
         callbacks.onPrintJsonReceived = [this](std::vector<std::string> const& texts) {
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
             _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
@@ -542,6 +546,18 @@ public:
         if (lootSlotCheckRepeatBehavior)
             sArchipelagoRealmState->SetLootSlotCheckRepeatBehavior(*lootSlotCheckRepeatBehavior);
 
+        std::optional<bool> holidaysanityStacking;
+        {
+            std::lock_guard<std::mutex> lock(_pendingHolidaysanityStackingMutex);
+            if (!_holidaysanityStackingApplied && _pendingHolidaysanityStacking)
+            {
+                holidaysanityStacking = _pendingHolidaysanityStacking;
+                _holidaysanityStackingApplied = true;
+            }
+        }
+        if (holidaysanityStacking)
+            sArchipelagoRealmState->SetHolidaysanityStacking(*holidaysanityStacking);
+
         std::vector<std::string> printJsonText;
         {
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
@@ -640,6 +656,13 @@ private:
     std::mutex _pendingLootSlotCheckRepeatBehaviorMutex;
     std::optional<std::string> _pendingLootSlotCheckRepeatBehavior;
     bool _lootSlotCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingLootSlotCheckRepeatBehavior/_lootSlotCheckRepeatBehaviorApplied
+    // above, for the one-shot holidaysanity_stacking slot_data bool (M4.10.7).
+    std::mutex _pendingHolidaysanityStackingMutex;
+    std::optional<bool> _pendingHolidaysanityStacking;
+    bool _holidaysanityStackingApplied = false;
 
     // Same io-thread-producer/world-thread-consumer shape as _pendingItems above,
     // for incoming PrintJSON display text (M4.13, ".ap hint"'s response). Unlike

@@ -382,6 +382,12 @@ namespace Archipelago
             if (lootSlotCheckRepeatBehavior && _callbacks.onLootSlotCheckRepeatBehaviorReceived)
                 _callbacks.onLootSlotCheckRepeatBehaviorReceived(*lootSlotCheckRepeatBehavior);
 
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
+            // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.10.7).
+            auto holidaysanityStacking = ParseHolidaysanityStackingFromSlotData(message);
+            if (holidaysanityStacking && _callbacks.onHolidaysanityStackingReceived)
+                _callbacks.onHolidaysanityStackingReceived(*holidaysanityStacking);
+
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData above
             // (M4.13): PrintJSON text is meaningful even when the surrounding frame has
             // no Connected command in it at all (a live hint response arrives on its own,

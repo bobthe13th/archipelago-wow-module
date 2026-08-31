@@ -291,6 +291,27 @@ namespace Archipelago
         return std::nullopt;
     }
 
+    std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("holidaysanity_stacking") || !slotData["holidaysanity_stacking"].is_boolean())
+                continue;
+            return slotData["holidaysanity_stacking"].get<bool>();
+        }
+        return std::nullopt;
+    }
+
     std::string BuildSayPacket(std::string const& text)
     {
         json packet = json::array({ json{

@@ -217,6 +217,16 @@ public:
     std::string GetLootSlotCheckRepeatBehavior() const { return _lootSlotCheckRepeatBehavior; }
     void SetLootSlotCheckRepeatBehavior(std::string behavior) { _lootSlotCheckRepeatBehavior = std::move(behavior); }
 
+    // Cached mirror of slot_data["holidaysanity_stacking"] (M4.10.7), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetLootSlotCheckRepeatBehavior above -- consumed by
+    // ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic to decide
+    // whether activating a new holiday deactivates the currently-running
+    // one. Defaults to false (only one holiday active at a time), matching
+    // the apworld option's own off-by-default.
+    bool GetHolidaysanityStacking() const { return _holidaysanityStacking; }
+    void SetHolidaysanityStacking(bool stacking) { _holidaysanityStacking = stacking; }
+
     // Cached mirror of Archipelago.AchievementHuntTier/AchievementHuntSubset
     // (M4.9 Sec4), same not-persisted worldserver.conf-mirror convention as
     // GameMode/CompletionistExpansion above -- consumed from
@@ -256,6 +266,7 @@ private:
     uint32_t _collectorItemsRequired = 264;
     std::string _vendorCheckRepeatBehavior = "suppress_entirely";
     std::string _lootSlotCheckRepeatBehavior = "suppress_entirely";
+    bool _holidaysanityStacking = false;
     std::string _achievementHuntTier = "hundred_percent";
     std::string _achievementHuntSubset = "explorer";
 };
