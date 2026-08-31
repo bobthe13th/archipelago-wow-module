@@ -2,11 +2,13 @@
 family: filler
 
 # Sink locations restoring item=location parity after Group 1's gate items
-# (Task 11, §16's "gate-item sphere-0 test") and Group 3's trap items (Task
-# 17). A single generation only USES as many of these rows as items.py's
-# count_enabled_gates_items + count_enabled_trap_items finds pooled for
-# that generation's options (locations.py's create_filler_locations slices
-# this list to that combined count). AP's generation pipeline has no
+# (Task 11, §16's "gate-item sphere-0 test"), Group 3's trap items (Task
+# 17), and M4.10.7's Holidaysanity items (no location of their own, same
+# shape as gates/traps). A single generation only USES as many of these
+# rows as items.py's count_enabled_gates_items + count_enabled_trap_items +
+# count_enabled_holidaysanity_items finds pooled for that generation's
+# options (locations.py's create_filler_locations slices this list to that
+# combined count). AP's generation pipeline has no
 # generic step that pads a short itempool to match location count (the
 # only itempool<->create_filler() interaction in Main.py is a fixed-size
 # 1:1 swap for start_inventory_from_pool removals, not padding), so every
@@ -32,6 +34,14 @@ family: filler
 # TestFillerPoolCoversWorstCaseGatesAndTraps caught as a 73-vs-122 (-49)
 # shortfall.
 #
+# M4.10.7: Row count grown 122 -> 136 = 37 (gates) + 85 (traps, unchanged)
+# + 14 (len(holidaysanity_content_data.ITEMS), Holidaysanity's own worst
+# case when combo_unlocks_scope is "both" -- every Holiday Unlock item
+# pooled, including the 5 combo-scope-gated ones). Filler Check 123-136 /
+# location_id 740122-740135 are the +14 rows added for this resize. See
+# items.py's count_enabled_holidaysanity_items docstring for why
+# Holidaysanity needs the exact same sink-location treatment as gates/traps.
+#
 # History of this file's prior sizings, kept for context:
 # - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
 #   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
@@ -52,7 +62,7 @@ family: filler
 # max of 100. Any future optional item family, OR any future core_loop.yaml
 # growth (per-track level-milestone count or instance-clear count), must
 # extend this ceiling by its own worst-case count the same way, not assume
-# 122 is permanent -- TestFillerPoolCoversWorstCaseGatesAndTraps is the
+# 136 is permanent -- TestFillerPoolCoversWorstCaseGatesAndTraps is the
 # trip-wire test that catches the next drift.
 #
 # items: [] always for this family (a filler location has no matching item
@@ -443,4 +453,46 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 122"
     location_id: 740121
+    trigger: {kind: always_available}
+  - name: "Filler Check 123"
+    location_id: 740122
+    trigger: {kind: always_available}
+  - name: "Filler Check 124"
+    location_id: 740123
+    trigger: {kind: always_available}
+  - name: "Filler Check 125"
+    location_id: 740124
+    trigger: {kind: always_available}
+  - name: "Filler Check 126"
+    location_id: 740125
+    trigger: {kind: always_available}
+  - name: "Filler Check 127"
+    location_id: 740126
+    trigger: {kind: always_available}
+  - name: "Filler Check 128"
+    location_id: 740127
+    trigger: {kind: always_available}
+  - name: "Filler Check 129"
+    location_id: 740128
+    trigger: {kind: always_available}
+  - name: "Filler Check 130"
+    location_id: 740129
+    trigger: {kind: always_available}
+  - name: "Filler Check 131"
+    location_id: 740130
+    trigger: {kind: always_available}
+  - name: "Filler Check 132"
+    location_id: 740131
+    trigger: {kind: always_available}
+  - name: "Filler Check 133"
+    location_id: 740132
+    trigger: {kind: always_available}
+  - name: "Filler Check 134"
+    location_id: 740133
+    trigger: {kind: always_available}
+  - name: "Filler Check 135"
+    location_id: 740134
+    trigger: {kind: always_available}
+  - name: "Filler Check 136"
+    location_id: 740135
     trigger: {kind: always_available}
