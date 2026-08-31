@@ -114,3 +114,49 @@ name_denylist:
   # would be a severe, unintended power-level break (final whole-branch
   # review finding I2, M4.9.6).
   - '(?i)Increase Critical Strike Chance 100%'
+  # Internal profession-specialization pseudo-factions used only by
+  # Faction.dbc's internal recipe-tracking bookkeeping, e.g. " Blacksmithing
+  # - Armorsmithing" (note the leading space -- a real, confirmed DBC
+  # quirk), " Leatherworking - Elemental", " Engineering - Goblin" --
+  # verified live against the full real 105-row reputation-pane roster
+  # (Faction.dbc reputationListID >= 0): exactly 10 rows match, all
+  # internal profession-specialization tracking, none player-facing, none a
+  # real earnable reputation bar. Also verified against every other
+  # is_denylisted consumer's real name source (item_template.name,
+  # creature_template.name, quest_template.LogTitle,
+  # gameobject_template.name, Spell.dbc SpellName): zero collisions
+  # (Repsanity family, M4.10.4 final whole-branch review fix I1).
+  - '(?i)^\s*(?:Blacksmithing|Leatherworking|Engineering) - \w+$'
+  # Reputation-pane UI headers and non-earnable "Forces" parent factions --
+  # "Horde"/"Alliance" (faction-group headers), "The Burning Crusade"/
+  # "Classic" (expansion-tab headers), "Alliance Forces"/"Horde Forces"
+  # (warfront parent factions with no real reputation bar of their own).
+  # "Wrath of the Lich King" and "Sholazar Basin" are the same kind of junk
+  # for Repsanity but are deliberately NOT added here -- each collides with
+  # real, already-shipped content in other families that share this
+  # denylist (a real quest_template.LogTitle row and/or a real Spell.dbc
+  # name); see extract_repsanity.py's own _LOCAL_DENYLIST for those two
+  # plus "REUSE" and the full verification notes. Verified live against the
+  # full real 105-row reputation-pane roster: exactly 6 rows match this
+  # pattern; verified zero collisions against every other is_denylisted
+  # consumer's real name source (Repsanity family, M4.10.4 final
+  # whole-branch review fix I1).
+  - '(?i)^(?:Horde|Alliance|Alliance Forces|Horde Forces|The Burning Crusade|Classic)$'
+  # Internal reputation-conversion bookkeeping rows (a player's standing
+  # with one faction being converted/carried over to a successor faction,
+  # e.g. Tranquillien -> The Sunreavers when a Blood Elf/Alliance character
+  # crosses over), never a real earnable reputation bar of their own --
+  # verified live: exactly these 4 rows exist in the full real 105-row
+  # reputation-pane roster; verified zero collisions against every other
+  # is_denylisted consumer's real name source (Repsanity family, M4.10.4
+  # final whole-branch review fix I1).
+  - '(?i)^(?:Tranquillien Conversion|Wintersaber Conversion|Silver Covenant Conversion|Sunreavers Conversion)$'
+  # Misc internal/unobtainable reputation-pane row -- "Friendly, Hidden" (an
+  # internal display-state row, not a real faction). "REUSE" is the same
+  # kind of junk for Repsanity but is deliberately NOT added here -- it
+  # collides with real, already-shipped quest_template.LogTitle rows and
+  # real Spell.dbc rows in other families that share this denylist; see
+  # extract_repsanity.py's own _LOCAL_DENYLIST. Verified live: exactly 1 row
+  # matches this pattern (Repsanity family, M4.10.4 final whole-branch
+  # review fix I1).
+  - '(?i)^Friendly, Hidden$'

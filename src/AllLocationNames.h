@@ -12,6 +12,7 @@
 #include "ArchipelagoTrainerSpellsContentTable.h"
 #include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoGATHERSANITYContent.h"
+#include "ArchipelagoREPSANITYContent.h"
 
 namespace Archipelago::Locations
 {
@@ -41,6 +42,17 @@ namespace Archipelago::Locations
             MergeFamilyLocations(ArchipelagoTRAINER_SPELLSContent::LOCATIONS, result);
             MergeFamilyLocations(ArchipelagoCONTAINERSANITYContent::LOCATIONS, result);
             MergeFamilyLocations(ArchipelagoGATHERSANITYContent::LOCATIONS, result);
+            // Final whole-branch review fix (I4, M4.10.4): Repsanity was
+            // never merged in here, so ".ap missing" printed
+            // "(unknown location)" for every real reputation-rank location
+            // id. Repsanity has no ITEMS (a reputation-rank crossing has no
+            // real-world lootable slot to shuffle -- see
+            // extract_repsanity.py's own module docstring), so only the
+            // LOCATIONS merge is needed here, matching how Enemysanity
+            // (also items_module=None) would be handled if it were merged
+            // in at all -- it currently is NOT (a separate, pre-existing
+            // gap noted by the reviewer, out of this fix's scope).
+            MergeFamilyLocations(ArchipelagoREPSANITYContent::LOCATIONS, result);
             return result;
         }
     }

@@ -11,6 +11,7 @@
 #include "AllLocationNames.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
 #include "ArchipelagoGATHERSANITYContent.h"
+#include "ArchipelagoREPSANITYContent.h"
 
 using namespace Archipelago;
 
@@ -28,18 +29,35 @@ TEST_CASE("AllLocationNames contains entries from at least two different familie
     CHECK(Locations::AllLocationNames.at(static_cast<int64_t>(gatherId)) == gatherName);
 }
 
+// Final whole-branch review fix (I4, M4.10.4): Repsanity was never merged
+// into AllLocationNames at all, so this test would have passed even with
+// that bug -- add its own coverage rather than only touching src/.
+TEST_CASE("AllLocationNames contains entries from Repsanity")
+{
+    REQUIRE(!ArchipelagoREPSANITYContent::LOCATIONS.empty());
+
+    auto const& [repName, repId] = *ArchipelagoREPSANITYContent::LOCATIONS.begin();
+
+    REQUIRE(Locations::AllLocationNames.count(static_cast<int64_t>(repId)) == 1);
+    CHECK(Locations::AllLocationNames.at(static_cast<int64_t>(repId)) == repName);
+}
+
 TEST_CASE("AllLocationNames has no id collisions across families (size matches total real-name count)")
 {
     size_t totalRealNames = ArchipelagoQUEST_REWARDSContent::LOCATIONS.size()
-        + ArchipelagoGATHERSANITYContent::LOCATIONS.size();
-    // A partial check restricted to the two families this test links, not
-    // every family this project has -- proves the merge for these two is a
-    // real concatenation, not one family silently overwriting the other.
+        + ArchipelagoGATHERSANITYContent::LOCATIONS.size()
+        + ArchipelagoREPSANITYContent::LOCATIONS.size();
+    // A partial check restricted to the three families this test links, not
+    // every family this project has -- proves the merge for these three is a
+    // real concatenation, not one family silently overwriting another.
     size_t coveredIds = 0;
     for (auto const& [name, id] : ArchipelagoQUEST_REWARDSContent::LOCATIONS)
         if (Locations::AllLocationNames.count(static_cast<int64_t>(id)))
             ++coveredIds;
     for (auto const& [name, id] : ArchipelagoGATHERSANITYContent::LOCATIONS)
+        if (Locations::AllLocationNames.count(static_cast<int64_t>(id)))
+            ++coveredIds;
+    for (auto const& [name, id] : ArchipelagoREPSANITYContent::LOCATIONS)
         if (Locations::AllLocationNames.count(static_cast<int64_t>(id)))
             ++coveredIds;
     CHECK(coveredIds == totalRealNames);

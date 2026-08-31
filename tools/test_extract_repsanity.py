@@ -26,13 +26,21 @@ class TestExtract(unittest.TestCase):
         self.assertNotIn("items", data)
 
     def test_row_count_matches_real_data(self) -> None:
-        # 105 reputation-tracking factions x 5 always-checkable ranks
-        # (Friendly, Honored, Revered, Exalted, Neutral) = 525, plus the 12
-        # curated negative-capable factions x 3 additional ranks below their
-        # own real starting rank = 36. See this milestone's plan doc.
-        # Real Faction.dbc produces 449 locations (actual count adjusted from brief's 561).
+        # Final whole-branch review fix (I1/M1, M4.10.4): the real 105-row
+        # Faction.dbc reputation-pane roster includes 27 unobtainable junk
+        # rows (10 profession-specialization pseudo-factions, 8 reputation-
+        # pane headers/non-earnable "Forces" parents, 4 internal
+        # rep-conversion rows, 3 Test Factions, 2 misc), leaving 78 real,
+        # player-facing factions x 4 always-checkable ranks (Friendly,
+        # Honored, Revered, Exalted) = 312, plus the 12 curated
+        # negative-capable factions x however many ranks lie strictly above
+        # their own real starting rank. The Aldor/The Scryers (932/934) also
+        # moved from a wrongly-forced starting rank of Hated (0) to their
+        # real Hostile (1) (M1 fix), each removing one more location.
+        # Verified live: 449 (stale, pre-fix) -> 339 (108 junk-location rows
+        # removed + 2 removed by the Aldor/Scryers rank fix).
         data = extract()
-        self.assertEqual(len(data["locations"]), 449)
+        self.assertEqual(len(data["locations"]), 339)
 
     def test_bloodsail_buccaneers_gets_hostile_unfriendly_neutral_locations(self) -> None:
         data = extract()

@@ -68,7 +68,18 @@ def load_reputation_factions(dbc_path: str | None = None) -> list[FactionRepInfo
     pane can ever show. starting_rank is computed from BaseRepValue's bucket 0
     (the default/all-races bucket); factions whose real starting standing
     genuinely differs per player race (the curated NEGATIVE_CAPABLE set) are
-    corrected below via reputation_to_rank on their real negative value."""
+    corrected below via reputation_to_rank on their real negative value --
+    bucket 0 itself when it is already negative, otherwise the worst
+    (minimum) of the faction's real 4 race-conditional BaseRepValue buckets.
+    Final whole-branch review fix (M1, M4.10.4): the bucket-0-only fallback
+    used to force _REPUTATION_BOTTOM (Hated) for any curated faction whose
+    bucket 0 was non-negative, which was wrong for The Aldor/The Scryers
+    (faction ids 932/934): their real buckets are (0, 3500, -3500, 0), so
+    their real worst rank is Hostile (-3500), not Hated -- using min() over
+    all 4 buckets instead of a hardcoded floor fixes this while leaving
+    every other NEGATIVE_CAPABLE faction's result unchanged (verified: none
+    of the other 10 ever hit this fallback branch at all, since each of
+    their bucket-0 values is already negative)."""
     path = dbc_path or os.environ.get("ARCHIPELAGO_WOW_FACTION_DBC_PATH", _DEFAULT_DBC_PATH)
     dbc = load_dbc(path)
 
@@ -79,13 +90,20 @@ def load_reputation_factions(dbc_path: str | None = None) -> list[FactionRepInfo
         reputation_list_id = struct.unpack_from("<i", rec, 4)[0]
         if reputation_list_id < 0:
             continue
-        base_rep_value = struct.unpack_from("<4i", rec, 40)[0]  # bucket 0
+        base_rep_values = struct.unpack_from("<4i", rec, 40)  # all 4 race-conditional buckets
+        base_rep_value = base_rep_values[0]  # bucket 0, the default/all-races bucket
         name_offset = struct.unpack_from("<I", rec, 23 * 4)[0]
         name = dbc.read_string(name_offset)
 
         starting_rank = 3  # Neutral, the safe default for every non-curated faction
         if faction_id in NEGATIVE_CAPABLE_FACTION_IDS:
-            starting_rank = reputation_to_rank(base_rep_value if base_rep_value < 0 else _REPUTATION_BOTTOM)
+            # Final whole-branch review fix (M1, M4.10.4): use the real
+            # worst (minimum) of all 4 race-conditional buckets instead of
+            # a hardcoded _REPUTATION_BOTTOM floor when bucket 0 itself
+            # isn't negative -- see the docstring above for why (The
+            # Aldor/The Scryers, faction ids 932/934, are the only 2
+            # factions this actually changes).
+            starting_rank = reputation_to_rank(base_rep_value if base_rep_value < 0 else min(base_rep_values))
 
         results.append(FactionRepInfo(faction_id=faction_id, name=name, starting_rank=starting_rank))
     return results
