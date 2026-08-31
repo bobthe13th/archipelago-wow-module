@@ -19,6 +19,7 @@ void AddArchipelagoInterceptionScripts();
 void AddArchipelagoAchievementScripts();
 void AddArchipelagoLootSlotScripts();
 void AddArchipelagoRepsanityScripts();
+void AddArchipelagoItemFirstHeldScripts();
 
 // Folder name is "archipelago_wow" (no dashes) -> loader function is Addarchipelago_wowScripts,
 // called automatically by the core's generated AddModulesScripts() wrapper.
@@ -45,5 +46,6 @@ void Addarchipelago_wowScripts()
     AddArchipelagoAchievementScripts();
     AddArchipelagoLootSlotScripts();
     AddArchipelagoRepsanityScripts();
+    AddArchipelagoItemFirstHeldScripts();
 }
 

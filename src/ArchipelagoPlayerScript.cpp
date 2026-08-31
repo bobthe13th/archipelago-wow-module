@@ -26,6 +26,7 @@
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGATHERSANITYContent.h"
 #include "ArchipelagoGoals.h"
+#include "ArchipelagoITEMSANITYContent.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
@@ -369,6 +370,22 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, craftsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", craftsanityEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.10.6 (Task 5 Step 1b): itemsanity is the FOURTH family to ship
+        // with a real, compiled ApItemIdToWowItemEntry map that nothing
+        // here consumed -- the exact same gap the M4.10.1/M4.10.2/M4.10.5
+        // fixes directly above closed for containersanity, gathersanity,
+        // and craftsanity, recurring a fourth time. Caught during this
+        // milestone's own pre-flight review instead of at a later
+        // whole-branch review.
+        auto itemsanityEntryIt = ArchipelagoITEMSANITYContent::ApItemIdToWowItemEntry.find(received.item);
+        if (itemsanityEntryIt != ArchipelagoITEMSANITYContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, itemsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", itemsanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
