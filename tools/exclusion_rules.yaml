@@ -171,3 +171,73 @@ name_denylist:
   # matches this pattern (Repsanity family, M4.10.4 final whole-branch
   # review fix I1).
   - '(?i)^Friendly, Hidden$'
+  # "Obsolete" glued directly onto the next word with no space, e.g.
+  # "ObsoleteIdol of the Beast", "ObsoleteSigil of Pestilential Touch",
+  # "ObsoleteSigil of the Glorious Mistake" -- same "glued marker prefix"
+  # shape as the existing ^OLD[A-Z]/^zz[A-Z] patterns above. Verified live
+  # (entry<4000000 universe): 4 rows match a bare '^Obsolete[A-Z]', of
+  # which 1 ("ObsoleteSigil of the Dark Rider (OLD)") is already caught by
+  # the \(OLD\) pattern above -- this pattern independently catches the
+  # other 3, all internal/superseded items, none player-facing (Itemsanity
+  # final whole-branch review fix I5, M4.10.6).
+  - '(?i)^Obsolete[A-Z]'
+  # Typo'd "deprecated" variants the existing \bdeprecated\b pattern
+  # doesn't catch (no correctly-spelled "deprecated" substring at all):
+  # "Deptecated White Stallion Summoning (Mount)" (r->t typo, keeps
+  # "ecated"), "Depricated Sharp Arrow"/"Depricated Whipwood Arrow"/
+  # "Depricated Razor Arrow" (e->i typo, keeps "r"). Verified live
+  # (entry<4000000 universe) against the full real DB: exactly 4 rows are
+  # new hits beyond what \bdeprecated\b, ^zz[A-Z], and the other existing
+  # patterns already catch (a broader dep[rt][ei]cated sweep surfaces 437
+  # raw hits, but 433 of those are already-caught correctly-spelled
+  # "Deprecated"/"zzDEPRECATED" rows) (Itemsanity final whole-branch review
+  # fix I5, M4.10.6).
+  - '(?i)\bdep[rt][ei]cated\b'
+  # Bare "PH" (placeholder) as its own word/bracket/paren token, e.g.
+  # "[TDB PH] - unsused Scourgestone", "PH Plate Ramparts Reward", "Nax PH
+  # Crit Plate Shoulders", "Naga Treasure Map - Questgiver (PH)" -- these
+  # are NOT caught by the existing \[PH\] pattern above (that one requires
+  # PH to be the entire bracket contents; these have other text alongside
+  # PH, or no brackets at all). Deliberately anchored on \b (a real word
+  # boundary on both sides) rather than a bare "PH" substring match: "PH"
+  # appears as a substring inside hundreds of real, player-facing item
+  # names (e.g. "Amethyst Phial", "Boots of Prophecy", "Empyrean Sapphire",
+  # every "BT/HF/DB## ... Physical ..." template row) -- \bPH\b never
+  # matches any of those since "PH" there is glued to surrounding letters,
+  # not a standalone word. Verified live (entry<4000000 universe): of the
+  # 1,275 real rows whose name contains "PH" as any kind of substring and
+  # aren't already denylisted by another pattern, exactly these 4 match
+  # \bPH\b (case-insensitive) and zero unrelated real items do (Itemsanity
+  # final whole-branch review fix I5, M4.10.6).
+  - '(?i)\bPH\b'
+  # Internal/dev QA item naming that the existing \btest\b pattern misses
+  # because "test" isn't a standalone word in these names (glued directly
+  # onto other letters, no boundary): "Fishing Pole (JEFFTEST)" (dev
+  # signature + TEST glued together), "TestBoots - Puffed Mail Green"
+  # ("Test" glued onto "Boots", same shape as the existing ^OLD[A-Z]/
+  # ^zz[A-Z]/^Obsolete[A-Z] glued-prefix patterns). Verified live
+  # (entry<4000000 universe): exactly 1 row matches JEFFTEST and exactly 1
+  # matches ^TestBoots, neither already caught by any other pattern
+  # (Itemsanity final whole-branch review fix I5, M4.10.6).
+  - '(?i)JEFFTEST'
+  - '(?i)^TestBoots'
+  # Internal dev-only equipment kits, e.g. "Internal Warrior Equipment Kit
+  # L25"/"L30" -- verified live (entry<4000000 universe): exactly 2 rows
+  # match a bare '^Internal ' prefix, both internal dev gear, none
+  # player-facing (Itemsanity final whole-branch review fix I5, M4.10.6).
+  - '(?i)^Internal '
+  # Blizzard's own internal itemization-template naming convention: a
+  # 2-letter template code (BT=Battlegrounds/PvP tier?, HF/DB -- exact
+  # meaning unconfirmed, but the shape is unambiguous) plus digits, a
+  # space, then a stat-role description ending in an optional tier digit,
+  # e.g. "BT47 Cloth Healer Belt2", "HF28 Leather Physical Legs4", "DB42
+  # Spell Ring4" -- these are Blizzard's own dev-only gear-progression
+  # scaffolding rows, never real player-facing items. Verified live
+  # (entry<4000000 universe): a broad '^[A-Za-z]{2}[0-9]+ ' sweep (any
+  # 2-letter-code+digits+space prefix at all) surfaces EXACTLY 37 rows,
+  # and every single one uses only the BT/HF/DB prefix codes -- no other
+  # 2-letter code appears at all, and no real player-facing item uses this
+  # shape, so anchoring on the specific confirmed prefix set (rather than
+  # the fully generic sweep) is both safe and precise (Itemsanity final
+  # whole-branch review fix I5, M4.10.6).
+  - '(?i)^(?:BT|HF|DB)\d+ '

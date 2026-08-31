@@ -13,6 +13,8 @@
 #include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoGATHERSANITYContent.h"
 #include "ArchipelagoREPSANITYContent.h"
+#include "ArchipelagoITEMSANITYContent.h"
+#include "ArchipelagoCRAFTSANITYContent.h"
 
 namespace Archipelago::Locations
 {
@@ -53,6 +55,18 @@ namespace Archipelago::Locations
             // in at all -- it currently is NOT (a separate, pre-existing
             // gap noted by the reviewer, out of this fix's scope).
             MergeFamilyLocations(ArchipelagoREPSANITYContent::LOCATIONS, result);
+            // Final whole-branch review fix (I2, M4.10.6): the THIRD
+            // recurrence of this exact bug class (I4 fixed it for
+            // Repsanity in M4.10.4; before that, an earlier family hit the
+            // same gap) -- Itemsanity and Craftsanity were both never
+            // merged in here, so ".ap missing" printed "(unknown
+            // location)" for every real Itemsanity/Craftsanity location
+            // id. EVERY new content family MUST be added to this merge --
+            // this is not optional cleanup, it is the only thing that
+            // makes ".ap missing" resolve a real name for that family's
+            // locations at all.
+            MergeFamilyLocations(ArchipelagoITEMSANITYContent::LOCATIONS, result);
+            MergeFamilyLocations(ArchipelagoCRAFTSANITYContent::LOCATIONS, result);
             return result;
         }
     }

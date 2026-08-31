@@ -1383,8 +1383,11 @@ def _emit_cpp_trigger_lookup_item_first_held(locations: list) -> list[str]:
     """ITEM_ENTRY_TO_LOCATION_ID via the same raw-constexpr-array-plus-
     runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.9)
     -- Itemsanity is the largest family to ever go through this emitter
-    (real live count 68,298 item_template rows before denylist filtering,
-    M4.10.6), which is exactly why this family is registered generic=True
+    (raw live count 68,298 item_template rows before any filtering;
+    46,096 after the test-pollution + reserved-range SQL filters; 39,292
+    real rows after exclusion_rules.yaml's name denylist plus the small
+    GM-only entry denylist, M4.10.6 final whole-branch review fixes
+    I1/I5/M1), which is exactly why this family is registered generic=True
     from the start rather than needing its own bespoke stack-safety work."""
     lines = ["inline constexpr std::pair<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID_RAW[] = {"]
     for loc in locations:

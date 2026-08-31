@@ -3,10 +3,19 @@
 Run this to regenerate content/itemsanity.yaml; never hand-edit that file.
 Event-hook family (item_first_held trigger kind) -- no loot slot, no DB
 rewrite. Deliberately the largest DB-extracted family in this project by
-row count (real live count 68,298 item_template rows before denylist
-filtering); registered generic=True in generate_content.py's FAMILY_SCHEMAS
-so it inherits the already-safe raw-array-plus-runtime-builder C++
-emission M4.7.1 built, rather than needing any bespoke stack-safety work."""
+row count: raw entry>0 universe is 68,298 item_template rows; after the
+test-pollution filter (entry < 4,000,000) plus this module's own
+reserved-range filter (see _RESERVED_RANGE_FILTER below, excludes the 21
+rows in 850000-850016/850100-850103) that's 46,096; after
+exclusion_rules.yaml's name denylist that's 39,299; after the small
+GM-only entry denylist (_GM_ONLY_ENTRY_DENYLIST below) the real final
+count is 39,292 real locations/items (re-verified live, M4.10.6 final
+whole-branch review fixes I1/I5/M1 -- re-derive by re-running this script
+if the live DB or either denylist changes again; never hardcode a stale
+number here). Registered generic=True in
+generate_content.py's FAMILY_SCHEMAS so it inherits the already-safe
+raw-array-plus-runtime-builder C++ emission M4.7.1 built, rather than
+needing any bespoke stack-safety work."""
 from __future__ import annotations
 
 import pathlib
@@ -24,6 +33,52 @@ _ITEM_ID_BASE = 13_500_000  # deliberately 1,000,000 clear of the location range
 # (no word boundary between "m4-7" and "test") -- this query filters
 # entry < 4000000 explicitly. See this plan's Global Constraints.
 _TEST_POLLUTION_FILTER = "entry < 4000000"
+
+# Final whole-branch review fix I1 (M4.10.6): this module synthesizes its
+# OWN internal item_template rows for two purposes, and neither is real,
+# player-obtainable Itemsanity content -- both must be excluded from this
+# query or they become real (bogus) locations/mailable items the next time
+# this script runs:
+#   - 850000-850016 (AP_ITEM_TRAP_* constants, src/ArchipelagoTrapsContentTable.h):
+#     one row per Traps-family trap effect (17 rows).
+#   - 850100-850103 (IconEntryFor in src/APItemDisplay.cpp:18-21): the 4
+#     classification-icon rows ("Archipelago Item (Progression/Useful/Trap/
+#     Filler)") every synthesized display item points at.
+# Confirmed real, live hits before this fix: entries 850100-850103 had
+# become real Itemsanity locations 12,539,351-12,539,354 and mailable
+# items. AP_ITEM_SYNTH_BASE (3,000,000+, src/APItemDisplay.h) is NOT given
+# its own filter here -- it's already fully covered by
+# _TEST_POLLUTION_FILTER above: the smallest real _LOCATION_ID_BASE across
+# every family is extract_quest_rewards.py's 1,000,000, so the smallest
+# possible synthesized entry is 3,000,000 + 1,000,000 == 4,000,000, which
+# entry < 4000000 already excludes.
+_RESERVED_RANGE_FILTER = (
+    "NOT (entry BETWEEN 850000 AND 850016) AND NOT (entry BETWEEN 850100 AND 850103)"
+)
+
+# Final whole-branch review fix I5 (M4.10.6): a small number of real,
+# live-DB item_template rows are GM-only/developer artifacts that no
+# generic exclusion_rules.yaml name pattern can safely catch (their names
+# read as ordinary, sometimes celebrated, player-facing items -- "Martin
+# Fury", "Frostmourne" -- so a name-based denylist pattern would be far too
+# broad). Same local-entry-denylist convention extract_repsanity.py's own
+# _LOCAL_DENYLIST already established for this exact situation (a handful
+# of items that don't belong in exclusion_rules.yaml because the SHARED
+# file affects other families' unrelated real content). Keyed by entry id,
+# not name, because "Frostmourne" legitimately appears twice (33475 and
+# 36942 are two distinct real rows) and a name-based exclusion would be
+# less precise here than the entry ids the review already pinned down:
+#   - 17 "Martin Fury": GM-only artifact shirt, notoriously never meant to
+#     be player-obtainable -- this is the single most important entry in
+#     this set, since #17 sorts first and becomes location_id 12,500,000,
+#     the very FIRST location in the whole Itemsanity family.
+#   - 12947 "Alex's Ring of Audacity", 32824 "Tigole's Trashbringer",
+#     44807 "Indalamar's Holy Hand Grenade", 20880 "Golden Token": GM/dev
+#     joke or event-only items, never obtainable through any of
+#     Itemsanity's covered acquisition routes.
+#   - 33475, 36942 "Frostmourne": the real weapon's non-obtainable
+#     GM/cinematic item rows.
+_GM_ONLY_ENTRY_DENYLIST = frozenset({17, 12947, 32824, 44807, 20880, 33475, 36942})
 
 # Real ItemClass enum values (src/server/game/Entities/Item/ItemTemplate.h:289-308).
 _CLASS_NAMES = {
@@ -74,16 +129,17 @@ def extract() -> dict:
     rows = run_query(f"""
         SELECT entry, name, class, Quality, RequiredLevel
         FROM item_template
-        WHERE entry > 0 AND {_TEST_POLLUTION_FILTER}
+        WHERE entry > 0 AND {_TEST_POLLUTION_FILTER} AND {_RESERVED_RANGE_FILTER}
         ORDER BY entry
     """)
 
     locations, items = [], []
     for entry_str, name, class_str, quality_str, required_level_str in rows:
-        if not name or is_denylisted(name, rules):
+        entry = int(entry_str)
+        name = name.strip() if name else name
+        if not name or is_denylisted(name, rules) or entry in _GM_ONLY_ENTRY_DENYLIST:
             continue
 
-        entry = int(entry_str)
         idx = len(locations)
         display = f"{name} (#{entry})"
 
