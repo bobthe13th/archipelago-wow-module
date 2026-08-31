@@ -19,6 +19,7 @@
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoCoreLoopContentTable.h"
+#include "ArchipelagoCRAFTSANITYContent.h"
 #include "ArchipelagoFillerRewardEffectsContentTable.h"
 #include "ArchipelagoFillerRewardItemsContentTable.h"
 #include "ArchipelagoFishContentTable.h"
@@ -347,6 +348,27 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, gathersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", gathersanityEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.10.5 final whole-branch review fix (C1): craftsanity is the
+        // THIRD family to ship with a real, compiled ApItemIdToWowItemEntry
+        // map that nothing here consumed -- the exact same gap the M4.10.1
+        // and M4.10.2 fixes directly above closed for containersanity and
+        // gathersanity, recurring a third time.
+        // ArchipelagoCRAFTSANITYContent::ApItemIdToWowItemEntry (1,698
+        // entries, compiled by generate_content.py's export_item_delivery
+        // path) was real and already built, but a Craftsanity Item the
+        // normal AP fill algorithm placed in a DIFFERENT player's world than
+        // the one who crafted the tracked item fell all the way through to
+        // the "unknown AP item id" log below and the receiving player got
+        // nothing.
+        auto craftsanityEntryIt = ArchipelagoCRAFTSANITYContent::ApItemIdToWowItemEntry.find(received.item);
+        if (craftsanityEntryIt != ArchipelagoCRAFTSANITYContent::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, craftsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", craftsanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }
