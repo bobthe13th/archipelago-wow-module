@@ -78,6 +78,7 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_achievement_complete_rows(locations, path)
     _validate_filler_effect_rows(items, path)
     _validate_learn_spell_rows(locations, path)
+    _validate_item_first_held_rows(locations, path)
     _validate_gameobject_loot_rows(family, locations)
     _validate_skinning_loot_rows(data)
     _validate_disenchant_loot_rows(data)
@@ -227,6 +228,18 @@ def _validate_learn_spell_rows(locations: list, yaml_path: pathlib.Path) -> None
             raise ValidationError(
                 f"{yaml_path}: location {loc['name']!r} has learn_spell trigger "
                 f"but is missing required key: spell_id"
+            )
+
+
+def _validate_item_first_held_rows(locations: list, yaml_path: pathlib.Path) -> None:
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["kind"] != "item_first_held":
+            continue
+        if "item_entry" not in trigger:
+            raise ValidationError(
+                f"{yaml_path}: location {loc['name']!r} has item_first_held trigger "
+                f"but is missing required key: item_entry"
             )
 
 
@@ -462,6 +475,17 @@ def _validate_trigger_lookup_uniqueness_one_kind(
                 )
             seen_keys[key] = loc["name"]
 
+    elif kind == "item_first_held":
+        for _index, loc in indexed_locations:
+            key = loc["trigger"]["item_entry"]
+            if key in seen_keys:
+                raise ValidationError(
+                    f"{yaml_path}: locations {seen_keys[key]!r} and {loc['name']!r} "
+                    f"both have item_entry={key}, which would produce a collision in "
+                    f"ITEM_ENTRY_TO_LOCATION_ID trigger-lookup map"
+                )
+            seen_keys[key] = loc["name"]
+
 
 def _validate_tags_rows(family: str, locations: list, items: list, yaml_path: pathlib.Path) -> None:
     """Every row in an export_tags family must carry a non-empty `tags`
@@ -659,6 +683,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     ),
     "craftsanity": FamilySchema(
         valid_trigger_kinds={"recipe_craft"}, valid_delivery_kinds={"mail"},
+        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+    ),
+    "itemsanity": FamilySchema(
+        valid_trigger_kinds={"item_first_held"}, valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
 }
@@ -1351,6 +1379,31 @@ def _emit_cpp_trigger_lookup_learn_spell(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_item_first_held(locations: list) -> list[str]:
+    """ITEM_ENTRY_TO_LOCATION_ID via the same raw-constexpr-array-plus-
+    runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.9)
+    -- Itemsanity is the largest family to ever go through this emitter
+    (real live count 68,298 item_template rows before denylist filtering,
+    M4.10.6), which is exactly why this family is registered generic=True
+    from the start rather than needing its own bespoke stack-safety work."""
+    lines = ["inline constexpr std::pair<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID_RAW[] = {"]
+    for loc in locations:
+        lines.append(f'    {{ {loc["trigger"]["item_entry"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+    lines.append("};")
+    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildITEM_ENTRY_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
+    lines.append("    for (auto const& row : ITEM_ENTRY_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID = "
+        "BuildITEM_ENTRY_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup_recipe_craft(locations: list) -> list[str]:
     """ITEM_ENTRY_TO_LOCATION_ID via the same raw-constexpr-array-plus-
     runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.10.5)
@@ -1574,6 +1627,9 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
     if kind == "learn_spell":
         return _emit_cpp_trigger_lookup_learn_spell(locations)
+
+    if kind == "item_first_held":
+        return _emit_cpp_trigger_lookup_item_first_held(locations)
 
     if kind == "gameobject_loot":
         return _emit_cpp_trigger_lookup_gameobject_loot(locations)

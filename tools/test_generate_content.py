@@ -1249,5 +1249,58 @@ class TestCraftsanityFamily(unittest.TestCase):
         self.assertIn("{ 500, 11500000 }", text)
 
 
+class TestItemFirstHeldTriggerLookup(unittest.TestCase):
+    def test_validate_item_first_held_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#6948)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 6948},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+            "items": [{"name": "Itemsanity Item: A (#6948)", "item_id": 13500000,
+                       "delivery": {"kind": "mail", "wow_item_entry": 6948}}],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_item_entry_is_a_hard_validation_error(self) -> None:
+        # item_template.entry is a real PK -- a duplicate in extracted data
+        # means a genuine extraction bug, same discipline as
+        # _validate_gameobject_loot_rows/_validate_learn_spell_rows-family
+        # collision checks elsewhere in this file.
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#1)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 1},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+                {"name": "Itemsanity: B (#1)", "location_id": 12500001,
+                 "trigger": {"kind": "item_first_held", "item_entry": 1},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Itemsanity Item: A (#1)", "item_id": 13500000, "delivery": {"kind": "mail", "wow_item_entry": 1}},
+                {"name": "Itemsanity Item: B (#1)", "item_id": 13500001, "delivery": {"kind": "mail", "wow_item_entry": 1}},
+            ],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_emit_cpp_trigger_lookup_item_first_held_shape(self) -> None:
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#6948)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 6948},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("ITEM_ENTRY_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ 6948, 12500000 }", joined)
+        self.assertIn("std::unordered_map<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID", joined)
+
+
 if __name__ == "__main__":
     unittest.main()

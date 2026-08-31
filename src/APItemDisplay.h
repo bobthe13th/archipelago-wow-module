@@ -43,6 +43,19 @@ namespace Archipelago::ItemDisplay
     // magnitude as before, so no change to the constant itself is needed
     // here. Re-derive again before the next large family (Itemsanity,
     // M4.10.6).
+    //
+    // Re-derived M4.10.6: real max location_id is now 12,539,354
+    // (itemsanity's own highest assigned id, 39,355 real rows after
+    // test-pollution + denylist filtering -- NOT the worst-case 68,298
+    // originally assumed), up from 11,501,697 (craftsanity, M4.10.5).
+    // At AP_ITEM_SYNTH_BASE (3,000,000) + that figure, the item_template
+    // vector tops out around 124 MB -- same safe order of magnitude the
+    // prior re-derivations already established (88 MB, then 96 MB), so
+    // no change to the constant itself is needed. Itemsanity itself never
+    // synthesizes anything (event-hook family, no DB rewrite) -- this
+    // comment is re-derived anyway because it tracks the real max
+    // location_id across every content/*.yaml, not just synthesizing
+    // families. Re-derive again before the next large family lands.
     inline constexpr int64_t AP_ITEM_SYNTH_BASE = 3000000;
 
     // Pure function of location_id -- this is the entire idempotency
