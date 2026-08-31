@@ -633,6 +633,10 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"creature_kill"}, valid_delivery_kinds=set(),
         generic=True, export_triggers=True, export_tags=True,
     ),
+    "repsanity": FamilySchema(
+        valid_trigger_kinds={"reputation_rank"}, valid_delivery_kinds=set(),
+        generic=True, export_triggers=True, export_tags=True,
+    ),
 }
 
 _REALM_STATE_EFFECTS = {
@@ -1447,6 +1451,38 @@ def _emit_cpp_trigger_lookup_creature_kill(locations: list) -> list[str]:
     return lines
 
 
+def _emit_cpp_trigger_lookup_reputation_rank(locations: list) -> list[str]:
+    """FACTION_RANK_TO_LOCATION_ID via the same composite-key
+    raw-constexpr-array-plus-runtime-builder pattern as
+    _emit_cpp_trigger_lookup_vendor_purchase (M4.10.4) -- 449 rows (real
+    count, Task 2's live extraction; the plan's original 561 estimate was
+    stale prose math), past the M4.7.1 stack-overflow threshold a bare
+    aggregate initializer proved unsafe at."""
+    lines = [
+        "inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> "
+        "FACTION_RANK_TO_LOCATION_ID_RAW[] = {"
+    ]
+    for loc in locations:
+        trigger = loc["trigger"]
+        lines.append(
+            f'    {{ {{ {trigger["faction_id"]}, {trigger["rank"]} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
+    lines.append("};")
+    lines.append("inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildFACTION_RANK_TO_LOCATION_ID()")
+    lines.append("{")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : FACTION_RANK_TO_LOCATION_ID_RAW)")
+    lines.append("        result.emplace(row.first, row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> FACTION_RANK_TO_LOCATION_ID = "
+        "BuildFACTION_RANK_TO_LOCATION_ID();"
+    )
+    return lines
+
+
 def _emit_cpp_trigger_lookup(data: dict) -> list[str]:
     """Typed trigger-lookup map for a generic family's C++ header, gated on
     FamilySchema.export_triggers. Every family through M4.10.1 had exactly
@@ -1500,6 +1536,9 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
     if kind == "creature_kill":
         return _emit_cpp_trigger_lookup_creature_kill(locations)
+
+    if kind == "reputation_rank":
+        return _emit_cpp_trigger_lookup_reputation_rank(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "

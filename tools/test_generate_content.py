@@ -1197,6 +1197,27 @@ class TestCreatureKillTriggerLookup(unittest.TestCase):
         source = emit_python(data)
         self.assertIn("ITEMS: dict[str, tuple[int, int]] = {\n}", source)
 
+    def test_emit_cpp_generic_emits_reputation_rank_trigger_lookup(self) -> None:
+        data = {
+            "family": "repsanity",
+            "locations": [
+                {
+                    "name": "Reputation: Bloodsail Buccaneers (Hostile)",
+                    "location_id": 11000000,
+                    "trigger": {"kind": "reputation_rank", "faction_id": 87, "rank": 1},
+                    "tags": {"expansion": ["vanilla"], "rank_tier": ["negative"]},
+                },
+            ],
+            "items": [],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("FACTION_RANK_TO_LOCATION_ID_RAW", cpp)
+        self.assertIn("{ { 87, 1 }, 11000000 }", cpp)
+        self.assertIn(
+            "std::map<std::pair<uint32_t, uint32_t>, int64_t> FACTION_RANK_TO_LOCATION_ID",
+            cpp,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
