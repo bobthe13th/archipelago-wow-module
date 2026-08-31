@@ -32,6 +32,14 @@ name_denylist:
   # space-separated "Old <Name>" row is real, player-facing content
   # (M4.9.3.1 final review fix).
   - '(?i)^OLD[A-Z]'
+  # "zz" prefix glued directly onto the next word with no space, e.g.
+  # "zzDEPRECATED..." -- same issue as the OLD[A-Z] pattern above. The
+  # existing \bdeprecated\b word-boundary pattern doesn't catch these
+  # because there's no boundary between "zz" and the following capital
+  # letter. Anchored at the start and requires a letter to follow.
+  # Verified live: exactly 5 rows match this pattern, all internal
+  # test/deprecated items (M4.10.6 itemsanity fix).
+  - '(?i)^zz[A-Z]'
   # Internal NPC-only visual equipment, e.g. "NPC Equip 18732" -- verified
   # live: 4,856 rows all conform exactly to the "NPC Equip <digits>" shape,
   # none player-facing (M4.9.3.1 final review fix).
