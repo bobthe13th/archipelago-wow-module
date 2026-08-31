@@ -8,6 +8,7 @@ void AddArchipelagoDarkPortalScripts();
 void AddArchipelagoNorthrendPassageScripts();
 void AddArchipelagoGatingScripts();
 void AddArchipelagoCacheKeeperScripts();
+void AddArchipelagoHolidayHeraldScripts();
 void AddArchipelagoTrapScripts();
 void AddArchipelagoDeathLinkScripts();
 void AddArchipelagoLootScripts();
@@ -35,6 +36,7 @@ void Addarchipelago_wowScripts()
     AddArchipelagoNorthrendPassageScripts();
     AddArchipelagoGatingScripts();
     AddArchipelagoCacheKeeperScripts();
+    AddArchipelagoHolidayHeraldScripts();
     AddArchipelagoTrapScripts();
     AddArchipelagoDeathLinkScripts();
     AddArchipelagoLootScripts();
