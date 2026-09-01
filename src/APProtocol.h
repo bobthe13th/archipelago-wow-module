@@ -79,6 +79,14 @@ namespace Archipelago
         // bool is a primitive, so passed by value rather than by const& (M4.10.7),
         // unlike the string-valued slot_data callbacks above.
         std::function<void(bool)> onHolidaysanityStackingReceived = nullptr;
+        // Zone Leveler slot_data (M4.11.1 Task 14) -- zone_leveler_zone_id
+        // and zone_leveler_allow_hub_zone are primitives (passed by value,
+        // matching onHolidaysanityStackingReceived's own bool convention);
+        // zone_leveler_allowed_hub_zone_ids is a real container, passed by
+        // const& like every other container-valued callback above.
+        std::function<void(uint32_t)> onZoneLevelerZoneIdReceived = nullptr;
+        std::function<void(std::vector<uint32_t> const&)> onZoneLevelerAllowedHubZoneIdsReceived = nullptr;
+        std::function<void(bool)> onZoneLevelerAllowHubZoneReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
         // Connected's top-level missing_locations array (M4.13, ".ap missing" --
         // see ArchipelagoManager::GetLastKnownMissingLocations/
@@ -176,6 +184,37 @@ namespace Archipelago
     // (never throws) if slot_data or the key is absent/malformed. Consumed
     // by ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic.
     std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_zone_id"] (a single integer
+    // option, M4.11.1 Task 14) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's
+    // exact shape (M4.7 Task 8), adapted for a uint32_t instead of a string:
+    // "don't crash the connection state machine on a shape it doesn't
+    // recognize". Returns std::nullopt (never throws) if slot_data or the
+    // key is absent/malformed (wrong type, negative, no Connected command in
+    // the frame). Consumed by ArchipelagoZoneLevelerScript.cpp's
+    // OnPlayerUpdateZone hook via ArchipelagoRealmState::GetZoneLevelerZoneId.
+    std::optional<uint32_t> ParseZoneLevelerZoneIdFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_allowed_hub_zone_ids"] (a
+    // JSON array of integers, M4.11.1 Task 14) -- mirrors
+    // ParseMissingLocationsFromConnected's exact "scan the array, skip a
+    // non-numeric element rather than throwing" discipline, adapted to also
+    // require a Connected command + slot_data object (like every other
+    // Parse*FromSlotData function here) since this key lives under
+    // slot_data, not at Connected's top level like missing_locations does.
+    // Returns std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed; an empty-but-present array parses to an empty
+    // (non-nullopt) vector, distinguishing "no hub zones configured" from
+    // "key absent from this frame".
+    std::optional<std::vector<uint32_t>> ParseZoneLevelerAllowedHubZoneIdsFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_allow_hub_zone"] (a single
+    // boolean option, M4.11.1 Task 14) -- mirrors
+    // ParseHolidaysanityStackingFromSlotData's exact shape: "don't crash the
+    // connection state machine on a shape it doesn't recognize". Returns
+    // std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed.
+    std::optional<bool> ParseZoneLevelerAllowHubZoneFromSlotData(std::string const& raw);
 
     // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
     // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors

@@ -388,6 +388,20 @@ namespace Archipelago
             if (holidaysanityStacking && _callbacks.onHolidaysanityStackingReceived)
                 _callbacks.onHolidaysanityStackingReceived(*holidaysanityStacking);
 
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
+            // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.11.1 Task 14).
+            auto zoneLevelerZoneId = ParseZoneLevelerZoneIdFromSlotData(message);
+            if (zoneLevelerZoneId && _callbacks.onZoneLevelerZoneIdReceived)
+                _callbacks.onZoneLevelerZoneIdReceived(*zoneLevelerZoneId);
+
+            auto zoneLevelerAllowedHubZoneIds = ParseZoneLevelerAllowedHubZoneIdsFromSlotData(message);
+            if (zoneLevelerAllowedHubZoneIds && _callbacks.onZoneLevelerAllowedHubZoneIdsReceived)
+                _callbacks.onZoneLevelerAllowedHubZoneIdsReceived(*zoneLevelerAllowedHubZoneIds);
+
+            auto zoneLevelerAllowHubZone = ParseZoneLevelerAllowHubZoneFromSlotData(message);
+            if (zoneLevelerAllowHubZone && _callbacks.onZoneLevelerAllowHubZoneReceived)
+                _callbacks.onZoneLevelerAllowHubZoneReceived(*zoneLevelerAllowHubZone);
+
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData above
             // (M4.13): PrintJSON text is meaningful even when the surrounding frame has
             // no Connected command in it at all (a live hint response arrives on its own,

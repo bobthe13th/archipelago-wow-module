@@ -312,6 +312,84 @@ namespace Archipelago
         return std::nullopt;
     }
 
+    std::optional<uint32_t> ParseZoneLevelerZoneIdFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_zone_id") || !slotData["zone_leveler_zone_id"].is_number_integer())
+                continue;
+            int64_t zoneId = slotData["zone_leveler_zone_id"].get<int64_t>();
+            if (zoneId < 0)
+                continue;
+            return static_cast<uint32_t>(zoneId);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<uint32_t>> ParseZoneLevelerAllowedHubZoneIdsFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_allowed_hub_zone_ids") ||
+                !slotData["zone_leveler_allowed_hub_zone_ids"].is_array())
+                continue;
+
+            std::vector<uint32_t> ids;
+            for (json const& idJson : slotData["zone_leveler_allowed_hub_zone_ids"])
+            {
+                if (!idJson.is_number_integer())
+                    continue;
+                int64_t id = idJson.get<int64_t>();
+                if (id < 0)
+                    continue;
+                ids.push_back(static_cast<uint32_t>(id));
+            }
+            return ids;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<bool> ParseZoneLevelerAllowHubZoneFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_allow_hub_zone") || !slotData["zone_leveler_allow_hub_zone"].is_boolean())
+                continue;
+            return slotData["zone_leveler_allow_hub_zone"].get<bool>();
+        }
+        return std::nullopt;
+    }
+
     std::string BuildSayPacket(std::string const& text)
     {
         json packet = json::array({ json{

@@ -236,6 +236,25 @@ public:
     std::string GetAchievementHuntSubset() const { return _achievementHuntSubset; }
     void SetAchievementHuntSubset(std::string const& subset) { _achievementHuntSubset = subset; }
 
+    // Cached mirrors of slot_data["zone_leveler_zone_id"] /
+    // ["zone_leveler_allowed_hub_zone_ids"] / ["zone_leveler_allow_hub_zone"]
+    // (M4.11.1 Task 14), same not-persisted, set-once-from-slot_data
+    // convention as GetInstanceClearMode/GetVendorCheckRepeatBehavior above
+    // -- consumed by ArchipelagoZoneLevelerScript.cpp's OnPlayerUpdateZone
+    // hook to decide whether a zone-change is inside the locked zone
+    // (BarrensBeater: the Barrens, area/zone id 17), inside an allowed hub
+    // zone exception (Durotar/Orgrimmar for Barrens, only reachable when
+    // GetZoneLevelerAllowHubZone() is true), or a violation that should
+    // teleport the player back to their last known in-bounds position.
+    uint32_t GetZoneLevelerZoneId() const { return _zoneLevelerZoneId; }
+    void SetZoneLevelerZoneId(uint32_t zoneId) { _zoneLevelerZoneId = zoneId; }
+
+    std::unordered_set<uint32_t> const& GetZoneLevelerAllowedHubZoneIds() const { return _zoneLevelerAllowedHubZoneIds; }
+    void SetZoneLevelerAllowedHubZoneIds(std::unordered_set<uint32_t> ids) { _zoneLevelerAllowedHubZoneIds = std::move(ids); }
+
+    bool GetZoneLevelerAllowHubZone() const { return _zoneLevelerAllowHubZone; }
+    void SetZoneLevelerAllowHubZone(bool allow) { _zoneLevelerAllowHubZone = allow; }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -269,6 +288,9 @@ private:
     bool _holidaysanityStacking = false;
     std::string _achievementHuntTier = "hundred_percent";
     std::string _achievementHuntSubset = "explorer";
+    uint32_t _zoneLevelerZoneId = 0;
+    std::unordered_set<uint32_t> _zoneLevelerAllowedHubZoneIds;
+    bool _zoneLevelerAllowHubZone = false;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

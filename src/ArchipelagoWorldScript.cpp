@@ -447,6 +447,27 @@ public:
             std::lock_guard<std::mutex> lock(_pendingHolidaysanityStackingMutex);
             _pendingHolidaysanityStacking = stacking;
         };
+        // Zone Leveler slot_data (M4.11.1 Task 14) -- all three keys share
+        // one mutex/applied-flag pair below (_pendingZoneLevelerMutex/
+        // _zoneLevelerApplied) rather than each getting its own like every
+        // other single-value slot_data callback above: unlike those,
+        // these three are not independently meaningful -- they only ever
+        // arrive together (slot_data.py's _add_zone_leveler_data always
+        // emits all three keys in the same Connected payload whenever
+        // game_mode==zone_leveler) and must be applied to
+        // ArchipelagoRealmState as one atomic unit.
+        callbacks.onZoneLevelerZoneIdReceived = [this](uint32_t zoneId) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerZoneId = zoneId;
+        };
+        callbacks.onZoneLevelerAllowedHubZoneIdsReceived = [this](std::vector<uint32_t> const& ids) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerAllowedHubZoneIds = ids;
+        };
+        callbacks.onZoneLevelerAllowHubZoneReceived = [this](bool allow) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerAllowHubZone = allow;
+        };
         callbacks.onPrintJsonReceived = [this](std::vector<std::string> const& texts) {
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
             _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
@@ -558,6 +579,36 @@ public:
         if (holidaysanityStacking)
             sArchipelagoRealmState->SetHolidaysanityStacking(*holidaysanityStacking);
 
+        // Zone Leveler slot_data (M4.11.1 Task 14): apply once, gated on
+        // _pendingZoneLevelerZoneId specifically (the primary key of the
+        // triplet) having arrived -- the allowed-hub-zone-ids/allow-hub-zone
+        // values default to "no hub zones"/false via value_or() below if
+        // for some reason they weren't set alongside it (shouldn't happen
+        // in real play; slot_data.py always emits all three together), so
+        // this never blocks forever waiting on a key that will never come.
+        bool applyZoneLeveler = false;
+        uint32_t zoneLevelerZoneId = 0;
+        std::vector<uint32_t> zoneLevelerAllowedHubZoneIds;
+        bool zoneLevelerAllowHubZone = false;
+        {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            if (!_zoneLevelerApplied && _pendingZoneLevelerZoneId)
+            {
+                zoneLevelerZoneId = *_pendingZoneLevelerZoneId;
+                zoneLevelerAllowedHubZoneIds = _pendingZoneLevelerAllowedHubZoneIds.value_or(std::vector<uint32_t>());
+                zoneLevelerAllowHubZone = _pendingZoneLevelerAllowHubZone.value_or(false);
+                _zoneLevelerApplied = true;
+                applyZoneLeveler = true;
+            }
+        }
+        if (applyZoneLeveler)
+        {
+            sArchipelagoRealmState->SetZoneLevelerZoneId(zoneLevelerZoneId);
+            sArchipelagoRealmState->SetZoneLevelerAllowedHubZoneIds(
+                std::unordered_set<uint32_t>(zoneLevelerAllowedHubZoneIds.begin(), zoneLevelerAllowedHubZoneIds.end()));
+            sArchipelagoRealmState->SetZoneLevelerAllowHubZone(zoneLevelerAllowHubZone);
+        }
+
         std::vector<std::string> printJsonText;
         {
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
@@ -663,6 +714,21 @@ private:
     std::mutex _pendingHolidaysanityStackingMutex;
     std::optional<bool> _pendingHolidaysanityStacking;
     bool _holidaysanityStackingApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingHolidaysanityStacking/_holidaysanityStackingApplied above, for
+    // the Zone Leveler slot_data triplet (M4.11.1 Task 14):
+    // zone_leveler_zone_id/zone_leveler_allowed_hub_zone_ids/
+    // zone_leveler_allow_hub_zone. One shared mutex/applied-flag rather than
+    // one per key (unlike every other slot_data queue above) -- these three
+    // always arrive together and must apply to ArchipelagoRealmState as one
+    // atomic unit; see the Initialize() callback registration above and
+    // OnUpdate's apply block for the full reasoning.
+    std::mutex _pendingZoneLevelerMutex;
+    std::optional<uint32_t> _pendingZoneLevelerZoneId;
+    std::optional<std::vector<uint32_t>> _pendingZoneLevelerAllowedHubZoneIds;
+    std::optional<bool> _pendingZoneLevelerAllowHubZone;
+    bool _zoneLevelerApplied = false;
 
     // Same io-thread-producer/world-thread-consumer shape as _pendingItems above,
     // for incoming PrintJSON display text (M4.13, ".ap hint"'s response). Unlike
