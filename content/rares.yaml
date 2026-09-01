@@ -45,127 +45,334 @@ family: rares
 # Hunt's rares are sampled through sample_category like any other optional
 # category, not hand-picked"). This is the FIRST real caller of Task 2's
 # density.py module anywhere in this codebase.
+#
+# M4.11.1 Task 5: `tags: {zone: [...]}` added to every row below -- a real
+# per-row top-level WoW zone, NOT derived from creature.sql's own zoneId/
+# areaId columns (both are 0 for all 40 of these creature entries in this
+# checkout's live DB, confirmed directly: `SELECT id, map, position_x,
+# position_y, zoneId, areaId FROM creature WHERE id IN (...)` returns
+# zoneId=0/areaId=0 for every single row). `map` IS populated correctly
+# (matches each row's existing `# level N, <continent>` comment) but is
+# only continent-granularity, already covered by the existing
+# MAP_ID_TO_EXPANSION mechanism -- not the zone-level granularity this tag
+# needs.
+#
+# Real mechanism used instead: each entry's real (map, position_x,
+# position_y) spawn point(s) (queried live, every real row from `creature`
+# for that entry, not just one) resolved against this checkout's real
+# WorldMapArea.dbc via two new tools/db_extract.py functions this task adds
+# (following that file's own existing WDBC-parsing precedent):
+# db_extract.parse_world_map_areas() parses WorldMapArea.dbc
+# (var/extractors/dbc/WorldMapArea.dbc, WorldMapAreaEntryfmt = "xinxffffixx"
+# per src/server/shared/DataStores/DBCfmt.h:131, confirmed against that same
+# file's WorldMapAreaEntry struct comment, DBCStructure.h:2147-2160:
+# field1=map_id, field2=area_id, fields4-7=y1/y2/x1/x2 bounding box,
+# field8=virtual_map_id) into a (map_id, area_id, bounding box) list; then
+# db_extract.resolve_zone_id_from_position(map, x, y, ...) picks, among
+# every row whose map_id matches the creature's own real map and whose
+# bounding box contains that point, the SMALLEST-area candidate (more
+# specific sub-region beats an enclosing/overlapping neighbor), and feeds
+# that winning area_id into Task 2's own db_extract.parse_area_zone_ids
+# (AreaTable.dbc's `zone` parent-chain walk, identical mechanism Task 2
+# already ships for Quest Rewards' zone tagging) to get the real top-level
+# zone_id. Verified against this checkout's real 108-row WorldMapArea.dbc
+# and 2307-row AreaTable.dbc. rares.yaml has no extract_rares.py of its own
+# (this family is hand-curated, per this file's own header above) --
+# these values were computed with a one-off script calling the two new
+# db_extract.py functions directly and hand-transcribed into the `tags:`
+# blocks below, exactly like this file's creature_entry/level/continent
+# values were originally hand-curated from creature_template.sql/
+# creature.sql. Re-running db_extract.parse_world_map_areas() +
+# resolve_zone_id_from_position() + parse_area_zone_ids() against each of
+# the 40 creature_entry values' real (map, position_x, position_y) rows
+# reproduces every zone tag below exactly (spot-checked live during this
+# task).
+#
+# Confidence, spot-checked against all 40 rows (multi-spawn majority vote
+# where a creature has more than one real spawn row, to guard against a
+# single spawn landing right on a WorldMapArea bounding-box edge):
+#   - 37 of 40 resolve unanimously across every one of that creature's real
+#     spawn points, and match this row's own pre-existing `# level N,
+#     <continent>` comment at the map/continent level (real cross-check,
+#     not assumed). Several also match this project's own general WoW
+#     knowledge of that named rare's real zone (e.g. Morgaine the Sly ->
+#     Elwynn Forest, Commander Felstrom -> Duskwood, Kazon/Chatter ->
+#     Redridge Mountains, Grizlak -> Loch Modan) -- HIGH confidence.
+#   - Drogoth the Roamer (entry 14231, 2 real spawns) split 1 Mulgore/1
+#     Dustwallow Marsh: its first spawn sits only ~78 world-units inside
+#     Mulgore's own bounding-box edge (a near-miss, not a solid interior
+#     point), while its second spawn falls OUTSIDE Mulgore's box entirely
+#     and comfortably inside Dustwallow Marsh's. Real irregular zone
+#     borders recede from their rectangular WorldMapArea bounding box, so a
+#     near-edge bbox hit is the least reliable kind of match; resolved to
+#     Dustwallow Marsh. MEDIUM-HIGH confidence.
+#   - Goretooth (entry 17144, 5 real spawns) splits 3 Nagrand/1 Zangarmarsh/
+#     1 Terokkar Forest -- majority Nagrand, matching this project's
+#     independent recollection of Goretooth as a real Nagrand clefthoof
+#     rare. HIGH confidence.
+#   - Ambassador Jerrikar (entry 18695, 5 real spawns) splits 3 Shadowmoon
+#     Valley/2 Terokkar Forest -- both zones share a real border and this
+#     creature patrols across it; majority-vote used, MEDIUM confidence
+#     (the minority zone is also plausible for this specific named rare).
+#   - Dr. Whitherlimb (entry 22062, 4 real spawns, real map=530) resolves
+#     unanimously to Ghostlands, not literal "Outland" terrain -- a genuine,
+#     confirmed WotLK client quirk, NOT a bug in this mechanism: Ghostlands/
+#     Eversong Woods/Silvermoon City/Isle of Quel'Danas are real WorldMapArea
+#     rows under map_id=530 (this checkout's real DBC data, directly
+#     verified), because Blizzard's own client stores Quel'Thalas terrain on
+#     the same physical map file as Outland (both added in the same Burning
+#     Crusade content patch) -- consistent with this row's own pre-existing
+#     "level 18, Outland" comment at the MAP_ID_TO_EXPANSION
+#     continent/expansion level (map 530 -> "tbc"), while this new zone tag
+#     correctly gives the more precise real zone underneath that same map.
+#     HIGH confidence.
+#
+# A `creature_addon`/pathing-based alternative (resolving zone from a
+# creature's full waypoint path rather than its raw spawn rows) was
+# considered and rejected as unnecessary extra complexity: the multi-spawn
+# majority vote above already resolves every real ambiguity this checkout's
+# 40 curated rows produce.
 locations:
   - name: "Rare Kill: Lost Soul"
     location_id: 730000
     trigger: {kind: rare_kill, creature_entry: 1531}  # level 6-7, Eastern Kingdoms
+    tags:
+      zone:
+      - tirisfal_glades
   - name: "Rare Kill: Snagglespear"
     location_id: 730001
     trigger: {kind: rare_kill, creature_entry: 5786}  # level 9, Kalimdor
+    tags:
+      zone:
+      - mulgore
   - name: "Rare Kill: Morgaine the Sly"
     location_id: 730002
     trigger: {kind: rare_kill, creature_entry: 99}  # level 10, Eastern Kingdoms
+    tags:
+      zone:
+      - elwynn_forest
   - name: "Rare Kill: Sister Hatelash"
     location_id: 730003
     trigger: {kind: rare_kill, creature_entry: 5785}  # level 11, Kalimdor
+    tags:
+      zone:
+      - desolace
   - name: "Rare Kill: Bjarn"
     location_id: 730004
     trigger: {kind: rare_kill, creature_entry: 1130}  # level 12, Eastern Kingdoms
+    tags:
+      zone:
+      - dun_morogh
   - name: "Rare Kill: Grizlak"
     location_id: 730005
     trigger: {kind: rare_kill, creature_entry: 1425}  # level 15, Eastern Kingdoms
+    tags:
+      zone:
+      - loch_modan
   - name: "Rare Kill: Carnivous the Breaker"
     location_id: 730006
     trigger: {kind: rare_kill, creature_entry: 2186}  # level 16, Kalimdor
+    tags:
+      zone:
+      - felwood
   - name: "Rare Kill: Dr. Whitherlimb"
     location_id: 730007
     trigger: {kind: rare_kill, creature_entry: 22062}  # level 18, Outland
+    tags:
+      zone:
+      - ghostlands
   - name: "Rare Kill: Engineer Whirleygig"
     location_id: 730008
     trigger: {kind: rare_kill, creature_entry: 5836}  # level 19, Kalimdor
+    tags:
+      zone:
+      - durotar
   - name: "Rare Kill: Magosh"
     location_id: 730009
     trigger: {kind: rare_kill, creature_entry: 1399}  # level 21, Eastern Kingdoms
+    tags:
+      zone:
+      - loch_modan
   - name: "Rare Kill: Taskmaster Whipfang"
     location_id: 730010
     trigger: {kind: rare_kill, creature_entry: 5932}  # level 22, Kalimdor
+    tags:
+      zone:
+      - stonetalon_mountains
   - name: "Rare Kill: Chatter"
     location_id: 730011
     trigger: {kind: rare_kill, creature_entry: 616}  # level 23, Eastern Kingdoms
+    tags:
+      zone:
+      - redridge_mountains
   - name: "Rare Kill: Leech Widow"
     location_id: 730012
     trigger: {kind: rare_kill, creature_entry: 1112}  # level 24, Eastern Kingdoms
+    tags:
+      zone:
+      - wetlands
   - name: "Rare Kill: Branch Snapper"
     location_id: 730013
     trigger: {kind: rare_kill, creature_entry: 10641}  # level 25, Kalimdor
+    tags:
+      zone:
+      - ashenvale
   - name: "Rare Kill: Kazon"
     location_id: 730014
     trigger: {kind: rare_kill, creature_entry: 584}  # level 27, Eastern Kingdoms
+    tags:
+      zone:
+      - redridge_mountains
   - name: "Rare Kill: Brother Ravenoak"
     location_id: 730015
     trigger: {kind: rare_kill, creature_entry: 5915}  # level 29, Kalimdor
+    tags:
+      zone:
+      - stonetalon_mountains
   - name: "Rare Kill: Commander Felstrom"
     location_id: 730016
     trigger: {kind: rare_kill, creature_entry: 771}  # level 32, Eastern Kingdoms
+    tags:
+      zone:
+      - duskwood
   - name: "Rare Kill: Giggler"
     location_id: 730017
     trigger: {kind: rare_kill, creature_entry: 14228}  # level 34, Kalimdor
+    tags:
+      zone:
+      - desolace
   - name: "Rare Kill: Kovork"
     location_id: 730018
     trigger: {kind: rare_kill, creature_entry: 2603}  # level 36, Eastern Kingdoms
+    tags:
+      zone:
+      - hillsbrad_foothills
   - name: "Rare Kill: Drogoth the Roamer"
     location_id: 730019
     trigger: {kind: rare_kill, creature_entry: 14231}  # level 37, Kalimdor
+    tags:
+      zone:
+      - dustwallow_marsh
   - name: "Rare Kill: Hayoc"
     location_id: 730020
     trigger: {kind: rare_kill, creature_entry: 14234}  # level 39, Kalimdor
+    tags:
+      zone:
+      - thousand_needles
   - name: "Rare Kill: Brimgore"
     location_id: 730021
     trigger: {kind: rare_kill, creature_entry: 4339}  # level 41, Kalimdor
+    tags:
+      zone:
+      - thousand_needles
   - name: "Rare Kill: Gilmorian"
     location_id: 730022
     trigger: {kind: rare_kill, creature_entry: 14447}  # level 43, Eastern Kingdoms
+    tags:
+      zone:
+      - swamp_of_sorrows
   - name: "Rare Kill: Rumbler"
     location_id: 730023
     trigger: {kind: rare_kill, creature_entry: 2752}  # level 45, Eastern Kingdoms
+    tags:
+      zone:
+      - searing_gorge
   - name: "Rare Kill: Faulty War Golem"
     location_id: 730024
     trigger: {kind: rare_kill, creature_entry: 8279}  # level 46, Eastern Kingdoms
+    tags:
+      zone:
+      - searing_gorge
   - name: "Rare Kill: Antilus the Soarer"
     location_id: 730025
     trigger: {kind: rare_kill, creature_entry: 5347}  # level 48, Kalimdor
+    tags:
+      zone:
+      - feralas
   - name: "Rare Kill: Jalinde Summerdrake"
     location_id: 730026
     trigger: {kind: rare_kill, creature_entry: 8214}  # level 49, Eastern Kingdoms
+    tags:
+      zone:
+      - the_hinterlands
   - name: "Rare Kill: Antilos"
     location_id: 730027
     trigger: {kind: rare_kill, creature_entry: 6648}  # level 50, Kalimdor
+    tags:
+      zone:
+      - azshara
   - name: "Rare Kill: Lady Sesspira"
     location_id: 730028
     trigger: {kind: rare_kill, creature_entry: 6649}  # level 51, Kalimdor
+    tags:
+      zone:
+      - azshara
   - name: "Rare Kill: Olm the Wise"
     location_id: 730029
     trigger: {kind: rare_kill, creature_entry: 14343}  # level 52, Kalimdor
+    tags:
+      zone:
+      - felwood
   - name: "Rare Kill: Mezzir the Howler"
     location_id: 730030
     trigger: {kind: rare_kill, creature_entry: 10197}  # level 55, Kalimdor
+    tags:
+      zone:
+      - felwood
   - name: "Rare Kill: Gish the Unmoving"
     location_id: 730031
     trigger: {kind: rare_kill, creature_entry: 10825}  # level 56, Eastern Kingdoms
+    tags:
+      zone:
+      - eastern_plaguelands
   - name: "Rare Kill: Grubthor"
     location_id: 730032
     trigger: {kind: rare_kill, creature_entry: 14477}  # level 58, Kalimdor
+    tags:
+      zone:
+      - silithus
   - name: "Rare Kill: High General Abbendis"
     location_id: 730033
     trigger: {kind: rare_kill, creature_entry: 10828}  # level 59, Eastern Kingdoms
+    tags:
+      zone:
+      - eastern_plaguelands
   - name: "Rare Kill: Scarlet Executioner"
     location_id: 730034
     trigger: {kind: rare_kill, creature_entry: 1841}  # level 60, Eastern Kingdoms
+    tags:
+      zone:
+      - western_plaguelands
   - name: "Rare Kill: Foreman Jerris"
     location_id: 730035
     trigger: {kind: rare_kill, creature_entry: 1843}  # level 62, Eastern Kingdoms
+    tags:
+      zone:
+      - western_plaguelands
   - name: "Rare Kill: Goretooth"
     location_id: 730036
     trigger: {kind: rare_kill, creature_entry: 17144}  # level 65, Outland
+    tags:
+      zone:
+      - nagrand
   - name: "Rare Kill: Ambassador Jerrikar"
     location_id: 730037
     trigger: {kind: rare_kill, creature_entry: 18695}  # level 69, Outland
+    tags:
+      zone:
+      - shadowmoon_valley
   - name: "Rare Kill: Tukemuth"
     location_id: 730038
     trigger: {kind: rare_kill, creature_entry: 32400}  # level 73, Northrend
+    tags:
+      zone:
+      - dragonblight
   - name: "Rare Kill: Gondria"
     location_id: 730039
     trigger: {kind: rare_kill, creature_entry: 33776}  # level 77, Northrend
+    tags:
+      zone:
+      - zul_drak
 
 # One item definition, ceiling count 40 matching the location list above --
 # NOT always pooled at 40; items.py's create_key_hunt_item_pool pools exactly

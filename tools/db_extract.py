@@ -236,6 +236,124 @@ def parse_area_zone_ids(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[i
     return {area_id: _resolve_top_level_zone(area_id) for area_id in zone_field_by_id}
 
 
+_WORLD_MAP_AREA_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "WorldMapArea.dbc"
+# WorldMapAreaEntryfmt = "xinxffffixx" (src/server/shared/DataStores/DBCfmt.h:131),
+# confirmed against this same checkout's own WorldMapAreaEntry struct
+# (src/server/shared/DataStores/DBCStructure.h:2147-2160): field0=ID (unused,
+# 'x'), field1=map_id, field2=area_id ('n', the row's own index -- an
+# AreaTable.dbc ID), field3=internal_name (unused, 'x'), field4=y1,
+# field5=y2, field6=x1, field7=x2 (the real WORLD-COORDINATE bounding box
+# this area occupies on `map_id`), field8=virtual_map_id (-1 means map_id IS
+# the real physical map; a non-(-1) value is cosmetic World-Map-UI grouping
+# only -- see parse_world_map_areas's own docstring), field9-10=unused ('x').
+# 11 fields total, all 4 bytes wide regardless of int/float typing --
+# field_count=11 confirmed against this checkout's real WorldMapArea.dbc
+# header.
+_WORLD_MAP_AREA_MAP_ID_FIELD = 1
+_WORLD_MAP_AREA_AREA_ID_FIELD = 2
+_WORLD_MAP_AREA_Y1_FIELD = 4
+_WORLD_MAP_AREA_Y2_FIELD = 5
+_WORLD_MAP_AREA_X1_FIELD = 6
+_WORLD_MAP_AREA_X2_FIELD = 7
+_WORLD_MAP_AREA_VIRTUAL_MAP_ID_FIELD = 8
+
+
+def parse_world_map_areas(dbc_path: pathlib.Path = _WORLD_MAP_AREA_DBC_PATH) -> list[tuple[int, int, float, float, float, float]]:
+    """Parse WorldMapArea.dbc into a list of (map_id, area_id, min_x, max_x,
+    min_y, max_y) tuples -- one per real top-level-zone-or-instance row this
+    checkout's client data defines (108 real rows as of this checkout).
+    y1/y2/x1/x2 are read directly off the row (not assumed already sorted
+    low-to-high) and normalized here via min()/max() so callers never have
+    to re-derive which of y1/y2 (or x1/x2) is the lower bound.
+
+    M4.11.1 Task 5's real mechanism for resolving a creature's (map,
+    position_x, position_y) spawn to a real top-level zone when
+    creature.zoneId/areaId are 0 (confirmed true for every one of
+    rares.yaml's 40 curated creature entries in this checkout's live DB --
+    see rares.yaml's own header comment) and creature.map only gives
+    continent-level granularity (already covered by the existing
+    MAP_ID_TO_EXPANSION mechanism). Usage: for a real spawn point, collect
+    every returned row whose map_id matches the creature's own real map AND
+    whose bounding box contains (position_x, position_y); the SMALLEST-area
+    matching box is the correct pick (a more specific sub-region always beats
+    a larger enclosing/overlapping neighbor -- verified against this
+    checkout's real data: Drogoth the Roamer's own two real spawn points
+    split Mulgore/Dustwallow Marsh, and the Mulgore pick came from a spawn
+    sitting only ~78 world-units inside Mulgore's own y-boundary, a near-miss
+    that the OTHER spawn point -- landing solidly inside Dustwallow Marsh's
+    box and entirely outside Mulgore's -- resolves unambiguously; taking
+    EVERY real spawn row for a creature and majority-voting the per-point
+    smallest-bbox pick, not just the first spawn row, is what actually
+    catches this). Feed the winning area_id into parse_area_zone_ids()'s
+    output to get the real top-level zone_id.
+
+    virtual_map_id (field8, NOT returned here -- callers needing it should
+    read the raw fields directly) is NOT used to exclude rows: verified
+    against this checkout's real data that map_id (not virtual_map_id) is
+    the row's real PHYSICAL-terrain map -- e.g. Ghostlands/Eversong Woods/
+    Silvermoon City/Isle of Quel'Danas all carry map_id=530 (real Outland
+    terrain file) with virtual_map_id=0, and Dr. Whitherlimb (rares.yaml
+    entry 22062, real creature.map=530) resolves unanimously across all 4 of
+    its real spawn rows to Ghostlands' bounding box under map_id=530 --
+    consistent with Blizzard's own client technically storing Quel'Thalas
+    terrain on the same physical map file as Outland (both shipped in the
+    same Burning Crusade content patch), NOT a data bug. virtual_map_id is
+    cosmetic World-Map-UI grouping only (which tab a zone's marker shows
+    under), unrelated to which map_id a real creature's own position column
+    actually uses.
+
+    A creature/gameobject-`zoneId` column fallback was NOT considered here
+    (unlike parse_area_zone_ids's own QuestSortID <= 0 fallback
+    investigation) -- zoneId/areaId are 0 for effectively all of this
+    checkout's creature rows (see parse_area_zone_ids's own docstring:
+    96.6% of ALL creature rows), so there is no real fallback signal to
+    reject or use; this bounding-box mechanism is the only real signal
+    available."""
+    field_count, records, _string_block = _read_wdbc(dbc_path)
+    rows: list[tuple[int, int, float, float, float, float]] = []
+    for raw in records:
+        ints = struct.unpack("<" + "i" * field_count, raw)
+        floats = struct.unpack("<" + "f" * field_count, raw)
+        map_id = ints[_WORLD_MAP_AREA_MAP_ID_FIELD]
+        area_id = ints[_WORLD_MAP_AREA_AREA_ID_FIELD]
+        y1, y2 = floats[_WORLD_MAP_AREA_Y1_FIELD], floats[_WORLD_MAP_AREA_Y2_FIELD]
+        x1, x2 = floats[_WORLD_MAP_AREA_X1_FIELD], floats[_WORLD_MAP_AREA_X2_FIELD]
+        rows.append((map_id, area_id, min(x1, x2), max(x1, x2), min(y1, y2), max(y1, y2)))
+    return rows
+
+
+def resolve_zone_id_from_position(
+    map_id: int, position_x: float, position_y: float,
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int],
+) -> int:
+    """One (map_id, position_x, position_y) spawn point -> a real top-level
+    zone_id, or 0 ("no resolvable real-world zone", the same unambiguous
+    sentinel parse_area_zone_ids's own caller convention uses -- AreaTable.dbc
+    IDs start at 1, never 0). Picks the SMALLEST-area WorldMapArea bounding
+    box (from parse_world_map_areas's own output) that contains the point,
+    among every row sharing this exact map_id -- see parse_world_map_areas's
+    own docstring for why smallest-box-wins is correct and why map_id
+    (not virtual_map_id) is the right real-terrain match key. Callers with
+    more than one real spawn row for the same creature/object should call
+    this once per row and majority-vote the results (see
+    parse_world_map_areas's own docstring, Drogoth the Roamer example) rather
+    than trusting a single spawn point, which this function deliberately does
+    NOT do itself (it has no notion of "this creature's other spawns")."""
+    best_area: tuple[float, int] | None = None
+    for (row_map_id, area_id, min_x, max_x, min_y, max_y) in world_map_areas:
+        if row_map_id != map_id:
+            continue
+        if not (min_x <= position_x <= max_x and min_y <= position_y <= max_y):
+            continue
+        size = (max_x - min_x) * (max_y - min_y)
+        if best_area is None or size < best_area[0]:
+            best_area = (size, area_id)
+    if best_area is None:
+        return 0
+    return area_zone_ids.get(best_area[1], 0)
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )

@@ -9,6 +9,7 @@ from db_extract import (
     parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
     parse_achievements, parse_achievement_categories,
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
+    parse_world_map_areas, resolve_zone_id_from_position,
 )
 
 
@@ -377,6 +378,119 @@ class TestParseAreaZoneIds(unittest.TestCase):
         self.assertEqual(result[14], 14)   # Durotar
         self.assertEqual(result[9], 12)    # Northshire -> Elwynn Forest
         self.assertEqual(result[12], 12)   # Elwynn Forest (itself a top-level zone)
+
+
+class TestParseWorldMapAreasAndResolveZoneIdFromPosition(unittest.TestCase):
+    """M4.11.1 Task 5: Key Hunt rares.yaml zone-tagging mechanism -- see
+    parse_world_map_areas's own docstring (db_extract.py) for the full
+    empirical justification against this checkout's real live DB (every
+    curated creature entry has creature.zoneId/areaId == 0, so this
+    WorldMapArea.dbc bounding-box mechanism is the real replacement)."""
+
+    def _write_fake_wma_dbc(
+        self, tmpdir: str, rows: list[tuple[int, int, float, float, float, float, int]],
+    ) -> pathlib.Path:
+        """rows: list of (map_id, area_id, y1, y2, x1, x2, virtual_map_id) --
+        writes a minimal real WDBC file with exactly 11 fields per record
+        (matching WorldMapAreaEntryfmt's real field_count, "xinxffffixx" per
+        src/server/shared/DataStores/DBCfmt.h:131), field0 (ID) zeroed since
+        it's unused by parse_world_map_areas."""
+        field_count = 11
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "WorldMapArea.dbc"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(rows), field_count, record_size, 0))
+            for map_id, area_id, y1, y2, x1, x2, virtual_map_id in rows:
+                f.write(struct.pack("<i", 0))                       # field0: ID (unused)
+                f.write(struct.pack("<i", map_id))                  # field1: map_id
+                f.write(struct.pack("<i", area_id))                 # field2: area_id
+                f.write(struct.pack("<i", 0))                       # field3: internal_name (unused)
+                f.write(struct.pack("<f", y1))                      # field4: y1
+                f.write(struct.pack("<f", y2))                      # field5: y2
+                f.write(struct.pack("<f", x1))                      # field6: x1
+                f.write(struct.pack("<f", x2))                      # field7: x2
+                f.write(struct.pack("<i", virtual_map_id))          # field8: virtual_map_id
+                f.write(struct.pack("<i", 0))                       # field9: unused
+                f.write(struct.pack("<i", 0))                       # field10: unused
+        return path
+
+    def test_parses_map_id_area_id_and_normalizes_bounding_box(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            # y1/y2 and x1/x2 deliberately given high-to-low, matching real
+            # WorldMapArea.dbc rows (e.g. Elwynn Forest's own real row) --
+            # parse_world_map_areas must normalize via min/max, not assume
+            # already-sorted order.
+            path = self._write_fake_wma_dbc(tmp, [(0, 12, 200.0, -200.0, 100.0, -100.0, -1)])
+            result = parse_world_map_areas(path)
+        self.assertEqual(result, [(0, 12, -100.0, 100.0, -200.0, 200.0)])
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                parse_world_map_areas(path)
+
+    def test_resolve_picks_smallest_containing_box_not_first_match(self) -> None:
+        # Two overlapping candidate boxes on the same map -- the smaller one
+        # (a more specific sub-region) must win even though it's listed
+        # second, matching this checkout's real overlapping-zone cases
+        # (e.g. Mulgore/Dustwallow Marsh near their shared Kalimdor border).
+        world_map_areas = [
+            (1, 100, -1000.0, 1000.0, -1000.0, 1000.0),  # large enclosing box
+            (1, 200, -10.0, 10.0, -10.0, 10.0),           # small box, fully inside the first
+        ]
+        area_zone_ids = {100: 100, 200: 200}
+        result = resolve_zone_id_from_position(1, 5.0, 5.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, 200)
+
+    def test_resolve_returns_zero_sentinel_when_no_box_contains_the_point(self) -> None:
+        world_map_areas = [(1, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        result = resolve_zone_id_from_position(1, 500.0, 500.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, 0)
+
+    def test_resolve_ignores_rows_on_a_different_map(self) -> None:
+        world_map_areas = [(999, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        result = resolve_zone_id_from_position(1, 0.0, 0.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, 0)
+
+    def test_real_world_map_area_dbc_resolves_known_zones_from_real_positions(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # WorldMapArea.dbc + AreaTable.dbc, using real (map, position_x,
+        # position_y) rows taken directly from this checkout's live
+        # `creature` table for rares.yaml's own curated entries (M4.11.1
+        # Task 5 research) -- confirms the bounding-box mechanism resolves
+        # to the same real zones documented in rares.yaml's own header
+        # comment.
+        world_map_areas = parse_world_map_areas()
+        area_zone_ids = parse_area_zone_ids()
+
+        # Morgaine the Sly (creature_entry 99): real spawn map=0,
+        # position=(-9437.81, 466.159) -> Elwynn Forest (zone 12).
+        self.assertEqual(
+            resolve_zone_id_from_position(0, -9437.81, 466.159, world_map_areas, area_zone_ids), 12,
+        )
+        # Commander Felstrom (creature_entry 771): real spawn map=0,
+        # position=(-10398.8, 347.001) -> Duskwood (zone 10).
+        self.assertEqual(
+            resolve_zone_id_from_position(0, -10398.8, 347.001, world_map_areas, area_zone_ids), 10,
+        )
+        # Gondria (creature_entry 33776): real spawn map=571 (Northrend),
+        # position=(6067.13, -4072.1) -> Zul'Drak (zone 66).
+        self.assertEqual(
+            resolve_zone_id_from_position(571, 6067.13, -4072.1, world_map_areas, area_zone_ids), 66,
+        )
+        # Dr. Whitherlimb (creature_entry 22062): real spawn map=530,
+        # position=(6300.91, -6252.88) -> Ghostlands (zone 3433) -- the real,
+        # confirmed-not-a-bug WotLK client quirk documented in
+        # parse_world_map_areas's own docstring (Quel'Thalas terrain shares
+        # Outland's physical map_id).
+        self.assertEqual(
+            resolve_zone_id_from_position(530, 6300.91, -6252.88, world_map_areas, area_zone_ids), 3433,
+        )
 
 
 class TestParseFillerBuffSpellCandidates(unittest.TestCase):

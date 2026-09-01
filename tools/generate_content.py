@@ -637,7 +637,9 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
     "traps": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"trap"}),
-    "rares": FamilySchema(valid_trigger_kinds={"rare_kill"}, valid_delivery_kinds={"realm_state"}),
+    "rares": FamilySchema(
+        valid_trigger_kinds={"rare_kill"}, valid_delivery_kinds={"realm_state"}, export_tags=True,
+    ),
     "fish": FamilySchema(valid_trigger_kinds={"fish_catch"}, valid_delivery_kinds={"mail"}),
     "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
@@ -1097,6 +1099,22 @@ def _emit_python_rares(data: dict) -> str:
     lines.append("ITEMS: dict[str, tuple[int, int]] = {")
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    # M4.11.1 Task 5: zone dimension only (each row's real `tags.zone` block,
+    # see rares.yaml's own header comment for how these were curated) -- reuses
+    # the exact format the generic export_tags emitter (emit_python_generic)
+    # already uses for every other export_tags family, so
+    # key_hunt_zone_pools's OptionSet/locations.py's zone filter read this the
+    # same shape as e.g. quest_reward_type_pools reads quest_rewards.TAGS.
+    lines.append("TAGS: dict[str, dict[str, frozenset[str]]] = {")
+    for loc in data["locations"]:
+        dims = loc.get("tags", {})
+        dim_parts = [
+            f'{_string_literal(dim)}: frozenset({{{", ".join(_string_literal(v) for v in values)}}})'
+            for dim, values in dims.items()
+        ]
+        lines.append(f'    {_string_literal(loc["name"])}: {{{", ".join(dim_parts)}}},')
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
