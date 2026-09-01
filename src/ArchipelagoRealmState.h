@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 // Realm-wide Archipelago core-loop progression state. One realm = one AP
 // slot (spec core commitment), so this is a single cached row/set, not
@@ -255,6 +256,83 @@ public:
     bool GetZoneLevelerAllowHubZone() const { return _zoneLevelerAllowHubZone; }
     void SetZoneLevelerAllowHubZone(bool allow) { _zoneLevelerAllowHubZone = allow; }
 
+    // Cached mirror of slot_data["zone_leveler_zone_key"] (M4.11.1 Task 15) --
+    // the connected zone's own short key (e.g. "barrens"), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneId above. Needed IN ADDITION TO the numeric zone id:
+    // Archipelago::CoreLoop::LEVEL_CAP_TOTAL_BY_TRACK (Task 3) is keyed by
+    // the STRING "zone_leveler_<zone_key>", and this C++ module has no
+    // zone_id -> zone_key reverse map of its own (unlike Python's
+    // zone_leveler_content_data.ZONES) -- without this, IsZoneLevelerComplete's
+    // reach_zone_level_cap check would have to hardcode "zone_leveler_barrens"
+    // literally, which would silently stop matching the moment a second zone
+    // is curated (M4.11.2). Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete.
+    std::string GetZoneLevelerZoneKey() const { return _zoneLevelerZoneKey; }
+    void SetZoneLevelerZoneKey(std::string const& key) { _zoneLevelerZoneKey = key; }
+
+    // Cached mirror of slot_data["zone_leveler_goals"] (M4.11.1 Task 15) --
+    // the connected slot's own selected win conditions (options.py's
+    // ZoneLevelerGoals OptionSet: any of reach_zone_level_cap,
+    // clear_all_zone_quests, golden_boar_statues, instance_clears), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneId above. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete to decide which goal-kind sub-checks apply, the
+    // same role GetGameMode plays for CheckAndSendGoalComplete's own
+    // top-level dispatch.
+    std::unordered_set<std::string> const& GetZoneLevelerGoals() const { return _zoneLevelerGoals; }
+    void SetZoneLevelerGoals(std::unordered_set<std::string> goals) { _zoneLevelerGoals = std::move(goals); }
+
+    // Cached mirrors of slot_data["zone_leveler_statues_required"] /
+    // ["zone_leveler_instances_required"] (M4.11.1 Task 15), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneId above -- consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete for the golden_boar_statues/instance_clears goal
+    // kinds respectively.
+    uint32_t GetZoneLevelerStatuesRequired() const { return _zoneLevelerStatuesRequired; }
+    void SetZoneLevelerStatuesRequired(uint32_t required) { _zoneLevelerStatuesRequired = required; }
+    uint32_t GetZoneLevelerInstancesRequired() const { return _zoneLevelerInstancesRequired; }
+    void SetZoneLevelerInstancesRequired(uint32_t required) { _zoneLevelerInstancesRequired = required; }
+
+    // Cached mirror of slot_data["zone_leveler_instance_keys"] (M4.11.1 Task
+    // 15) -- the connected zone's own curated instance_keys tuple (e.g.
+    // Barrens' wailing_caverns/razorfen_kraul/razorfen_downs), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneId above. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete's instance_clears check, which counts how many
+    // of THESE SPECIFIC keys (not every realm-unlocked instance) are
+    // unlocked -- mirrors goals.py's own instance_item_names, built from the
+    // same zone_data.instance_keys.
+    std::vector<std::string> const& GetZoneLevelerInstanceKeys() const { return _zoneLevelerInstanceKeys; }
+    void SetZoneLevelerInstanceKeys(std::vector<std::string> keys) { _zoneLevelerInstanceKeys = std::move(keys); }
+
+    // M4.11.1 Task 15 (reach_zone_level_cap): realm-wide count of
+    // "Progressive Level Cap" items ever received -- exact same generic
+    // flag-store mechanism as GetKeyCount()/GrantKey() above (Task 25),
+    // under its own dedicated flag key. Deliberately distinct from
+    // GetLevelCap() itself (the realm's CURRENT max level, e.g. starting cap
+    // + copies*LEVEL_CAP_STEP): goals.py's real completion condition for
+    // this goal kind (_set_completion_rule_zone_leveler,
+    // state.has("Progressive Level Cap", count=total_caps)) counts copies
+    // RECEIVED, not the resulting cap value, so this needs its own counter
+    // rather than reverse-deriving a copy count from GetLevelCap() and a
+    // per-track starting cap. Incremented alongside RaiseLevelCap in
+    // ArchipelagoPlayerScript.cpp's AP_ITEM_PROGRESSIVE_LEVEL_CAP delivery
+    // block.
+    uint32_t GetLevelCapCopiesReceived() const { return GetFlagTier("progressive_level_cap_copies_received"); }
+    void GrantLevelCapCopy() { SetFlagTier("progressive_level_cap_copies_received", GetFlagTier("progressive_level_cap_copies_received") + 1); }
+
+    // M4.11.1 Task 15 (golden_boar_statues): realm-wide count of "Golden
+    // Boar Statue" items ever received -- exact same generic flag-store
+    // mechanism as GetKeyCount()/GrantKey() above (Task 25), under its own
+    // dedicated flag key (golden_boar_statues.yaml's own header comment: "a
+    // new `grant_statue` realm_state effect... needs its OWN distinct
+    // realm-state counter, not a silent alias of Key Hunt's"). Incremented
+    // from ArchipelagoPlayerScript.cpp's AP_ITEM_GOLDEN_BOAR_STATUE delivery
+    // block, the exact analog of the AP_ITEM_KEY_HUNT_KEY block.
+    uint32_t GetGoldenBoarStatueCount() const { return GetFlagTier("golden_boar_statue_count"); }
+    void GrantStatue() { SetFlagTier("golden_boar_statue_count", GetFlagTier("golden_boar_statue_count") + 1); }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -291,6 +369,11 @@ private:
     uint32_t _zoneLevelerZoneId = 0;
     std::unordered_set<uint32_t> _zoneLevelerAllowedHubZoneIds;
     bool _zoneLevelerAllowHubZone = false;
+    std::string _zoneLevelerZoneKey;
+    std::unordered_set<std::string> _zoneLevelerGoals;
+    uint32_t _zoneLevelerStatuesRequired = 0;
+    uint32_t _zoneLevelerInstancesRequired = 0;
+    std::vector<std::string> _zoneLevelerInstanceKeys;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

@@ -402,6 +402,28 @@ namespace Archipelago
             if (zoneLevelerAllowHubZone && _callbacks.onZoneLevelerAllowHubZoneReceived)
                 _callbacks.onZoneLevelerAllowHubZoneReceived(*zoneLevelerAllowHubZone);
 
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
+            // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.11.1 Task 15).
+            auto zoneLevelerZoneKey = ParseZoneLevelerZoneKeyFromSlotData(message);
+            if (zoneLevelerZoneKey && _callbacks.onZoneLevelerZoneKeyReceived)
+                _callbacks.onZoneLevelerZoneKeyReceived(*zoneLevelerZoneKey);
+
+            auto zoneLevelerGoals = ParseZoneLevelerGoalsFromSlotData(message);
+            if (zoneLevelerGoals && _callbacks.onZoneLevelerGoalsReceived)
+                _callbacks.onZoneLevelerGoalsReceived(*zoneLevelerGoals);
+
+            auto zoneLevelerStatuesRequired = ParseZoneLevelerStatuesRequiredFromSlotData(message);
+            if (zoneLevelerStatuesRequired && _callbacks.onZoneLevelerStatuesRequiredReceived)
+                _callbacks.onZoneLevelerStatuesRequiredReceived(*zoneLevelerStatuesRequired);
+
+            auto zoneLevelerInstancesRequired = ParseZoneLevelerInstancesRequiredFromSlotData(message);
+            if (zoneLevelerInstancesRequired && _callbacks.onZoneLevelerInstancesRequiredReceived)
+                _callbacks.onZoneLevelerInstancesRequiredReceived(*zoneLevelerInstancesRequired);
+
+            auto zoneLevelerInstanceKeys = ParseZoneLevelerInstanceKeysFromSlotData(message);
+            if (zoneLevelerInstanceKeys && _callbacks.onZoneLevelerInstanceKeysReceived)
+                _callbacks.onZoneLevelerInstanceKeysReceived(*zoneLevelerInstanceKeys);
+
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData above
             // (M4.13): PrintJSON text is meaningful even when the surrounding frame has
             // no Connected command in it at all (a live hint response arrives on its own,

@@ -468,6 +468,29 @@ public:
             std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
             _pendingZoneLevelerAllowHubZone = allow;
         };
+        // M4.11.1 Task 15: goal-completion side's own zone_leveler slot_data
+        // -- shares _pendingZoneLevelerMutex with the Task 14 triplet above
+        // (see that mutex's own declaration comment for why).
+        callbacks.onZoneLevelerZoneKeyReceived = [this](std::string const& key) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerZoneKey = key;
+        };
+        callbacks.onZoneLevelerGoalsReceived = [this](std::vector<std::string> const& goals) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerGoals = goals;
+        };
+        callbacks.onZoneLevelerStatuesRequiredReceived = [this](uint32_t required) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerStatuesRequired = required;
+        };
+        callbacks.onZoneLevelerInstancesRequiredReceived = [this](uint32_t required) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerInstancesRequired = required;
+        };
+        callbacks.onZoneLevelerInstanceKeysReceived = [this](std::vector<std::string> const& keys) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerInstanceKeys = keys;
+        };
         callbacks.onPrintJsonReceived = [this](std::vector<std::string> const& texts) {
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
             _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
@@ -590,6 +613,11 @@ public:
         uint32_t zoneLevelerZoneId = 0;
         std::vector<uint32_t> zoneLevelerAllowedHubZoneIds;
         bool zoneLevelerAllowHubZone = false;
+        std::string zoneLevelerZoneKey;
+        std::vector<std::string> zoneLevelerGoals;
+        uint32_t zoneLevelerStatuesRequired = 0;
+        uint32_t zoneLevelerInstancesRequired = 0;
+        std::vector<std::string> zoneLevelerInstanceKeys;
         {
             std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
             if (!_zoneLevelerApplied && _pendingZoneLevelerZoneId)
@@ -597,6 +625,19 @@ public:
                 zoneLevelerZoneId = *_pendingZoneLevelerZoneId;
                 zoneLevelerAllowedHubZoneIds = _pendingZoneLevelerAllowedHubZoneIds.value_or(std::vector<uint32_t>());
                 zoneLevelerAllowHubZone = _pendingZoneLevelerAllowHubZone.value_or(false);
+                // M4.11.1 Task 15: these five default to "no goal-completion
+                // data yet" (empty string/empty vector/0) via value_or()
+                // below if for some reason they weren't set alongside the
+                // Task 14 triplet -- shouldn't happen in real play (Step 1's
+                // _add_zone_leveler_data always emits all eight keys
+                // together), and IsZoneLevelerComplete's own goals-set gate
+                // means an empty ZoneLevelerGoals never reports complete
+                // regardless.
+                zoneLevelerZoneKey = _pendingZoneLevelerZoneKey.value_or(std::string());
+                zoneLevelerGoals = _pendingZoneLevelerGoals.value_or(std::vector<std::string>());
+                zoneLevelerStatuesRequired = _pendingZoneLevelerStatuesRequired.value_or(0);
+                zoneLevelerInstancesRequired = _pendingZoneLevelerInstancesRequired.value_or(0);
+                zoneLevelerInstanceKeys = _pendingZoneLevelerInstanceKeys.value_or(std::vector<std::string>());
                 _zoneLevelerApplied = true;
                 applyZoneLeveler = true;
             }
@@ -607,6 +648,12 @@ public:
             sArchipelagoRealmState->SetZoneLevelerAllowedHubZoneIds(
                 std::unordered_set<uint32_t>(zoneLevelerAllowedHubZoneIds.begin(), zoneLevelerAllowedHubZoneIds.end()));
             sArchipelagoRealmState->SetZoneLevelerAllowHubZone(zoneLevelerAllowHubZone);
+            sArchipelagoRealmState->SetZoneLevelerZoneKey(zoneLevelerZoneKey);
+            sArchipelagoRealmState->SetZoneLevelerGoals(
+                std::unordered_set<std::string>(zoneLevelerGoals.begin(), zoneLevelerGoals.end()));
+            sArchipelagoRealmState->SetZoneLevelerStatuesRequired(zoneLevelerStatuesRequired);
+            sArchipelagoRealmState->SetZoneLevelerInstancesRequired(zoneLevelerInstancesRequired);
+            sArchipelagoRealmState->SetZoneLevelerInstanceKeys(zoneLevelerInstanceKeys);
         }
 
         std::vector<std::string> printJsonText;
@@ -717,17 +764,26 @@ private:
 
     // Same io-thread-producer/world-thread-consumer, apply-once shape as
     // _pendingHolidaysanityStacking/_holidaysanityStackingApplied above, for
-    // the Zone Leveler slot_data triplet (M4.11.1 Task 14):
-    // zone_leveler_zone_id/zone_leveler_allowed_hub_zone_ids/
-    // zone_leveler_allow_hub_zone. One shared mutex/applied-flag rather than
-    // one per key (unlike every other slot_data queue above) -- these three
-    // always arrive together and must apply to ArchipelagoRealmState as one
-    // atomic unit; see the Initialize() callback registration above and
-    // OnUpdate's apply block for the full reasoning.
+    // the Zone Leveler slot_data bundle: zone_leveler_zone_id/
+    // zone_leveler_allowed_hub_zone_ids/zone_leveler_allow_hub_zone (M4.11.1
+    // Task 14), extended with zone_leveler_zone_key/zone_leveler_goals/
+    // zone_leveler_statues_required/zone_leveler_instances_required/
+    // zone_leveler_instance_keys (M4.11.1 Task 15, the goal-completion
+    // side's own slot_data). One shared mutex/applied-flag rather than one
+    // per key (unlike every other slot_data queue above) -- all eight always
+    // arrive together in the same _add_zone_leveler_data Connected payload
+    // and must apply to ArchipelagoRealmState as one atomic unit; see the
+    // Initialize() callback registration above and OnUpdate's apply block
+    // for the full reasoning.
     std::mutex _pendingZoneLevelerMutex;
     std::optional<uint32_t> _pendingZoneLevelerZoneId;
     std::optional<std::vector<uint32_t>> _pendingZoneLevelerAllowedHubZoneIds;
     std::optional<bool> _pendingZoneLevelerAllowHubZone;
+    std::optional<std::string> _pendingZoneLevelerZoneKey;
+    std::optional<std::vector<std::string>> _pendingZoneLevelerGoals;
+    std::optional<uint32_t> _pendingZoneLevelerStatuesRequired;
+    std::optional<uint32_t> _pendingZoneLevelerInstancesRequired;
+    std::optional<std::vector<std::string>> _pendingZoneLevelerInstanceKeys;
     bool _zoneLevelerApplied = false;
 
     // Same io-thread-producer/world-thread-consumer shape as _pendingItems above,

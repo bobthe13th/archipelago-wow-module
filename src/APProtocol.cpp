@@ -390,6 +390,135 @@ namespace Archipelago
         return std::nullopt;
     }
 
+    std::optional<std::string> ParseZoneLevelerZoneKeyFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_zone_key") || !slotData["zone_leveler_zone_key"].is_string())
+                continue;
+            return slotData["zone_leveler_zone_key"].get<std::string>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<std::string>> ParseZoneLevelerGoalsFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_goals") || !slotData["zone_leveler_goals"].is_array())
+                continue;
+
+            std::vector<std::string> goals;
+            for (json const& goalJson : slotData["zone_leveler_goals"])
+            {
+                if (!goalJson.is_string())
+                    continue;
+                goals.push_back(goalJson.get<std::string>());
+            }
+            return goals;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_statues_required") ||
+                !slotData["zone_leveler_statues_required"].is_number_integer())
+                continue;
+            int64_t required = slotData["zone_leveler_statues_required"].get<int64_t>();
+            if (required < 0)
+                continue;
+            return static_cast<uint32_t>(required);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_instances_required") ||
+                !slotData["zone_leveler_instances_required"].is_number_integer())
+                continue;
+            int64_t required = slotData["zone_leveler_instances_required"].get<int64_t>();
+            if (required < 0)
+                continue;
+            return static_cast<uint32_t>(required);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<std::string>> ParseZoneLevelerInstanceKeysFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_instance_keys") || !slotData["zone_leveler_instance_keys"].is_array())
+                continue;
+
+            std::vector<std::string> keys;
+            for (json const& keyJson : slotData["zone_leveler_instance_keys"])
+            {
+                if (!keyJson.is_string())
+                    continue;
+                keys.push_back(keyJson.get<std::string>());
+            }
+            return keys;
+        }
+        return std::nullopt;
+    }
+
     std::string BuildSayPacket(std::string const& text)
     {
         json packet = json::array({ json{

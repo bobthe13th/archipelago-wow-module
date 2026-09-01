@@ -87,6 +87,15 @@ namespace Archipelago
         std::function<void(uint32_t)> onZoneLevelerZoneIdReceived = nullptr;
         std::function<void(std::vector<uint32_t> const&)> onZoneLevelerAllowedHubZoneIdsReceived = nullptr;
         std::function<void(bool)> onZoneLevelerAllowHubZoneReceived = nullptr;
+        // M4.11.1 Task 15: zone_leveler_zone_key/goals/statues_required/
+        // instances_required/instance_keys -- the goal-completion side's own
+        // slot_data, same primitive-vs-container split as the Task 14
+        // triplet directly above.
+        std::function<void(std::string const&)> onZoneLevelerZoneKeyReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onZoneLevelerGoalsReceived = nullptr;
+        std::function<void(uint32_t)> onZoneLevelerStatuesRequiredReceived = nullptr;
+        std::function<void(uint32_t)> onZoneLevelerInstancesRequiredReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onZoneLevelerInstanceKeysReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
         // Connected's top-level missing_locations array (M4.13, ".ap missing" --
         // see ArchipelagoManager::GetLastKnownMissingLocations/
@@ -215,6 +224,37 @@ namespace Archipelago
     // std::nullopt (never throws) if slot_data or the key is
     // absent/malformed.
     std::optional<bool> ParseZoneLevelerAllowHubZoneFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_zone_key"] (a single string
+    // option, M4.11.1 Task 15) -- mirrors
+    // ParseVendorCheckRepeatBehaviorFromSlotData's exact shape. Returns
+    // std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete to resolve the connected slot's own
+    // "zone_leveler_<zone_key>" LEVEL_CAP_TOTAL_BY_TRACK entry.
+    std::optional<std::string> ParseZoneLevelerZoneKeyFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_goals"] (a JSON array of
+    // strings, M4.11.1 Task 15) -- mirrors
+    // ParseZoneLevelerAllowedHubZoneIdsFromSlotData's exact "scan the array,
+    // skip a non-string element rather than throwing" discipline, adapted
+    // for strings instead of integers. Returns std::nullopt (never throws)
+    // if slot_data or the key is absent/malformed; an empty-but-present
+    // array parses to an empty (non-nullopt) vector.
+    std::optional<std::vector<std::string>> ParseZoneLevelerGoalsFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_statues_required"] /
+    // ["zone_leveler_instances_required"] (single integer options, M4.11.1
+    // Task 15) -- mirrors ParseZoneLevelerZoneIdFromSlotData's exact shape
+    // (a uint32_t, rejecting negative values). Returns std::nullopt (never
+    // throws) if slot_data or the key is absent/malformed.
+    std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw);
+    std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_instance_keys"] (a JSON
+    // array of strings, M4.11.1 Task 15) -- mirrors
+    // ParseZoneLevelerGoalsFromSlotData's exact shape.
+    std::optional<std::vector<std::string>> ParseZoneLevelerInstanceKeysFromSlotData(std::string const& raw);
 
     // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
     // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors

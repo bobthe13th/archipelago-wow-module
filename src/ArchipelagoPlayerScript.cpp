@@ -26,6 +26,7 @@
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGATHERSANITYContent.h"
 #include "ArchipelagoGoals.h"
+#include "ArchipelagoGoldenBoarStatuesContentTable.h"
 #include "ArchipelagoHOLIDAYSANITYContent.h"
 #include "ArchipelagoITEMSANITYContent.h"
 #include "ArchipelagoProfessionsContentTable.h"
@@ -106,6 +107,14 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             uint32_t newCap = sArchipelagoRealmState->GetLevelCap() + Archipelago::CoreLoop::LEVEL_CAP_STEP;
             sArchipelagoRealmState->RaiseLevelCap(newCap);
+            // M4.11.1 Task 15 (Zone Leveler's reach_zone_level_cap goal):
+            // realm-wide "how many Progressive Level Cap copies have ever
+            // been received" counter, distinct from GetLevelCap() itself
+            // (the resulting cap value) -- see ArchipelagoRealmState.h's own
+            // GetLevelCapCopiesReceived comment for why this needs its own
+            // counter rather than being derived from GetLevelCap().
+            sArchipelagoRealmState->GrantLevelCapCopy();
+            Archipelago::Goals::CheckAndSendGoalComplete();
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, newCap);
             // The actual XP-suppression gate re-reads CONFIG_MAX_PLAYER_LEVEL
             // live on every Player::GiveXP call, so the setIntConfig above is
@@ -152,6 +161,19 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         if (received.item == Archipelago::Rares::AP_ITEM_KEY_HUNT_KEY)
         {
             sArchipelagoRealmState->GrantKey();
+            Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+        // M4.11.1 Task 15 (Zone Leveler's golden_boar_statues goal): exact
+        // analog of the AP_ITEM_KEY_HUNT_KEY block directly above --
+        // golden_boar_statues.yaml's own header comment: "Golden Boar
+        // Statue" needs its OWN distinct realm-state counter (delivery:
+        // {kind: realm_state, effect: grant_statue}, not a real WoW item to
+        // mail, same realm_state-effect shape as Key Hunt's grant_key).
+        if (received.item == Archipelago::GoldenBoarStatues::AP_ITEM_GOLDEN_BOAR_STATUE)
+        {
+            sArchipelagoRealmState->GrantStatue();
             Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -476,6 +498,23 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, questRewardEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", questRewardEntryIt->second);
+            // M4.11.1 Task 15 fix: Quest Rewards deliveries never set a
+            // per-item "received" flag or called CheckAndSendGoalComplete,
+            // unlike every other family that delivers a real WoW item
+            // (Fish/Collections both do both, see their own blocks above) --
+            // a genuine, pre-existing, project-wide gap (Quest Rewards
+            // triggered no live completion signal for ANY game mode, not
+            // just Zone Leveler). Mirrors Fish's exact
+            // "fish_received_<apItemId>" flag shape, under its own
+            // "quest_reward_received_" namespace. Not yet consumed by any
+            // live C++ completion check (Zone Leveler's own
+            // clear_all_zone_quests goal needs zone-filtered item ids this
+            // flag alone can't provide -- see ArchipelagoGoalsPure.h's own
+            // comment on that deferred gap), but is independently correct
+            // and low-risk to add now regardless, and unblocks that future
+            // per-zone check the moment zone_id data is exported to C++.
+            sArchipelagoRealmState->SetFlagTier("quest_reward_received_" + std::to_string(received.item), 1);
+            Archipelago::Goals::CheckAndSendGoalComplete();
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

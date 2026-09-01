@@ -9,6 +9,7 @@
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoFishContentTable.h"
+#include "ArchipelagoGoalsPure.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 
@@ -173,6 +174,38 @@ namespace Archipelago::Goals
             return sArchipelagoRealmState->IsFlagUnlocked(
                 "achievement_received_" + std::to_string(Archipelago::Achievements::WORLD_EXPLORER_ACHIEVEMENT_ID));
         }
+
+        // M4.11.1 Task 15 (Zone Leveler): gathers every value
+        // Archipelago::Goals::Pure::IsZoneLevelerComplete needs from the
+        // realm-state singleton, then delegates the actual AND-of-selected-
+        // goals decision to that pure function -- see ArchipelagoGoalsPure.h
+        // for the full completion-rule citation (mirrors goals.py's
+        // _set_completion_rule_zone_leveler) and for why
+        // clear_all_zone_quests is deliberately unimplemented here (a real,
+        // documented, DEFERRED gap: no C++-compiled zone_id data for
+        // Quest Rewards items, see that header's own comment on the goal).
+        bool IsZoneLevelerComplete()
+        {
+            Archipelago::Goals::Pure::ZoneLevelerCompletionInput input;
+            input.selectedGoals = sArchipelagoRealmState->GetZoneLevelerGoals();
+
+            input.levelCapCopiesReceived = sArchipelagoRealmState->GetLevelCapCopiesReceived();
+            std::string const trackKey = "zone_leveler_" + sArchipelagoRealmState->GetZoneLevelerZoneKey();
+            auto trackIt = Archipelago::CoreLoop::LEVEL_CAP_TOTAL_BY_TRACK.find(trackKey);
+            if (trackIt != Archipelago::CoreLoop::LEVEL_CAP_TOTAL_BY_TRACK.end())
+                input.levelCapCopiesRequired = trackIt->second;
+
+            input.statueCount = sArchipelagoRealmState->GetGoldenBoarStatueCount();
+            input.statuesRequired = sArchipelagoRealmState->GetZoneLevelerStatuesRequired();
+
+            input.instanceKeys = sArchipelagoRealmState->GetZoneLevelerInstanceKeys();
+            for (std::string const& instanceKey : input.instanceKeys)
+                if (sArchipelagoRealmState->IsInstanceUnlocked(instanceKey))
+                    input.unlockedInstanceKeys.insert(instanceKey);
+            input.instancesRequired = sArchipelagoRealmState->GetZoneLevelerInstancesRequired();
+
+            return Archipelago::Goals::Pure::IsZoneLevelerComplete(input);
+        }
     }
 
     void CheckAndSendGoalComplete()
@@ -210,6 +243,8 @@ namespace Archipelago::Goals
             complete = IsAchievementHuntComplete();
         else if (mode == "explorer")
             complete = IsExplorerComplete();
+        else if (mode == "zone_leveler")
+            complete = IsZoneLevelerComplete();
         // gladiator no longer exists as a GameMode value at all (M4.9 Sec4) --
         // removed from options.py's GameMode Choice entirely, not merely a
         // deferred mode this dispatch needs a branch for.
