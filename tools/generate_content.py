@@ -85,7 +85,7 @@ def validate_family(data: dict, yaml_path: pathlib.Path | None = None) -> None:
     _validate_recipe_craft_rows(family, locations)
     _validate_trigger_lookup_uniqueness(family, locations, items, path)
     _validate_tags_rows(family, locations, items, path)
-    _validate_level_milestone_tracks(family, locations, path)
+    _validate_level_milestone_tracks(family, locations, data.get("level_cap_tracks", {}), path)
 
 
 def _validate_unique_ids(rows: list, key: str, yaml_path: pathlib.Path, row_kind: str) -> None:
@@ -524,32 +524,44 @@ def _validate_tags_rows(family: str, locations: list, items: list, yaml_path: pa
                 )
 
 
-_VALID_LEVEL_MILESTONE_TRACKS = {"standard", "death_knight"}
-
-
-def _validate_level_milestone_tracks(family: str, locations: list, yaml_path: pathlib.Path) -> None:
-    """M4.9: every level_milestone location must declare which of the two
-    per-class tracks it belongs to (standard: every class except Death
+def _validate_level_milestone_tracks(
+    family: str, locations: list, level_cap_tracks: dict, yaml_path: pathlib.Path
+) -> None:
+    """M4.9: every level_milestone location must declare which per-class/
+    per-mode track it belongs to (standard: every class except Death
     Knight, levels 1-80; death_knight: Death Knight only, levels 55-80,
     matching the class's real Player::Create starting level). Both the C++
     level-up hook (ArchipelagoLevelScript.cpp, Task 4) and the apworld
     (locations.py's create_core_loop_locations, Task 3) need this to pick
-    the right one of the two content tracks -- a location silently missing
-    it (or naming an unrecognized track) would be a content-authoring bug,
-    not a valid state. core_loop-specific (not gated by a FamilySchema
-    opt-in flag like export_tags/export_triggers) since no other family has
-    a level_milestone trigger kind at all."""
+    the right one of the content tracks -- a location silently missing it
+    (or naming an unrecognized track) would be a content-authoring bug, not
+    a valid state. core_loop-specific (not gated by a FamilySchema opt-in
+    flag like export_tags/export_triggers) since no other family has a
+    level_milestone trigger kind at all.
+
+    M4.11.1 (Task 9): the valid-track set used to be a hardcoded
+    module-level {"standard", "death_knight"} pair -- that stopped being
+    generic the moment Zone Leveler's own track (zone_leveler_barrens)
+    needed to exist alongside them, so this now derives the valid set from
+    the YAML's own `level_cap_tracks:` block (the same block Task 3 already
+    made STARTING_LEVEL_CAP_BY_TRACK/LEVEL_CAP_TOTAL_BY_TRACK generic over)
+    instead of a fixed constant -- a brand-new track only needs a
+    `level_cap_tracks` entry plus its own location rows, no
+    generate_content.py code change."""
     if family != "core_loop":
         return
+    valid_tracks = set(level_cap_tracks.keys())
     for loc in locations:
         trigger = loc["trigger"]
         if trigger["kind"] != "level_milestone":
             continue
         track = trigger.get("track")
-        if track not in _VALID_LEVEL_MILESTONE_TRACKS:
+        if track not in valid_tracks:
             raise ValidationError(
                 f"{yaml_path}: location {loc['name']!r} has level_milestone trigger "
-                f"with track={track!r} -- must be one of {sorted(_VALID_LEVEL_MILESTONE_TRACKS)}"
+                f"with track={track!r} -- must be one of {sorted(valid_tracks)} "
+                f"(add a matching entry to the constants.level_cap_tracks: block "
+                f"if this is a new track)"
             )
 
 

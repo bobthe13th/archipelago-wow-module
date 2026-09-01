@@ -22,6 +22,13 @@ constants:
 level_cap_tracks:
   standard: {starting_level_cap: 10}
   death_knight: {starting_level_cap: 10}
+  # M4.11.1 (Task 9): Zone Leveler's Barrens track. Its own min_level is 10
+  # (zone_leveler_content_data.ZONES["barrens"].min_level) -- matches the
+  # starting cap used by standard/death_knight above, purely coincidentally
+  # (Barrens' own design spec calls for a level-10 floor). The track's total
+  # pooled-copy count is derived automatically from this starting cap and
+  # the track's own max level_milestone row below (30): 30 - 10 = 20.
+  zone_leveler_barrens: {starting_level_cap: 10}
 
 # Task 24 (Completionist mode, design spec Sec5.4): instance_clear rows now
 # carry an `expansion: vanilla|tbc|wotlk` field, driving
@@ -364,6 +371,73 @@ locations:
   - name: Reach Level 80 (Death Knight)
     location_id: 711080
     trigger: {kind: level_milestone, level: 80, track: death_knight}
+
+  # M4.11.1 (Task 9): Zone Leveler's Barrens track -- levels 11-30 only (the
+  # mode's own min_level is 10, so level 10 itself needs zero Progressive
+  # Level Cap copies, matching the standard/death_knight tracks' own
+  # "starting level needs nothing" shape). Location ids in the 712000+
+  # range, parallel to standard's 710000+ and death_knight's 711000+.
+  - name: Reach Level 11 (Zone Leveler)
+    location_id: 712011
+    trigger: {kind: level_milestone, level: 11, track: zone_leveler_barrens}
+  - name: Reach Level 12 (Zone Leveler)
+    location_id: 712012
+    trigger: {kind: level_milestone, level: 12, track: zone_leveler_barrens}
+  - name: Reach Level 13 (Zone Leveler)
+    location_id: 712013
+    trigger: {kind: level_milestone, level: 13, track: zone_leveler_barrens}
+  - name: Reach Level 14 (Zone Leveler)
+    location_id: 712014
+    trigger: {kind: level_milestone, level: 14, track: zone_leveler_barrens}
+  - name: Reach Level 15 (Zone Leveler)
+    location_id: 712015
+    trigger: {kind: level_milestone, level: 15, track: zone_leveler_barrens}
+  - name: Reach Level 16 (Zone Leveler)
+    location_id: 712016
+    trigger: {kind: level_milestone, level: 16, track: zone_leveler_barrens}
+  - name: Reach Level 17 (Zone Leveler)
+    location_id: 712017
+    trigger: {kind: level_milestone, level: 17, track: zone_leveler_barrens}
+  - name: Reach Level 18 (Zone Leveler)
+    location_id: 712018
+    trigger: {kind: level_milestone, level: 18, track: zone_leveler_barrens}
+  - name: Reach Level 19 (Zone Leveler)
+    location_id: 712019
+    trigger: {kind: level_milestone, level: 19, track: zone_leveler_barrens}
+  - name: Reach Level 20 (Zone Leveler)
+    location_id: 712020
+    trigger: {kind: level_milestone, level: 20, track: zone_leveler_barrens}
+  - name: Reach Level 21 (Zone Leveler)
+    location_id: 712021
+    trigger: {kind: level_milestone, level: 21, track: zone_leveler_barrens}
+  - name: Reach Level 22 (Zone Leveler)
+    location_id: 712022
+    trigger: {kind: level_milestone, level: 22, track: zone_leveler_barrens}
+  - name: Reach Level 23 (Zone Leveler)
+    location_id: 712023
+    trigger: {kind: level_milestone, level: 23, track: zone_leveler_barrens}
+  - name: Reach Level 24 (Zone Leveler)
+    location_id: 712024
+    trigger: {kind: level_milestone, level: 24, track: zone_leveler_barrens}
+  - name: Reach Level 25 (Zone Leveler)
+    location_id: 712025
+    trigger: {kind: level_milestone, level: 25, track: zone_leveler_barrens}
+  - name: Reach Level 26 (Zone Leveler)
+    location_id: 712026
+    trigger: {kind: level_milestone, level: 26, track: zone_leveler_barrens}
+  - name: Reach Level 27 (Zone Leveler)
+    location_id: 712027
+    trigger: {kind: level_milestone, level: 27, track: zone_leveler_barrens}
+  - name: Reach Level 28 (Zone Leveler)
+    location_id: 712028
+    trigger: {kind: level_milestone, level: 28, track: zone_leveler_barrens}
+  - name: Reach Level 29 (Zone Leveler)
+    location_id: 712029
+    trigger: {kind: level_milestone, level: 29, track: zone_leveler_barrens}
+  - name: Reach Level 30 (Zone Leveler)
+    location_id: 712030
+    trigger: {kind: level_milestone, level: 30, track: zone_leveler_barrens}
+
   - name: Clear Ragefire Chasm
     location_id: 720000
     trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520, expansion: vanilla}

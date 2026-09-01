@@ -36,11 +36,13 @@ namespace Archipelago::CoreLoop
     // per-track -- see ArchipelagoRealmState.h's _levelCap).
     inline std::unordered_map<std::string, uint32_t> const STARTING_LEVEL_CAP_BY_TRACK = {
         { "standard", 10 },
+        { "zone_leveler_barrens", 10 },
         { "death_knight", 10 },
     };
 
     inline std::unordered_map<std::string, uint32_t> const LEVEL_CAP_TOTAL_BY_TRACK = {
         { "standard", 70 },
+        { "zone_leveler_barrens", 20 },
         { "death_knight", 70 },
     };
 

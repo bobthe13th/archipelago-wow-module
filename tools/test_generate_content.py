@@ -314,10 +314,32 @@ class TestLoadFamilyLevelMilestoneTrack(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = self._write(tmp, """
                 family: core_loop
+                level_cap_tracks:
+                  standard: {starting_level_cap: 10}
                 locations:
                   - name: Reach Level 5
                     location_id: 710005
                     trigger: {kind: level_milestone, level: 5, track: standard}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
+
+    def test_level_milestone_track_valid_only_via_level_cap_tracks_block(self) -> None:
+        # M4.11.1 (Task 9): the valid-track set is now derived from the
+        # YAML's own level_cap_tracks: block (not a hardcoded
+        # {"standard", "death_knight"} pair) -- a brand-new track name is
+        # accepted as long as it has a matching level_cap_tracks entry, with
+        # zero generate_content.py code changes.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                level_cap_tracks:
+                  zone_leveler_barrens: {starting_level_cap: 10}
+                locations:
+                  - name: Reach Level 11 (Zone Leveler)
+                    location_id: 712011
+                    trigger: {kind: level_milestone, level: 11, track: zone_leveler_barrens}
                 items: []
             """)
             data = load_family(path)
