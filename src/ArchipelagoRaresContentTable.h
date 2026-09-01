@@ -11,11 +11,11 @@ namespace Archipelago::Rares
     // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).
     inline constexpr int64_t AP_ITEM_KEY_HUNT_KEY = 730040;
 
-    // Every curated rare's real creature entry -> its own location id.
+    // Every curated rares row's real creature entry -> its own location id.
     // Sent unconditionally on a matching kill, same as every other
     // location-check table in this module -- a given generation may not
     // have sampled every one of these 40 into its actual location pool
-    // (see rares.yaml's own header comment on density sampling), but the
+    // (see content/rares.yaml's own header comment on density sampling), but the
     // AP server silently ignores a location id outside a slot's actual
     // location table (the same MultiServer.py behavior Task 11's filler
     // fix already relies on), so sending the full set is safe regardless.

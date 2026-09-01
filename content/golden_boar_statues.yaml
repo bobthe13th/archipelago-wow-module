@@ -1,0 +1,135 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/golden_boar_statues.yaml
+family: golden_boar_statues
+
+# M4.11.1 Task 10 (Zone Leveler's Barrens flagship, golden_boar_statues goal):
+# a curated, Barrens-ONLY rare-mob-kill roster -- structurally identical to
+# Key Hunt's rares.yaml (same "curated family, density-sampled, N required"
+# mechanism, goals.py), renamed to "Golden Boar Statues" per the project
+# owner's own request to keep this family's own flavor name distinct from
+# Key Hunt's rares.
+#
+# Curation methodology, following rares.yaml's own precedent exactly (real
+# creature_template rank IN (2, 4) i.e. CREATURE_ELITE_RAREELITE/
+# CREATURE_ELITE_RARE, cross-referenced against a real overworld spawn):
+# candidates were first identified against external, authoritative WoW
+# reference sources (Wowhead NPC pages and community Barrens-rare-spawn
+# guides) as real, documented Barrens rares, DELIBERATELY NOT using this
+# module's own resolve_zone_id_from_position/parse_world_map_areas
+# mechanism (db_extract.py, rares.yaml's own Task 5 zone-tagging tool) --
+# investigated during this task's own research and found UNRELIABLE for
+# Barrens specifically: Barrens' own WorldMapArea.dbc bounding box is
+# unusually large and overlaps several real neighboring zones (Thousand
+# Needles, Dustwallow Marsh, Stonetalon Mountains), so real Barrens
+# creatures can resolve to a neighboring zone under that box-based mechanism.
+# External reference-source corroboration avoids that specific failure mode.
+#
+# Independently re-verified this session, live, against this checkout's own
+# real acore_world DB (not merely trusted from the external-source pass
+# above): `SELECT entry, name, minlevel, rank FROM creature_template WHERE
+# entry IN (<the 20 entries below>)` -- every entry/name/minlevel/rank
+# matched exactly (all 20 real rank-2/4 rows), and every entry was confirmed
+# absent from rares.yaml's own existing 40 curated creature_entry values (no
+# collision between the two families' rosters).
+#
+# location_id note: this family's location_id range was NOT placed at
+# 740000+ as an earlier planning draft suggested -- 740000-740138 is already
+# owned by filler.yaml (139 real "Filler Check N" sink locations), confirmed
+# by inspecting content/filler.yaml directly before assigning ids here.
+# Placed instead immediately after rares.yaml's own 730000-730040 range
+# (731000-731019, 20 rows) -- real, confirmed-free space (no other family
+# claims anything in 730041-739999), and numerically adjacent to the family
+# this one is structurally modeled on.
+#
+# item_id 810011 is the real next-free id after core_loop.yaml's own
+# 810000-810010 range (confirmed via a grep across every content/*.yaml
+# file before assigning) -- gates.yaml's own item range starts at 830000, so
+# no collision there either.
+#
+# delivery: unlike rares.yaml's "Key Hunt: Key" (delivery.effect=grant_key,
+# tracked via ArchipelagoRealmState::GetKeyCount()/GrantKey(), which is
+# hardcoded to a single "key_hunt_key_count" flag-store key -- confirmed by
+# reading ArchipelagoRealmState.h directly), "Golden Boar Statue" needs its
+# OWN distinct realm-state counter, not a silent alias of Key Hunt's. A new
+# `grant_statue` realm_state effect is added to generate_content.py's
+# _REALM_STATE_EFFECTS allowlist for this (mirrors grant_key's shape: a
+# countable progression item, not a one-time flag like record_milestone/
+# record_achievement). Actually wiring a live in-game counter for it
+# (ArchipelagoPlayerScript.cpp/ArchipelagoRealmState.h/ArchipelagoGoals.cpp)
+# is real C++ work out of this task's own Files list (Task 10 is
+# content-family + Python-side wiring only, per the dev cheat sheet's "new
+# family" runbook step 6: "if it needs a real in-game trigger, that's
+# separate C++ work") -- AP's own generation-time goal completion
+# (goals.py's Zone Leveler validator/completion rule, Task 11) reads
+# world.golden_boar_statues_sampled_count and multiworld item state
+# directly, independent of this delivery block.
+#
+# No `tags:` block on these rows (unlike rares.yaml's per-row zone tags) --
+# every row here is already Barrens-only by curation, so there is no
+# zone-pool dimension left to filter on within this family.
+locations:
+  - name: "Golden Boar Statue Kill: Dishu"
+    location_id: 731000
+    trigger: {kind: creature_kill, creature_entry: 5865}  # level 13
+  - name: "Golden Boar Statue Kill: Elder Mystic Razorsnout"
+    location_id: 731001
+    trigger: {kind: creature_kill, creature_entry: 3270}  # level 15
+  - name: "Golden Boar Statue Kill: Rathorian"
+    location_id: 731002
+    trigger: {kind: creature_kill, creature_entry: 3470}  # level 15
+  - name: "Golden Boar Statue Kill: Stonearm"
+    location_id: 731003
+    trigger: {kind: creature_kill, creature_entry: 5837}  # level 15
+  - name: "Golden Boar Statue Kill: Trigore the Lasher"
+    location_id: 731004
+    trigger: {kind: creature_kill, creature_entry: 3652}  # level 17
+  - name: "Golden Boar Statue Kill: Boahn"
+    location_id: 731005
+    trigger: {kind: creature_kill, creature_entry: 3672}  # level 17
+  - name: "Golden Boar Statue Kill: Snort the Heckler"
+    location_id: 731006
+    trigger: {kind: creature_kill, creature_entry: 5829}  # level 17
+  - name: "Golden Boar Statue Kill: Brokespear"
+    location_id: 731007
+    trigger: {kind: creature_kill, creature_entry: 5838}  # level 17
+  - name: "Golden Boar Statue Kill: Rocklance"
+    location_id: 731008
+    trigger: {kind: creature_kill, creature_entry: 5841}  # level 17
+  - name: "Golden Boar Statue Kill: Foreman Grills"
+    location_id: 731009
+    trigger: {kind: creature_kill, creature_entry: 5835}  # level 18
+  - name: "Golden Boar Statue Kill: Takk the Leaper"
+    location_id: 731010
+    trigger: {kind: creature_kill, creature_entry: 5842}  # level 19
+  - name: "Golden Boar Statue Kill: Sister Rathtalon"
+    location_id: 731011
+    trigger: {kind: creature_kill, creature_entry: 5830}  # level 19
+  - name: "Golden Boar Statue Kill: Sludge Beast"
+    location_id: 731012
+    trigger: {kind: creature_kill, creature_entry: 3295}  # level 19
+  - name: "Golden Boar Statue Kill: Geopriest Gukk'rok"
+    location_id: 731013
+    trigger: {kind: creature_kill, creature_entry: 5863}  # level 19
+  - name: "Golden Boar Statue Kill: Gesharahan"
+    location_id: 731014
+    trigger: {kind: creature_kill, creature_entry: 3398}  # level 20
+  - name: "Golden Boar Statue Kill: Swiftmane"
+    location_id: 731015
+    trigger: {kind: creature_kill, creature_entry: 5831}  # level 21
+  - name: "Golden Boar Statue Kill: Swinegart Spearhide"
+    location_id: 731016
+    trigger: {kind: creature_kill, creature_entry: 5864}  # level 22
+  - name: "Golden Boar Statue Kill: Humar the Pridelord"
+    location_id: 731017
+    trigger: {kind: creature_kill, creature_entry: 5828}  # level 23
+  - name: "Golden Boar Statue Kill: Silithid Harvester"
+    location_id: 731018
+    trigger: {kind: creature_kill, creature_entry: 3253}  # level 24
+  - name: "Golden Boar Statue Kill: Azzere the Skyblade"
+    location_id: 731019
+    trigger: {kind: creature_kill, creature_entry: 5834}  # level 25
+
+items:
+  - name: "Golden Boar Statue"
+    item_id: 810011
+    count: 20
+    delivery: {kind: realm_state, effect: grant_statue, step: 1}

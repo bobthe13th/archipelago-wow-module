@@ -20,6 +20,16 @@ class ValidationError(ValueError):
     """A content YAML file violates a schema/cross-reference constraint."""
 
 
+def _pascal_case(snake: str) -> str:
+    """snake_case -> PascalCase for a C++ namespace name (e.g. "golden_boar_statues"
+    -> "GoldenBoarStatues"), matching the existing hand-written multi-word
+    namespaces already in this file (Archipelago::CoreLoop,
+    Archipelago::FillerRewardEffects) -- deliberately NOT the same as Python's
+    str.title(), which leaves underscores in place (family.title() is only
+    safe for _emit_cpp_gates' single-word families, "gates"/"holidaysanity")."""
+    return "".join(word.capitalize() for word in snake.split("_"))
+
+
 def _cpp_const_name(name: str) -> str:
     """AP_ITEM_<NAME> constant identifier from a content item's display name.
 
@@ -652,6 +662,20 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     "rares": FamilySchema(
         valid_trigger_kinds={"rare_kill"}, valid_delivery_kinds={"realm_state"}, export_tags=True,
     ),
+    # M4.11.1 Task 10: structurally identical to "rares" above (reuses
+    # _emit_python_rares/_emit_cpp_rares verbatim -- see emit_python/emit_cpp's
+    # own `family in ("rares", "golden_boar_statues")` dispatch branch below),
+    # a curated Barrens-only rare-mob-kill roster for Zone Leveler's
+    # golden_boar_statues goal. trigger.kind is "creature_kill" (not
+    # rares' own "rare_kill") per this family's own content/golden_boar_
+    # statues.yaml -- harmless divergence, since neither shared emitter reads
+    # trigger.kind at all (only trigger.creature_entry). export_tags is False
+    # here (unlike rares) because golden_boar_statues.yaml has no `tags:`
+    # block on its rows -- every row is already Barrens-only by curation, so
+    # there's no zone-pool dimension left to filter on within this family.
+    "golden_boar_statues": FamilySchema(
+        valid_trigger_kinds={"creature_kill"}, valid_delivery_kinds={"realm_state"},
+    ),
     "fish": FamilySchema(valid_trigger_kinds={"fish_catch"}, valid_delivery_kinds={"mail"}),
     "professions": FamilySchema(valid_trigger_kinds={"skill_milestone"}, valid_delivery_kinds={"realm_state"}),
     "collections": FamilySchema(valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"}),
@@ -714,6 +738,12 @@ _REALM_STATE_EFFECTS = {
     "grant_key",
     "record_milestone",
     "record_achievement",
+    # M4.11.1 Task 10 (golden_boar_statues.yaml): a distinct countable
+    # progression-item effect for Zone Leveler's Golden Boar Statue, same
+    # shape as grant_key but its own realm-state counter -- NOT a reuse of
+    # grant_key/GetKeyCount(), which ArchipelagoRealmState.h hardcodes to a
+    # single "key_hunt_key_count" flag-store key belonging to Key Hunt.
+    "grant_statue",
 }
 
 
@@ -872,7 +902,7 @@ def emit_python(data: dict) -> str:
         return _emit_python_traps(data)
     if family == "filler_reward_effects":
         return _emit_python_filler_reward_effects(data)
-    if family == "rares":
+    if family in ("rares", "golden_boar_statues"):
         return _emit_python_rares(data)
     if family == "fish":
         return _emit_python_fish(data)
@@ -1102,7 +1132,12 @@ def _emit_python_filler_reward_effects(data: dict) -> str:
 
 
 def _emit_python_rares(data: dict) -> str:
-    lines = [_GENERATED_HEADER_PY.format(source="content/rares.yaml"), ""]
+    # M4.11.1 Task 10: parameterized on data["family"] (was hardcoded to
+    # "content/rares.yaml") so golden_boar_statues.yaml -- identical shape,
+    # reusing this function verbatim per emit_python's own dispatch below --
+    # gets its own correct header comment instead of rares.yaml's.
+    family = data["family"]
+    lines = [_GENERATED_HEADER_PY.format(source=f"content/{family}.yaml"), ""]
     lines.append("LOCATIONS: dict[str, int] = {")
     for loc in data["locations"]:
         lines.append(f'    "{loc["name"]}": {loc["location_id"]},')
@@ -1781,7 +1816,7 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_traps(data)
     if family == "filler_reward_effects":
         return _emit_cpp_filler_reward_effects(data)
-    if family == "rares":
+    if family in ("rares", "golden_boar_statues"):
         return _emit_cpp_rares(data)
     if family == "fish":
         return _emit_cpp_fish(data)
@@ -2029,23 +2064,33 @@ def _emit_cpp_filler_reward_effects(data: dict) -> str:
 
 
 def _emit_cpp_rares(data: dict) -> str:
+    # M4.11.1 Task 10: parameterized on data["family"] (was hardcoded to
+    # "rares"/"Archipelago::Rares") so golden_boar_statues.yaml -- identical
+    # shape, reusing this function verbatim per emit_cpp's own dispatch
+    # below -- gets its own correct header/namespace/comment instead of
+    # rares.yaml's. _pascal_case (not family.title(), which would leave
+    # "Golden_Boar_Statues") gives the same multi-word-namespace shape this
+    # file's other hand-written namespaces already use (Archipelago::CoreLoop
+    # etc).
+    family = data["family"]
+    namespace = "Archipelago::" + _pascal_case(family)
     lines = [
-        _GENERATED_HEADER_CPP.format(source="content/rares.yaml"),
+        _GENERATED_HEADER_CPP.format(source=f"content/{family}.yaml"),
         "#pragma once", "",
         "#include <cstdint>",
         "#include <unordered_map>", "",
-        "namespace Archipelago::Rares", "{",
+        f"namespace {namespace}", "{",
     ]
     lines.append("    // AP item ids (all int64_t, matching Archipelago::ReceivedItem::item).")
     for item in data["items"]:
         const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
-    lines.append("    // Every curated rare's real creature entry -> its own location id.")
+    lines.append(f"    // Every curated {family} row's real creature entry -> its own location id.")
     lines.append("    // Sent unconditionally on a matching kill, same as every other")
     lines.append("    // location-check table in this module -- a given generation may not")
-    lines.append("    // have sampled every one of these 40 into its actual location pool")
-    lines.append("    // (see rares.yaml's own header comment on density sampling), but the")
+    lines.append(f"    // have sampled every one of these {len(data['locations'])} into its actual location pool")
+    lines.append(f"    // (see content/{family}.yaml's own header comment on density sampling), but the")
     lines.append("    // AP server silently ignores a location id outside a slot's actual")
     lines.append("    // location table (the same MultiServer.py behavior Task 11's filler")
     lines.append("    // fix already relies on), so sending the full set is safe regardless.")
