@@ -2,9 +2,26 @@
 family: core_loop
 
 constants:
-  STARTING_LEVEL_CAP: 10
-  LEVEL_CAP_STEP: 5
+  LEVEL_CAP_STEP: 1
   SPRINT_GOAL_LEVEL: 60
+  # STARTING_LEVEL_CAP removed as a single flat value -- now derived
+  # per-track (level_cap_tracks below) since Zone Leveler's own track
+  # (Task 9) needs a different starting cap/ceiling than the shared
+  # standard/death_knight tracks. See generate_content.py's
+  # _emit_python_core_loop / _emit_cpp_core_loop for the STARTING_LEVEL_CAP_BY_TRACK
+  # / LEVEL_CAP_TOTAL_BY_TRACK dicts this produces.
+
+# M4.11.1 (Task 3): per-track starting Progressive Level Cap value. Each
+# track's own ceiling (used to compute LEVEL_CAP_TOTAL_BY_TRACK) is derived
+# from that track's own max level_milestone level in `locations:` below --
+# only the starting cap needs authoring here, since a track's lowest
+# level_milestone location is NOT reliably one-above the starting cap (the
+# standard/death_knight tracks both still emit "Reach Level N" locations
+# for every level from 1 (standard) / 55 (death_knight) upward, including
+# levels below the real starting cap, as free/no-item-required checks).
+level_cap_tracks:
+  standard: {starting_level_cap: 10}
+  death_knight: {starting_level_cap: 10}
 
 # Task 24 (Completionist mode, design spec Sec5.4): instance_clear rows now
 # carry an `expansion: vanilla|tbc|wotlk` field, driving
@@ -458,17 +475,21 @@ locations:
         - {name: "The Lich King", entry: 36597, final: true}
 
 items:
-  # M4.9: count raised from 10 to 14 -- STARTING_LEVEL_CAP (10) + 14 *
-  # LEVEL_CAP_STEP (5) = 80, matching the new level-milestone ceiling
-  # (the old count of 10 was tuned to stop at exactly 60 =
-  # SPRINT_GOAL_LEVEL under the old every-5-levels granularity). Sprint's
-  # own goal is unaffected -- it still only requires reaching level 60,
-  # not all 14 copies; see goals.py's _set_completion_rule_sprint (Task 3)
-  # for the real level-60-specific threshold this change required.
+  # M4.11.1 (Task 3): count raised from 14 to 70 -- LEVEL_CAP_STEP dropped
+  # from 5 to 1 (one copy now raises the cap by exactly 1 level instead of
+  # 5), so the standard track's own pooled total
+  # (LEVEL_CAP_TOTAL_BY_TRACK["standard"], generate_content.py) is now
+  # level_cap_tracks.standard.starting_level_cap (10) subtracted from the
+  # standard track's own level-milestone ceiling of 80: 80 - 10 = 70.
+  # (Previously: STARTING_LEVEL_CAP (10) + 14 * LEVEL_CAP_STEP (5) = 80,
+  # under the old every-5th-level granularity.) Sprint's own goal is
+  # unaffected -- it still only requires reaching level 60, not all 70
+  # copies; see goals.py's _set_completion_rule_sprint for the real
+  # level-60-specific threshold this change required.
   - name: Progressive Level Cap
     item_id: 810000
-    count: 14
-    delivery: {kind: realm_state, effect: raise_level_cap, step: 5}
+    count: 70
+    delivery: {kind: realm_state, effect: raise_level_cap, step: 1}
   - name: "Instance Unlock: Ragefire Chasm"
     item_id: 810001
     count: 1

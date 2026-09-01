@@ -20,9 +20,26 @@ namespace Archipelago::CoreLoop
     inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_SUNWELL_PLATEAU = 810006;
     inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_ICECROWN_CITADEL = 810007;
 
-    inline constexpr uint32_t STARTING_LEVEL_CAP = 10;
-    inline constexpr uint32_t LEVEL_CAP_STEP = 5;
+    inline constexpr uint32_t LEVEL_CAP_STEP = 1;
     inline constexpr uint32_t SPRINT_GOAL_LEVEL = 60;
+
+    // M4.11.1 (Task 3): per-track starting Progressive Level Cap value and
+    // pooled copy count needed to reach that track's own level-milestone
+    // ceiling at LEVEL_CAP_STEP == 1, replacing the old single flat
+    // STARTING_LEVEL_CAP constant -- emitted for parity with the Python side
+    // (core_loop_content_data.STARTING_LEVEL_CAP_BY_TRACK /
+    // LEVEL_CAP_TOTAL_BY_TRACK); not consumed anywhere in the C++ module as of
+    // this task (the real level cap is single global realm state, not
+    // per-track -- see ArchipelagoRealmState.h's _levelCap).
+    inline std::unordered_map<std::string, uint32_t> const STARTING_LEVEL_CAP_BY_TRACK = {
+        { "standard", 10 },
+        { "death_knight", 10 },
+    };
+
+    inline std::unordered_map<std::string, uint32_t> const LEVEL_CAP_TOTAL_BY_TRACK = {
+        { "standard", 70 },
+        { "death_knight", 70 },
+    };
 
     inline std::string const INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm";
     inline std::string const INSTANCE_KEY_DEADMINES = "deadmines";

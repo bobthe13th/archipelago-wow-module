@@ -873,8 +873,9 @@ def emit_python(data: dict) -> str:
 
 def _emit_python_core_loop(data: dict) -> str:
     constants = data["constants"]
+    level_cap_tracks = data.get("level_cap_tracks", {})
     lines = [_GENERATED_HEADER_PY.format(source="content/core_loop.yaml"), ""]
-    for key in ("STARTING_LEVEL_CAP", "LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
+    for key in ("LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
         lines.append(f"{key} = {constants[key]}")
     lines.append("")
     lines.append("ITEMS: dict[str, tuple[int, int]] = {")
@@ -906,6 +907,29 @@ def _emit_python_core_loop(data: dict) -> str:
     for track_name, locs in tracks.items():
         entries = ", ".join(f'{loc["trigger"]["level"]}: {loc["location_id"]}' for loc in locs)
         lines.append(f'    "{track_name}": {{{entries}}},')
+    lines.append("}")
+    lines.append("")
+    lines.append("# M4.11.1 (Task 3): per-track starting Progressive Level Cap value, read")
+    lines.append("# directly from core_loop.yaml's level_cap_tracks: block -- NOT derived from")
+    lines.append("# a track's own lowest level_milestone level, since standard/death_knight both")
+    lines.append("# emit 'Reach Level N' locations below their real starting cap too (free,")
+    lines.append("# no-item-required checks), so the lowest milestone level in a track does not")
+    lines.append("# reliably equal starting_cap + 1.")
+    lines.append("STARTING_LEVEL_CAP_BY_TRACK: dict[str, int] = {")
+    for track_name in tracks:
+        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        lines.append(f'    "{track_name}": {starting_cap},')
+    lines.append("}")
+    lines.append("")
+    lines.append("# M4.11.1 (Task 3): pooled Progressive Level Cap copy count needed to reach")
+    lines.append("# a track's own level-milestone ceiling from its starting cap, at")
+    lines.append("# LEVEL_CAP_STEP == 1 (total = ceiling - starting_cap, the step==1")
+    lines.append("# simplification of ceil((ceiling - starting_cap) / LEVEL_CAP_STEP)).")
+    lines.append("LEVEL_CAP_TOTAL_BY_TRACK: dict[str, int] = {")
+    for track_name, locs in tracks.items():
+        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        ceiling = max(loc["trigger"]["level"] for loc in locs)
+        lines.append(f'    "{track_name}": {ceiling - starting_cap},')
     lines.append("}")
     lines.append("")
     lines.append("# M4.9: name for each (track, level) pair, generated directly from each")
@@ -1719,10 +1743,14 @@ def emit_cpp(data: dict) -> str:
 
 def _emit_cpp_core_loop(data: dict) -> str:
     constants = data["constants"]
+    level_cap_tracks = data.get("level_cap_tracks", {})
     milestone_locs = sorted(
         (loc for loc in data["locations"] if loc["trigger"]["kind"] == "level_milestone"),
         key=lambda loc: loc["trigger"]["level"],
     )
+    tracks: dict[str, list] = {}
+    for loc in milestone_locs:
+        tracks.setdefault(loc["trigger"]["track"], []).append(loc)
     clear_locs = [loc for loc in data["locations"] if loc["trigger"]["kind"] == "instance_clear"]
 
     lines = [
@@ -1739,8 +1767,29 @@ def _emit_cpp_core_loop(data: dict) -> str:
         const_name = _cpp_const_name(item["name"])
         lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
     lines.append("")
-    for key in ("STARTING_LEVEL_CAP", "LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
+    for key in ("LEVEL_CAP_STEP", "SPRINT_GOAL_LEVEL"):
         lines.append(f"    inline constexpr uint32_t {key} = {constants[key]};")
+    lines.append("")
+    lines.append("    // M4.11.1 (Task 3): per-track starting Progressive Level Cap value and")
+    lines.append("    // pooled copy count needed to reach that track's own level-milestone")
+    lines.append("    // ceiling at LEVEL_CAP_STEP == 1, replacing the old single flat")
+    lines.append("    // STARTING_LEVEL_CAP constant -- emitted for parity with the Python side")
+    lines.append("    // (core_loop_content_data.STARTING_LEVEL_CAP_BY_TRACK /")
+    lines.append("    // LEVEL_CAP_TOTAL_BY_TRACK); not consumed anywhere in the C++ module as of")
+    lines.append("    // this task (the real level cap is single global realm state, not")
+    lines.append("    // per-track -- see ArchipelagoRealmState.h's _levelCap).")
+    lines.append("    inline std::unordered_map<std::string, uint32_t> const STARTING_LEVEL_CAP_BY_TRACK = {")
+    for track_name in tracks:
+        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        lines.append(f'        {{ "{track_name}", {starting_cap} }},')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    inline std::unordered_map<std::string, uint32_t> const LEVEL_CAP_TOTAL_BY_TRACK = {")
+    for track_name, locs in tracks.items():
+        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        ceiling = max(loc["trigger"]["level"] for loc in locs)
+        lines.append(f'        {{ "{track_name}", {ceiling - starting_cap} }},')
+    lines.append("    };")
     lines.append("")
     for loc in clear_locs:
         key = loc["trigger"]["instance_key"]
