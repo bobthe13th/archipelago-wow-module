@@ -871,6 +871,29 @@ def emit_python(data: dict) -> str:
     raise ValidationError(f"unknown family: {family!r}")
 
 
+def _track_starting_level_cap(level_cap_tracks: dict, track_name: str) -> int:
+    """M4.11.1 fix-round: a level_milestone track with no matching entry in
+    core_loop.yaml's level_cap_tracks: block used to raise a bare, cryptic
+    KeyError from deep inside dict indexing -- surfaced by the compiler's own
+    test_generate_content.py suite, whose core_loop fixtures predate this
+    task and never got a level_cap_tracks block added to match (a real
+    regression this task introduced, caught by test review). Raise a clear,
+    actionable ValidationError instead, matching this module's existing
+    validation style (_validate_level_milestone_tracks et al.) -- both so a
+    real content-authoring mistake (add a new track's locations, forget its
+    level_cap_tracks entry) fails loudly instead of with a raw KeyError, and
+    so a hand-built test fixture that forgets the block gets the same clear
+    signal rather than an unhelpful traceback."""
+    track = level_cap_tracks.get(track_name)
+    if track is None or "starting_level_cap" not in track:
+        raise ValidationError(
+            f"core_loop: track {track_name!r} has level_milestone locations but no "
+            f"matching entry in the constants.level_cap_tracks: block -- add "
+            f"level_cap_tracks.{track_name}.starting_level_cap"
+        )
+    return track["starting_level_cap"]
+
+
 def _emit_python_core_loop(data: dict) -> str:
     constants = data["constants"]
     level_cap_tracks = data.get("level_cap_tracks", {})
@@ -917,7 +940,7 @@ def _emit_python_core_loop(data: dict) -> str:
     lines.append("# reliably equal starting_cap + 1.")
     lines.append("STARTING_LEVEL_CAP_BY_TRACK: dict[str, int] = {")
     for track_name in tracks:
-        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        starting_cap = _track_starting_level_cap(level_cap_tracks, track_name)
         lines.append(f'    "{track_name}": {starting_cap},')
     lines.append("}")
     lines.append("")
@@ -927,7 +950,7 @@ def _emit_python_core_loop(data: dict) -> str:
     lines.append("# simplification of ceil((ceiling - starting_cap) / LEVEL_CAP_STEP)).")
     lines.append("LEVEL_CAP_TOTAL_BY_TRACK: dict[str, int] = {")
     for track_name, locs in tracks.items():
-        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        starting_cap = _track_starting_level_cap(level_cap_tracks, track_name)
         ceiling = max(loc["trigger"]["level"] for loc in locs)
         lines.append(f'    "{track_name}": {ceiling - starting_cap},')
     lines.append("}")
@@ -1780,13 +1803,13 @@ def _emit_cpp_core_loop(data: dict) -> str:
     lines.append("    // per-track -- see ArchipelagoRealmState.h's _levelCap).")
     lines.append("    inline std::unordered_map<std::string, uint32_t> const STARTING_LEVEL_CAP_BY_TRACK = {")
     for track_name in tracks:
-        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        starting_cap = _track_starting_level_cap(level_cap_tracks, track_name)
         lines.append(f'        {{ "{track_name}", {starting_cap} }},')
     lines.append("    };")
     lines.append("")
     lines.append("    inline std::unordered_map<std::string, uint32_t> const LEVEL_CAP_TOTAL_BY_TRACK = {")
     for track_name, locs in tracks.items():
-        starting_cap = level_cap_tracks[track_name]["starting_level_cap"]
+        starting_cap = _track_starting_level_cap(level_cap_tracks, track_name)
         ceiling = max(loc["trigger"]["level"] for loc in locs)
         lines.append(f'        {{ "{track_name}", {ceiling - starting_cap} }},')
     lines.append("    };")

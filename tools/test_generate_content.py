@@ -144,6 +144,10 @@ class TestEmitCpp(unittest.TestCase):
         data = {
             "family": "core_loop",
             "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
             "locations": [
                 {"name": "Reach Level 5", "location_id": 710005,
                  "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
@@ -164,7 +168,17 @@ class TestEmitCpp(unittest.TestCase):
         text = emit_cpp(data)
         self.assertIn("AP_ITEM_PROGRESSIVE_LEVEL_CAP = 810000", text)
         self.assertIn("AP_ITEM_INSTANCE_UNLOCK_RAGEFIRE_CHASM = 810001", text)
-        self.assertIn("STARTING_LEVEL_CAP = 10", text)
+        # M4.11.1 fix-round: the bare STARTING_LEVEL_CAP constant was retired
+        # in favor of two per-track maps (STARTING_LEVEL_CAP_BY_TRACK,
+        # LEVEL_CAP_TOTAL_BY_TRACK), sourced from this fixture's own
+        # level_cap_tracks block above rather than a single flat value --
+        # confirms both maps are populated per track, not just present.
+        self.assertIn("STARTING_LEVEL_CAP_BY_TRACK", text)
+        self.assertIn('{ "standard", 0 }', text)
+        self.assertIn('{ "death_knight", 54 }', text)
+        self.assertIn("LEVEL_CAP_TOTAL_BY_TRACK", text)
+        self.assertIn('{ "standard", 5 }', text)  # ceiling 5 - starting_cap 0
+        self.assertIn('{ "death_knight", 1 }', text)  # ceiling 55 - starting_cap 54
         self.assertIn('INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm"', text)
         self.assertIn("{ INSTANCE_KEY_RAGEFIRE_CHASM, 11520 }", text)
         self.assertIn("LEVEL_LOCATIONS_STANDARD", text)
@@ -177,6 +191,10 @@ class TestEmitCpp(unittest.TestCase):
         data = {
             "family": "core_loop",
             "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
             "locations": [
                 {"name": "Reach Level 5", "location_id": 710005,
                  "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
@@ -197,6 +215,10 @@ class TestEmitPythonCoreLoopTracks(unittest.TestCase):
         data = {
             "family": "core_loop",
             "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
             "locations": [
                 {"name": "Reach Level 5", "location_id": 710005,
                  "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
@@ -216,6 +238,44 @@ class TestEmitPythonCoreLoopTracks(unittest.TestCase):
             namespace["LEVEL_LOCATION_NAMES_BY_TRACK"]["death_knight"],
             {55: "Reach Level 55 (Death Knight)"},
         )
+
+
+class TestCoreLoopMissingLevelCapTrackEntry(unittest.TestCase):
+    """M4.11.1 fix-round: a level_milestone track with no matching entry in
+    core_loop.yaml's level_cap_tracks: block used to raise a bare KeyError
+    from deep inside _emit_python_core_loop/_emit_cpp_core_loop's dict
+    indexing -- caught by test review as a real regression this task
+    introduced (this suite's own pre-existing core_loop fixtures never got a
+    level_cap_tracks block added to match). Both emitters now raise a clear
+    ValidationError instead (via the shared _track_starting_level_cap
+    helper), so a genuine content-authoring mistake (a new track's
+    locations added without a matching level_cap_tracks entry) fails loudly
+    with an actionable message rather than an unhelpful traceback."""
+
+    def _data_missing_level_cap_tracks(self) -> dict:
+        return {
+            "family": "core_loop",
+            "constants": {"LEVEL_CAP_STEP": 1, "SPRINT_GOAL_LEVEL": 60},
+            # Deliberately omit "level_cap_tracks" entirely -- the real gap
+            # this fix-round addresses.
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+            ],
+            "items": [],
+        }
+
+    def test_emit_python_raises_validation_error_not_key_error(self) -> None:
+        with self.assertRaises(ValidationError) as ctx:
+            emit_python(self._data_missing_level_cap_tracks())
+        self.assertIn("standard", str(ctx.exception))
+        self.assertIn("level_cap_tracks", str(ctx.exception))
+
+    def test_emit_cpp_raises_validation_error_not_key_error(self) -> None:
+        with self.assertRaises(ValidationError) as ctx:
+            emit_cpp(self._data_missing_level_cap_tracks())
+        self.assertIn("standard", str(ctx.exception))
+        self.assertIn("level_cap_tracks", str(ctx.exception))
 
 
 class TestLoadFamilyLevelMilestoneTrack(unittest.TestCase):
