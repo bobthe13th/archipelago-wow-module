@@ -153,6 +153,89 @@ def parse_achievement_categories(dbc_path: pathlib.Path = _ACHIEVEMENT_CATEGORY_
     return {cat_id: (_root_of(cat_id), name_by_id[cat_id]) for cat_id in parent_by_id}
 
 
+_AREA_TABLE_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "AreaTable.dbc"
+_AREA_TABLE_ZONE_FIELD = 2  # AreaTableEntry::zone (src/server/shared/DataStores/DBCStructure.h:522):
+                             # "0 if it's a zone, else it's zone id of this area" -- i.e. this field is
+                             # 0 for a top-level zone row, or the AreaTable ID of that row's own parent
+                             # zone otherwise. field_count=36 confirmed against AreaTableEntryfmt
+                             # (src/server/shared/DataStores/DBCfmt.h:24, "niiiixxxxxissssssssssssssssxiiiiixxx").
+
+
+def parse_area_zone_ids(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[int, int]:
+    """Parse AreaTable.dbc's real `zone` field (WDBC format, same header
+    shape parse_map_expansions already documents) into an area_id ->
+    resolved TOP-LEVEL zone_id dict, walking the `zone` parent-chain up to
+    a row whose own `zone` field is 0 (a root/top-level zone resolves to
+    itself), mirroring parse_achievement_categories's own `_root_of` walk
+    for the identical reason (a subzone's real geography is its top-level
+    zone, not the subzone id itself).
+
+    This is extract_quest_rewards.py's real mechanism for resolving
+    quest_template.QuestSortID (`ZoneOrSort` in this codebase's own Quest
+    class, QuestDef.h) to a real zone_id -- confirmed reliable against this
+    checkout's live acore_world DB (M4.11.1 Task 2 research): of 9456 real
+    quest_template rows with a non-empty LogTitle, 7135 (75.5%) have a
+    POSITIVE QuestSortID, and EVERY ONE of the 182 distinct positive values
+    among them is a real AreaTable.dbc ID (zero exceptions) -- confirming
+    positive QuestSortID values are genuine Area ids, not something to be
+    guessed at. This supersedes the M4.8.0 plan's own earlier, narrower
+    finding ("QuestSortID's sign convention is NOT reliable -- quest 783
+    has QuestSortID=9, positive, contradicting an assumed 'negative=direct
+    area reference' convention"): that assumed convention was backwards.
+    This codebase's own Quest::GetZoneOrSort() is used DIRECTLY as a real
+    zone id when positive (src/server/game/Entities/Player/PlayerQuest.cpp:
+    878-879, `if (quest->GetZoneOrSort() > 0) UpdateAchievementCriteria(
+    ACHIEVEMENT_CRITERIA_TYPE_COMPLETE_QUESTS_IN_ZONE, ...)`), proving
+    positive = real zone reference. Quest 783's QuestSortID=9 resolves via
+    this function to Area 9's real parent zone 12 (Area 9's own `zone`
+    field is 12, not 0) -- not a contradiction once the parent-chain is
+    walked, just a subzone reference one level down.
+
+    The remaining 2321 rows (24.5%) have QuestSortID <= 0: 2117 negative
+    (39 distinct absolute values, ALL 39 confirmed present among
+    QuestSort.dbc's own 41 real category ids -- e.g. "Dungeon"/"PvP"/
+    "Seasonal"-style quest-log GROUPING categories, not geography at all)
+    plus 204 that are exactly 0 (no sort/zone data whatsoever). Note a real
+    id-space COLLISION exists between AreaTable.dbc and QuestSort.dbc (at
+    least 7 real ids -- 1, 22, 24, 25, 41, 141, 221 -- exist in BOTH
+    tables) -- this is exactly why the caller must check QuestSortID's
+    SIGN first and never blindly look up abs(QuestSortID) in AreaTable.dbc
+    regardless of sign. extract_quest_rewards.py's `_resolve_zone_id`
+    returns 0 (an unambiguous sentinel -- confirmed AreaTable.dbc's real
+    ids start at 1, never 0) for every QuestSortID <= 0 row instead of
+    guessing.
+
+    A `creature`/`gameobject`-`zoneId`-column fallback (via
+    creature_queststarter/gameobject_queststarter) for the QuestSortID <= 0
+    rows was investigated and REJECTED: live-checked, it rescues only 3 of
+    those 2321 rows (creature.zoneId is 0 for 144,945 of 149,975 = 96.6% of
+    ALL creature rows in this checkout) -- not worth the extra query and
+    complexity for a 0.03%-of-9456 gain.
+
+    Verified empirically against this checkout's real AreaTable.dbc: for
+    all 182 real distinct positive QuestSortID values seen in the live DB,
+    the parent-chain walk below never exceeds depth 1 (a QuestSortID is
+    either already a top-level zone, or a direct subzone of one) and never
+    cycles -- the loop guard exists defensively anyway, matching
+    parse_achievement_categories's own `_root_of` precedent."""
+    field_count, records, _string_block = _read_wdbc(dbc_path)
+    zone_field_by_id: dict[int, int] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        zone_field_by_id[fields[0]] = fields[_AREA_TABLE_ZONE_FIELD]
+
+    def _resolve_top_level_zone(area_id: int) -> int:
+        seen: set[int] = set()
+        while zone_field_by_id.get(area_id, 0) != 0:
+            if area_id in seen:
+                break  # defensive against a malformed cycle; never seen in real data
+            seen.add(area_id)
+            area_id = zone_field_by_id[area_id]
+        return area_id
+
+    return {area_id: _resolve_top_level_zone(area_id) for area_id in zone_field_by_id}
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )

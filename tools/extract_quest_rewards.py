@@ -8,7 +8,7 @@ from typing import Optional
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
+from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_area_zone_ids
 
 _LOCATION_ID_BASE = 1_000_000
 _ITEM_ID_BASE = 1_750_000
@@ -119,15 +119,32 @@ def _load_quest_expansions() -> dict[int, str]:
     return {int(quest_id): map_expansions.get(int(map_id), "vanilla") for quest_id, map_id in rows}
 
 
+def _resolve_zone_id(quest_sort_id: int, area_zone_ids: dict[int, int]) -> int:
+    """quest_template.QuestSortID (`ZoneOrSort` in this codebase's own Quest
+    class) -> a real top-level zone_id, or 0 ("no resolvable real-world
+    zone") -- see parse_area_zone_ids's own docstring (db_extract.py) for
+    the full empirical justification of this mechanism, why 0 is an
+    unambiguous sentinel (AreaTable.dbc's real ids start at 1), and why a
+    negative/zero QuestSortID must NOT be looked up by absolute value (a
+    real id-space collision exists between AreaTable.dbc and QuestSort.dbc:
+    e.g. id 22 is a real AreaTable.dbc zone AND a real QuestSort.dbc
+    category, and this checkout's live DB confirms 7 such collisions among
+    the ids actually seen -- 1, 22, 24, 25, 41, 141, 221)."""
+    if quest_sort_id <= 0:
+        return 0
+    return area_zone_ids.get(quest_sort_id, 0)
+
+
 def extract() -> dict:
     rules = load_exclusion_rules()
     quest_expansions = _load_quest_expansions()
+    area_zone_ids = parse_area_zone_ids()
     rows = run_query("""
         SELECT q.ID, q.LogTitle, q.MinLevel, a.PrevQuestID,
                q.RewardItem1, q.RewardItem2, q.RewardItem3, q.RewardItem4,
                q.RewardChoiceItemID1, q.RewardChoiceItemID2, q.RewardChoiceItemID3,
                q.RewardChoiceItemID4, q.RewardChoiceItemID5, q.RewardChoiceItemID6,
-               q.QuestInfoID, q.SuggestedGroupNum, q.Flags
+               q.QuestInfoID, q.SuggestedGroupNum, q.Flags, q.QuestSortID
         FROM quest_template q
         LEFT JOIN quest_template_addon a ON q.ID = a.ID
         WHERE q.LogTitle != ''
@@ -138,7 +155,7 @@ def extract() -> dict:
     for row in rows:
         (quest_id, title, min_level, prev_quest_id,
          ri1, ri2, ri3, ri4, rc1, rc2, rc3, rc4, rc5, rc6,
-         quest_info_id, suggested_group_num, flags) = row
+         quest_info_id, suggested_group_num, flags, quest_sort_id) = row
         if not title or is_denylisted(title, rules):
             continue
 
@@ -168,6 +185,7 @@ def extract() -> dict:
             "quest_id": quest_id_int,
             "min_level": int(min_level),
             "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
+            "zone_id": _resolve_zone_id(int(quest_sort_id), area_zone_ids),
         }
         if is_filler_reward:
             trigger["is_filler_reward"] = True

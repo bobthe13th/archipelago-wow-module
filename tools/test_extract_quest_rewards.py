@@ -6,6 +6,7 @@ from extract_quest_rewards import (
     extract,
     _compute_quest_type_tags,
     _load_quest_expansions,
+    _resolve_zone_id,
 )
 
 
@@ -72,6 +73,38 @@ class TestLoadQuestExpansions(unittest.TestCase):
         self.assertEqual(result, {100: "vanilla"})
 
 
+class TestResolveZoneId(unittest.TestCase):
+    """M4.11.1 Task 2: quest_template.QuestSortID -> a real zone_id, or 0
+    ("no resolvable real-world zone"). See db_extract.parse_area_zone_ids's
+    own docstring for the full empirical justification -- this class only
+    exercises _resolve_zone_id's own sign-check contract."""
+
+    def test_positive_quest_sort_id_resolves_via_area_zone_ids(self) -> None:
+        # Real-data shape: quest 850 "Kolkar Leaders" has QuestSortID = 17,
+        # a real top-level AreaTable.dbc zone (The Barrens, zone_level_data
+        # .ZONE_ID_BARRENS) -- a top-level zone resolves to itself.
+        self.assertEqual(_resolve_zone_id(17, {17: 17}), 17)
+
+    def test_positive_quest_sort_id_referencing_a_subzone_resolves_to_its_parent_zone(self) -> None:
+        # Real-data shape: quest 783 "A Threat Within" has QuestSortID = 9
+        # (Area 9, Northshire), a real SUBZONE whose own AreaTable.dbc
+        # `zone` field is 12 (Elwynn Forest) -- parse_area_zone_ids already
+        # walks that chain, so this dict simulates its resolved output.
+        self.assertEqual(_resolve_zone_id(9, {9: 12}), 12)
+
+    def test_negative_quest_sort_id_never_resolves_even_if_its_absolute_value_is_a_real_zone(self) -> None:
+        # A real id-space collision exists between AreaTable.dbc and
+        # QuestSort.dbc (e.g. id 22 is real in both) -- a negative
+        # QuestSortID must NEVER be looked up by absolute value.
+        self.assertEqual(_resolve_zone_id(-22, {22: 22}), 0)
+
+    def test_zero_quest_sort_id_resolves_to_zero(self) -> None:
+        self.assertEqual(_resolve_zone_id(0, {}), 0)
+
+    def test_positive_quest_sort_id_absent_from_area_zone_ids_resolves_to_zero(self) -> None:
+        self.assertEqual(_resolve_zone_id(999999, {}), 0)
+
+
 class TestExtractNullHandling(unittest.TestCase):
     """Test that extract() correctly handles SQL NULL values from LEFT JOIN.
 
@@ -81,17 +114,21 @@ class TestExtractNullHandling(unittest.TestCase):
     when a quest_template row has no matching quest_template_addon row.
     """
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_null_prev_quest_id_does_not_crash(self, mock_run_query, mock_load_rules, mock_load_expansions) -> None:
+    def test_null_prev_quest_id_does_not_crash(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("100", "Test Quest", "10", "NULL",
              "1234", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
 
         result = extract()
@@ -106,19 +143,21 @@ class TestExtractFillerRewardHandling(unittest.TestCase):
     distinctly, using the project's designated real filler item (7073,
     "Broken Fang", reused from APTraps.cpp's ApplyGreyItemBagFill)."""
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
     def test_zero_reward_quest_produces_filler_tagged_location_and_item(
-        self, mock_run_query, mock_load_rules, mock_load_expansions
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("200", "No Reward Quest", "15", "NULL",
              "0", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
 
         result = extract()
@@ -130,17 +169,21 @@ class TestExtractFillerRewardHandling(unittest.TestCase):
         self.assertEqual(result["locations"][0]["name"], "Quest: No Reward Quest Reward (#200)")
         self.assertEqual(result["locations"][0]["trigger"]["quest_id"], 200)
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_real_reward_quest_has_no_filler_tag(self, mock_run_query, mock_load_rules, mock_load_expansions) -> None:
+    def test_real_reward_quest_has_no_filler_tag(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("300", "Real Reward Quest", "20", "NULL",
              "5555", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
 
         result = extract()
@@ -149,19 +192,21 @@ class TestExtractFillerRewardHandling(unittest.TestCase):
         self.assertNotIn("is_filler_reward", result["locations"][0]["trigger"])
         self.assertEqual(result["items"][0]["delivery"]["wow_item_entry"], 5555)
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
     def test_zero_reward_quest_with_denylisted_title_is_still_excluded(
-        self, mock_run_query, mock_load_rules, mock_load_expansions
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": [r"(?i)\bqa\b"]}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("400", "QA Test Quest", "1", "NULL",
              "0", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
 
         result = extract()
@@ -171,69 +216,141 @@ class TestExtractFillerRewardHandling(unittest.TestCase):
 
 
 class TestExtractTagsAndAlwaysPresent(unittest.TestCase):
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_every_location_gets_a_real_tags_block(self, mock_run_query, mock_load_rules, mock_load_expansions) -> None:
+    def test_every_location_gets_a_real_tags_block(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("500", "Dungeon Test Quest", "20", "NULL",
              "1234", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "81", "0", "0")
+             "81", "0", "0", "0")
         ]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"], {"type": ["dungeon_quest"], "expansion": ["vanilla"]})
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_expansion_comes_from_load_quest_expansions(self, mock_run_query, mock_load_rules, mock_load_expansions) -> None:
+    def test_expansion_comes_from_load_quest_expansions(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {600: "wotlk"}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("600", "Northrend Test Quest", "70", "NULL",
              "1234", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"]["expansion"], ["wotlk"])
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
     def test_migrated_starting_quest_id_gets_always_present_true(
-        self, mock_run_query, mock_load_rules, mock_load_expansions
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("783", "A Threat Within", "1", "NULL",
              "0", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "9")
         ]
         result = extract()
         self.assertTrue(result["locations"][0]["always_present"])
 
+    @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
     def test_non_migrated_quest_has_no_always_present_key(
-        self, mock_run_query, mock_load_rules, mock_load_expansions
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {}
         mock_run_query.return_value = [
             ("999999", "Some Other Quest", "1", "NULL",
              "1", "0", "0", "0",
              "0", "0", "0", "0", "0", "0",
-             "0", "0", "0")
+             "0", "0", "0", "0")
         ]
         result = extract()
         self.assertNotIn("always_present", result["locations"][0])
+
+
+class TestExtractQuestRewardsZoneTagging(unittest.TestCase):
+    """M4.11.1 Task 2: every extracted quest_rewards row carries a real
+    zone_id, needed by Task 7's zone_leveler_content_data.py to build
+    Barrens' clear_all_zone_quests quest set (quest_rewards_content_data
+    .TRIGGERS[name]["zone_id"] == zone_level_data.ZONE_ID_BARRENS)."""
+
+    @patch("extract_quest_rewards.parse_area_zone_ids")
+    @patch("extract_quest_rewards._load_quest_expansions")
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_extracted_rows_carry_a_real_zone_id(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_load_expansions.return_value = {}
+        # Real-data shape (M4.11.1 Task 2 research): quest 850 "Kolkar
+        # Leaders" has QuestSortID = 17, a real top-level AreaTable.dbc
+        # zone id (The Barrens, zone_level_data.ZONE_ID_BARRENS).
+        mock_parse_area_zone_ids.return_value = {17: 17}
+        mock_run_query.return_value = [
+            ("850", "Kolkar Leaders", "11", "NULL",
+             "1234", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "17")
+        ]
+
+        result = extract()
+        rows = result["locations"]
+
+        self.assertIn("zone_id", rows[0]["trigger"])
+        self.assertIsInstance(rows[0]["trigger"]["zone_id"], int)
+        self.assertEqual(rows[0]["trigger"]["zone_id"], 17)
+
+    @patch("extract_quest_rewards.parse_area_zone_ids")
+    @patch("extract_quest_rewards._load_quest_expansions")
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_negative_quest_sort_id_produces_zone_id_zero_not_a_guessed_zone(
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
+    ) -> None:
+        # QuestSortID <= 0 means "not a real zone reference" (either a
+        # QuestSort.dbc category id or genuinely no data) -- must resolve
+        # to the 0 sentinel, never a guessed zone, even if area_zone_ids
+        # happens to contain a matching absolute-value key (id-space
+        # collisions between AreaTable.dbc and QuestSort.dbc are real).
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_load_expansions.return_value = {}
+        mock_parse_area_zone_ids.return_value = {22: 22}
+        mock_run_query.return_value = [
+            ("700", "Category Sorted Quest", "10", "NULL",
+             "1234", "0", "0", "0",
+             "0", "0", "0", "0", "0", "0",
+             "0", "0", "0", "-22")
+        ]
+
+        result = extract()
+
+        self.assertEqual(result["locations"][0]["trigger"]["zone_id"], 0)
 
 
 if __name__ == "__main__":

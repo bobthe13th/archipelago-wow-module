@@ -8,7 +8,7 @@ from db_extract import (
     is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
     parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
     parse_achievements, parse_achievement_categories,
-    parse_filler_buff_spell_candidates,
+    parse_filler_buff_spell_candidates, parse_area_zone_ids,
 )
 
 
@@ -318,6 +318,65 @@ class TestParseAchievementCategories(unittest.TestCase):
         self.assertEqual(result[81], (81, "Feats of Strength"))
         self.assertEqual(result[14961][0], 168)  # Secrets of Ulduar 10-Player Raid -> Dungeons & Raids
         self.assertEqual(result[14961][1], "Secrets of Ulduar 10-Player Raid")
+
+
+class TestParseAreaZoneIds(unittest.TestCase):
+    """M4.11.1 Task 2: quest_template.QuestSortID resolution mechanism --
+    see parse_area_zone_ids's own docstring (db_extract.py) for the full
+    empirical justification against this checkout's real live DB."""
+
+    def _write_fake_dbc(self, tmpdir: str, records: list[tuple[int, int]]) -> pathlib.Path:
+        """records: list of (area_id, zone_field) -- writes a minimal real
+        WDBC file with exactly 36 int32 fields per record (matching
+        AreaTableEntryfmt's real field_count, src/server/shared/DataStores/
+        DBCfmt.h:24, so field[2] really is the `zone` parent field --
+        DBCStructure.h:518-524), every other field zeroed, no string block
+        content needed."""
+        field_count = 36
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "AreaTable.dbc"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, 0))
+            for area_id, zone_field in records:
+                fields = [0] * field_count
+                fields[0] = area_id
+                fields[2] = zone_field
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+        return path
+
+    def test_a_top_level_zone_resolves_to_itself(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(17, 0)])  # The Barrens: zone field 0
+            result = parse_area_zone_ids(path)
+        self.assertEqual(result[17], 17)
+
+    def test_a_subzone_resolves_up_to_its_real_parent_zone(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(12, 0), (9, 12)])  # Elwynn Forest / Northshire
+            result = parse_area_zone_ids(path)
+        self.assertEqual(result[9], 12)
+        self.assertEqual(result[12], 12)
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                parse_area_zone_ids(path)
+
+    def test_real_area_table_dbc_resolves_known_zones_and_subzones(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # AreaTable.dbc, confirming the field[2]=`zone` offset assumption
+        # against known, human-verifiable real data (M4.11.1 Task 2
+        # research): Area 17 (The Barrens) and Area 14 (Durotar) are both
+        # real top-level zones (zone field 0, resolve to themselves); Area
+        # 9 (Northshire) is a real subzone of Area 12 (Elwynn Forest).
+        result = parse_area_zone_ids()
+        self.assertEqual(result[17], 17)   # The Barrens
+        self.assertEqual(result[14], 14)   # Durotar
+        self.assertEqual(result[9], 12)    # Northshire -> Elwynn Forest
+        self.assertEqual(result[12], 12)   # Elwynn Forest (itself a top-level zone)
 
 
 class TestParseFillerBuffSpellCandidates(unittest.TestCase):
