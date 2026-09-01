@@ -56,7 +56,7 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(len(result["items"]), 1)
         loc = result["locations"][0]
         self.assertEqual(loc["name"], "Itemsanity: Hearthstone (#6948)")
-        self.assertEqual(loc["trigger"], {"kind": "item_first_held", "item_entry": 6948})
+        self.assertEqual(loc["trigger"], {"kind": "item_first_held", "item_entry": 6948, "min_level": 0})
         self.assertEqual(loc["tags"], {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]})
         item = result["items"][0]
         self.assertEqual(item["name"], "Itemsanity Item: Hearthstone (#6948)")
@@ -103,6 +103,20 @@ class TestExtract(unittest.TestCase):
         mock_run_query.return_value = [("40395", "Bloodsurge", "4", "4", "78")]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"]["expansion"], ["wotlk"])
+
+    # M4.11.1 Task 12: min_level is the row's own real item_template.
+    # RequiredLevel, exported verbatim into `trigger` (not `tags` --
+    # TAGS is frozenset[str]-only) so Zone Leveler's whole_game_scaled
+    # filter (Archipelago's locations.py) can read it.
+    @patch("extract_itemsanity.load_exclusion_rules")
+    @patch("extract_itemsanity.run_query")
+    def test_trigger_carries_real_required_level_as_min_level(
+        self, mock_run_query, mock_load_rules
+    ) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_run_query.return_value = [("40395", "Bloodsurge", "4", "4", "78")]
+        result = extract()
+        self.assertEqual(result["locations"][0]["trigger"]["min_level"], 78)
 
     # M3 (final whole-branch review, M4.10.6): the SQL query string
     # extract() actually builds is never observed by any prior test here

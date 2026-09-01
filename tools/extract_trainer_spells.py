@@ -118,7 +118,19 @@ def extract() -> dict:
         locations.append({
             "name": f"Trainer Spell: {name} (#{spell_id})",
             "location_id": _LOCATION_ID_BASE + spell_id,
-            "trigger": {"kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True},
+            # min_level: real trainer_spell.ReqLevel, minimum across every
+            # class trainer that teaches this spell_id (M4.11.1 Task 12) --
+            # already computed above (info["req_level"]) for aggregation
+            # purposes; now also exported so Zone Leveler's whole_game_scaled
+            # filter (locations.py) can read it. Lives in `trigger`, not
+            # `tags`, same placement extract_quest_rewards.py's own min_level/
+            # zone_id already use -- TAGS is dict[str, frozenset[str]]-only
+            # (generate_content.py's export_tags emission), TRIGGERS keeps the
+            # raw trigger dict verbatim.
+            "trigger": {
+                "kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True,
+                "min_level": info["req_level"],
+            },
             "tags": {"class": sorted(info["classes"]), "expansion": [expansion]},
         })
         items.append({

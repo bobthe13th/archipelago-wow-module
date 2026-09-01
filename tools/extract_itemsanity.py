@@ -146,7 +146,16 @@ def extract() -> dict:
         locations.append({
             "name": f"Itemsanity: {display}",
             "location_id": _LOCATION_ID_BASE + idx,
-            "trigger": {"kind": "item_first_held", "item_entry": entry},
+            # min_level: real item_template.RequiredLevel (M4.11.1 Task 12) --
+            # lives in `trigger`, not `tags`, same placement
+            # extract_quest_rewards.py's own min_level/zone_id already use:
+            # TAGS is exported as dict[str, frozenset[str]] (generate_content.py's
+            # export_tags emission), which can't hold a numeric value, while
+            # TRIGGERS keeps the raw trigger dict verbatim (any value type).
+            # Consumed by locations.py's Zone Leveler whole_game_scaled filter
+            # to decide whether this row's own real level requirement falls
+            # inside the selected zone's level band.
+            "trigger": {"kind": "item_first_held", "item_entry": entry, "min_level": int(required_level_str)},
             "tags": {
                 "class": [_class_tag(int(class_str))],
                 "quality": [_quality_tag(int(quality_str))],

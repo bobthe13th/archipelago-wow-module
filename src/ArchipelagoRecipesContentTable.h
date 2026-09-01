@@ -1575,27 +1575,6 @@ inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
     {"Recipe: Plans: Reinforced Cobalt Helm (#41123)", 6041123},
     {"Recipe: Plans: Reinforced Cobalt Legplates (#41120)", 6041120},
     {"Recipe: Plans: Reinforced Cobalt Chestpiece (#41122)", 6041122},
-    {"Recipe: ZZOLD Design: Effulgent Skyflare Diamond (#41414)", 6041414},
-    {"Recipe: ZZOLD Design: Tireless Skyflare Diamond (#41415)", 6041415},
-    {"Recipe: ZZOLD Design: Forlorn Skyflare Diamond (#41416)", 6041416},
-    {"Recipe: ZZOLD Design: Impassive Skyflare Diamond (#41417)", 6041417},
-    {"Recipe: ZZOLD Design: Chaotic Skyflare Diamond (#41418)", 6041418},
-    {"Recipe: ZZOLD Design: Destructive Skyflare Diamond (#41419)", 6041419},
-    {"Recipe: ZZOLD Design: Ember Skyflare Diamond (#41420)", 6041420},
-    {"Recipe: ZZOLD Design: Enigmatic Skyflare Diamond (#41421)", 6041421},
-    {"Recipe: ZZOLD Design: Swift Skyflare Diamond (#41422)", 6041422},
-    {"Recipe: ZZOLDDesign: Thundering Skyflare Diamond (#41423)", 6041423},
-    {"Recipe: ZZOLD Design: Insightful Earthsiege Diamond (#41403)", 6041403},
-    {"Recipe: ZZOLD Design: Bracing Earthsiege Diamond (#41404)", 6041404},
-    {"Recipe: ZZOLD Design: Eternal Earthsiege Diamond (#41405)", 6041405},
-    {"Recipe: ZZOLD Design: Powerful Earthsiege Diamond (#41406)", 6041406},
-    {"Recipe: ZZOLD Design: Relentless Earthsiege Diamond (#41407)", 6041407},
-    {"Recipe: ZZOLD Design: Austere Earthsiege Diamond (#41408)", 6041408},
-    {"Recipe: ZZOLD Design: Persistent Earthsiege Diamond (#41409)", 6041409},
-    {"Recipe: ZZOLD Design: Trenchant Earthsiege Diamond (#41410)", 6041410},
-    {"Recipe: ZZOLD Design: Invigorating Earthsiege Diamond (#41411)", 6041411},
-    {"Recipe: ZZOLD Design: Beaming Earthsiege Diamond (#41412)", 6041412},
-    {"Recipe: ZZOLD Design: Revitalizing Skyflare Diamond (#41413)", 6041413},
     {"Recipe: Pattern: Red Lumberjack Shirt (#42172)", 6042172},
     {"Recipe: Pattern: Blue Lumberjack Shirt (#42173)", 6042173},
     {"Recipe: Pattern: Yellow Lumberjack Shirt (#42174)", 6042174},
@@ -3497,27 +3476,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Recipe Item: Plans: Reinforced Cobalt Helm (#41123)", 6541123},
     {"Recipe Item: Plans: Reinforced Cobalt Legplates (#41120)", 6541120},
     {"Recipe Item: Plans: Reinforced Cobalt Chestpiece (#41122)", 6541122},
-    {"Recipe Item: ZZOLD Design: Effulgent Skyflare Diamond (#41414)", 6541414},
-    {"Recipe Item: ZZOLD Design: Tireless Skyflare Diamond (#41415)", 6541415},
-    {"Recipe Item: ZZOLD Design: Forlorn Skyflare Diamond (#41416)", 6541416},
-    {"Recipe Item: ZZOLD Design: Impassive Skyflare Diamond (#41417)", 6541417},
-    {"Recipe Item: ZZOLD Design: Chaotic Skyflare Diamond (#41418)", 6541418},
-    {"Recipe Item: ZZOLD Design: Destructive Skyflare Diamond (#41419)", 6541419},
-    {"Recipe Item: ZZOLD Design: Ember Skyflare Diamond (#41420)", 6541420},
-    {"Recipe Item: ZZOLD Design: Enigmatic Skyflare Diamond (#41421)", 6541421},
-    {"Recipe Item: ZZOLD Design: Swift Skyflare Diamond (#41422)", 6541422},
-    {"Recipe Item: ZZOLDDesign: Thundering Skyflare Diamond (#41423)", 6541423},
-    {"Recipe Item: ZZOLD Design: Insightful Earthsiege Diamond (#41403)", 6541403},
-    {"Recipe Item: ZZOLD Design: Bracing Earthsiege Diamond (#41404)", 6541404},
-    {"Recipe Item: ZZOLD Design: Eternal Earthsiege Diamond (#41405)", 6541405},
-    {"Recipe Item: ZZOLD Design: Powerful Earthsiege Diamond (#41406)", 6541406},
-    {"Recipe Item: ZZOLD Design: Relentless Earthsiege Diamond (#41407)", 6541407},
-    {"Recipe Item: ZZOLD Design: Austere Earthsiege Diamond (#41408)", 6541408},
-    {"Recipe Item: ZZOLD Design: Persistent Earthsiege Diamond (#41409)", 6541409},
-    {"Recipe Item: ZZOLD Design: Trenchant Earthsiege Diamond (#41410)", 6541410},
-    {"Recipe Item: ZZOLD Design: Invigorating Earthsiege Diamond (#41411)", 6541411},
-    {"Recipe Item: ZZOLD Design: Beaming Earthsiege Diamond (#41412)", 6541412},
-    {"Recipe Item: ZZOLD Design: Revitalizing Skyflare Diamond (#41413)", 6541413},
     {"Recipe Item: Pattern: Red Lumberjack Shirt (#42172)", 6542172},
     {"Recipe Item: Pattern: Blue Lumberjack Shirt (#42173)", 6542173},
     {"Recipe Item: Pattern: Yellow Lumberjack Shirt (#42174)", 6542174},
@@ -5419,27 +5377,6 @@ inline constexpr std::pair<uint32_t, int64_t> SPELL_ID_TO_LOCATION_ID_RAW[] = {
     { 54979, 6041123 }, // "Recipe: Plans: Reinforced Cobalt Helm (#41123)"
     { 54980, 6041120 }, // "Recipe: Plans: Reinforced Cobalt Legplates (#41120)"
     { 54981, 6041122 }, // "Recipe: Plans: Reinforced Cobalt Chestpiece (#41122)"
-    { 55384, 6041414 }, // "Recipe: ZZOLD Design: Effulgent Skyflare Diamond (#41414)"
-    { 55386, 6041415 }, // "Recipe: ZZOLD Design: Tireless Skyflare Diamond (#41415)"
-    { 55387, 6041416 }, // "Recipe: ZZOLD Design: Forlorn Skyflare Diamond (#41416)"
-    { 55388, 6041417 }, // "Recipe: ZZOLD Design: Impassive Skyflare Diamond (#41417)"
-    { 55389, 6041418 }, // "Recipe: ZZOLD Design: Chaotic Skyflare Diamond (#41418)"
-    { 55390, 6041419 }, // "Recipe: ZZOLD Design: Destructive Skyflare Diamond (#41419)"
-    { 55392, 6041420 }, // "Recipe: ZZOLD Design: Ember Skyflare Diamond (#41420)"
-    { 55393, 6041421 }, // "Recipe: ZZOLD Design: Enigmatic Skyflare Diamond (#41421)"
-    { 55394, 6041422 }, // "Recipe: ZZOLD Design: Swift Skyflare Diamond (#41422)"
-    { 55395, 6041423 }, // "Recipe: ZZOLDDesign: Thundering Skyflare Diamond (#41423)"
-    { 55396, 6041403 }, // "Recipe: ZZOLD Design: Insightful Earthsiege Diamond (#41403)"
-    { 55397, 6041404 }, // "Recipe: ZZOLD Design: Bracing Earthsiege Diamond (#41404)"
-    { 55398, 6041405 }, // "Recipe: ZZOLD Design: Eternal Earthsiege Diamond (#41405)"
-    { 55399, 6041406 }, // "Recipe: ZZOLD Design: Powerful Earthsiege Diamond (#41406)"
-    { 55400, 6041407 }, // "Recipe: ZZOLD Design: Relentless Earthsiege Diamond (#41407)"
-    { 55401, 6041408 }, // "Recipe: ZZOLD Design: Austere Earthsiege Diamond (#41408)"
-    { 55402, 6041409 }, // "Recipe: ZZOLD Design: Persistent Earthsiege Diamond (#41409)"
-    { 55403, 6041410 }, // "Recipe: ZZOLD Design: Trenchant Earthsiege Diamond (#41410)"
-    { 55404, 6041411 }, // "Recipe: ZZOLD Design: Invigorating Earthsiege Diamond (#41411)"
-    { 55405, 6041412 }, // "Recipe: ZZOLD Design: Beaming Earthsiege Diamond (#41412)"
-    { 55407, 6041413 }, // "Recipe: ZZOLD Design: Revitalizing Skyflare Diamond (#41413)"
     { 55993, 6042172 }, // "Recipe: Pattern: Red Lumberjack Shirt (#42172)"
     { 55994, 6042173 }, // "Recipe: Pattern: Blue Lumberjack Shirt (#42173)"
     { 55995, 6042174 }, // "Recipe: Pattern: Yellow Lumberjack Shirt (#42174)"
@@ -7341,27 +7278,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 6541123, 41123 }, // "Recipe Item: Plans: Reinforced Cobalt Helm (#41123)"
     { 6541120, 41120 }, // "Recipe Item: Plans: Reinforced Cobalt Legplates (#41120)"
     { 6541122, 41122 }, // "Recipe Item: Plans: Reinforced Cobalt Chestpiece (#41122)"
-    { 6541414, 41414 }, // "Recipe Item: ZZOLD Design: Effulgent Skyflare Diamond (#41414)"
-    { 6541415, 41415 }, // "Recipe Item: ZZOLD Design: Tireless Skyflare Diamond (#41415)"
-    { 6541416, 41416 }, // "Recipe Item: ZZOLD Design: Forlorn Skyflare Diamond (#41416)"
-    { 6541417, 41417 }, // "Recipe Item: ZZOLD Design: Impassive Skyflare Diamond (#41417)"
-    { 6541418, 41418 }, // "Recipe Item: ZZOLD Design: Chaotic Skyflare Diamond (#41418)"
-    { 6541419, 41419 }, // "Recipe Item: ZZOLD Design: Destructive Skyflare Diamond (#41419)"
-    { 6541420, 41420 }, // "Recipe Item: ZZOLD Design: Ember Skyflare Diamond (#41420)"
-    { 6541421, 41421 }, // "Recipe Item: ZZOLD Design: Enigmatic Skyflare Diamond (#41421)"
-    { 6541422, 41422 }, // "Recipe Item: ZZOLD Design: Swift Skyflare Diamond (#41422)"
-    { 6541423, 41423 }, // "Recipe Item: ZZOLDDesign: Thundering Skyflare Diamond (#41423)"
-    { 6541403, 41403 }, // "Recipe Item: ZZOLD Design: Insightful Earthsiege Diamond (#41403)"
-    { 6541404, 41404 }, // "Recipe Item: ZZOLD Design: Bracing Earthsiege Diamond (#41404)"
-    { 6541405, 41405 }, // "Recipe Item: ZZOLD Design: Eternal Earthsiege Diamond (#41405)"
-    { 6541406, 41406 }, // "Recipe Item: ZZOLD Design: Powerful Earthsiege Diamond (#41406)"
-    { 6541407, 41407 }, // "Recipe Item: ZZOLD Design: Relentless Earthsiege Diamond (#41407)"
-    { 6541408, 41408 }, // "Recipe Item: ZZOLD Design: Austere Earthsiege Diamond (#41408)"
-    { 6541409, 41409 }, // "Recipe Item: ZZOLD Design: Persistent Earthsiege Diamond (#41409)"
-    { 6541410, 41410 }, // "Recipe Item: ZZOLD Design: Trenchant Earthsiege Diamond (#41410)"
-    { 6541411, 41411 }, // "Recipe Item: ZZOLD Design: Invigorating Earthsiege Diamond (#41411)"
-    { 6541412, 41412 }, // "Recipe Item: ZZOLD Design: Beaming Earthsiege Diamond (#41412)"
-    { 6541413, 41413 }, // "Recipe Item: ZZOLD Design: Revitalizing Skyflare Diamond (#41413)"
     { 6542172, 42172 }, // "Recipe Item: Pattern: Red Lumberjack Shirt (#42172)"
     { 6542173, 42173 }, // "Recipe Item: Pattern: Blue Lumberjack Shirt (#42173)"
     { 6542174, 42174 }, // "Recipe Item: Pattern: Yellow Lumberjack Shirt (#42174)"
