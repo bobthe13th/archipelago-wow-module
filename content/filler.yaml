@@ -42,6 +42,19 @@ family: filler
 # items.py's count_enabled_holidaysanity_items docstring for why
 # Holidaysanity needs the exact same sink-location treatment as gates/traps.
 #
+# M4.11.1 (Task 4, BarrensBeater): Row count grown 136 -> 139 = 37 (gates)
+# + 88 (traps, grown from 85) + 14 (holidaysanity, unchanged). The trap
+# ceiling grew because _trap_baseline_location_count() (items.py) sizes
+# itself off len(core_loop_content_data.INSTANCE_CLEAR_LOCATIONS), which
+# this task grew from 5 to 8 (Wailing Caverns/Razorfen Kraul/Razorfen Downs
+# added to core_loop.yaml) -- exactly the "any future core_loop.yaml...
+# instance-clear count" drift this file's own trip-wire note above already
+# anticipated. Standard track's own baseline is still the larger of the two
+# (88 = 80 level milestones + 8 instance clears vs. death_knight's 34 = 26 +
+# 8), so it remains the one that sets count_enabled_trap_items's ceiling.
+# Filler Check 137-139 / location_id 740136-740138 are the +3 rows added for
+# this resize.
+#
 # History of this file's prior sizings, kept for context:
 # - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
 #   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
@@ -495,4 +508,13 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 136"
     location_id: 740135
+    trigger: {kind: always_available}
+  - name: "Filler Check 137"
+    location_id: 740136
+    trigger: {kind: always_available}
+  - name: "Filler Check 138"
+    location_id: 740137
+    trigger: {kind: always_available}
+  - name: "Filler Check 139"
+    location_id: 740138
     trigger: {kind: always_available}

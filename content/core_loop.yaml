@@ -371,6 +371,38 @@ locations:
     location_id: 720001
     trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639, expansion: vanilla}
 
+  # M4.11.1 (Task 4, BarrensBeater): three more classic 5-mans, matching
+  # Ragefire Chasm/Deadmines' simple no-`bosses:`-sublist shape rather than
+  # Molten Core's, since InstanceClearMode's all_bosses/final_boss_only
+  # distinction only applies to the 3 raids that already have one.
+  # final_boss_entry values verified against this checkout's own data, not
+  # assumed from upstream wiki data:
+  #   - Wailing Caverns: this checkout's own instance script header
+  #     (src/server/scripts/Kalimdor/WailingCaverns/wailing_caverns.h)
+  #     defines a DataTypes enum with TYPE_MUTANUS = 4 as the last of 5
+  #     tracked encounter slots (MAX_ENCOUNTERS = 5) and does NOT track the
+  #     alternate-path boss Verdan the Everliving (creature entry 5775) as
+  #     an instance-data encounter at all -- confirming Mutanus the
+  #     Devourer (creature_template.entry 3654) is the canonical tracked
+  #     final boss in this specific checkout.
+  #   - Razorfen Kraul has no instance script under
+  #     src/server/scripts/Kalimdor/RazorfenKraul/ -- final boss confirmed
+  #     directly via creature_template: (4421, 'Charlga Razorflank', 27).
+  #   - Razorfen Downs: creature_template confirms (7358, 'Amnennar the
+  #     Coldbringer', 37); its instance script
+  #     (src/server/scripts/Kalimdor/RazorfenDowns/razorfen_downs.h) tracks
+  #     other encounter NPCs but not a DataTypes encounter enum, so this is
+  #     likewise sourced directly from creature_template.
+  - name: Clear Wailing Caverns
+    location_id: 720005
+    trigger: {kind: instance_clear, instance_key: wailing_caverns, final_boss_entry: 3654, expansion: vanilla}
+  - name: Clear Razorfen Kraul
+    location_id: 720006
+    trigger: {kind: instance_clear, instance_key: razorfen_kraul, final_boss_entry: 4421, expansion: vanilla}
+  - name: Clear Razorfen Downs
+    location_id: 720007
+    trigger: {kind: instance_clear, instance_key: razorfen_downs, final_boss_entry: 7358, expansion: vanilla}
+
   # Task 23 (design spec Sec5.4, Tier 1: Classic/Burning Crusade/Wrath modes)
   # -- the first three rows to actually carry a `bosses:` sub-list, driving
   # the player-configurable InstanceClearMode (all_bosses default /
@@ -518,3 +550,15 @@ items:
     item_id: 810007
     count: 1
     delivery: {kind: realm_state, effect: unlock_instance, instance_key: icecrown_citadel}
+  - name: "Instance Unlock: Wailing Caverns"
+    item_id: 810008
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: wailing_caverns}
+  - name: "Instance Unlock: Razorfen Kraul"
+    item_id: 810009
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: razorfen_kraul}
+  - name: "Instance Unlock: Razorfen Downs"
+    item_id: 810010
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: razorfen_downs}

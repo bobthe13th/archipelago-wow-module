@@ -19,6 +19,9 @@ namespace Archipelago::CoreLoop
     inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_MOLTEN_CORE = 810005;
     inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_SUNWELL_PLATEAU = 810006;
     inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_ICECROWN_CITADEL = 810007;
+    inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_WAILING_CAVERNS = 810008;
+    inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_RAZORFEN_KRAUL = 810009;
+    inline constexpr int64_t AP_ITEM_INSTANCE_UNLOCK_RAZORFEN_DOWNS = 810010;
 
     inline constexpr uint32_t LEVEL_CAP_STEP = 1;
     inline constexpr uint32_t SPRINT_GOAL_LEVEL = 60;
@@ -43,6 +46,9 @@ namespace Archipelago::CoreLoop
 
     inline std::string const INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm";
     inline std::string const INSTANCE_KEY_DEADMINES = "deadmines";
+    inline std::string const INSTANCE_KEY_WAILING_CAVERNS = "wailing_caverns";
+    inline std::string const INSTANCE_KEY_RAZORFEN_KRAUL = "razorfen_kraul";
+    inline std::string const INSTANCE_KEY_RAZORFEN_DOWNS = "razorfen_downs";
     inline std::string const INSTANCE_KEY_MOLTEN_CORE = "molten_core";
     inline std::string const INSTANCE_KEY_SUNWELL_PLATEAU = "sunwell_plateau";
     inline std::string const INSTANCE_KEY_ICECROWN_CITADEL = "icecrown_citadel";
@@ -61,11 +67,17 @@ namespace Archipelago::CoreLoop
         { 810005, INSTANCE_KEY_MOLTEN_CORE },
         { 810006, INSTANCE_KEY_SUNWELL_PLATEAU },
         { 810007, INSTANCE_KEY_ICECROWN_CITADEL },
+        { 810008, INSTANCE_KEY_WAILING_CAVERNS },
+        { 810009, INSTANCE_KEY_RAZORFEN_KRAUL },
+        { 810010, INSTANCE_KEY_RAZORFEN_DOWNS },
     };
 
     inline std::unordered_map<std::string, uint32_t> const INSTANCE_FINAL_BOSS_ENTRY = {
         { INSTANCE_KEY_RAGEFIRE_CHASM, 11520 },
         { INSTANCE_KEY_DEADMINES, 639 },
+        { INSTANCE_KEY_WAILING_CAVERNS, 3654 },
+        { INSTANCE_KEY_RAZORFEN_KRAUL, 4421 },
+        { INSTANCE_KEY_RAZORFEN_DOWNS, 7358 },
         { INSTANCE_KEY_MOLTEN_CORE, 11502 },
         { INSTANCE_KEY_SUNWELL_PLATEAU, 25315 },
         { INSTANCE_KEY_ICECROWN_CITADEL, 36597 },
@@ -191,6 +203,9 @@ namespace Archipelago::CoreLoop
     inline std::unordered_map<std::string, int64_t> const INSTANCE_CLEAR_LOCATIONS = {
         { INSTANCE_KEY_RAGEFIRE_CHASM, 720000 },
         { INSTANCE_KEY_DEADMINES, 720001 },
+        { INSTANCE_KEY_WAILING_CAVERNS, 720005 },
+        { INSTANCE_KEY_RAZORFEN_KRAUL, 720006 },
+        { INSTANCE_KEY_RAZORFEN_DOWNS, 720007 },
         { INSTANCE_KEY_MOLTEN_CORE, 720002 },
         { INSTANCE_KEY_SUNWELL_PLATEAU, 720003 },
         { INSTANCE_KEY_ICECROWN_CITADEL, 720004 },
@@ -214,7 +229,7 @@ namespace Archipelago::CoreLoop
     // completion rule are apworld-only, generation-time logic) -- emitted
     // for parity with the Python side per this task's own Files list.
     inline std::unordered_map<std::string, std::vector<std::string>> const INSTANCES_BY_EXPANSION = {
-        { "vanilla", { INSTANCE_KEY_RAGEFIRE_CHASM, INSTANCE_KEY_DEADMINES, INSTANCE_KEY_MOLTEN_CORE } },
+        { "vanilla", { INSTANCE_KEY_RAGEFIRE_CHASM, INSTANCE_KEY_DEADMINES, INSTANCE_KEY_WAILING_CAVERNS, INSTANCE_KEY_RAZORFEN_KRAUL, INSTANCE_KEY_RAZORFEN_DOWNS, INSTANCE_KEY_MOLTEN_CORE } },
         { "tbc", { INSTANCE_KEY_SUNWELL_PLATEAU } },
         { "wotlk", { INSTANCE_KEY_ICECROWN_CITADEL } },
     };
