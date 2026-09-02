@@ -8,7 +8,10 @@ from typing import Optional
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_area_zone_ids
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_area_zone_ids,
+    parse_area_names,
+)
 
 _LOCATION_ID_BASE = 1_000_000
 _ITEM_ID_BASE = 1_750_000
@@ -139,6 +142,7 @@ def extract() -> dict:
     rules = load_exclusion_rules()
     quest_expansions = _load_quest_expansions()
     area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
     rows = run_query("""
         SELECT q.ID, q.LogTitle, q.MinLevel, a.PrevQuestID,
                q.RewardItem1, q.RewardItem2, q.RewardItem3, q.RewardItem4,
@@ -180,12 +184,12 @@ def extract() -> dict:
         quest_id_int = int(quest_id)
         location_name = f"Quest: {title} Reward (#{quest_id_int})"
         item_name = f"Quest Reward: {title} (#{quest_id_int})"
+        zone_id = _resolve_zone_id(int(quest_sort_id), area_zone_ids)
         trigger = {
             "kind": "quest_reward",
             "quest_id": quest_id_int,
             "min_level": int(min_level),
             "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
-            "zone_id": _resolve_zone_id(int(quest_sort_id), area_zone_ids),
         }
         if is_filler_reward:
             trigger["is_filler_reward"] = True
@@ -193,11 +197,25 @@ def extract() -> dict:
         type_tags = _compute_quest_type_tags(int(quest_info_id), int(suggested_group_num), int(flags))
         expansion = quest_expansions.get(quest_id_int, "vanilla")
 
+        # `area` is OMITTED (not an empty list) when zone_id doesn't resolve
+        # to a real area -- generate_content.py's _validate_tags_rows
+        # enforces a "never zero tags" invariant per dimension for every
+        # export_tags family, so an empty list here would fail validation.
+        # Unlike `type`/`expansion` (which always have a real value), a
+        # QuestSortID legitimately has no resolvable real-world zone for a
+        # large fraction of quests (see _resolve_zone_id's own docstring),
+        # so the key itself must be able to be absent. Every real consumer
+        # reads it via `tags.get("area", frozenset())` (or equivalent),
+        # never assumes presence.
+        tags = {"type": type_tags, "expansion": [expansion]}
+        if zone_id in area_names:
+            tags["area"] = [area_names[zone_id]]
+
         loc_dict = {
             "name": location_name,
             "location_id": _LOCATION_ID_BASE + quest_id_int,
             "trigger": trigger,
-            "tags": {"type": type_tags, "expansion": [expansion]},
+            "tags": tags,
         }
         if quest_id_int in _ALWAYS_PRESENT_QUEST_IDS:
             loc_dict["always_present"] = True

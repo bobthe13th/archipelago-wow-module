@@ -233,7 +233,14 @@ class TestExtractTagsAndAlwaysPresent(unittest.TestCase):
              "81", "0", "0", "0")
         ]
         result = extract()
-        self.assertEqual(result["locations"][0]["tags"], {"type": ["dungeon_quest"], "expansion": ["vanilla"]})
+        # QuestSortID is 0 (no resolvable real-world zone) -- `area` is
+        # OMITTED from the tags block entirely (not an empty list), since
+        # generate_content.py's _validate_tags_rows rejects an empty list
+        # for any dimension present in an export_tags family's tags block.
+        self.assertEqual(
+            result["locations"][0]["tags"],
+            {"type": ["dungeon_quest"], "expansion": ["vanilla"]},
+        )
 
     @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
@@ -294,23 +301,26 @@ class TestExtractTagsAndAlwaysPresent(unittest.TestCase):
 
 
 class TestExtractQuestRewardsZoneTagging(unittest.TestCase):
-    """M4.11.1 Task 2: every extracted quest_rewards row carries a real
-    zone_id, needed by Task 7's zone_leveler_content_data.py to build
-    Barrens' clear_all_zone_quests quest set (quest_rewards_content_data
-    .TRIGGERS[name]["zone_id"] == zone_level_data.ZONE_ID_BARRENS)."""
+    """M4.11.3.1: replaces M4.11.1 Task 2's own assertions on
+    trigger["zone_id"] (removed entirely by this migration) with the new
+    tags["area"] canonical-name shape, needed by
+    zone_leveler_content_data.py to build Barrens' clear_all_zone_quests
+    quest set (quest_rewards_content_data.TAGS[name]["area"] containing
+    "barrens")."""
 
     @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_extracted_rows_carry_a_real_zone_id(
+    def test_extracted_rows_carry_a_real_area_tag(
         self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
         # Real-data shape (M4.11.1 Task 2 research): quest 850 "Kolkar
         # Leaders" has QuestSortID = 17, a real top-level AreaTable.dbc
-        # zone id (The Barrens, zone_level_data.ZONE_ID_BARRENS).
+        # zone id (The Barrens, zone_level_data.ZONE_ID_BARRENS), whose
+        # real parse_area_names() slug is "barrens".
         mock_parse_area_zone_ids.return_value = {17: 17}
         mock_run_query.return_value = [
             ("850", "Kolkar Leaders", "11", "NULL",
@@ -322,22 +332,23 @@ class TestExtractQuestRewardsZoneTagging(unittest.TestCase):
         result = extract()
         rows = result["locations"]
 
-        self.assertIn("zone_id", rows[0]["trigger"])
-        self.assertIsInstance(rows[0]["trigger"]["zone_id"], int)
-        self.assertEqual(rows[0]["trigger"]["zone_id"], 17)
+        self.assertNotIn("zone_id", rows[0]["trigger"])
+        self.assertEqual(rows[0]["tags"]["area"], ["barrens"])
 
     @patch("extract_quest_rewards.parse_area_zone_ids")
     @patch("extract_quest_rewards._load_quest_expansions")
     @patch("extract_quest_rewards.load_exclusion_rules")
     @patch("extract_quest_rewards.run_query")
-    def test_negative_quest_sort_id_produces_zone_id_zero_not_a_guessed_zone(
+    def test_negative_quest_sort_id_produces_no_area_tag_not_a_guessed_zone(
         self, mock_run_query, mock_load_rules, mock_load_expansions, mock_parse_area_zone_ids
     ) -> None:
         # QuestSortID <= 0 means "not a real zone reference" (either a
-        # QuestSort.dbc category id or genuinely no data) -- must resolve
-        # to the 0 sentinel, never a guessed zone, even if area_zone_ids
-        # happens to contain a matching absolute-value key (id-space
-        # collisions between AreaTable.dbc and QuestSort.dbc are real).
+        # QuestSort.dbc category id or genuinely no data) -- must OMIT the
+        # `area` key entirely (never an empty list, which
+        # generate_content.py's _validate_tags_rows would reject), and
+        # never a guessed zone, even if area_zone_ids happens to contain a
+        # matching absolute-value key (id-space collisions between
+        # AreaTable.dbc and QuestSort.dbc are real).
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
         mock_parse_area_zone_ids.return_value = {22: 22}
@@ -350,7 +361,35 @@ class TestExtractQuestRewardsZoneTagging(unittest.TestCase):
 
         result = extract()
 
-        self.assertEqual(result["locations"][0]["trigger"]["zone_id"], 0)
+        self.assertNotIn("area", result["locations"][0]["tags"])
+
+
+class TestExtractQuestRewardsAreaTags(unittest.TestCase):
+    """M4.11.3.1: exercises the real extract() against the live DB (same
+    convention TestLoadRecipeSpellIds/TestExtractTrainerSpellsAreaTags
+    already use) -- tags["area"] is derived from a QuestSortID's
+    parent-chain walk via parse_area_zone_ids + parse_area_names, not
+    position data, so it isn't meaningfully mockable without re-deriving
+    the DBC/DB data by hand."""
+
+    def test_extracted_rows_carry_area_tag_not_zone_id(self) -> None:
+        rows = extract()
+        resolved = [loc for loc in rows["locations"] if loc["tags"].get("area")]
+        self.assertTrue(resolved)
+        sample = resolved[0]
+        self.assertIsInstance(sample["tags"]["area"], list)
+        self.assertNotIn("zone_id", sample["trigger"])
+
+    def test_unresolvable_quest_sort_id_yields_no_area_tag(self) -> None:
+        # Confirmed against the live DB (M4.11.3.1 Task 5 research): quest
+        # 26 "A Lesson to Learn" has QuestSortID = -263 (a negative
+        # QuestSort.dbc category reference, never a real zone), this
+        # family's own existing "unresolvable, real zone unknown" sentinel
+        # -- matching this project's "unknown = excluded, never guessed"
+        # convention.
+        rows = extract()
+        unresolved = [loc for loc in rows["locations"] if not loc["tags"].get("area")]
+        self.assertTrue(unresolved)
 
 
 if __name__ == "__main__":
