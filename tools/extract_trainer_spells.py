@@ -10,7 +10,10 @@ import pathlib
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_spell_names
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_spell_names,
+    parse_world_map_areas, parse_area_zone_ids, resolve_zone_id_from_position,
+)
 
 _LOCATION_ID_BASE = 7_000_000
 _ITEM_ID_BASE = 7_500_000
@@ -73,11 +76,59 @@ def _load_trainer_expansions() -> dict[int, str]:
     return {int(trainer_id): map_expansions.get(int(map_id), "vanilla") for trainer_id, map_id in rows}
 
 
+def _load_trainer_positions() -> dict[int, list[tuple[int, float, float]]]:
+    """trainer_id -> list of every real (map, x, y) spawn position for the
+    creature(s) that serve as this trainer's own creature_default_trainer
+    row. A trainer can have more than one real spawn (city guards/trainers
+    sometimes have multiple spawn rows) -- collect all of them, the caller
+    resolves each independently and unions the results (M4.11.2)."""
+    rows = run_query(f"""
+        SELECT cdt.TrainerId, c.map, c.position_x, c.position_y
+        FROM creature_default_trainer cdt
+        JOIN creature c ON c.id = cdt.CreatureId
+        JOIN trainer t ON t.Id = cdt.TrainerId
+        WHERE t.Type = {_TRAINER_TYPE_CLASS}
+    """)
+    positions: dict[int, list[tuple[int, float, float]]] = {}
+    for trainer_id_str, map_id_str, x_str, y_str in rows:
+        positions.setdefault(int(trainer_id_str), []).append(
+            (int(map_id_str), float(x_str), float(y_str))
+        )
+    return positions
+
+
+def _resolve_trainer_zone_ids(
+    trainer_ids: set[int], trainer_positions: dict[int, list[tuple[int, float, float]]],
+    world_map_areas, area_zone_ids,
+) -> list[int]:
+    """M4.11.2: every distinct real zone id at least one of this spell's
+    teaching trainers resolves to, via the same WorldMapArea.dbc
+    position-resolution mechanism Key Hunt's own rares use (M4.11.1 Task
+    5) -- membership-testing across N real positions, not a single
+    best-match pick, so the "smallest-box-wins" ambiguity that mechanism
+    has near zone borders doesn't apply here the same way (we're not
+    choosing ONE zone per row, just testing "is Barrens/Durotar/Orgrimmar
+    among the real zones this spell's trainers stand in"). A trainer_id
+    with no matching creature_default_trainer/creature row at all
+    contributes nothing (defensive; extract()'s own real join already
+    filters to trainers with a real creature)."""
+    resolved: set[int] = set()
+    for trainer_id in trainer_ids:
+        for map_id, x, y in trainer_positions.get(trainer_id, []):
+            zone = resolve_zone_id_from_position(map_id, x, y, world_map_areas, area_zone_ids)
+            if zone != 0:
+                resolved.add(zone)
+    return sorted(resolved)
+
+
 def extract() -> dict:
     rules = load_exclusion_rules()
     already_claimed = _load_recipe_spell_ids()
     trainer_expansions = _load_trainer_expansions()
     spell_names = parse_spell_names()
+    trainer_positions = _load_trainer_positions()
+    world_map_areas = parse_world_map_areas()
+    area_zone_ids = parse_area_zone_ids()
 
     rows = run_query(f"""
         SELECT ts.SpellId, t.Requirement, t.Id, ts.ReqLevel
@@ -130,6 +181,14 @@ def extract() -> dict:
             "trigger": {
                 "kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True,
                 "min_level": info["req_level"],
+                # trainer_zone_ids: real, deduplicated, sorted zone ids at
+                # least one teaching trainer resolves to (M4.11.2, Zone
+                # Leveler's own physical-reachability check for this
+                # possession-triggered family) -- empty list if none of this
+                # spell's trainers resolve to a real zone.
+                "trainer_zone_ids": _resolve_trainer_zone_ids(
+                    info["trainer_ids"], trainer_positions, world_map_areas, area_zone_ids
+                ),
             },
             "tags": {"class": sorted(info["classes"]), "expansion": [expansion]},
         })

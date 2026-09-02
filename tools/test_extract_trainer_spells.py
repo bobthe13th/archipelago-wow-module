@@ -117,5 +117,32 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(len(result["locations"]), 0)
 
 
+class TestExtractTrainerSpellsZoneData(unittest.TestCase):
+    """M4.11.2: exercises the real extract() against the live DB (same
+    convention TestLoadRecipeSpellIds already uses for _load_recipe_spell_ids)
+    -- trainer_zone_ids is derived from real creature spawn positions via
+    db_extract's own WorldMapArea.dbc position-resolution, which isn't
+    meaningfully mockable without re-deriving the DBC data by hand."""
+
+    def test_extracted_rows_carry_trainer_zone_ids(self) -> None:
+        rows = extract()
+        sample = rows["locations"][0]
+        self.assertIn("trainer_zone_ids", sample["trigger"])
+        self.assertIsInstance(sample["trigger"]["trainer_zone_ids"], list)
+
+    def test_frost_nova_includes_orgrimmar_and_durotar(self) -> None:
+        rows = extract()
+        frost_nova = next(loc for loc in rows["locations"] if loc["trigger"]["spell_id"] == 122)
+        zone_ids = set(frost_nova["trigger"]["trainer_zone_ids"])
+        self.assertTrue({14, 1637} & zone_ids)
+
+    def test_teleport_stormwind_has_no_horde_hub_trainer(self) -> None:
+        rows = extract()
+        teleport_stormwind = next(loc for loc in rows["locations"] if loc["trigger"]["spell_id"] == 3561)
+        zone_ids = set(teleport_stormwind["trigger"]["trainer_zone_ids"])
+        self.assertFalse({14, 1637} & zone_ids)
+        self.assertIn(1519, zone_ids)  # Stormwind itself
+
+
 if __name__ == "__main__":
     unittest.main()
