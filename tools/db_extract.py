@@ -259,7 +259,17 @@ def parse_area_names(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[int,
     resolved zone id this project's area-tag mechanism produces gets
     turned into one of these canonical strings before being written into
     any content/*.yaml file -- matching the existing convention every
-    other TAGS dimension already uses (frozenset[str], never bare ints)."""
+    other TAGS dimension already uses (frozenset[str], never bare ints).
+
+    NOTE (M4.11.3.1 final whole-branch review, Finding 9): slugification is
+    NOT guaranteed injective -- this checkout's real AreaTable.dbc data has
+    at least 4 slugs (e.g. "azjol_nerub", also "north_sea"/"great_sea"/
+    "veiled_sea") each mapping to more than one distinct real zone id, most
+    notably the open-world zone and the same-named dungeon instance both
+    slugifying to "azjol_nerub". Harmless for this milestone's open-world
+    area tags, but a consumer that needs to disambiguate an open-world zone
+    from a same-named instance (expected of M4.11.3.2's instance area tags)
+    will need a different mechanism than this dict's string values alone."""
     field_count, records, string_block = _read_wdbc(dbc_path)
     names: dict[int, str] = {}
     for raw in records:
@@ -360,7 +370,16 @@ def resolve_zone_id_from_position(
     world_map_areas: list[tuple[int, int, float, float, float, float]],
     area_zone_ids: dict[int, int],
 ) -> int:
-    """One (map_id, position_x, position_y) spawn point -> a real top-level
+    """SUPERSEDED by resolve_area_tags_for_positions (M4.11.3.1) for any new
+    family -- this single-winner resolver is known to misattribute
+    border-ambiguous positions (see resolve_zone_ids_from_position's own
+    docstring: only ~10.3% of Barrens' own WorldMapArea box actually
+    resolves to zone 17 under smallest-box-wins, because the smaller,
+    genuinely-overlapping Durotar/Mulgore boxes crowd it out almost
+    everywhere else) and is retained only for its own test coverage /
+    backward reference. Do not use for new extraction work.
+
+    One (map_id, position_x, position_y) spawn point -> a real top-level
     zone_id, or 0 ("no resolvable real-world zone", the same unambiguous
     sentinel parse_area_zone_ids's own caller convention uses -- AreaTable.dbc
     IDs start at 1, never 0). Picks the SMALLEST-area WorldMapArea bounding

@@ -373,11 +373,18 @@ class TestExtractQuestRewardsAreaTags(unittest.TestCase):
     the DBC/DB data by hand."""
 
     def test_extracted_rows_carry_area_tag_not_zone_id(self) -> None:
+        # Confirmed against the live DB (same M4.11.1 Task 2 research
+        # TestExtractQuestRewardsZoneTagging's own mocked
+        # test_extracted_rows_carry_a_real_area_tag cites): quest 850
+        # "Kolkar Leaders" has QuestSortID = 17, a real top-level
+        # AreaTable.dbc zone id (The Barrens), whose real parse_area_names()
+        # slug is "barrens" -- asserting on this named quest (rather than an
+        # arbitrary resolved[0]) means this test still fails if quest 850
+        # itself stops resolving, not just if every quest stopped resolving.
         rows = extract()
-        resolved = [loc for loc in rows["locations"] if loc["tags"].get("area")]
-        self.assertTrue(resolved)
-        sample = resolved[0]
+        sample = next(loc for loc in rows["locations"] if loc["trigger"]["quest_id"] == 850)
         self.assertIsInstance(sample["tags"]["area"], list)
+        self.assertIn("barrens", sample["tags"]["area"])
         self.assertNotIn("zone_id", sample["trigger"])
 
     def test_unresolvable_quest_sort_id_yields_no_area_tag(self) -> None:
@@ -386,10 +393,12 @@ class TestExtractQuestRewardsAreaTags(unittest.TestCase):
         # QuestSort.dbc category reference, never a real zone), this
         # family's own existing "unresolvable, real zone unknown" sentinel
         # -- matching this project's "unknown = excluded, never guessed"
-        # convention.
+        # convention. Asserting on this named quest (rather than a generic
+        # "some row is unresolved" check) means this test still fails if
+        # quest 26 itself stops being unresolvable.
         rows = extract()
-        unresolved = [loc for loc in rows["locations"] if not loc["tags"].get("area")]
-        self.assertTrue(unresolved)
+        sample = next(loc for loc in rows["locations"] if loc["trigger"]["quest_id"] == 26)
+        self.assertNotIn("area", sample["tags"])
 
 
 if __name__ == "__main__":

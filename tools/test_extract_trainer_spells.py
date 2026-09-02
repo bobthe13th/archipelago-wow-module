@@ -40,6 +40,35 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(result["locations"][0]["tags"]["expansion"], ["vanilla"])
         self.assertEqual(result["items"][0]["delivery"], {"kind": "mail", "wow_item_entry": 7073})
 
+    @patch("extract_trainer_spells.resolve_area_tags_for_positions")
+    @patch("extract_trainer_spells.parse_spell_names")
+    @patch("extract_trainer_spells._load_trainer_expansions")
+    @patch("extract_trainer_spells._load_recipe_spell_ids")
+    @patch("extract_trainer_spells.load_exclusion_rules")
+    @patch("extract_trainer_spells.run_query")
+    def test_empty_area_tags_omits_area_key_not_empty_list(
+        self, mock_run_query, mock_load_rules, mock_recipe_ids, mock_expansions, mock_names,
+        mock_resolve_area_tags,
+    ) -> None:
+        # M4.11.3.1 final whole-branch review Finding 3: when none of a
+        # spell's teaching trainers resolve to a real zone (mocked here via
+        # resolve_area_tags_for_positions returning an empty frozenset --
+        # not reproducible against this checkout's live DB, where every
+        # class trainer resolves to a real zone), tags["area"] must be
+        # OMITTED entirely, never set to an empty list -- the same "never
+        # zero tags" invariant extract_quest_rewards.py's own tags["area"]
+        # omission already handles (generate_content.py's
+        # _validate_tags_rows rejects an empty list for any dimension
+        # present in an export_tags family's tags block).
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_recipe_ids.return_value = frozenset()
+        mock_expansions.return_value = {1: "vanilla"}
+        mock_names.return_value = {72: "Shield Bash"}
+        mock_run_query.return_value = [("72", "1", "1", "12")]
+        mock_resolve_area_tags.return_value = frozenset()
+        result = extract()
+        self.assertNotIn("area", result["locations"][0]["tags"])
+
     @patch("extract_trainer_spells.parse_spell_names")
     @patch("extract_trainer_spells._load_trainer_expansions")
     @patch("extract_trainer_spells._load_recipe_spell_ids")

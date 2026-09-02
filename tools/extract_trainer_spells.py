@@ -168,6 +168,23 @@ def extract() -> dict:
             info["trainer_ids"], trainer_positions, world_map_areas, area_zone_ids, area_names
         )
 
+        # area: real, deduplicated, sorted canonical zone-name strings at
+        # least one teaching trainer resolves to (M4.11.3.1, Task 3's fixed
+        # resolve_area_tags_for_positions mechanism -- replaces M4.11.2's
+        # own trigger["trainer_zone_ids"] int list). Zone Leveler's own
+        # physical-reachability check for this possession-triggered family
+        # (locations.py) reads this instead. `area` is OMITTED (not an
+        # empty list) when none of this spell's trainers resolve to a real
+        # zone -- generate_content.py's own _validate_tags_rows rejects an
+        # empty list for any dimension present in an export_tags family's
+        # tags block (same edge case extract_quest_rewards.py's own
+        # tags["area"] omission already handles). Every real consumer reads
+        # it via `tags.get("area", frozenset())` (or equivalent), never
+        # assumes presence.
+        tags = {"class": sorted(info["classes"]), "expansion": [expansion]}
+        if area_tags:
+            tags["area"] = sorted(area_tags)
+
         locations.append({
             "name": f"Trainer Spell: {name} (#{spell_id})",
             "location_id": _LOCATION_ID_BASE + spell_id,
@@ -184,18 +201,7 @@ def extract() -> dict:
                 "kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True,
                 "min_level": info["req_level"],
             },
-            # area: real, deduplicated, sorted canonical zone-name strings at
-            # least one teaching trainer resolves to (M4.11.3.1, Task 3's
-            # fixed resolve_area_tags_for_positions mechanism -- replaces
-            # M4.11.2's own trigger["trainer_zone_ids"] int list). Zone
-            # Leveler's own physical-reachability check for this
-            # possession-triggered family (locations.py) reads this instead;
-            # empty list if none of this spell's trainers resolve to a real
-            # zone.
-            "tags": {
-                "class": sorted(info["classes"]), "expansion": [expansion],
-                "area": sorted(area_tags),
-            },
+            "tags": tags,
         })
         items.append({
             "name": f"Trainer Spell Item: {name} (#{spell_id})",
