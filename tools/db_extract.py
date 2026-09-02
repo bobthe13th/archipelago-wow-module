@@ -501,6 +501,39 @@ def resolve_area_tags_for_positions(
     return frozenset(area_names[zone_id] for zone_id in zone_ids if zone_id in area_names)
 
 
+def resolve_area_or_instance_tags_for_positions(
+    positions: list[tuple[int, float, float]],
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int],
+    area_names: dict[int, str],
+    map_instance_types: dict[int, int],
+    map_names: dict[int, str],
+) -> frozenset[str]:
+    """M4.11.3.2: like resolve_area_tags_for_positions (M4.11.3.1), but
+    aware that some real spawn positions are INSIDE an instance rather
+    than on open-world terrain. An instanced position (map_instance_types
+    says InstanceType != 0) resolves to that instance's own real name --
+    ONLY that, never unioned with an open-world zone -- since an
+    instance's own content identity must stay independent of wherever its
+    entrance currently sits (design spec: this is what lets a future
+    door-shuffle feature relocate an entrance without silently
+    reclassifying the instance's interior content). An open-world
+    position resolves exactly like resolve_area_tags_for_positions
+    already does."""
+    tags: set[str] = set()
+    for map_id, x, y in positions:
+        if map_instance_types.get(map_id, 0) != 0:
+            name = map_names.get(map_id)
+            if name:
+                tags.add(name)
+            continue
+        for zone_id in resolve_zone_ids_from_position(map_id, x, y, world_map_areas, area_zone_ids):
+            name = area_names.get(zone_id)
+            if name:
+                tags.add(name)
+    return frozenset(tags)
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )

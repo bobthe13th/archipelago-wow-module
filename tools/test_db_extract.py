@@ -12,7 +12,7 @@ from db_extract import (
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
     parse_world_map_areas, resolve_zone_id_from_position,
     resolve_zone_ids_from_position, parse_area_names, _slugify_area_name,
-    resolve_area_tags_for_positions,
+    resolve_area_tags_for_positions, resolve_area_or_instance_tags_for_positions,
 )
 
 
@@ -777,6 +777,49 @@ class TestResolveAreaTagsForPositions(unittest.TestCase):
         positions = [(int(m), float(x), float(y)) for m, x, y in rows]
         result = resolve_area_tags_for_positions(positions, world_map_areas, area_zone_ids, area_names)
         self.assertTrue({"durotar", "ashenvale", "felwood", "stonetalon_mountains"} <= result)
+
+
+class TestResolveAreaOrInstanceTagsForPositions(unittest.TestCase):
+    def test_open_world_position_resolves_normally(self) -> None:
+        world_map_areas = [(1, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        area_names = {100: "barrens"}
+        map_instance_types = {1: 0}
+        map_names = {1: "kalimdor"}
+        result = resolve_area_or_instance_tags_for_positions(
+            [(1, 0.0, 0.0)], world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+        )
+        self.assertEqual(result, frozenset({"barrens"}))
+
+    def test_instanced_position_resolves_to_instance_name_not_open_world_zone(self) -> None:
+        # The whole point: an interior spawn's map (43 = Wailing Caverns,
+        # InstanceType=1) must resolve to "wailing_caverns" ONLY -- never
+        # unioned with whatever open-world zone the instance's entrance
+        # happens to sit in, since a future door-shuffle feature must be
+        # able to relocate the entrance without silently reclassifying
+        # the instance's own content (design spec section on instance
+        # area tags).
+        world_map_areas = [(43, 999, -10000.0, 10000.0, -10000.0, 10000.0)]  # deliberately
+                            # broad, to prove it's ignored, not just absent
+        area_zone_ids = {999: 999}
+        area_names = {999: "should_never_be_used"}
+        map_instance_types = {43: 1}
+        map_names = {43: "wailing_caverns"}
+        result = resolve_area_or_instance_tags_for_positions(
+            [(43, 0.0, 0.0)], world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+        )
+        self.assertEqual(result, frozenset({"wailing_caverns"}))
+
+    def test_mixed_positions_union_correctly_without_cross_contamination(self) -> None:
+        world_map_areas = [(1, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        area_names = {100: "barrens"}
+        map_instance_types = {1: 0, 43: 1}
+        map_names = {43: "wailing_caverns"}
+        result = resolve_area_or_instance_tags_for_positions(
+            [(1, 0.0, 0.0), (43, 5.0, 5.0)], world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+        )
+        self.assertEqual(result, frozenset({"barrens", "wailing_caverns"}))
 
 
 if __name__ == "__main__":
