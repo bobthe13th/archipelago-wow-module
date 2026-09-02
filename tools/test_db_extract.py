@@ -11,6 +11,7 @@ from db_extract import (
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
     parse_world_map_areas, resolve_zone_id_from_position,
     resolve_zone_ids_from_position, parse_area_names, _slugify_area_name,
+    resolve_area_tags_for_positions,
 )
 
 
@@ -707,6 +708,42 @@ class TestParseAreaNamesAndSlugify(unittest.TestCase):
         self.assertEqual(names[361], "felwood")
         self.assertEqual(names[406], "stonetalon_mountains")
         self.assertEqual(names[1637], "orgrimmar")
+
+
+class TestResolveAreaTagsForPositions(unittest.TestCase):
+    def test_unions_across_multiple_positions(self) -> None:
+        world_map_areas = [
+            (1, 100, -10.0, 10.0, -10.0, 10.0),
+            (1, 200, 90.0, 110.0, 90.0, 110.0),
+        ]
+        area_zone_ids = {100: 100, 200: 200}
+        area_names = {100: "zone_a", 200: "zone_b"}
+        result = resolve_area_tags_for_positions(
+            [(1, 0.0, 0.0), (1, 100.0, 100.0)], world_map_areas, area_zone_ids, area_names,
+        )
+        self.assertEqual(result, frozenset({"zone_a", "zone_b"}))
+
+    def test_empty_positions_list_returns_empty_frozenset(self) -> None:
+        result = resolve_area_tags_for_positions([], [], {}, {})
+        self.assertEqual(result, frozenset())
+
+    def test_real_ghostpaw_runner_spans_four_real_zones(self) -> None:
+        # Ghostpaw Runner (creature_template.entry 3823): 69 real spawn
+        # rows on map 1. Confirmed this session: unioning every real spawn
+        # position resolves to (at least) Durotar/Ashenvale/Felwood/
+        # Stonetalon Mountains -- a single-winner resolver (the old
+        # mechanism) would have collapsed this to one zone, permanently
+        # misclassifying the other three for any content family keying
+        # off it. Re-run this query yourself before finalizing to confirm
+        # the real position list still matches.
+        from db_extract import run_query
+        world_map_areas = parse_world_map_areas()
+        area_zone_ids = parse_area_zone_ids()
+        area_names = parse_area_names()
+        rows = run_query("SELECT map, position_x, position_y FROM creature WHERE id = 3823")
+        positions = [(int(m), float(x), float(y)) for m, x, y in rows]
+        result = resolve_area_tags_for_positions(positions, world_map_areas, area_zone_ids, area_names)
+        self.assertTrue({"durotar", "ashenvale", "felwood", "stonetalon_mountains"} <= result)
 
 
 if __name__ == "__main__":

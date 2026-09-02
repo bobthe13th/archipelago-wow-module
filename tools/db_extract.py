@@ -420,6 +420,28 @@ def resolve_zone_ids_from_position(
     return frozenset(matches)
 
 
+def resolve_area_tags_for_positions(
+    positions: list[tuple[int, float, float]],
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int],
+    area_names: dict[int, str],
+) -> frozenset[str]:
+    """The one function every extraction script calls for open-world area
+    tagging (M4.11.3.1): unions resolve_zone_ids_from_position across
+    every one of an entity's real spawn positions (fixing the Ghostpaw
+    Runner case -- a genuine multi-zone creature, not a resolver
+    ambiguity), and each individual position already returns every
+    containing zone rather than one guess (fixing the Babagaya
+    Shadowcleft case -- a border-ambiguous single position). One
+    mechanism, both problems. `positions` is every real (map_id, x, y) a
+    caller has for one entity -- a single-spawn quest-giver passes a
+    one-element list, a 69-spawn creature passes all 69."""
+    zone_ids: set[int] = set()
+    for map_id, x, y in positions:
+        zone_ids |= resolve_zone_ids_from_position(map_id, x, y, world_map_areas, area_zone_ids)
+    return frozenset(area_names[zone_id] for zone_id in zone_ids if zone_id in area_names)
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )
