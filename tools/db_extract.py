@@ -61,6 +61,46 @@ def parse_map_expansions(dbc_path: pathlib.Path = _MAP_DBC_PATH) -> dict[int, st
     return result
 
 
+_MAP_NAME_FIELD = 5      # real display name -- verified M4.11.3.2 against 8 known real ids
+_MAP_INSTANCE_TYPE_FIELD = 2  # 0=continent, 1=dungeon, 2=raid, 3=battleground, 4=arena --
+                                # verified M4.11.3.2 against 4 continents + 3 dungeons + 1 raid
+
+
+def parse_map_names(dbc_path: pathlib.Path = _MAP_DBC_PATH) -> dict[int, str]:
+    """Map.dbc real map id -> its own real, slugified name. Generalizes
+    zone_leveler_content_data.py's hand-curated 3-instance instance_keys
+    tuple to EVERY real instance in the game -- confirmed this session
+    that the same 3 names this mechanism produces automatically
+    ("wailing_caverns"/"razorfen_kraul"/"razorfen_downs") already match
+    what was hand-typed there, so this isn't a guess, it's the same real
+    data reached generically. Reuses _slugify_area_name (M4.11.3.1) --
+    that function's own logic (strip leading "the ", snake_case) applies
+    identically to map names, no separate slugifier needed."""
+    field_count, records, string_block = _read_wdbc(dbc_path)
+    names: dict[int, str] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        map_id = fields[0]
+        names[map_id] = _slugify_area_name(_wdbc_string(string_block, fields[_MAP_NAME_FIELD]))
+    return names
+
+
+def parse_map_instance_types(dbc_path: pathlib.Path = _MAP_DBC_PATH) -> dict[int, int]:
+    """Map.dbc real map id -> its own real InstanceType (0=open-world
+    continent; 1/2/3/4=dungeon/raid/battleground/arena, all "this map is
+    an instance, not open-world terrain"). The authoritative real signal
+    for "should a spawn on this map get an instance area tag or an
+    open-world one" -- not a hand-maintained allowlist of known instance
+    ids, which would silently miss any instance this project hasn't
+    already curated."""
+    field_count, records, _string_block = _read_wdbc(dbc_path)
+    instance_types: dict[int, int] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        instance_types[fields[0]] = fields[_MAP_INSTANCE_TYPE_FIELD]
+    return instance_types
+
+
 _ACHIEVEMENT_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Achievement.dbc"
 _ACHIEVEMENT_CATEGORY_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Achievement_Category.dbc"
 

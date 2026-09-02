@@ -6,7 +6,8 @@ from unittest.mock import patch, MagicMock
 
 from db_extract import (
     is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
-    parse_map_expansions, parse_skill_line_abilities, parse_spell_names,
+    parse_map_expansions, parse_map_names, parse_map_instance_types,
+    parse_skill_line_abilities, parse_spell_names,
     parse_achievements, parse_achievement_categories,
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
     parse_world_map_areas, resolve_zone_id_from_position,
@@ -126,6 +127,38 @@ class TestParseMapExpansions(unittest.TestCase):
         self.assertEqual(result[571], "wotlk")   # Northrend
         self.assertEqual(result[574], "wotlk")   # Utgarde Keep
         self.assertEqual(result[631], "wotlk")   # Icecrown Citadel
+
+
+class TestParseMapNamesAndInstanceTypes(unittest.TestCase):
+    def test_real_map_dbc_resolves_known_names_and_slugifies(self) -> None:
+        names = parse_map_names()
+        self.assertEqual(names[0], "eastern_kingdoms")
+        self.assertEqual(names[1], "kalimdor")
+        self.assertEqual(names[43], "wailing_caverns")
+        self.assertEqual(names[47], "razorfen_kraul")
+        self.assertEqual(names[129], "razorfen_downs")
+        self.assertEqual(names[409], "molten_core")
+
+    def test_real_map_dbc_resolves_known_instance_types(self) -> None:
+        instance_types = parse_map_instance_types()
+        self.assertEqual(instance_types[0], 0)   # Eastern Kingdoms -- continent
+        self.assertEqual(instance_types[1], 0)   # Kalimdor -- continent
+        self.assertEqual(instance_types[530], 0)  # Outland -- continent
+        self.assertEqual(instance_types[571], 0)  # Northrend -- continent
+        self.assertEqual(instance_types[43], 1)   # Wailing Caverns -- dungeon
+        self.assertEqual(instance_types[47], 1)   # Razorfen Kraul -- dungeon
+        self.assertEqual(instance_types[129], 1)  # Razorfen Downs -- dungeon
+        self.assertEqual(instance_types[409], 2)  # Molten Core -- raid
+
+    def test_slugified_instance_names_match_existing_hand_curated_keys(self) -> None:
+        # Real validation this task's own research already confirmed:
+        # zone_leveler_content_data.py's hand-curated instance_keys tuple
+        # ("wailing_caverns", "razorfen_kraul", "razorfen_downs") exactly
+        # matches what this general Map.dbc mechanism produces on its
+        # own -- not a coincidence to re-derive by hand each time.
+        names = parse_map_names()
+        for map_id, expected_key in ((43, "wailing_caverns"), (47, "razorfen_kraul"), (129, "razorfen_downs")):
+            self.assertEqual(names[map_id], expected_key)
 
 
 class TestParseSkillLineAbilities(unittest.TestCase):
