@@ -38,6 +38,7 @@
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoENEMYSANITYContent.h"
+#include "ArchipelagoGoldenBoarStatuesContentTable.h"
 
 class ArchipelagoInstanceKillScript : public PlayerScript
 {
@@ -146,6 +147,16 @@ public:
         auto enemysanityIt = ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.find(entry);
         if (enemysanityIt != ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.end())
             sArchipelagoMgr->SendLocationChecks({ enemysanityIt->second });
+
+        // M4.11.1 (Golden Boar Statues): 20 curated Barrens rares, one
+        // location per creature entry -- sent unconditionally on a matching
+        // kill regardless of whether this generation actually sampled the
+        // location, same safety argument as the Rares lookup above (the AP
+        // server silently ignores a location id outside a slot's actual
+        // location table).
+        auto goldenBoarStatueIt = Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.find(entry);
+        if (goldenBoarStatueIt != Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.end())
+            sArchipelagoMgr->SendLocationChecks({ goldenBoarStatueIt->second });
     }
 };
 

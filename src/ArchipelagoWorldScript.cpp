@@ -127,6 +127,7 @@ namespace
             { "AchievementHunt", "achievement_hunt" },
             { "Explorer", "explorer" },
             { "FishingQuest", "fishing_quest" },
+            { "ZoneLeveler", "zone_leveler" },
         };
         auto it = modes.find(value);
         if (it != modes.end())
@@ -630,9 +631,15 @@ public:
                 // below if for some reason they weren't set alongside the
                 // Task 14 triplet -- shouldn't happen in real play (Step 1's
                 // _add_zone_leveler_data always emits all eight keys
-                // together), and IsZoneLevelerComplete's own goals-set gate
-                // means an empty ZoneLevelerGoals never reports complete
-                // regardless.
+                // together). An empty ZoneLevelerGoals here (either from
+                // this fallback, or simply because slot_data hasn't arrived
+                // yet at all -- game_mode is set at worldserver boot,
+                // independent of any live AP connection, and a level-up can
+                // occur before Connected ever fires) is why
+                // IsZoneLevelerComplete (ArchipelagoGoalsPure.h) has an
+                // explicit empty-set guard returning false: without it, the
+                // AND-of-zero-conditions loop there would vacuously report
+                // complete (final whole-branch review Important 3).
                 zoneLevelerZoneKey = _pendingZoneLevelerZoneKey.value_or(std::string());
                 zoneLevelerGoals = _pendingZoneLevelerGoals.value_or(std::vector<std::string>());
                 zoneLevelerStatuesRequired = _pendingZoneLevelerStatuesRequired.value_or(0);

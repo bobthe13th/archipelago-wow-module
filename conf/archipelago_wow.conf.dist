@@ -294,7 +294,7 @@ Archipelago.ComboUnlocksScope = "Off"
 #        Values:      "Sprint" (default) | "KeyHunt" | "Classic" |
 #                      "BurningCrusade" | "Wrath" | "Completionist" |
 #                      "Artisan" | "Collector" | "AchievementHunt" |
-#                      "Explorer" | "FishingQuest"
+#                      "Explorer" | "FishingQuest" | "ZoneLeveler"
 #        Default:     "Sprint"
 
 Archipelago.GameMode = "Sprint"

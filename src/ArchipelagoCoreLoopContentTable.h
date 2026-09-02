@@ -31,9 +31,14 @@ namespace Archipelago::CoreLoop
     // ceiling at LEVEL_CAP_STEP == 1, replacing the old single flat
     // STARTING_LEVEL_CAP constant -- emitted for parity with the Python side
     // (core_loop_content_data.STARTING_LEVEL_CAP_BY_TRACK /
-    // LEVEL_CAP_TOTAL_BY_TRACK); not consumed anywhere in the C++ module as of
-    // this task (the real level cap is single global realm state, not
-    // per-track -- see ArchipelagoRealmState.h's _levelCap).
+    // LEVEL_CAP_TOTAL_BY_TRACK). Comment correction (final whole-branch
+    // review M7, 2026-09-01): LEVEL_CAP_TOTAL_BY_TRACK IS now consumed in the
+    // C++ module -- ArchipelagoGoals.cpp's IsZoneLevelerComplete reads it (via
+    // the "zone_leveler_<zone_key>" track key) to resolve the Zone Leveler
+    // reach_zone_level_cap goal's copies-required threshold (M4.11.1 Task 15).
+    // STARTING_LEVEL_CAP_BY_TRACK remains unconsumed as of this task (the real
+    // level cap is single global realm state, not per-track -- see
+    // ArchipelagoRealmState.h's _levelCap).
     inline std::unordered_map<std::string, uint32_t> const STARTING_LEVEL_CAP_BY_TRACK = {
         { "standard", 10 },
         { "zone_leveler_barrens", 10 },

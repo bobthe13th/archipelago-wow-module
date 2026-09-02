@@ -4,10 +4,15 @@
 
 using namespace Archipelago::Goals::Pure;
 
-TEST_CASE("IsZoneLevelerComplete is true when no goals are selected at all")
+TEST_CASE("IsZoneLevelerComplete is false when no goals are selected at all")
 {
+    // Important 3 (final whole-branch review): an empty selectedGoals set
+    // must fail closed, not vacuously-AND to true -- selectedGoals can be
+    // empty at real runtime before the AP client's slot_data has arrived
+    // (game_mode is set at worldserver boot, independent of any live
+    // connection), and a level-up can occur in that window.
     ZoneLevelerCompletionInput input;
-    CHECK(IsZoneLevelerComplete(input) == true);
+    CHECK(IsZoneLevelerComplete(input) == false);
 }
 
 TEST_CASE("reach_zone_level_cap requires enough Progressive Level Cap copies received")

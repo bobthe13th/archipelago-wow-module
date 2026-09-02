@@ -69,6 +69,24 @@ namespace Archipelago::Goals::Pure
     // ArchipelagoGoals.cpp's own IsZoneLevelerComplete for the full citation.
     inline bool IsZoneLevelerComplete(ZoneLevelerCompletionInput const& in)
     {
+        // Important 3 (final whole-branch review): an empty selectedGoals
+        // set must NOT report complete. The AND-of-zero-conditions loop
+        // below is vacuously true for an empty set, which is exactly wrong
+        // here -- selectedGoals is populated from the connected seed's own
+        // slot_data (ArchipelagoWorldScript.cpp's Connected handling), but
+        // ArchipelagoLevelScript::OnPlayerLevelChanged calls
+        // CheckAndSendGoalComplete() on every level-up regardless of
+        // whether a live AP connection has delivered that slot_data yet
+        // (game_mode itself is set at worldserver boot from the conf file,
+        // independent of any live connection). Without this guard, a
+        // zone_leveler-mode server would falsely report the goal complete
+        // on the very first level-up after boot, before the AP client ever
+        // connects -- and ArchipelagoManager::SendGoalComplete()'s own
+        // persistence (SetGoalComplete()) means that false-complete state
+        // would survive and be re-sent on the next real connect.
+        if (in.selectedGoals.empty())
+            return false;
+
         if (in.selectedGoals.count("reach_zone_level_cap"))
         {
             if (!in.levelCapCopiesRequired || in.levelCapCopiesReceived < *in.levelCapCopiesRequired)
