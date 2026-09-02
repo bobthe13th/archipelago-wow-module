@@ -10,6 +10,7 @@ from db_extract import (
     parse_achievements, parse_achievement_categories,
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
     parse_world_map_areas, resolve_zone_id_from_position,
+    resolve_zone_ids_from_position,
 )
 
 
@@ -491,6 +492,41 @@ class TestParseWorldMapAreasAndResolveZoneIdFromPosition(unittest.TestCase):
         self.assertEqual(
             resolve_zone_id_from_position(530, 6300.91, -6252.88, world_map_areas, area_zone_ids), 3433,
         )
+
+    def test_resolve_zone_ids_returns_every_containing_box_not_just_smallest(self) -> None:
+        world_map_areas = [
+            (1, 100, -1000.0, 1000.0, -1000.0, 1000.0),  # large enclosing box
+            (1, 200, -10.0, 10.0, -10.0, 10.0),           # small box, fully inside the first
+        ]
+        area_zone_ids = {100: 100, 200: 200}
+        result = resolve_zone_ids_from_position(1, 5.0, 5.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, frozenset({100, 200}))
+
+    def test_resolve_zone_ids_returns_empty_frozenset_when_no_box_contains_the_point(self) -> None:
+        world_map_areas = [(1, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        result = resolve_zone_ids_from_position(1, 500.0, 500.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, frozenset())
+
+    def test_resolve_zone_ids_ignores_rows_on_a_different_map(self) -> None:
+        world_map_areas = [(999, 100, -10.0, 10.0, -10.0, 10.0)]
+        area_zone_ids = {100: 100}
+        result = resolve_zone_ids_from_position(1, 0.0, 0.0, world_map_areas, area_zone_ids)
+        self.assertEqual(result, frozenset())
+
+    def test_real_barrens_durotar_border_ambiguity_now_returns_both_zones(self) -> None:
+        # Babagaya Shadowcleft (a real Warlock Trainer): real spawn map=1,
+        # position=(-782.82, -3704.84) -- geographically inside Barrens near
+        # Ratchet, but the old single-winner resolver returns only 14
+        # (Durotar) here because Barrens' own WorldMapArea box is almost
+        # entirely overlapped by the smaller Durotar/Mulgore boxes on this
+        # map (final whole-branch review, M4.11.2, 2026-09-02). Confirmed
+        # this session: both 14 and 17 genuinely contain this point.
+        world_map_areas = parse_world_map_areas()
+        area_zone_ids = parse_area_zone_ids()
+        result = resolve_zone_ids_from_position(1, -782.82, -3704.84, world_map_areas, area_zone_ids)
+        self.assertIn(14, result)
+        self.assertIn(17, result)
 
 
 class TestParseFillerBuffSpellCandidates(unittest.TestCase):

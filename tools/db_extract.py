@@ -354,6 +354,39 @@ def resolve_zone_id_from_position(
     return area_zone_ids.get(best_area[1], 0)
 
 
+def resolve_zone_ids_from_position(
+    map_id: int, position_x: float, position_y: float,
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int],
+) -> frozenset[int]:
+    """M4.11.3.1: sibling of resolve_zone_id_from_position that returns
+    EVERY real zone whose WorldMapArea.dbc bounding box contains this
+    point, not just the smallest one. WorldMapArea.dbc's 108 real rows are
+    crude axis-aligned rectangles, not real zone polygons -- on map 1,
+    Barrens' own box is almost entirely overlapped by the smaller,
+    genuinely-overlapping Durotar/Mulgore boxes (final whole-branch
+    review, M4.11.2, 2026-09-02: only ~10.3% of Barrens' own box actually
+    resolves to zone 17 under smallest-box-wins). Returning the full
+    membership set instead of guessing one winner means a border-ambiguous
+    position gets tagged with every real candidate instead of one
+    possibly-wrong pick -- the right trade for every consumer of area
+    tags, which are used to build a zone-scoped CHECK POOL: an occasional
+    false-positive extra zone tag is far cheaper than the false-negative
+    this project's tooling has repeatedly produced (a real check wrongly
+    excluded from a zone-locked mode). Deliberately does NOT replace
+    resolve_zone_id_from_position -- nothing currently needs a single
+    best guess, but nothing is broken by this coexisting either."""
+    matches: set[int] = set()
+    for (row_map_id, area_id, min_x, max_x, min_y, max_y) in world_map_areas:
+        if row_map_id != map_id:
+            continue
+        if min_x <= position_x <= max_x and min_y <= position_y <= max_y:
+            zone_id = area_zone_ids.get(area_id, 0)
+            if zone_id != 0:
+                matches.add(zone_id)
+    return frozenset(matches)
+
+
 _SKILL_LINE_ABILITY_DBC_PATH = (
     pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "SkillLineAbility.dbc"
 )
