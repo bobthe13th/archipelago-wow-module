@@ -25,6 +25,22 @@ class TestExpansionTagsForLootId(unittest.TestCase):
 
 
 class TestExtract(unittest.TestCase):
+    # NOTE on position columns (M4.11.3.2): the spawn/map query now also
+    # selects position_x/position_y (4-tuples, not 2-tuples) so extract()
+    # can resolve a real tags["area"]. These mocked TestExtract cases don't
+    # care about area resolution, so they use a deliberately out-of-range
+    # position (999999.0, 999999.0) -- outside every real WorldMapArea.dbc
+    # bounding box on any map, confirmed via resolve_zone_ids_from_position's
+    # own min_x<=x<=max_x/min_y<=y<=max_y containment check (db_extract.py)
+    # -- so resolve_area_or_instance_tags_for_positions always returns an
+    # empty frozenset here and "area" stays omitted from tags, keeping these
+    # assertions' exact dict shape valid. Same convention
+    # test_extract_enemysanity.py's own TestExtract already established.
+    # parse_world_map_areas/parse_area_zone_ids/parse_area_names/
+    # parse_map_instance_types/parse_map_names are NOT mocked -- they parse
+    # real on-disk DBC files (no DB/network dependency).
+    _OUT_OF_RANGE_POS = ("999999.0", "999999.0")
+
     @patch("extract_containersanity.parse_map_expansions")
     @patch("extract_containersanity.load_exclusion_rules")
     @patch("extract_containersanity.run_query")
@@ -39,7 +55,7 @@ class TestExtract(unittest.TestCase):
         # in this specific real row, not a bug).
         mock_run_query.side_effect = [
             [("1683", "1683", "Sunken Chest", "Oslow's Toolbox")],  # main loot query
-            [("1683", "0")],  # spawn/map query
+            [("1683", "0", *self._OUT_OF_RANGE_POS)],  # spawn query: loot_id, map, x, y
         ]
         result = extract()
         self.assertEqual(len(result["locations"]), 1)
@@ -76,7 +92,7 @@ class TestExtract(unittest.TestCase):
                 ("404", "1811", "Weapon Crate", "Blunt Claymore"),
                 ("404", "1812", "Weapon Crate", "Short-handled Battle Axe"),
             ],
-            [("404", "0")],
+            [("404", "0", *self._OUT_OF_RANGE_POS)],
         ]
         result = extract()
         self.assertEqual([loc["location_id"] for loc in result["locations"]], [8_000_000, 8_000_001, 8_000_002, 8_000_003])
@@ -107,13 +123,61 @@ class TestExtract(unittest.TestCase):
         mock_map_expansions.return_value = {0: "vanilla", 571: "wotlk"}
         mock_run_query.side_effect = [
             [("500", "600", "Shared Crate", "Shared Item")],
-            [("500", "0"), ("500", "571")],
+            [("500", "0", *self._OUT_OF_RANGE_POS), ("500", "571", *self._OUT_OF_RANGE_POS)],
         ]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"], {"expansion": ["vanilla", "wotlk"]})
 
+    @patch("extract_containersanity.resolve_area_or_instance_tags_for_positions")
+    @patch("extract_containersanity.parse_map_expansions")
+    @patch("extract_containersanity.load_exclusion_rules")
+    @patch("extract_containersanity.run_query")
+    def test_empty_area_tags_omits_area_key_not_empty_list(
+        self, mock_run_query, mock_load_rules, mock_map_expansions, mock_resolve_area_tags
+    ) -> None:
+        # Same "never zero tags" invariant extract_enemysanity.py/
+        # extract_quest_rewards.py/extract_trainer_spells.py's own
+        # tags["area"] omission already handles (generate_content.py's
+        # _validate_tags_rows rejects an empty list for any dimension
+        # present in an export_tags family's tags block, and containersanity
+        # is export_tags=True).
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_map_expansions.return_value = {0: "vanilla"}
+        mock_run_query.side_effect = [
+            [("1683", "1683", "Sunken Chest", "Oslow's Toolbox")],
+            [("1683", "0", "0.0", "0.0")],
+        ]
+        mock_resolve_area_tags.return_value = frozenset()
+        result = extract()
+        self.assertNotIn("area", result["locations"][0]["tags"])
+
+
+class TestExtractContainersanityAreaTags(unittest.TestCase):
+    """M4.11.3.2: exercises the real extract() against the live DB (same
+    convention TestExtractEnemysanityAreaTags/TestExtractVendorStockAreaTags
+    already use) -- tags["area"] is derived from every real chest spawn
+    position via db_extract's own resolve_area_or_instance_tags_for_positions
+    (Task 2's fixed mechanism), which isn't meaningfully mockable without
+    re-deriving the DBC data by hand."""
+
+    def test_extracted_rows_carry_area_tag(self) -> None:
+        rows = extract()
+        resolved = [loc for loc in rows["locations"] if loc["tags"].get("area")]
+        self.assertTrue(resolved)
+
+    def test_a_barrens_chest_is_tagged_barrens(self) -> None:
+        # Confirmed directly against this checkout's live DB: a real chest
+        # spawn (gameobject_template.type=3) exists on map=1 (Kalimdor) near
+        # Crossroads (-410, -2645), a real Barrens landmark -- see
+        # task-5-report.md for the exact live-query confirmation.
+        rows = extract()
+        barrens_chests = [loc for loc in rows["locations"] if "barrens" in loc["tags"].get("area", [])]
+        self.assertTrue(barrens_chests)
+
 
 class TestGatheringNodeExclusion(unittest.TestCase):
+    _OUT_OF_RANGE_POS = ("999999.0", "999999.0")
+
     @patch("extract_containersanity.parse_map_expansions")
     @patch("extract_containersanity.load_exclusion_rules")
     @patch("extract_containersanity.run_query")
@@ -131,7 +195,7 @@ class TestGatheringNodeExclusion(unittest.TestCase):
                 ("1502", "774", "Copper Vein", "Malachite"),
                 ("1731", "999", "Mossy Footlocker", "Some Real Container Item"),
             ],
-            [("1502", "0"), ("1731", "0")],
+            [("1502", "0", *self._OUT_OF_RANGE_POS), ("1731", "0", *self._OUT_OF_RANGE_POS)],
         ]
         result = extract()
         names = [loc["name"] for loc in result["locations"]]

@@ -9,7 +9,11 @@ import pathlib
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions,
+    parse_world_map_areas, parse_area_zone_ids, parse_area_names, parse_map_instance_types,
+    parse_map_names, resolve_area_or_instance_tags_for_positions,
+)
 from gathersanity_node_names import GATHERING_NODE_NAMES
 
 _LOCATION_ID_BASE = 8_000_000
@@ -40,6 +44,11 @@ def _expansion_tags_for_loot_id(
 def extract() -> dict:
     rules = load_exclusion_rules()
     map_expansions = parse_map_expansions()
+    world_map_areas = parse_world_map_areas()
+    area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
+    map_instance_types = parse_map_instance_types()
+    map_names = parse_map_names()
 
     # Real join confirmed live during planning: gameobject_loot_template.Entry
     # is a chest's LOOT id (chest.lootId == gameobject_template.Data1), NOT
@@ -70,19 +79,29 @@ def extract() -> dict:
         ORDER BY glt.Entry, glt.Item
     """)
 
-    # Separate query for expansion tagging: which real map(s) does a spawn
-    # of ANY chest-type template backing a given loot_id (Data1) appear on.
-    # gameobject's own template FK column is `id` (same shape as
-    # creature.id -> creature_template.entry, per M4.9.2's own precedent).
+    # Separate query for expansion/area tagging: which real map(s) and
+    # position(s) does a spawn of ANY chest-type template backing a given
+    # loot_id (Data1) appear on. gameobject's own template FK column is `id`
+    # (same shape as creature.id -> creature_template.entry, per M4.9.2's
+    # own precedent).
+    #
+    # M4.11.3.2: now also selects position_x/position_y so every real
+    # spawn's exact position feeds resolve_area_or_instance_tags_for_
+    # positions (Task 2, db_extract.py) for a real tags["area"] --
+    # loot_id_to_maps (map-only) is still derived from this for
+    # _expansion_tags_for_loot_id, which only ever needed the map id.
     spawn_rows = run_query(f"""
-        SELECT gt.Data1, g.map
+        SELECT gt.Data1, g.map, g.position_x, g.position_y
         FROM gameobject g
         JOIN gameobject_template gt ON gt.entry = g.id
         WHERE gt.type = {_GAMEOBJECT_TYPE_CHEST}
     """)
-    loot_id_to_maps: dict[int, set[int]] = {}
-    for data1, map_id in spawn_rows:
-        loot_id_to_maps.setdefault(int(data1), set()).add(int(map_id))
+    loot_id_to_positions: dict[int, set[tuple[int, float, float]]] = {}
+    for data1, map_id, x, y in spawn_rows:
+        loot_id_to_positions.setdefault(int(data1), set()).add((int(map_id), float(x), float(y)))
+    loot_id_to_maps: dict[int, set[int]] = {
+        loot_id: {map_id for map_id, _, _ in positions} for loot_id, positions in loot_id_to_positions.items()
+    }
 
     locations, items = [], []
     for loot_id_str, item_entry_str, chest_name, item_name in loot_rows:
@@ -103,12 +122,29 @@ def extract() -> dict:
         idx = len(locations)
         display = f"{chest_name} - {item_name} (#{loot_id}/{item_entry})"
         expansions = _expansion_tags_for_loot_id(loot_id, loot_id_to_maps, map_expansions)
+        area_tags = resolve_area_or_instance_tags_for_positions(
+            sorted(loot_id_to_positions.get(loot_id, set())), world_map_areas, area_zone_ids,
+            area_names, map_instance_types, map_names,
+        )
+
+        tags = {"expansion": expansions}
+        # area is OMITTED (not an empty list) when none of this chest's real
+        # spawns resolve to a real zone/instance name -- same
+        # generate_content.py's _validate_tags_rows constraint
+        # extract_enemysanity.py/extract_quest_rewards.py/
+        # extract_trainer_spells.py's own tags["area"] omission already
+        # handles (an empty list for a present dimension is a hard
+        # ValidationError for any export_tags=True family, which
+        # containersanity is). Expected to fire for some real chests -- not
+        # a bug.
+        if area_tags:
+            tags["area"] = sorted(area_tags)
 
         locations.append({
             "name": f"Container: {display}",
             "location_id": _LOCATION_ID_BASE + idx,
             "trigger": {"kind": "gameobject_loot", "loot_id": loot_id, "item_entry": item_entry},
-            "tags": {"expansion": expansions},
+            "tags": tags,
         })
         items.append({
             "name": f"Container Item: {display}",
