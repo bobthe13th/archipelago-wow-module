@@ -10,7 +10,7 @@ from db_extract import (
     parse_achievements, parse_achievement_categories,
     parse_filler_buff_spell_candidates, parse_area_zone_ids,
     parse_world_map_areas, resolve_zone_id_from_position,
-    resolve_zone_ids_from_position,
+    resolve_zone_ids_from_position, parse_area_names, _slugify_area_name,
 )
 
 
@@ -684,6 +684,29 @@ class TestParseFillerBuffSpellCandidates(unittest.TestCase):
         self.assertIn(16884, result)  # "Health II"
         self.assertIn(16885, result)  # "Agility VIII"
         self.assertIn(16888, result)  # "Intellect IX"
+
+
+class TestParseAreaNamesAndSlugify(unittest.TestCase):
+    def test_slugify_strips_leading_the_and_snake_cases(self) -> None:
+        self.assertEqual(_slugify_area_name("The Barrens"), "barrens")
+        self.assertEqual(_slugify_area_name("Orgrimmar"), "orgrimmar")
+        self.assertEqual(_slugify_area_name("Stonetalon Mountains"), "stonetalon_mountains")
+
+    def test_slugify_strips_apostrophes_and_other_punctuation(self) -> None:
+        self.assertEqual(_slugify_area_name("Un'Goro Crater"), "un_goro_crater")
+
+    def test_real_area_table_dbc_resolves_known_names(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # AreaTable.dbc -- confirms field index 11 is still AreaName_enUS
+        # and the slugify output matches this project's existing
+        # instance_keys naming convention (snake_case, no "the_" prefix).
+        names = parse_area_names()
+        self.assertEqual(names[14], "durotar")
+        self.assertEqual(names[17], "barrens")
+        self.assertEqual(names[331], "ashenvale")
+        self.assertEqual(names[361], "felwood")
+        self.assertEqual(names[406], "stonetalon_mountains")
+        self.assertEqual(names[1637], "orgrimmar")
 
 
 if __name__ == "__main__":

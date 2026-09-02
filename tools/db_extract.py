@@ -236,6 +236,39 @@ def parse_area_zone_ids(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[i
     return {area_id: _resolve_top_level_zone(area_id) for area_id in zone_field_by_id}
 
 
+_AREA_TABLE_NAME_FIELD = 11  # AreaName_enUS -- verified M4.11.1 Task 13 (zone_level_data.py's
+                              # own docstring) against ids 14/1637; re-confirmed this session
+                              # (M4.11.3.1) against 17/331/361/406.
+
+
+def _slugify_area_name(name: str) -> str:
+    """'The Barrens' -> 'barrens', 'Stonetalon Mountains' -> 'stonetalon_mountains' --
+    matches this project's existing instance_keys naming convention
+    (zone_leveler_content_data.py's own 'wailing_caverns'/'razorfen_kraul') so open-world
+    zones and instances share one string namespace with no visual
+    inconsistency between them."""
+    slug = name.strip().lower()
+    if slug.startswith("the "):
+        slug = slug[4:]
+    slug = re.sub(r"[^a-z0-9]+", "_", slug).strip("_")
+    return slug
+
+
+def parse_area_names(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[int, str]:
+    """AreaTable.dbc real area id -> its own real, slugified name. Every
+    resolved zone id this project's area-tag mechanism produces gets
+    turned into one of these canonical strings before being written into
+    any content/*.yaml file -- matching the existing convention every
+    other TAGS dimension already uses (frozenset[str], never bare ints)."""
+    field_count, records, string_block = _read_wdbc(dbc_path)
+    names: dict[int, str] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        area_id = fields[0]
+        names[area_id] = _slugify_area_name(_wdbc_string(string_block, fields[_AREA_TABLE_NAME_FIELD]))
+    return names
+
+
 _WORLD_MAP_AREA_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "WorldMapArea.dbc"
 # WorldMapAreaEntryfmt = "xinxffffixx" (src/server/shared/DataStores/DBCfmt.h:131),
 # confirmed against this same checkout's own WorldMapAreaEntry struct
