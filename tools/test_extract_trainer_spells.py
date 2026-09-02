@@ -117,31 +117,40 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(len(result["locations"]), 0)
 
 
-class TestExtractTrainerSpellsZoneData(unittest.TestCase):
-    """M4.11.2: exercises the real extract() against the live DB (same
+class TestExtractTrainerSpellsAreaTags(unittest.TestCase):
+    """M4.11.3.1: exercises the real extract() against the live DB (same
     convention TestLoadRecipeSpellIds already uses for _load_recipe_spell_ids)
-    -- trainer_zone_ids is derived from real creature spawn positions via
-    db_extract's own WorldMapArea.dbc position-resolution, which isn't
-    meaningfully mockable without re-deriving the DBC data by hand."""
+    -- tags["area"] is derived from real creature spawn positions via
+    db_extract's own resolve_area_tags_for_positions (Task 3's fixed
+    mechanism), which isn't meaningfully mockable without re-deriving the
+    DBC data by hand. Replaces M4.11.2's own TestExtractTrainerSpellsZoneData,
+    which asserted on trigger["trainer_zone_ids"] -- removed entirely by this
+    migration."""
 
-    def test_extracted_rows_carry_trainer_zone_ids(self) -> None:
+    def test_extracted_rows_carry_area_tag_not_trainer_zone_ids(self) -> None:
         rows = extract()
         sample = rows["locations"][0]
-        self.assertIn("trainer_zone_ids", sample["trigger"])
-        self.assertIsInstance(sample["trigger"]["trainer_zone_ids"], list)
+        self.assertIn("area", sample["tags"])
+        self.assertIsInstance(sample["tags"]["area"], list)
+        self.assertNotIn("trainer_zone_ids", sample["trigger"])
 
-    def test_frost_nova_includes_orgrimmar_and_durotar(self) -> None:
+    def test_frost_nova_area_tags_include_durotar_and_orgrimmar(self) -> None:
         rows = extract()
         frost_nova = next(loc for loc in rows["locations"] if loc["trigger"]["spell_id"] == 122)
-        zone_ids = set(frost_nova["trigger"]["trainer_zone_ids"])
-        self.assertTrue({14, 1637} & zone_ids)
+        area_tags = set(frost_nova["tags"]["area"])
+        self.assertTrue({"durotar", "orgrimmar"} & area_tags)
 
-    def test_teleport_stormwind_has_no_horde_hub_trainer(self) -> None:
+    def test_teleport_stormwind_area_tags_have_no_horde_hub(self) -> None:
         rows = extract()
         teleport_stormwind = next(loc for loc in rows["locations"] if loc["trigger"]["spell_id"] == 3561)
-        zone_ids = set(teleport_stormwind["trigger"]["trainer_zone_ids"])
-        self.assertFalse({14, 1637} & zone_ids)
-        self.assertIn(1519, zone_ids)  # Stormwind itself
+        area_tags = set(teleport_stormwind["tags"]["area"])
+        self.assertFalse({"durotar", "orgrimmar"} & area_tags)
+        # Real AreaTable.dbc area 1519's own name slugifies to
+        # "stormwind_city", not "stormwind" (confirmed against this
+        # checkout's real parse_area_names() output) -- this task's own
+        # brief cited the shorter, unverified form; corrected here per this
+        # task's own "confirm the real current shape" instruction.
+        self.assertIn("stormwind_city", area_tags)
 
 
 if __name__ == "__main__":
