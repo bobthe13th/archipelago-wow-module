@@ -9,9 +9,9 @@
 
 // M4.11.1 Task 15. Pure, ArchipelagoRealmState/singleton-independent "is the
 // Zone Leveler goal satisfied" decision -- unit-testable directly via
-// test/test_ArchipelagoGoalsPure.cpp, matching the exact split
-// ArchipelagoZoneLevelerScriptPure.h already established for
-// IsZoneAllowedForZoneLeveler (same module, same task family): this module's
+// test/test_ArchipelagoGoalsPure.cpp, matching the "pure decision function,
+// no AzerothCore/singleton dependency" split this module already uses
+// elsewhere (e.g. APTrapsPure.h, APGateDecision.h): this module's
 // test executable (test/CMakeLists.txt) links no ArchipelagoRealmState.cpp/
 // ArchipelagoGoals.cpp at all (neither has doctest-harness coverage as of
 // this task -- confirmed by reading test/CMakeLists.txt's source list before

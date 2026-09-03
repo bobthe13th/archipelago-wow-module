@@ -389,20 +389,6 @@ namespace Archipelago
                 _callbacks.onHolidaysanityStackingReceived(*holidaysanityStacking);
 
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
-            // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.11.1 Task 14).
-            auto zoneLevelerZoneId = ParseZoneLevelerZoneIdFromSlotData(message);
-            if (zoneLevelerZoneId && _callbacks.onZoneLevelerZoneIdReceived)
-                _callbacks.onZoneLevelerZoneIdReceived(*zoneLevelerZoneId);
-
-            auto zoneLevelerAllowedHubZoneIds = ParseZoneLevelerAllowedHubZoneIdsFromSlotData(message);
-            if (zoneLevelerAllowedHubZoneIds && _callbacks.onZoneLevelerAllowedHubZoneIdsReceived)
-                _callbacks.onZoneLevelerAllowedHubZoneIdsReceived(*zoneLevelerAllowedHubZoneIds);
-
-            auto zoneLevelerAllowHubZone = ParseZoneLevelerAllowHubZoneFromSlotData(message);
-            if (zoneLevelerAllowHubZone && _callbacks.onZoneLevelerAllowHubZoneReceived)
-                _callbacks.onZoneLevelerAllowHubZoneReceived(*zoneLevelerAllowHubZone);
-
-            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
             // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.11.1 Task 15).
             auto zoneLevelerZoneKey = ParseZoneLevelerZoneKeyFromSlotData(message);
             if (zoneLevelerZoneKey && _callbacks.onZoneLevelerZoneKeyReceived)

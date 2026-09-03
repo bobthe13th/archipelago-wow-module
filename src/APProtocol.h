@@ -79,18 +79,12 @@ namespace Archipelago
         // bool is a primitive, so passed by value rather than by const& (M4.10.7),
         // unlike the string-valued slot_data callbacks above.
         std::function<void(bool)> onHolidaysanityStackingReceived = nullptr;
-        // Zone Leveler slot_data (M4.11.1 Task 14) -- zone_leveler_zone_id
-        // and zone_leveler_allow_hub_zone are primitives (passed by value,
-        // matching onHolidaysanityStackingReceived's own bool convention);
-        // zone_leveler_allowed_hub_zone_ids is a real container, passed by
-        // const& like every other container-valued callback above.
-        std::function<void(uint32_t)> onZoneLevelerZoneIdReceived = nullptr;
-        std::function<void(std::vector<uint32_t> const&)> onZoneLevelerAllowedHubZoneIdsReceived = nullptr;
-        std::function<void(bool)> onZoneLevelerAllowHubZoneReceived = nullptr;
         // M4.11.1 Task 15: zone_leveler_zone_key/goals/statues_required/
         // instances_required/instance_keys -- the goal-completion side's own
-        // slot_data, same primitive-vs-container split as the Task 14
-        // triplet directly above.
+        // slot_data. uint32_t is a primitive (passed by value, matching
+        // onHolidaysanityStackingReceived's own bool convention); the vector
+        // fields are real containers, passed by const& like every other
+        // container-valued callback above.
         std::function<void(std::string const&)> onZoneLevelerZoneKeyReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onZoneLevelerGoalsReceived = nullptr;
         std::function<void(uint32_t)> onZoneLevelerStatuesRequiredReceived = nullptr;
@@ -194,37 +188,6 @@ namespace Archipelago
     // by ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic.
     std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw);
 
-    // Parses Connected's slot_data["zone_leveler_zone_id"] (a single integer
-    // option, M4.11.1 Task 14) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's
-    // exact shape (M4.7 Task 8), adapted for a uint32_t instead of a string:
-    // "don't crash the connection state machine on a shape it doesn't
-    // recognize". Returns std::nullopt (never throws) if slot_data or the
-    // key is absent/malformed (wrong type, negative, no Connected command in
-    // the frame). Consumed by ArchipelagoZoneLevelerScript.cpp's
-    // OnPlayerUpdateZone hook via ArchipelagoRealmState::GetZoneLevelerZoneId.
-    std::optional<uint32_t> ParseZoneLevelerZoneIdFromSlotData(std::string const& raw);
-
-    // Parses Connected's slot_data["zone_leveler_allowed_hub_zone_ids"] (a
-    // JSON array of integers, M4.11.1 Task 14) -- mirrors
-    // ParseMissingLocationsFromConnected's exact "scan the array, skip a
-    // non-numeric element rather than throwing" discipline, adapted to also
-    // require a Connected command + slot_data object (like every other
-    // Parse*FromSlotData function here) since this key lives under
-    // slot_data, not at Connected's top level like missing_locations does.
-    // Returns std::nullopt (never throws) if slot_data or the key is
-    // absent/malformed; an empty-but-present array parses to an empty
-    // (non-nullopt) vector, distinguishing "no hub zones configured" from
-    // "key absent from this frame".
-    std::optional<std::vector<uint32_t>> ParseZoneLevelerAllowedHubZoneIdsFromSlotData(std::string const& raw);
-
-    // Parses Connected's slot_data["zone_leveler_allow_hub_zone"] (a single
-    // boolean option, M4.11.1 Task 14) -- mirrors
-    // ParseHolidaysanityStackingFromSlotData's exact shape: "don't crash the
-    // connection state machine on a shape it doesn't recognize". Returns
-    // std::nullopt (never throws) if slot_data or the key is
-    // absent/malformed.
-    std::optional<bool> ParseZoneLevelerAllowHubZoneFromSlotData(std::string const& raw);
-
     // Parses Connected's slot_data["zone_leveler_zone_key"] (a single string
     // option, M4.11.1 Task 15) -- mirrors
     // ParseVendorCheckRepeatBehaviorFromSlotData's exact shape. Returns
@@ -236,17 +199,19 @@ namespace Archipelago
 
     // Parses Connected's slot_data["zone_leveler_goals"] (a JSON array of
     // strings, M4.11.1 Task 15) -- mirrors
-    // ParseZoneLevelerAllowedHubZoneIdsFromSlotData's exact "scan the array,
-    // skip a non-string element rather than throwing" discipline, adapted
-    // for strings instead of integers. Returns std::nullopt (never throws)
-    // if slot_data or the key is absent/malformed; an empty-but-present
-    // array parses to an empty (non-nullopt) vector.
+    // ParseZoneLevelerInstanceKeysFromSlotData's exact "scan the array,
+    // skip a non-string element rather than throwing" discipline. Returns
+    // std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed; an empty-but-present array parses to an empty
+    // (non-nullopt) vector.
     std::optional<std::vector<std::string>> ParseZoneLevelerGoalsFromSlotData(std::string const& raw);
 
     // Parses Connected's slot_data["zone_leveler_statues_required"] /
     // ["zone_leveler_instances_required"] (single integer options, M4.11.1
-    // Task 15) -- mirrors ParseZoneLevelerZoneIdFromSlotData's exact shape
-    // (a uint32_t, rejecting negative values). Returns std::nullopt (never
+    // Task 15) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's exact
+    // shape (M4.7 Task 8), adapted for a uint32_t instead of a string:
+    // "don't crash the connection state machine on a shape it doesn't
+    // recognize" (rejecting negative values). Returns std::nullopt (never
     // throws) if slot_data or the key is absent/malformed.
     std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw);
     std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw);

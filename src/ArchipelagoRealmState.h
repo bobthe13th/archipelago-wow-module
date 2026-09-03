@@ -237,29 +237,10 @@ public:
     std::string GetAchievementHuntSubset() const { return _achievementHuntSubset; }
     void SetAchievementHuntSubset(std::string const& subset) { _achievementHuntSubset = subset; }
 
-    // Cached mirrors of slot_data["zone_leveler_zone_id"] /
-    // ["zone_leveler_allowed_hub_zone_ids"] / ["zone_leveler_allow_hub_zone"]
-    // (M4.11.1 Task 14), same not-persisted, set-once-from-slot_data
-    // convention as GetInstanceClearMode/GetVendorCheckRepeatBehavior above
-    // -- consumed by ArchipelagoZoneLevelerScript.cpp's OnPlayerUpdateZone
-    // hook to decide whether a zone-change is inside the locked zone
-    // (BarrensBeater: the Barrens, area/zone id 17), inside an allowed hub
-    // zone exception (Durotar/Orgrimmar for Barrens, only reachable when
-    // GetZoneLevelerAllowHubZone() is true), or a violation that should
-    // teleport the player back to their last known in-bounds position.
-    uint32_t GetZoneLevelerZoneId() const { return _zoneLevelerZoneId; }
-    void SetZoneLevelerZoneId(uint32_t zoneId) { _zoneLevelerZoneId = zoneId; }
-
-    std::unordered_set<uint32_t> const& GetZoneLevelerAllowedHubZoneIds() const { return _zoneLevelerAllowedHubZoneIds; }
-    void SetZoneLevelerAllowedHubZoneIds(std::unordered_set<uint32_t> ids) { _zoneLevelerAllowedHubZoneIds = std::move(ids); }
-
-    bool GetZoneLevelerAllowHubZone() const { return _zoneLevelerAllowHubZone; }
-    void SetZoneLevelerAllowHubZone(bool allow) { _zoneLevelerAllowHubZone = allow; }
-
     // Cached mirror of slot_data["zone_leveler_zone_key"] (M4.11.1 Task 15) --
     // the connected zone's own short key (e.g. "barrens"), same
-    // not-persisted, set-once-from-slot_data convention as
-    // GetZoneLevelerZoneId above. Needed IN ADDITION TO the numeric zone id:
+    // not-persisted, set-once-from-slot_data convention as every other
+    // slot_data mirror above. Needed IN ADDITION TO the numeric zone id:
     // Archipelago::CoreLoop::LEVEL_CAP_TOTAL_BY_TRACK (Task 3) is keyed by
     // the STRING "zone_leveler_<zone_key>", and this C++ module has no
     // zone_id -> zone_key reverse map of its own (unlike Python's
@@ -276,7 +257,7 @@ public:
     // ZoneLevelerGoals OptionSet: any of reach_zone_level_cap,
     // clear_all_zone_quests, golden_boar_statues, instance_clears), same
     // not-persisted, set-once-from-slot_data convention as
-    // GetZoneLevelerZoneId above. Consumed by ArchipelagoGoals.cpp's
+    // GetZoneLevelerZoneKey above. Consumed by ArchipelagoGoals.cpp's
     // IsZoneLevelerComplete to decide which goal-kind sub-checks apply, the
     // same role GetGameMode plays for CheckAndSendGoalComplete's own
     // top-level dispatch.
@@ -286,7 +267,7 @@ public:
     // Cached mirrors of slot_data["zone_leveler_statues_required"] /
     // ["zone_leveler_instances_required"] (M4.11.1 Task 15), same
     // not-persisted, set-once-from-slot_data convention as
-    // GetZoneLevelerZoneId above -- consumed by ArchipelagoGoals.cpp's
+    // GetZoneLevelerZoneKey above -- consumed by ArchipelagoGoals.cpp's
     // IsZoneLevelerComplete for the golden_boar_statues/instance_clears goal
     // kinds respectively.
     uint32_t GetZoneLevelerStatuesRequired() const { return _zoneLevelerStatuesRequired; }
@@ -298,7 +279,7 @@ public:
     // 15) -- the connected zone's own curated instance_keys tuple (e.g.
     // Barrens' wailing_caverns/razorfen_kraul/razorfen_downs), same
     // not-persisted, set-once-from-slot_data convention as
-    // GetZoneLevelerZoneId above. Consumed by ArchipelagoGoals.cpp's
+    // GetZoneLevelerZoneKey above. Consumed by ArchipelagoGoals.cpp's
     // IsZoneLevelerComplete's instance_clears check, which counts how many
     // of THESE SPECIFIC keys (not every realm-unlocked instance) are
     // unlocked -- mirrors goals.py's own instance_item_names, built from the
@@ -366,9 +347,6 @@ private:
     bool _holidaysanityStacking = false;
     std::string _achievementHuntTier = "hundred_percent";
     std::string _achievementHuntSubset = "explorer";
-    uint32_t _zoneLevelerZoneId = 0;
-    std::unordered_set<uint32_t> _zoneLevelerAllowedHubZoneIds;
-    bool _zoneLevelerAllowHubZone = false;
     std::string _zoneLevelerZoneKey;
     std::unordered_set<std::string> _zoneLevelerGoals;
     uint32_t _zoneLevelerStatuesRequired = 0;
