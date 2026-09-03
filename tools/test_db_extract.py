@@ -854,7 +854,7 @@ def test_resolve_zone_pool_units_pooled_spawns_count_as_one_unit():
         spawn_rows, pool_memberships, world_map_areas, area_zone_ids,
         area_names, map_instance_types, map_names,
     )
-    assert units_by_zone == {"barrens": {5, 200}}
+    assert units_by_zone == {"barrens": {("pool", 5), ("standalone", 200)}}
 
 
 def test_resolve_zone_pool_units_unit_spanning_two_zones_counts_in_both():
@@ -875,7 +875,7 @@ def test_resolve_zone_pool_units_unit_spanning_two_zones_counts_in_both():
         spawn_rows, {}, world_map_areas, area_zone_ids, area_names,
         map_instance_types, map_names,
     )
-    assert units_by_zone == {"barrens": {300}, "durotar": {300}}
+    assert units_by_zone == {"barrens": {("standalone", 300)}, "durotar": {("standalone", 300)}}
 
 
 if __name__ == "__main__":

@@ -824,28 +824,32 @@ def resolve_zone_pool_units(
     area_names: dict[int, str],
     map_instance_types: dict[int, int],
     map_names: dict[int, str],
-) -> dict[str, set[int]]:
+) -> dict[str, set[tuple[str, int]]]:
     """M4.11.4: real spawn rows (one row per real gameobject.guid, as
     (guid, map_id, position_x, position_y)) -> zone_key -> the set of
     distinct real "pool unit" ids resolving to that zone. A unit id is
-    the real pool_entry for a pool-managed spawn (from
-    parse_pool_gameobject_memberships), or the spawn's own guid for a
-    standalone spawn -- matching what a real player can actually
-    encounter (87.9% of real chest pools have max_limit=1: only one
-    member is ever findable at a time, so an entire pool counts as ONE
-    encounterable unit, never one per member). A unit whose own
-    position(s) resolve to more than one real zone (a border-ambiguous
-    spawn, or a pool whose members happen to sit across a zone boundary)
-    is counted toward every zone it resolves to -- same union-not-guess
-    convention resolve_zone_ids_from_position's own docstring
-    establishes for this project, never a single arbitrarily-chosen
-    winner."""
-    positions_by_unit: dict[int, set[tuple[int, float, float]]] = {}
+    a type-tagged 2-tuple: ("pool", pool_entry) for a pool-managed spawn
+    (from parse_pool_gameobject_memberships), or ("standalone", guid)
+    for a standalone spawn -- the tag namespace prevents collisions
+    between pool_entry and guid id spaces (both are independently
+    numbered, and a numeric collision would silently merge distinct
+    units, undercounting a zone's real distinct chest/node population).
+    Matching what a real player can actually encounter (87.9% of real
+    chest pools have max_limit=1: only one member is ever findable at a
+    time, so an entire pool counts as ONE encounterable unit, never one
+    per member). A unit whose own position(s) resolve to more than one
+    real zone (a border-ambiguous spawn, or a pool whose members happen
+    to sit across a zone boundary) is counted toward every zone it
+    resolves to -- same union-not-guess convention
+    resolve_zone_ids_from_position's own docstring establishes for this
+    project, never a single arbitrarily-chosen winner."""
+    positions_by_unit: dict[tuple[str, int], set[tuple[int, float, float]]] = {}
     for guid, map_id, x, y in spawn_rows:
-        unit_id = pool_memberships.get(guid, guid)
+        pool_entry = pool_memberships.get(guid)
+        unit_id = ("pool", pool_entry) if pool_entry is not None else ("standalone", guid)
         positions_by_unit.setdefault(unit_id, set()).add((map_id, x, y))
 
-    units_by_zone: dict[str, set[int]] = {}
+    units_by_zone: dict[str, set[tuple[str, int]]] = {}
     for unit_id, positions in positions_by_unit.items():
         zone_tags = resolve_area_or_instance_tags_for_positions(
             sorted(positions), world_map_areas, area_zone_ids, area_names,
