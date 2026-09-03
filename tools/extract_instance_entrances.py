@@ -105,7 +105,10 @@ def render_module(data: dict[str, frozenset[str]]) -> str:
         "INSTANCE_ENTRANCE_AREA_TAGS: dict[str, frozenset[str]] = {\n",
     ]
     for name in sorted(data):
-        tags_repr = "frozenset({" + ", ".join(repr(t) for t in sorted(data[name])) + "})"
+        if data[name]:
+            tags_repr = "frozenset({" + ", ".join(repr(t) for t in sorted(data[name])) + "})"
+        else:
+            tags_repr = "frozenset()"
         lines.append(f"    {name!r}: {tags_repr},\n")
     lines.append("}\n")
     return "".join(lines)

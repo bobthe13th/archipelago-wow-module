@@ -40,7 +40,9 @@ def _load_vendor_expansions() -> dict[int, str]:
 
 
 def _load_vendor_area_tags(
-    world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int], area_names: dict[int, str],
+    map_instance_types: dict[int, int], map_names: dict[int, str],
 ) -> dict[int, frozenset[str]]:
     """npc_vendor.entry -> the real, resolved area/instance tags for EVERY
     real spawn of that vendor template (a vendor's tag applies to every one

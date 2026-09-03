@@ -32,17 +32,30 @@ name_denylist:
   # space-separated "Old <Name>" row is real, player-facing content
   # (M4.9.3.1 final review fix).
   - '(?i)^OLD[A-Z]'
-  # "zz" prefix glued directly onto the next word with no space, e.g.
-  # "zzDEPRECATED..." -- same issue as the OLD[A-Z] pattern above. The
-  # existing \bdeprecated\b word-boundary pattern doesn't catch these
-  # because there's no boundary between "zz" and the following capital
-  # letter. Anchored at the start and requires a letter to follow.
-  # Verified live: 39 rows match this pattern (entry<4000000 universe),
-  # all internal test/deprecated items -- e.g. zzOLD.../ZZOLD.../
-  # zzDEPRECATED.../zzoldSwift Warstrider (M4.10.6 itemsanity fix;
-  # count corrected during scoped re-review after an initial
-  # under-count of 5).
-  - '(?i)^zz[A-Z]'
+  # "zz"(+) prefix glued directly onto a specific known placeholder/marker
+  # word with no space, e.g. "zzDEPRECATED..." -- same issue as the
+  # OLD[A-Z] pattern above. The existing \bdeprecated\b word-boundary
+  # pattern doesn't catch these because there's no boundary between "zz"
+  # and the following capital letter. Verified live: 39 rows match this
+  # pattern (entry<4000000 universe), all internal test/deprecated items
+  # -- e.g. zzOLD.../ZZOLD.../zzDEPRECATED.../zzoldSwift Warstrider/
+  # zzzOLDDaily Quest Faction Token (M4.10.6 itemsanity fix; count
+  # corrected during scoped re-review after an initial under-count of 5).
+  # NOTE: this pattern originally was the broader '^zz[A-Z]' (any name
+  # starting "zz" + an uppercase letter), which was verified ONLY against
+  # the item namespace (entry<4000000) per the above -- it was never
+  # checked against creature_template. M4.11.3.2 final whole-branch review
+  # found it ALSO matched the real, player-facing creature "Zzarc' Vul"
+  # (creature entry 300, a coincidental "Zz"-initial name, not a
+  # placeholder), silently dropping it from Enemysanity once
+  # content/enemysanity.yaml was finally regenerated against this rule.
+  # Tightened to require "zz"(2+) to be immediately followed by a specific
+  # known marker word ("old" or "deprecated", matching this file's other
+  # glued-marker-prefix patterns) rather than any uppercase letter --
+  # re-verified live: still matches all 39 real item rows above
+  # (including the 3+ "z" zzzOLD... row) and no longer matches
+  # "Zzarc' Vul" (M4.11.3.2 final whole-branch review fix).
+  - '(?i)^z{2,}(?:old|deprecated)'
   # Internal NPC-only visual equipment, e.g. "NPC Equip 18732" -- verified
   # live: 4,856 rows all conform exactly to the "NPC Equip <digits>" shape,
   # none player-facing (M4.9.3.1 final review fix).
@@ -209,7 +222,25 @@ name_denylist:
   # aren't already denylisted by another pattern, exactly these 4 match
   # \bPH\b (case-insensitive) and zero unrelated real items do (Itemsanity
   # final whole-branch review fix I5, M4.10.6).
-  - '(?i)\bPH\b'
+  # NOTE: this pattern was verified ONLY against the item namespace
+  # (entry<4000000) per the above -- it was never checked against
+  # creature_template. M4.11.3.2 final whole-branch review found it ALSO
+  # matched the real, player-facing creature "Doctor Vomisa, Ph.T."
+  # (creature entry 19832, a real TBC creature whose name includes the
+  # academic-degree abbreviation "Ph.T." -- the period gives "Ph" real
+  # word boundaries on both sides, and case-insensitive matching turns it
+  # into a \bPH\b hit), silently dropping it from Enemysanity once
+  # content/enemysanity.yaml was finally regenerated against this rule.
+  # Tightened with a negative lookahead excluding the "PH." + capital-
+  # letter academic-title shape (e.g. "Ph.T.", "Ph.D.") specifically, while
+  # still matching bracket/paren-wrapped or space-separated "PH" tokens --
+  # re-verified live: still matches all 145 real \bPH\b item rows
+  # (entry<4000000 universe, including the 4 rows this pattern was
+  # originally added to catch: "[TDB PH] - unsused Scourgestone", "PH
+  # Plate Ramparts Reward", "Nax PH Crit Plate Shoulders", "Naga Treasure
+  # Map - Questgiver (PH)") and no longer matches "Doctor Vomisa, Ph.T."
+  # (M4.11.3.2 final whole-branch review fix).
+  - '(?i)\bPH\b(?!\.[A-Za-z])'
   # Internal/dev QA item naming that the existing \btest\b pattern misses
   # because "test" isn't a standalone word in these names (glued directly
   # onto other letters, no boundary): "Fishing Pole (JEFFTEST)" (dev

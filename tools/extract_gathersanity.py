@@ -64,8 +64,10 @@ def _expansion_tags_for_maps(maps: set[int], map_expansions: dict[int, str]) -> 
 
 
 def _extract_gathering_nodes(
-    rules: dict, map_expansions: dict[int, str], world_map_areas, area_zone_ids, area_names,
-    map_instance_types, map_names,
+    rules: dict, map_expansions: dict[int, str],
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int], area_names: dict[int, str],
+    map_instance_types: dict[int, int], map_names: dict[int, str],
 ) -> tuple[list, list]:
     # Identical join shape to extract_containersanity.py's own query, but
     # INCLUDE-filtered to GATHERING_NODE_NAMES instead of excluding it --
@@ -137,8 +139,10 @@ def _extract_gathering_nodes(
 
 
 def _extract_skinning(
-    rules: dict, map_expansions: dict[int, str], world_map_areas, area_zone_ids, area_names,
-    map_instance_types, map_names,
+    rules: dict, map_expansions: dict[int, str],
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int], area_names: dict[int, str],
+    map_instance_types: dict[int, int], map_names: dict[int, str],
 ) -> tuple[list, list]:
     # Real join confirmed live during planning: creature_template.skinloot
     # -> skinning_loot_template.Entry (a DEDICATED table, NOT
