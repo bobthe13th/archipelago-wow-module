@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
 
+import db_extract
+
 from db_extract import (
     is_denylisted, load_exclusion_rules, run_query, DEFAULT_RULES_PATH,
     parse_map_expansions, parse_map_names, parse_map_instance_types,
@@ -820,6 +822,60 @@ class TestResolveAreaOrInstanceTagsForPositions(unittest.TestCase):
             [(1, 0.0, 0.0), (43, 5.0, 5.0)], world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
         )
         self.assertEqual(result, frozenset({"barrens", "wailing_caverns"}))
+
+
+def test_parse_pool_gameobject_memberships_shape(monkeypatch):
+    def fake_run_query(sql):
+        assert "pool_gameobject" in sql
+        return [("100", "5"), ("101", "5"), ("200", "9")]
+    monkeypatch.setattr(db_extract, "run_query", fake_run_query)
+    result = db_extract.parse_pool_gameobject_memberships()
+    assert result == {100: 5, 101: 5, 200: 9}
+
+
+def test_resolve_zone_pool_units_pooled_spawns_count_as_one_unit():
+    # Two real spawn guids (100, 101) share pool_entry 5 -- they must
+    # collapse into ONE unit for zone counting, matching a real player's
+    # own experience of a rotating spawn-pool network (only one member is
+    # ever findable at a time for the 87.9% of real chest pools with
+    # max_limit=1).
+    world_map_areas = [(1, 17, 0.0, 100.0, 0.0, 100.0)]  # map 1, area 17, box covering (10,10)
+    area_zone_ids = {17: 17}
+    area_names = {17: "barrens"}
+    map_instance_types = {1: 0}
+    map_names = {1: "kalimdor"}
+    spawn_rows = [
+        (100, 1, 10.0, 10.0),
+        (101, 1, 11.0, 11.0),
+        (200, 1, 12.0, 12.0),  # standalone (no pool membership)
+    ]
+    pool_memberships = {100: 5, 101: 5}
+    units_by_zone = db_extract.resolve_zone_pool_units(
+        spawn_rows, pool_memberships, world_map_areas, area_zone_ids,
+        area_names, map_instance_types, map_names,
+    )
+    assert units_by_zone == {"barrens": {5, 200}}
+
+
+def test_resolve_zone_pool_units_unit_spanning_two_zones_counts_in_both():
+    world_map_areas = [
+        (1, 17, 0.0, 50.0, 0.0, 100.0),   # map 1, area 17 ("barrens"), x in [0,50]
+        (1, 18, 50.0, 100.0, 0.0, 100.0),  # map 1, area 18 ("durotar"), x in [50,100]
+    ]
+    area_zone_ids = {17: 17, 18: 18}
+    area_names = {17: "barrens", 18: "durotar"}
+    map_instance_types = {1: 0}
+    map_names = {1: "kalimdor"}
+    # One standalone spawn (guid 300) whose own position falls in BOTH boxes
+    # (a border-ambiguous point, same real-world shape
+    # resolve_zone_ids_from_position's own docstring documents for Barrens
+    # vs Durotar/Mulgore) -- counted toward both zones, never one guessed winner.
+    spawn_rows = [(300, 1, 50.0, 10.0)]
+    units_by_zone = db_extract.resolve_zone_pool_units(
+        spawn_rows, {}, world_map_areas, area_zone_ids, area_names,
+        map_instance_types, map_names,
+    )
+    assert units_by_zone == {"barrens": {300}, "durotar": {300}}
 
 
 if __name__ == "__main__":

@@ -803,3 +803,54 @@ def load_exclusion_rules(path: pathlib.Path = DEFAULT_RULES_PATH) -> dict:
 
 def is_denylisted(name: str, rules: dict) -> bool:
     return any(re.search(pattern, name) for pattern in rules["name_denylist"])
+
+
+def parse_pool_gameobject_memberships() -> dict[int, int]:
+    """Real gameobject.guid -> pool_gameobject.pool_entry for every real
+    spawn registered in AzerothCore's own gameobject spawn-pool rotation
+    table. A guid absent from the returned dict has no pool membership
+    (a standalone spawn) -- see resolve_zone_pool_units's own docstring
+    for why this distinction is the correct real unit of count for a
+    zone's own chest/node population (M4.11.4 design spec §5)."""
+    rows = run_query("SELECT guid, pool_entry FROM pool_gameobject")
+    return {int(guid): int(pool_entry) for guid, pool_entry in rows}
+
+
+def resolve_zone_pool_units(
+    spawn_rows: list[tuple[int, int, float, float]],
+    pool_memberships: dict[int, int],
+    world_map_areas: list[tuple[int, int, float, float, float, float]],
+    area_zone_ids: dict[int, int],
+    area_names: dict[int, str],
+    map_instance_types: dict[int, int],
+    map_names: dict[int, str],
+) -> dict[str, set[int]]:
+    """M4.11.4: real spawn rows (one row per real gameobject.guid, as
+    (guid, map_id, position_x, position_y)) -> zone_key -> the set of
+    distinct real "pool unit" ids resolving to that zone. A unit id is
+    the real pool_entry for a pool-managed spawn (from
+    parse_pool_gameobject_memberships), or the spawn's own guid for a
+    standalone spawn -- matching what a real player can actually
+    encounter (87.9% of real chest pools have max_limit=1: only one
+    member is ever findable at a time, so an entire pool counts as ONE
+    encounterable unit, never one per member). A unit whose own
+    position(s) resolve to more than one real zone (a border-ambiguous
+    spawn, or a pool whose members happen to sit across a zone boundary)
+    is counted toward every zone it resolves to -- same union-not-guess
+    convention resolve_zone_ids_from_position's own docstring
+    establishes for this project, never a single arbitrarily-chosen
+    winner."""
+    positions_by_unit: dict[int, set[tuple[int, float, float]]] = {}
+    for guid, map_id, x, y in spawn_rows:
+        unit_id = pool_memberships.get(guid, guid)
+        positions_by_unit.setdefault(unit_id, set()).add((map_id, x, y))
+
+    units_by_zone: dict[str, set[int]] = {}
+    for unit_id, positions in positions_by_unit.items():
+        zone_tags = resolve_area_or_instance_tags_for_positions(
+            sorted(positions), world_map_areas, area_zone_ids, area_names,
+            map_instance_types, map_names,
+        )
+        for zone_key in zone_tags:
+            units_by_zone.setdefault(zone_key, set()).add(unit_id)
+    return units_by_zone
