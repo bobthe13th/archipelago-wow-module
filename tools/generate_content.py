@@ -648,6 +648,11 @@ class FamilySchema:
                                 # opt-in per family, same shape as export_triggers above. C++ never
                                 # needs this (spec §4) -- it's Python-only, generation-time bookkeeping.
     export_item_delivery: bool = False
+    export_zone_pool_spawn_zones: bool = False  # True only for families whose real spawns need
+                                                  # a generation-time guid -> zone_key(s) lookup
+                                                  # for the new AllGameObjectScript trigger (M4.11.4)
+                                                  # to consult at runtime. Opt-in per family, same
+                                                  # shape as export_triggers/export_tags above.
 
 
 FAMILY_SCHEMAS: dict[str, FamilySchema] = {
@@ -704,8 +709,15 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     ),
     "achievements": FamilySchema(valid_trigger_kinds={"achievement_complete"}, valid_delivery_kinds={"realm_state"}),
     "containersanity": FamilySchema(
-        valid_trigger_kinds={"gameobject_loot"}, valid_delivery_kinds={"mail"},
-        generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+        # M4.11.4: gameobject_loot (per-loot-table-item enumeration) is
+        # replaced entirely by zone_pool_credit -- Containersanity no
+        # longer has a real per-row item to mail (its abstract locations
+        # draw from the shared filler-item pool instead, see items.py's
+        # items_module=None convention), so valid_delivery_kinds is now
+        # empty, matching Enemysanity's own no-per-row-item shape.
+        valid_trigger_kinds={"zone_pool_credit"}, valid_delivery_kinds=set(),
+        generic=True, export_triggers=True, export_tags=True,
+        export_zone_pool_spawn_zones=True,
     ),
     "gathersanity": FamilySchema(
         valid_trigger_kinds={"gameobject_loot", "skinning_loot", "disenchant_loot"},
@@ -1396,6 +1408,9 @@ def emit_cpp_generic(data: dict) -> str:
     schema = FAMILY_SCHEMAS.get(family)
     if schema is not None and schema.export_triggers:
         lines.extend(_emit_cpp_trigger_lookup(data))
+    if schema is not None and schema.export_zone_pool_spawn_zones:
+        lines.extend(_emit_cpp_zone_pool_spawn_zones(data))
+        lines.append("")
     if schema is not None and schema.export_item_delivery:
         lines.extend(_emit_cpp_item_delivery_lookup(data["items"]))
     lines.append("}")
@@ -1578,6 +1593,70 @@ def _emit_cpp_trigger_lookup_gameobject_loot(locations: list) -> list[str]:
     lines.append(
         "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID = "
         "BuildGAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID();"
+    )
+    return lines
+
+
+def _emit_cpp_trigger_lookup_zone_pool_credit(locations: list) -> list[str]:
+    """ZONE_POOL_CREDIT_CANDIDATES: real zone_key (or zone_key+tier
+    composite string, for a future family) -> its own ordinal-sorted list
+    of candidate location ids (M4.11.4). Unlike the other trigger-lookup
+    emitters, the map's VALUE is a vector, not a single location id -- the
+    C++ runtime hook scans this vector for the first uncollected id via
+    HasSentLocationCheck, it does not look up a single fixed id."""
+    by_zone_key: dict[str, list[tuple[int, int]]] = {}
+    for loc in locations:
+        trigger = loc["trigger"]
+        by_zone_key.setdefault(trigger["zone_key"], []).append((trigger["ordinal"], loc["location_id"]))
+
+    lines = [
+        "inline constexpr std::pair<char const*, int64_t> ZONE_POOL_CREDIT_CANDIDATES_RAW[] = {"
+    ]
+    for zone_key in sorted(by_zone_key):
+        for ordinal, location_id in sorted(by_zone_key[zone_key]):
+            lines.append(f'    {{ {_string_literal(zone_key)}, {location_id} }}, // ordinal {ordinal}')
+    lines.append("};")
+    lines.append("inline std::map<std::string, std::vector<int64_t>> BuildZONE_POOL_CREDIT_CANDIDATES()")
+    lines.append("{")
+    lines.append("    std::map<std::string, std::vector<int64_t>> result;")
+    lines.append("    for (auto const& row : ZONE_POOL_CREDIT_CANDIDATES_RAW)")
+    lines.append("        result[row.first].push_back(row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::map<std::string, std::vector<int64_t>> ZONE_POOL_CREDIT_CANDIDATES = "
+        "BuildZONE_POOL_CREDIT_CANDIDATES();"
+    )
+    return lines
+
+
+def _emit_cpp_zone_pool_spawn_zones(data: dict) -> list[str]:
+    """ZONE_POOL_SPAWN_ZONE_KEYS: real gameobject.guid (GameObject::GetSpawnId())
+    -> the list of real zone_key strings that spawn's own position resolves
+    to (M4.11.4). Populated only for families with
+    FamilySchema.export_zone_pool_spawn_zones=True; data["zone_pool_spawn_zones"]
+    is a plain dict[int, list[str]] set by that family's own extraction
+    script (e.g. extract_containersanity.py)."""
+    spawn_zones: dict = data.get("zone_pool_spawn_zones", {})
+    lines = [
+        "inline constexpr std::pair<uint64_t, char const*> ZONE_POOL_SPAWN_ZONE_KEYS_RAW[] = {"
+    ]
+    for guid in sorted(spawn_zones):
+        for zone_key in spawn_zones[guid]:
+            lines.append(f'    {{ {guid}, {_string_literal(zone_key)} }},')
+    lines.append("};")
+    lines.append(
+        "inline std::unordered_map<uint64_t, std::vector<std::string>> BuildZONE_POOL_SPAWN_ZONE_KEYS()"
+    )
+    lines.append("{")
+    lines.append("    std::unordered_map<uint64_t, std::vector<std::string>> result;")
+    lines.append("    for (auto const& row : ZONE_POOL_SPAWN_ZONE_KEYS_RAW)")
+    lines.append("        result[row.first].emplace_back(row.second);")
+    lines.append("    return result;")
+    lines.append("}")
+    lines.append(
+        "inline const std::unordered_map<uint64_t, std::vector<std::string>> ZONE_POOL_SPAWN_ZONE_KEYS = "
+        "BuildZONE_POOL_SPAWN_ZONE_KEYS();"
     )
     return lines
 
@@ -1765,6 +1844,9 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
     if kind == "recipe_craft":
         return _emit_cpp_trigger_lookup_recipe_craft(locations)
+
+    if kind == "zone_pool_credit":
+        return _emit_cpp_trigger_lookup_zone_pool_credit(locations)
 
     raise ValidationError(
         f"family {data['family']!r} has export_triggers=True but trigger.kind "

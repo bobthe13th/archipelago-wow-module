@@ -16,6 +16,8 @@ from generate_content import (
     _emit_cpp_trigger_lookup,
     _validate_recipe_craft_rows,
     _emit_cpp_trigger_lookup_recipe_craft,
+    _emit_cpp_trigger_lookup_zone_pool_credit,
+    _emit_cpp_zone_pool_spawn_zones,
     ValidationError,
     FAMILY_SCHEMAS,
 )
@@ -1398,6 +1400,43 @@ class TestHolidaysanityFamilySchema(unittest.TestCase):
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         self.assertEqual(data["locations"], [])
         self.assertEqual(len(data["items"]), 14)
+
+
+class TestZonePoolCreditTriggerLookup(unittest.TestCase):
+    # M4.11.4.1 Task 2: containersanity moves from per-loot-row
+    # gameobject_loot triggers to the new abstracted zone_pool_credit
+    # trigger kind (spec: 2026-09-03-archipelago-wow-m4.11.4-abstracted-
+    # zone-pool-design.md).
+    def test_containersanity_schema_accepts_zone_pool_credit(self) -> None:
+        self.assertIn("zone_pool_credit", FAMILY_SCHEMAS["containersanity"].valid_trigger_kinds)
+        self.assertTrue(FAMILY_SCHEMAS["containersanity"].export_zone_pool_spawn_zones)
+
+    def test_emit_cpp_trigger_lookup_zone_pool_credit_groups_and_sorts_by_ordinal(self) -> None:
+        locations = [
+            {"name": "Container: Barrens - Chest 2", "location_id": 8000001,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "barrens", "ordinal": 2}},
+            {"name": "Container: Barrens - Chest 1", "location_id": 8000000,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "barrens", "ordinal": 1}},
+            {"name": "Container: Durotar - Chest 1", "location_id": 8000002,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "durotar", "ordinal": 1}},
+        ]
+        lines = _emit_cpp_trigger_lookup_zone_pool_credit(locations)
+        text = "\n".join(lines)
+        self.assertIn('"barrens"', text)
+        self.assertIn("8000000", text)
+        self.assertIn("8000001", text)
+        self.assertIn("8000002", text)
+        # ordinal 1 must appear before ordinal 2 within the barrens group
+        self.assertLess(text.index("8000000"), text.index("8000001"))
+
+    def test_emit_cpp_zone_pool_spawn_zones_flattens_multi_zone_spawns(self) -> None:
+        data = {"zone_pool_spawn_zones": {12345: ["barrens", "durotar"], 999: ["barrens"]}}
+        lines = _emit_cpp_zone_pool_spawn_zones(data)
+        text = "\n".join(lines)
+        self.assertIn("12345", text)
+        self.assertIn("999", text)
+        self.assertIn('"barrens"', text)
+        self.assertIn('"durotar"', text)
 
 
 if __name__ == "__main__":
