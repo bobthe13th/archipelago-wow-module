@@ -1021,19 +1021,29 @@ class TestGameobjectLootTriggerLookup(unittest.TestCase):
         # bug (unlike vendor_purchase's soft dedup, which exists because
         # npc_vendor legitimately allows repeated (npc,item) pairs via
         # ExtendedCost variations). This must hard-fail, same as quest_reward.
+        #
+        # M4.11.4.1 Task 2, fix round 1: this fixture used to be
+        # "containersanity", but that family's own FAMILY_SCHEMAS entry no
+        # longer accepts gameobject_loot at all (replaced by
+        # zone_pool_credit) -- with that family, validate_family raised for
+        # "unrecognized trigger.kind" before ever reaching the duplicate-
+        # pair check this test claims to verify, so it was passing for the
+        # wrong reason. Repointed to "gathersanity" (still validly accepts
+        # gameobject_loot at this point in the M4.11.4 sequence), same fix
+        # as the sibling test above.
         data = {
-            "family": "containersanity",
+            "family": "gathersanity",
             "locations": [
-                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
                  "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"]}},
-                {"name": "Container: B (#1/2)", "location_id": 8000001,
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+                {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
                  "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"]}},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
             ],
             "items": [
-                {"name": "Container Item: A (#1/2)", "item_id": 8500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
-                {"name": "Container Item: B (#1/2)", "item_id": 8500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "Gathersanity Item: B (#1/2)", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
             ],
         }
         with self.assertRaises(ValidationError):
