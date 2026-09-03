@@ -989,21 +989,28 @@ class TestEmitAchievements(unittest.TestCase):
 
 class TestGameobjectLootTriggerLookup(unittest.TestCase):
     def test_validate_gameobject_loot_rows_accepts_well_formed_data(self) -> None:
+        # M4.11.4.1 Task 2: this fixture used to be "containersanity", but
+        # that family's own FAMILY_SCHEMAS entry no longer accepts
+        # gameobject_loot at all (replaced by zone_pool_credit) -- repointed
+        # to "gathersanity", which still validly accepts gameobject_loot at
+        # this point in the M4.11.4 sequence (M4.11.4.2 removes it there
+        # too, but hasn't run yet), matching the same family/tag shape the
+        # sibling tests below in this class already use for gathersanity.
         data = {
-            "family": "containersanity",
+            "family": "gathersanity",
             "locations": [
-                # containersanity is export_tags=True (same "never zero tags"
+                # gathersanity is export_tags=True (same "never zero tags"
                 # invariant _validate_tags_rows enforces for every other
                 # export_tags family), so this fixture uses a real tag shape
-                # (matching the actual extracted `expansion` dimension) --
-                # not an empty {} placeholder, which would fail that
-                # pre-existing invariant on its own, independent of anything
-                # gameobject_loot-specific.
-                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                # (matching the actual extracted `expansion`/`source`
+                # dimensions) -- not an empty {} placeholder, which would
+                # fail that pre-existing invariant on its own, independent
+                # of anything gameobject_loot-specific.
+                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
                  "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"]}},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
             ],
-            "items": [{"name": "Container Item: A (#1/2)", "item_id": 8500000,
+            "items": [{"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000,
                        "delivery": {"kind": "mail", "wow_item_entry": 2}}],
         }
         validate_family(data)  # must not raise
