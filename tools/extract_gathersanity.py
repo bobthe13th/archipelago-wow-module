@@ -11,7 +11,11 @@ import pathlib
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions,
+    parse_world_map_areas, parse_area_zone_ids, parse_area_names, parse_map_instance_types,
+    parse_map_names, resolve_area_or_instance_tags_for_positions,
+)
 from gathersanity_node_names import GATHERING_NODE_NAMES
 
 _LOCATION_ID_BASE = 9_000_000
@@ -59,7 +63,10 @@ def _expansion_tags_for_maps(maps: set[int], map_expansions: dict[int, str]) -> 
     return sorted({map_expansions.get(map_id, "vanilla") for map_id in maps})
 
 
-def _extract_gathering_nodes(rules: dict, map_expansions: dict[int, str]) -> tuple[list, list]:
+def _extract_gathering_nodes(
+    rules: dict, map_expansions: dict[int, str], world_map_areas, area_zone_ids, area_names,
+    map_instance_types, map_names,
+) -> tuple[list, list]:
     # Identical join shape to extract_containersanity.py's own query, but
     # INCLUDE-filtered to GATHERING_NODE_NAMES instead of excluding it --
     # the exact 284 rows Task 1 carved out of Containersanity. Real names in
@@ -76,15 +83,23 @@ def _extract_gathering_nodes(rules: dict, map_expansions: dict[int, str]) -> tup
         GROUP BY glt.Entry, glt.Item, it.name
         ORDER BY glt.Entry, glt.Item
     """)
+    # M4.11.3.2: now also selects position_x/position_y so every real spawn's
+    # exact position feeds resolve_area_or_instance_tags_for_positions (Task
+    # 2, db_extract.py) for a real tags["area"] -- loot_id_to_maps (map-only)
+    # is still derived from this for _expansion_tags_for_maps, which only
+    # ever needed the map id.
     spawn_rows = run_query(f"""
-        SELECT gt.Data1, g.map
+        SELECT gt.Data1, g.map, g.position_x, g.position_y
         FROM gameobject g
         JOIN gameobject_template gt ON gt.entry = g.id
         WHERE gt.type = {_GAMEOBJECT_TYPE_CHEST} AND gt.name IN ({names_placeholder})
     """)
-    loot_id_to_maps: dict[int, set[int]] = {}
-    for data1, map_id in spawn_rows:
-        loot_id_to_maps.setdefault(int(data1), set()).add(int(map_id))
+    loot_id_to_positions: dict[int, set[tuple[int, float, float]]] = {}
+    for data1, map_id, x, y in spawn_rows:
+        loot_id_to_positions.setdefault(int(data1), set()).add((int(map_id), float(x), float(y)))
+    loot_id_to_maps: dict[int, set[int]] = {
+        loot_id: {map_id for map_id, _, _ in positions} for loot_id, positions in loot_id_to_positions.items()
+    }
 
     locations, items = [], []
     for loot_id_str, item_entry_str, chest_name, item_name in loot_rows:
@@ -95,10 +110,24 @@ def _extract_gathering_nodes(rules: dict, map_expansions: dict[int, str]) -> tup
             continue
         display = f"{chest_name} - {item_name} (#{loot_id}/{item_entry})"
         expansions = _expansion_tags_for_maps(loot_id_to_maps.get(loot_id, set()), map_expansions)
+        area_tags = resolve_area_or_instance_tags_for_positions(
+            sorted(loot_id_to_positions.get(loot_id, set())), world_map_areas, area_zone_ids,
+            area_names, map_instance_types, map_names,
+        )
+
+        tags = {"expansion": expansions, "source": ["gathering_node"]}
+        # area is OMITTED (not an empty list) when none of this node's real
+        # spawns resolve to a real zone/instance name -- same convention
+        # every other export_tags family's tags["area"] omission already
+        # follows (generate_content.py's _validate_tags_rows hard-fails on
+        # an empty list for a present dimension).
+        if area_tags:
+            tags["area"] = sorted(area_tags)
+
         locations.append({
             "name": f"Gathersanity: {display}",
             "trigger": {"kind": "gameobject_loot", "loot_id": loot_id, "item_entry": item_entry},
-            "tags": {"expansion": expansions, "source": ["gathering_node"]},
+            "tags": tags,
         })
         items.append({
             "name": f"Gathersanity Item: {display}",
@@ -107,7 +136,10 @@ def _extract_gathering_nodes(rules: dict, map_expansions: dict[int, str]) -> tup
     return locations, items
 
 
-def _extract_skinning(rules: dict, map_expansions: dict[int, str]) -> tuple[list, list]:
+def _extract_skinning(
+    rules: dict, map_expansions: dict[int, str], world_map_areas, area_zone_ids, area_names,
+    map_instance_types, map_names,
+) -> tuple[list, list]:
     # Real join confirmed live during planning: creature_template.skinloot
     # -> skinning_loot_template.Entry (a DEDICATED table, NOT
     # creature_loot_template -- see this plan's header for the real
@@ -125,15 +157,23 @@ def _extract_skinning(rules: dict, map_expansions: dict[int, str]) -> tuple[list
         GROUP BY slt.Entry, slt.Item, it.name
         ORDER BY slt.Entry, slt.Item
     """)
+    # M4.11.3.2: now also selects position_x/position_y so every real spawn's
+    # exact position feeds resolve_area_or_instance_tags_for_positions (Task
+    # 2, db_extract.py) for a real tags["area"] -- skinloot_to_maps (map-only)
+    # is still derived from this for _expansion_tags_for_maps, which only
+    # ever needed the map id.
     spawn_rows = run_query("""
-        SELECT ct.skinloot, c.map
+        SELECT ct.skinloot, c.map, c.position_x, c.position_y
         FROM creature c
         JOIN creature_template ct ON ct.entry = c.id
         WHERE ct.skinloot > 0
     """)
-    skinloot_to_maps: dict[int, set[int]] = {}
-    for skinloot_id, map_id in spawn_rows:
-        skinloot_to_maps.setdefault(int(skinloot_id), set()).add(int(map_id))
+    skinloot_to_positions: dict[int, set[tuple[int, float, float]]] = {}
+    for skinloot_id, map_id, x, y in spawn_rows:
+        skinloot_to_positions.setdefault(int(skinloot_id), set()).add((int(map_id), float(x), float(y)))
+    skinloot_to_maps: dict[int, set[int]] = {
+        skinloot_id: {map_id for map_id, _, _ in positions} for skinloot_id, positions in skinloot_to_positions.items()
+    }
 
     locations, items = [], []
     for loot_id_str, item_entry_str, item_name, _sample_entry, type_flags_str in loot_rows:
@@ -143,10 +183,23 @@ def _extract_skinning(rules: dict, map_expansions: dict[int, str]) -> tuple[list
         source = _skinning_source_tag(int(type_flags_str))
         display = f"{item_name} (skinning #{loot_id}/{item_entry})"
         expansions = _expansion_tags_for_maps(skinloot_to_maps.get(loot_id, set()), map_expansions)
+        area_tags = resolve_area_or_instance_tags_for_positions(
+            sorted(skinloot_to_positions.get(loot_id, set())), world_map_areas, area_zone_ids,
+            area_names, map_instance_types, map_names,
+        )
+
+        tags = {"expansion": expansions, "source": [source]}
+        # area is OMITTED (not an empty list) when none of this skinloot id's
+        # real creature spawns resolve to a real zone/instance name -- same
+        # "never zero tags" convention _extract_gathering_nodes above
+        # follows.
+        if area_tags:
+            tags["area"] = sorted(area_tags)
+
         locations.append({
             "name": f"Gathersanity: {display}",
             "trigger": {"kind": "skinning_loot", "loot_id": loot_id, "item_entry": item_entry},
-            "tags": {"expansion": expansions, "source": [source]},
+            "tags": tags,
         })
         items.append({
             "name": f"Gathersanity Item: {display}",
@@ -213,9 +266,24 @@ def _extract_disenchant(rules: dict) -> tuple[list, list]:
 def extract() -> dict:
     rules = load_exclusion_rules()
     map_expansions = parse_map_expansions()
+    world_map_areas = parse_world_map_areas()
+    area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
+    map_instance_types = parse_map_instance_types()
+    map_names = parse_map_names()
 
-    node_locs, node_items = _extract_gathering_nodes(rules, map_expansions)
-    skin_locs, skin_items = _extract_skinning(rules, map_expansions)
+    node_locs, node_items = _extract_gathering_nodes(
+        rules, map_expansions, world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+    )
+    skin_locs, skin_items = _extract_skinning(
+        rules, map_expansions, world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
+    )
+    # disenchant is NOT extended with area resolution -- it is keyed by an
+    # item-level bracket only, with no real gameobject/creature spawn
+    # position of its own (see _extract_disenchant's own docstring/comments
+    # above), so it never gains a tags["area"] key at all -- same "no
+    # physical location" exemption core_loop's level milestones and
+    # Repsanity already have.
     dis_locs, dis_items = _extract_disenchant(rules)
 
     locations = node_locs + skin_locs + dis_locs
