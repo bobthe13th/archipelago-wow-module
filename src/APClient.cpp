@@ -669,7 +669,12 @@ namespace Archipelago
                 ? _options.reconnectMinSeconds
                 : std::min(_currentBackoffSeconds * 2, _options.reconnectMaxSeconds);
 
-            LOG_INFO("module.archipelago_wow", "Archipelago: reconnecting in {}s", _currentBackoffSeconds);
+            // M4.11.4.2 whole-milestone review: fmt (vendored v12) no longer
+            // formats std::atomic<T> implicitly -- .load() a plain int for
+            // the format call. Pre-existing, unrelated to this milestone;
+            // only surfaced now because this is the first real full-module
+            // MSBuild compile-only check run against this file.
+            LOG_INFO("module.archipelago_wow", "Archipelago: reconnecting in {}s", _currentBackoffSeconds.load());
 
             // Arm the backoff with async_wait rather than a blocking wait(). steady_timer::cancel()
             // (called from Stop(), which may run on a different thread than this one) only forces
