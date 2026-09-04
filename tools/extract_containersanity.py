@@ -10,13 +10,14 @@ import pathlib
 import yaml
 
 from db_extract import (
-    run_query, parse_pool_gameobject_memberships, resolve_zone_pool_units,
+    run_query, is_denylisted, load_exclusion_rules,
+    parse_pool_gameobject_memberships, resolve_zone_pool_units,
     parse_world_map_areas, parse_area_zone_ids, parse_area_names, parse_map_instance_types,
     parse_map_names, resolve_area_or_instance_tags_for_positions, parse_map_expansions,
 )
+from gathersanity_node_names import GATHERING_NODE_NAMES
 
 _LOCATION_ID_BASE = 8_000_000
-_ITEM_ID_BASE = 7_600_000
 
 _GAMEOBJECT_TYPE_CHEST = 3  # SharedDefines.h:1565
 
@@ -52,6 +53,7 @@ def _expansion_tags_for_zone_key(
 
 
 def extract() -> dict:
+    rules = load_exclusion_rules()
     map_expansions = parse_map_expansions()
     world_map_areas = parse_world_map_areas()
     area_zone_ids = parse_area_zone_ids()
@@ -63,13 +65,31 @@ def extract() -> dict:
     # Real spawn rows for every chest-type gameobject in the world --
     # g.guid is the real GameObject::GetSpawnId() value the new C++
     # trigger looks up at runtime (M4.11.4.1 Task 3).
+    #
+    # gt.name is selected purely to filter on (nothing downstream consumes
+    # it): M4.11.4.1 final review fix (C3) restores the two exclusions the
+    # zone-pool rewrite dropped. Both were established by M4.10.2 Task 1 and
+    # are the ONLY thing keeping Containersanity's and Gathersanity's real
+    # spawn populations disjoint -- this checkout's gathering nodes (Copper
+    # Vein, Peacebloom, ...) are themselves gameobject_template.type=3, i.e.
+    # matched by this query's own WHERE clause, so without the name filter
+    # ~69% of all type=3 spawns would count into Containersanity's zone-pool
+    # unit counts AND credit a "Chest N" check every time a player mined or
+    # picked one, on top of that node's own real Gathersanity credit. See
+    # gathersanity_node_names.py's docstring for the shared contract:
+    # extract_containersanity.py EXCLUDES these names, extract_gathersanity.py
+    # INCLUDES them.
     spawn_rows_raw = run_query(f"""
-        SELECT g.guid, g.map, g.position_x, g.position_y
+        SELECT g.guid, g.map, g.position_x, g.position_y, gt.name
         FROM gameobject g
         JOIN gameobject_template gt ON gt.entry = g.id
         WHERE gt.type = {_GAMEOBJECT_TYPE_CHEST}
     """)
-    spawn_rows = [(int(guid), int(map_id), float(x), float(y)) for guid, map_id, x, y in spawn_rows_raw]
+    spawn_rows: list[tuple[int, int, float, float]] = []
+    for guid, map_id, x, y, name in spawn_rows_raw:
+        if not name or name in GATHERING_NODE_NAMES or is_denylisted(name, rules):
+            continue
+        spawn_rows.append((int(guid), int(map_id), float(x), float(y)))
 
     units_by_zone = resolve_zone_pool_units(
         spawn_rows, pool_memberships, world_map_areas, area_zone_ids, area_names,
