@@ -13,11 +13,16 @@
 // durable "already sent" tracking (ArchipelagoRealmState::HasSentLocationCheck),
 // exactly the same crediting shape ArchipelagoLootSlotScript.cpp already
 // uses for a single fixed location id.
+//
+// M4.11.4.2: extended to also credit Gathersanity's own gathering_node zone
+// pool, keyed by a "<zone_key>|<profession>|<tier>" composite instead of
+// Containersanity's bare zone_key.
 #include "GameObject.h"
 #include "ScriptMgr.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCONTAINERSANITYContent.h"
+#include "ArchipelagoGATHERSANITYContent.h"
 
 namespace
 {
@@ -79,22 +84,41 @@ public:
             return;
 
         uint64_t spawnId = static_cast<uint64_t>(go->GetSpawnId());
-        auto it = ArchipelagoCONTAINERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.find(spawnId);
-        if (it == ArchipelagoCONTAINERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.end())
+
+        // Containersanity: bare zone_key credit, at most one per interaction.
+        auto containerIt = ArchipelagoCONTAINERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.find(spawnId);
+        if (containerIt != ArchipelagoCONTAINERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.end())
+        {
+            for (std::string const& zoneKey : containerIt->second)
+            {
+                if (CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey))
+                    return;
+            }
+        }
+
+        // Gathersanity gathering_node: "<zone_key>|<profession>|<tier>" composite
+        // credit, at most one per interaction (same M4.11.4.1 final-review pacing
+        // fix applies here: a border-ambiguous node spawn must not credit more
+        // than one zone from a single interaction). A gameobject whose own entry
+        // has no real tier (not a gathering node at all, or a real
+        // skinning/disenchant-adjacent object that happens to share
+        // GAMEOBJECT_TYPE_CHEST) is silently skipped -- GetSpellForLock already
+        // gated the interaction on the real skill requirement before this hook
+        // ever fires (M4.11.4 design spec §6: "skill-gating is free"), so
+        // reaching here for a real gathering node is already proof the real
+        // skill check passed.
+        auto tierIt = ArchipelagoGATHERSANITYContent::ZONE_POOL_NODE_TIER_BY_ENTRY.find(go->GetEntry());
+        if (tierIt == ArchipelagoGATHERSANITYContent::ZONE_POOL_NODE_TIER_BY_ENTRY.end())
             return;
 
-        // M4.11.4.1 final review fix (I2): credit AT MOST ONE zone per real
-        // interaction. A border-ambiguous spawn resolves to more than one
-        // zone_key (extract_containersanity.py stores every zone a spawn's
-        // own position falls in, sorted), and the previous unconditional
-        // loop credited a check in EVERY one of them from a single chest
-        // open -- doubling the pacing this design explicitly budgets at one
-        // check per interaction. The first zone (in the stored sorted
-        // order) that still has an uncollected slot wins; the rest are left
-        // for the player's next real interaction with that zone.
-        for (std::string const& zoneKey : it->second)
+        auto nodeZonesIt = ArchipelagoGATHERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.find(spawnId);
+        if (nodeZonesIt == ArchipelagoGATHERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.end())
+            return;
+
+        for (std::string const& zoneKey : nodeZonesIt->second)
         {
-            if (CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey))
+            std::string compositeKey = zoneKey + "|" + tierIt->second;
+            if (CreditZonePool(ArchipelagoGATHERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, compositeKey))
                 return;
         }
     }

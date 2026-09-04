@@ -720,9 +720,13 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         export_zone_pool_spawn_zones=True,
     ),
     "gathersanity": FamilySchema(
-        valid_trigger_kinds={"gameobject_loot", "skinning_loot", "disenchant_loot"},
+        # M4.11.4.2: gameobject_loot (gathering_node's own old per-loot-
+        # table-item enumeration) is replaced by zone_pool_credit;
+        # skinning_loot/disenchant_loot are untouched (spec §3 Non-Goals).
+        valid_trigger_kinds={"zone_pool_credit", "skinning_loot", "disenchant_loot"},
         valid_delivery_kinds={"mail"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
+        export_zone_pool_spawn_zones=True,
     ),
     "enemysanity": FamilySchema(
         valid_trigger_kinds={"creature_kill"}, valid_delivery_kinds=set(),
@@ -1421,6 +1425,9 @@ def emit_cpp_generic(data: dict) -> str:
     if schema is not None and schema.export_zone_pool_spawn_zones:
         lines.extend(_emit_cpp_zone_pool_spawn_zones(data))
         lines.append("")
+    if schema.export_zone_pool_spawn_zones and "zone_pool_node_tier_by_entry" in data:
+        lines.extend(_emit_cpp_zone_pool_node_tiers(data))
+        lines.append("")
     if schema is not None and schema.export_item_delivery:
         lines.extend(_emit_cpp_item_delivery_lookup(data["items"]))
     lines.append("}")
@@ -1668,6 +1675,24 @@ def _emit_cpp_zone_pool_spawn_zones(data: dict) -> list[str]:
         "inline const std::unordered_map<uint64_t, std::vector<std::string>> ZONE_POOL_SPAWN_ZONE_KEYS = "
         "BuildZONE_POOL_SPAWN_ZONE_KEYS();"
     )
+    return lines
+
+
+def _emit_cpp_zone_pool_node_tiers(data: dict) -> list[str]:
+    """ZONE_POOL_NODE_TIER_BY_ENTRY: real gameobject_template.entry ->
+    its own real skill-tier string (M4.11.4.2). A node's required skill
+    is a property of its TEMPLATE (every spawn of the same node type
+    shares the same lockId/required skill), unlike zone resolution which
+    is per-spawn-position -- so this is keyed by entry, not spawn guid.
+    Populated only for gathersanity (data["zone_pool_node_tier_by_entry"],
+    set by extract_gathersanity.py's own _extract_gathering_nodes)."""
+    tiers: dict = data.get("zone_pool_node_tier_by_entry", {})
+    lines = [
+        "inline const std::unordered_map<uint32_t, std::string> ZONE_POOL_NODE_TIER_BY_ENTRY = {"
+    ]
+    for entry in sorted(tiers):
+        lines.append(f'    {{ {entry}, {_string_literal(tiers[entry])} }},')
+    lines.append("};")
     return lines
 
 

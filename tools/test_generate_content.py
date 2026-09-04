@@ -15,9 +15,11 @@ from generate_content import (
     validate_family,
     _emit_cpp_trigger_lookup,
     _validate_recipe_craft_rows,
+    _validate_gameobject_loot_rows,
     _emit_cpp_trigger_lookup_recipe_craft,
     _emit_cpp_trigger_lookup_zone_pool_credit,
     _emit_cpp_zone_pool_spawn_zones,
+    _emit_cpp_zone_pool_node_tiers,
     ValidationError,
     FAMILY_SCHEMAS,
 )
@@ -989,31 +991,23 @@ class TestEmitAchievements(unittest.TestCase):
 
 class TestGameobjectLootTriggerLookup(unittest.TestCase):
     def test_validate_gameobject_loot_rows_accepts_well_formed_data(self) -> None:
-        # M4.11.4.1 Task 2: this fixture used to be "containersanity", but
-        # that family's own FAMILY_SCHEMAS entry no longer accepts
-        # gameobject_loot at all (replaced by zone_pool_credit) -- repointed
-        # to "gathersanity", which still validly accepts gameobject_loot at
-        # this point in the M4.11.4 sequence (M4.11.4.2 removes it there
-        # too, but hasn't run yet), matching the same family/tag shape the
-        # sibling tests below in this class already use for gathersanity.
-        data = {
-            "family": "gathersanity",
-            "locations": [
-                # gathersanity is export_tags=True (same "never zero tags"
-                # invariant _validate_tags_rows enforces for every other
-                # export_tags family), so this fixture uses a real tag shape
-                # (matching the actual extracted `expansion`/`source`
-                # dimensions) -- not an empty {} placeholder, which would
-                # fail that pre-existing invariant on its own, independent
-                # of anything gameobject_loot-specific.
-                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
-                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
-            ],
-            "items": [{"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000,
-                       "delivery": {"kind": "mail", "wow_item_entry": 2}}],
-        }
-        validate_family(data)  # must not raise
+        # M4.11.4.2 Task 3: gathersanity's own FAMILY_SCHEMAS entry no
+        # longer accepts gameobject_loot either (replaced by
+        # zone_pool_credit, same as containersanity in M4.11.4.1) -- as of
+        # this task, NO real family's schema accepts gameobject_loot as a
+        # valid_trigger_kind any more, so a fixture routed through the full
+        # validate_family(data) pipeline would now be rejected by
+        # _validate_recognized_kinds before ever reaching this test's real
+        # target, _validate_gameobject_loot_rows itself. Calling that
+        # validator directly keeps testing its real behavior (accepts
+        # well-formed (loot_id, item_entry) rows) without depending on a
+        # trigger kind no family's schema can reach in practice any more.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
+        _validate_gameobject_loot_rows("gathersanity", locations)  # must not raise
 
     def test_duplicate_loot_id_item_entry_pair_is_a_hard_validation_error(self) -> None:
         # gameobject_loot_template's real PK is (Entry, Item) -- a real
@@ -1022,32 +1016,22 @@ class TestGameobjectLootTriggerLookup(unittest.TestCase):
         # npc_vendor legitimately allows repeated (npc,item) pairs via
         # ExtendedCost variations). This must hard-fail, same as quest_reward.
         #
-        # M4.11.4.1 Task 2, fix round 1: this fixture used to be
-        # "containersanity", but that family's own FAMILY_SCHEMAS entry no
-        # longer accepts gameobject_loot at all (replaced by
-        # zone_pool_credit) -- with that family, validate_family raised for
-        # "unrecognized trigger.kind" before ever reaching the duplicate-
-        # pair check this test claims to verify, so it was passing for the
-        # wrong reason. Repointed to "gathersanity" (still validly accepts
-        # gameobject_loot at this point in the M4.11.4 sequence), same fix
-        # as the sibling test above.
-        data = {
-            "family": "gathersanity",
-            "locations": [
-                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
-                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
-                {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
-                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
-            ],
-            "items": [
-                {"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
-                {"name": "Gathersanity Item: B (#1/2)", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
-            ],
-        }
+        # M4.11.4.2 Task 3: same "no family's schema accepts gameobject_loot
+        # any more" consequence as the sibling test above -- calls
+        # _validate_gameobject_loot_rows directly instead of going through
+        # validate_family, so this test again exercises its real duplicate-
+        # pair check rather than failing earlier on "unrecognized
+        # trigger.kind" for the wrong reason.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+            {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
         with self.assertRaises(ValidationError):
-            validate_family(data)
+            _validate_gameobject_loot_rows("gathersanity", locations)
 
     def test_duplicate_gameobject_loot_error_names_the_owning_family(self) -> None:
         # M4.10.2 final whole-branch review fix (M1): this message hardcoded
@@ -1055,23 +1039,21 @@ class TestGameobjectLootTriggerLookup(unittest.TestCase):
         # called unconditionally and also validates gathersanity's own 284
         # gameobject_loot rows -- a real gathersanity duplicate raised an
         # error blaming the wrong family.
-        data = {
-            "family": "gathersanity",
-            "locations": [
-                {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
-                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
-                {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
-                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
-                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
-            ],
-            "items": [
-                {"name": "Gathersanity Item: A (#1/2)", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
-                {"name": "Gathersanity Item: B (#1/2)", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
-            ],
-        }
+        #
+        # M4.11.4.2 Task 3: same "no family's schema accepts gameobject_loot
+        # any more" consequence as the two sibling tests above -- calls
+        # _validate_gameobject_loot_rows directly instead of going through
+        # validate_family.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+            {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
         with self.assertRaises(ValidationError) as ctx:
-            validate_family(data)
+            _validate_gameobject_loot_rows("gathersanity", locations)
         self.assertIn("gathersanity:", str(ctx.exception))
         self.assertNotIn("containersanity", str(ctx.exception))
 
@@ -1454,6 +1436,30 @@ class TestZonePoolCreditTriggerLookup(unittest.TestCase):
         self.assertIn("999", text)
         self.assertIn('"barrens"', text)
         self.assertIn('"durotar"', text)
+
+
+class TestGathersanityZonePoolNodeTiers(unittest.TestCase):
+    # M4.11.4.2 Task 3: gathersanity's own gathering_node moves from
+    # per-loot-row gameobject_loot triggers to the zone_pool_credit trigger
+    # kind, plus a new per-entry skill-tier lookup so the same zone pool
+    # crediting hook can build the "<zone_key>|<profession>|<tier>" composite
+    # key (spec: 2026-09-03-archipelago-wow-m4.11.4.2-gathersanity-skill-
+    # tier-zone-pool-design.md).
+    def test_gathersanity_schema_accepts_zone_pool_credit_alongside_existing_kinds(self) -> None:
+        schema = FAMILY_SCHEMAS["gathersanity"]
+        self.assertEqual(schema.valid_trigger_kinds, {"zone_pool_credit", "skinning_loot", "disenchant_loot"})
+        self.assertTrue(schema.export_zone_pool_spawn_zones)
+
+    def test_emit_cpp_zone_pool_node_tiers(self) -> None:
+        # Values are "profession|tier" composites (M4.11.4.2 Task 2) -- this
+        # emitter treats them as opaque strings, it never parses them.
+        data = {"zone_pool_node_tier_by_entry": {1731: "mining|apprentice", 1617: "herbalism|apprentice", 9999: "mining|expert"}}
+        lines = _emit_cpp_zone_pool_node_tiers(data)
+        text = "\n".join(lines)
+        self.assertIn("1731", text)
+        self.assertIn('"mining|apprentice"', text)
+        self.assertIn("9999", text)
+        self.assertIn('"mining|expert"', text)
 
 
 if __name__ == "__main__":
