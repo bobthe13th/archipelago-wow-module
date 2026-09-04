@@ -136,11 +136,17 @@ TEST_CASE("APItemDisplay::FallbackRewardColumnForFillerQuestReturnsRewardItem1Ma
 TEST_CASE("BuildLocationIdToGameobjectLootSlot resolves a real generated row")
 {
     auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
-    // Uses this checkout's real generated ArchipelagoCONTAINERSANITYContent
-    // header (Task 2) -- location_id 8000000 is guaranteed to exist as
-    // long as containersanity_content_data.py has at least one row
-    // (17,594 real rows as of this plan).
-    REQUIRE(map.find(8000000) != map.end());
+    // M4.11.4.1 final review fix (C1): this used to assert on
+    // location_id 8000000, a real Containersanity gameobject_loot row.
+    // Containersanity has no gameobject_loot rows at all anymore (its
+    // locations are abstract zone_pool_credit ones now, and 8000000 is the
+    // first of THOSE -- a location id that must NOT resolve through this
+    // map). Repointed at Gathersanity's own first real gameobject_loot row,
+    // location_id 9000000 ("Gathersanity: Incendicite Mineral Vein -
+    // Incendicite Ore", loot_id 1409 / item entry 3340), whose mechanism
+    // this plan never touched.
+    REQUIRE(map.find(9000000) != map.end());
+    CHECK(map.at(9000000) == std::make_pair(1409u, 3340u));
 }
 
 TEST_CASE("SynthesizeAndRewireLocations gameobject_loot branch is idempotent on entry id")
@@ -164,15 +170,21 @@ TEST_CASE("Containersanity synthesized entry range never overlaps ArchipelagoLoo
     CHECK(Archipelago::ItemDisplay::AP_ITEM_SYNTH_BASE > 56806u);
 }
 
-TEST_CASE("BuildLocationIdToGameobjectLootSlot merges Containersanity and Gathersanity")
+TEST_CASE("BuildLocationIdToGameobjectLootSlot excludes Containersanity's abstract locations")
 {
-    // Task 1 shrunk Containersanity to 16,526 rows (base 8,000,000); Task 3
-    // added Gathersanity's own gameobject_loot rows (base 9,000,000,
-    // gathering_node source only, 284 of them) -- both must resolve
-    // through the SAME merged map after this task's change.
+    // M4.11.4.1 final review fix (C1): M4.10.2 had this map merge
+    // Containersanity's and Gathersanity's gameobject_loot rows. Containersanity
+    // no longer contributes any -- every one of its locations is now an
+    // abstract zone_pool_credit check credited by ArchipelagoZonePoolScript.cpp,
+    // with no real loot row to substitute an item into. This guards against a
+    // future change re-merging that family in: nothing in the 8,000,000 range
+    // (Containersanity's own location_id base) may resolve through this map,
+    // or ArchipelagoLootSlotScript would try to hand out a synthesized item
+    // for a check that has no backing loot slot.
     auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
-    REQUIRE(map.find(8000000) != map.end());  // still-real Containersanity row
-    REQUIRE(map.find(9000000) != map.end());  // real Gathersanity gathering_node row
+    CHECK(map.find(8000000) == map.end());
+    for (auto const& entry : map)
+        CHECK(entry.first >= 9000000);
 }
 
 TEST_CASE("BuildLocationIdToSkinningLootSlot resolves a real generated row")

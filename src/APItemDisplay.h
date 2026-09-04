@@ -10,7 +10,6 @@
 #include <vector>
 
 #include "APProtocol.h"
-#include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoGATHERSANITYContent.h"
 
 namespace Archipelago::ItemDisplay
@@ -189,22 +188,25 @@ namespace Archipelago::ItemDisplay
     // since that translation unit pulls in DatabaseEnv.h/QueryResult.h
     // (the real AzerothCore DB layer, requiring the full server build,
     // MySQL connector, etc.), unlike this function or
-    // ArchipelagoCONTAINERSANITYContent.h, both of which have zero DB
+    // ArchipelagoGATHERSANITYContent.h, both of which have zero DB
     // dependency. Every other pure/testable function in this file
     // (SynthesizedEntryFor, PickRewardColumn, RewardColumnsToRewrite,
     // FallbackRewardColumnForFillerQuest) is inline here for exactly this
     // reason.
-    // M4.10.2: Containersanity's own map shrank (284 gathering-node rows
-    // carved out, Task 1) and Gathersanity gained its own gameobject_loot
-    // rows (the same 284, re-extracted under a new family/location_id
-    // range) -- the two maps' keys never overlap post-Task-1 (a real
-    // (loot_id, item_entry) pair now belongs to exactly one family), so a
-    // plain merge is safe.
+    // M4.10.2 merged Containersanity's own gameobject_loot map in here
+    // alongside Gathersanity's. M4.11.4.1 final review fix (C1):
+    // Containersanity no longer participates at all -- its rewrite to
+    // abstract zone-pool locations (trigger kind zone_pool_credit) removed
+    // per-loot-row item substitution from that family entirely, so
+    // ArchipelagoCONTAINERSANITYContent no longer emits a
+    // GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID map to merge (its abstract
+    // locations draw rewards from the shared filler pool instead, credited
+    // by ArchipelagoZonePoolScript.cpp, never by a real substituted item).
+    // Gathersanity's own gameobject_loot mechanism is untouched and is now
+    // the sole source of this map.
     inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToGameobjectLootSlot()
     {
         std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
-        for (auto const& [key, locationId] : ArchipelagoCONTAINERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
-            result.emplace(locationId, key);
         for (auto const& [key, locationId] : ArchipelagoGATHERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
             result.emplace(locationId, key);
         return result;

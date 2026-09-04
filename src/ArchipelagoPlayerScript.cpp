@@ -17,7 +17,6 @@
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoCollectionsContentTable.h"
-#include "ArchipelagoCONTAINERSANITYContent.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoCRAFTSANITYContent.h"
 #include "ArchipelagoFillerRewardEffectsContentTable.h"
@@ -366,22 +365,16 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.10.1 final review fix (C1): containersanity's items also use
-        // the same generic mail-delivery path as recipes/trainer_spells --
-        // ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry (16,810
-        // entries as of this fix, compiled by generate_content.py's
-        // export_item_delivery path) was real and already built, but
-        // nothing consumed it here, so a Container Item another player
-        // received cross-world fell all the way through to the "unknown AP
-        // item id" log below and the player got nothing.
-        auto containersanityEntryIt = ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry.find(received.item);
-        if (containersanityEntryIt != ArchipelagoCONTAINERSANITYContent::ApItemIdToWowItemEntry.end())
-        {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, containersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
-            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", containersanityEntryIt->second);
-            highestSeen = std::max(highestSeen, received.index);
-            continue;
-        }
+        // M4.11.4.1 final review fix (C1): containersanity used to have its
+        // own block here (added by the M4.10.1 final review fix, mailing the
+        // real WoW item behind a Container Item another player received
+        // cross-world). That family no longer HAS per-row items: its rewrite
+        // to abstract zone-pool locations set valid_delivery_kinds to the
+        // empty set, so generate_content.py emits no ApItemIdToWowItemEntry
+        // map for it at all and its abstract checks draw from the shared
+        // filler pool instead (items.py's items_module=None convention).
+        // Nothing to dispatch here anymore -- the block was removed rather
+        // than left referencing a symbol that no longer exists.
 
         // M4.10.2 final whole-branch review fix (C2): gathersanity is the
         // SECOND family to ship with a real, compiled
