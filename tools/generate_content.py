@@ -1395,6 +1395,16 @@ def emit_cpp_generic(data: dict) -> str:
         "#include <string>",
         "#include <unordered_map>",
         "#include <utility>",
+        # M4.11.4.1 final review fix (C2): unconditional, like every other
+        # include in this generic preamble. Two of this emitter's own
+        # optional sections spell real std::vector types --
+        # _emit_cpp_zone_pool_credit_candidates (std::vector<int64_t>) and
+        # _emit_cpp_zone_pool_spawn_zones (std::vector<std::string>) -- and
+        # they only compiled before this fix because every consuming
+        # translation unit happened to pull <vector> in transitively. Same
+        # unconditional-<vector> shape the hand-rolled core_loop preamble
+        # (_emit_cpp_core_loop) already uses.
+        "#include <vector>",
         "",
     ]
     guard = family.upper()

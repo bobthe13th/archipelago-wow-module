@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 namespace ArchipelagoFILLER_REWARD_ITEMSContent {
 inline const std::map<std::string, uint32_t> LOCATIONS = {};

@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 namespace ArchipelagoTRAINER_SPELLSContent {
 inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
