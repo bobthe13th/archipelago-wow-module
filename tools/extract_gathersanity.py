@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """DB-driven extraction for the Gathersanity content family (M4.10.2).
 Run this to regenerate content/gathersanity.yaml; never hand-edit that
-file. Reuses M4.10.1's gameobject_loot trigger kind for gathering nodes
-(the exact rows Task 1 carved out of Containersanity), and introduces two
-new trigger kinds (skinning_loot, disenchant_loot) for the two backing
-tables Gathersanity adds."""
+file. Gathering nodes (M4.11.4.2) are grouped into abstract
+zone+profession+skill-tier zone-pool locations, the same zone_pool_credit
+trigger kind Containersanity's own zone-pool rewrite (M4.11.4.1) uses --
+see _extract_gathering_nodes below. Introduces two other trigger kinds
+(skinning_loot, disenchant_loot) for the two backing tables Gathersanity
+adds, both still per-loot-table-item (unchanged by this rewrite)."""
 from __future__ import annotations
 
 import pathlib
@@ -15,6 +17,8 @@ from db_extract import (
     run_query, is_denylisted, load_exclusion_rules, parse_map_expansions,
     parse_world_map_areas, parse_area_zone_ids, parse_area_names, parse_map_instance_types,
     parse_map_names, resolve_area_or_instance_tags_for_positions,
+    parse_pool_gameobject_memberships, resolve_zone_pool_units,
+    parse_lock_skill_requirements, skill_tier_for_level,
 )
 from gathersanity_node_names import GATHERING_NODE_NAMES
 
@@ -63,79 +67,155 @@ def _expansion_tags_for_maps(maps: set[int], map_expansions: dict[int, str]) -> 
     return sorted({map_expansions.get(map_id, "vanilla") for map_id in maps})
 
 
-def _extract_gathering_nodes(
-    rules: dict, map_expansions: dict[int, str],
-    world_map_areas: list[tuple[int, int, float, float, float, float]],
-    area_zone_ids: dict[int, int], area_names: dict[int, str],
-    map_instance_types: dict[int, int], map_names: dict[int, str],
-) -> tuple[list, list]:
-    # Identical join shape to extract_containersanity.py's own query, but
-    # INCLUDE-filtered to GATHERING_NODE_NAMES instead of excluding it --
-    # the exact 284 rows Task 1 carved out of Containersanity. Real names in
-    # this allowlist include embedded apostrophes (Adder's Tongue, Khadgar's
-    # Whisker, Arthas' Tears, Talandra's Rose) -- standard SQL quote-doubling
-    # (MySQL also accepts this) so the IN(...) clause stays valid.
+_FILLER_CONSUMABLE_ITEM_ENTRY = 117  # "Tough Jerky" -- same real value FILLER_CONSUMABLE_ENTRY
+                                       # uses in ArchipelagoLootSlotScript.cpp/
+                                       # ArchipelagoInterceptionScript.cpp for "no real backing
+                                       # item" cases (M4.11.4.2's own Global Constraints).
+
+
+def _query_lock_id_by_entry(entries: set[int]) -> dict[int, int]:
+    """Real gameobject_template.entry -> gameobject_template.Data0 (lockId),
+    restricted to the given real entries (the gathering-node templates this
+    extraction already found via GATHERING_NODE_NAMES). Split out as its
+    own small query (rather than folded into the existing loot_rows/
+    spawn_rows queries) since it's keyed by template entry, not loot_id or
+    spawn guid -- a genuinely different real join."""
+    if not entries:
+        return {}
+    entries_csv = ",".join(str(e) for e in sorted(entries))
+    rows = run_query(f"SELECT entry, Data0 FROM gameobject_template WHERE entry IN ({entries_csv})")
+    return {int(entry): int(lock_id) for entry, lock_id in rows}
+
+
+def _profession_and_tier_by_entry(
+    entries: set[int], lock_requirements: dict[int, dict[str, int]]
+) -> dict[int, tuple[str, str]]:
+    """Real gameobject_template.entry -> (profession, tier), via
+    entry -> lockId -> {profession: skill_level} -> skill_tier_for_level.
+    An entry whose lockId has no real Herbalism/Mining slot (or whose
+    lockId itself doesn't resolve) is absent from the returned dict --
+    excluded from the abstract zone-pool entirely rather than guessed at,
+    matching this project's "unknown means excluded" convention. Keeping
+    profession alongside tier (rather than tier alone) is required so
+    Mining and Herbalism get INDEPENDENT abstract pools per zone+tier --
+    spec §6's own example names locations per profession ("Tanaris -
+    Mining Node (Expert) 2"), which a merged "<zone>|<tier>" key could not
+    represent."""
+    lock_id_by_entry = _query_lock_id_by_entry(entries)
+    result: dict[int, tuple[str, str]] = {}
+    for entry in entries:
+        lock_id = lock_id_by_entry.get(entry)
+        if lock_id is None:
+            continue
+        requirement = lock_requirements.get(lock_id)
+        if not requirement:
+            continue
+        # A real node's lockId has exactly one of herbalism/mining set in
+        # this checkout's own real data (confirmed during the spec's own
+        # research); take whichever is present.
+        if "herbalism" in requirement:
+            profession, skill_level = "herbalism", requirement["herbalism"]
+        elif "mining" in requirement:
+            profession, skill_level = "mining", requirement["mining"]
+        else:
+            continue
+        result[entry] = (profession, skill_tier_for_level(skill_level))
+    return result
+
+
+def _extract_gathering_nodes() -> tuple[list, list, dict[int, list[str]], dict[int, str]]:
+    lock_requirements = parse_lock_skill_requirements()
+    world_map_areas = parse_world_map_areas()
+    area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
+    map_instance_types = parse_map_instance_types()
+    map_names = parse_map_names()
+    pool_memberships = parse_pool_gameobject_memberships()
+
+    # Identical INCLUDE-filter to GATHERING_NODE_NAMES as before Task 2's
+    # rewrite -- the exact 284 rows M4.10.2 Task 1 carved out of
+    # Containersanity. Real names in this allowlist include embedded
+    # apostrophes (Adder's Tongue, Khadgar's Whisker, Arthas' Tears,
+    # Talandra's Rose) -- standard SQL quote-doubling (MySQL also accepts
+    # this) so the IN(...) clause stays valid.
     names_placeholder = ",".join("'{}'".format(n.replace("'", "''")) for n in GATHERING_NODE_NAMES)
-    loot_rows = run_query(f"""
-        SELECT glt.Entry, glt.Item, MIN(gt.name), it.name
-        FROM gameobject_loot_template glt
-        JOIN gameobject_template gt ON gt.Data1 = glt.Entry AND gt.type = {_GAMEOBJECT_TYPE_CHEST}
-        JOIN item_template it ON it.entry = glt.Item
-        WHERE gt.name IN ({names_placeholder}) AND glt.QuestRequired = 0 AND glt.Reference = 0
-        GROUP BY glt.Entry, glt.Item, it.name
-        ORDER BY glt.Entry, glt.Item
-    """)
-    # M4.11.3.2: now also selects position_x/position_y so every real spawn's
-    # exact position feeds resolve_area_or_instance_tags_for_positions (Task
-    # 2, db_extract.py) for a real tags["area"] -- loot_id_to_maps (map-only)
-    # is still derived from this for _expansion_tags_for_maps, which only
-    # ever needed the map id.
-    spawn_rows = run_query(f"""
-        SELECT gt.Data1, g.map, g.position_x, g.position_y
+    spawn_rows_raw = run_query(f"""
+        SELECT gt.entry, g.guid, g.map, g.position_x, g.position_y
         FROM gameobject g
         JOIN gameobject_template gt ON gt.entry = g.id
         WHERE gt.type = {_GAMEOBJECT_TYPE_CHEST} AND gt.name IN ({names_placeholder})
     """)
-    loot_id_to_positions: dict[int, set[tuple[int, float, float]]] = {}
-    for data1, map_id, x, y in spawn_rows:
-        loot_id_to_positions.setdefault(int(data1), set()).add((int(map_id), float(x), float(y)))
-    loot_id_to_maps: dict[int, set[int]] = {
-        loot_id: {map_id for map_id, _, _ in positions} for loot_id, positions in loot_id_to_positions.items()
-    }
+    spawn_rows_raw = [
+        (int(entry), int(guid), int(map_id), float(x), float(y))
+        for entry, guid, map_id, x, y in spawn_rows_raw
+    ]
+
+    real_entries = {entry for entry, _guid, _map, _x, _y in spawn_rows_raw}
+    profession_tier_by_entry = _profession_and_tier_by_entry(real_entries, lock_requirements)
+
+    # Only spawns whose own template resolved to a real (profession, tier)
+    # pair feed the zone-pool unit count -- a node whose lockId isn't a real
+    # Herbalism/Mining skill lock (should not occur for a real
+    # GATHERING_NODE_NAMES row, but defensively excluded rather than
+    # crashing) contributes nothing.
+    spawn_rows_by_profession_tier: dict[tuple[str, str], list[tuple[int, int, float, float]]] = {}
+    for entry, guid, map_id, x, y in spawn_rows_raw:
+        profession_tier = profession_tier_by_entry.get(entry)
+        if profession_tier is None:
+            continue
+        spawn_rows_by_profession_tier.setdefault(profession_tier, []).append((guid, map_id, x, y))
 
     locations, items = [], []
-    for loot_id_str, item_entry_str, chest_name, item_name in loot_rows:
-        loot_id, item_entry = int(loot_id_str), int(item_entry_str)
-        if not chest_name or is_denylisted(chest_name, rules):
-            continue
-        if not item_name or is_denylisted(item_name, rules):
-            continue
-        display = f"{chest_name} - {item_name} (#{loot_id}/{item_entry})"
-        expansions = _expansion_tags_for_maps(loot_id_to_maps.get(loot_id, set()), map_expansions)
-        area_tags = resolve_area_or_instance_tags_for_positions(
-            sorted(loot_id_to_positions.get(loot_id, set())), world_map_areas, area_zone_ids,
-            area_names, map_instance_types, map_names,
+    for profession, tier in sorted(spawn_rows_by_profession_tier):
+        units_by_zone = resolve_zone_pool_units(
+            spawn_rows_by_profession_tier[(profession, tier)], pool_memberships, world_map_areas,
+            area_zone_ids, area_names, map_instance_types, map_names,
         )
+        profession_label = "Mining" if profession == "mining" else "Herbalism"
+        tier_label = tier.replace("_", " ").title()
+        for zone_key in sorted(units_by_zone):
+            # Mining and Herbalism get INDEPENDENT abstract pools at the
+            # same zone+tier -- a 3-part composite, not the 2-part
+            # "<zone>|<tier>" a first draft of this task used, which would
+            # have silently merged both professions' nodes into one pool
+            # and made per-profession item-gating (Task 4) ill-defined.
+            composite_key = f"{zone_key}|{profession}|{tier}"
+            real_unit_count = len(units_by_zone[zone_key])
+            for ordinal in range(1, real_unit_count + 1):
+                display = f"{zone_key} - {profession_label} Node ({tier_label}) {ordinal}"
+                locations.append({
+                    "name": f"Gathersanity: {display}",
+                    "trigger": {"kind": "zone_pool_credit", "zone_key": composite_key, "ordinal": ordinal},
+                    "tags": {"area": [zone_key]},
+                })
+                items.append({
+                    "name": f"Gathersanity Item: {display}",
+                    "delivery": {"kind": "mail", "wow_item_entry": _FILLER_CONSUMABLE_ITEM_ENTRY},
+                })
 
-        tags = {"expansion": expansions, "source": ["gathering_node"]}
-        # area is OMITTED (not an empty list) when none of this node's real
-        # spawns resolve to a real zone/instance name -- same convention
-        # every other export_tags family's tags["area"] omission already
-        # follows (generate_content.py's _validate_tags_rows hard-fails on
-        # an empty list for a present dimension).
-        if area_tags:
-            tags["area"] = sorted(area_tags)
+    # Real per-spawn zone resolution + per-entry "profession|tier" (for the
+    # new C++ runtime lookups, this plan's Task 3) -- same "resolve this ONE
+    # spawn's own individual position" shape as
+    # extract_containersanity.py's own zone_pool_spawn_zones (M4.11.4.1
+    # Task 6), not the unioned-per-unit shape resolve_zone_pool_units
+    # produces for cap-sizing. The stored value is "profession|tier" (not
+    # tier alone) so the C++ side can composite the full 3-part zone_key
+    # (zoneKey + "|" + this value) without a separate profession lookup.
+    zone_pool_spawn_zones: dict[int, list[str]] = {}
+    node_tier_by_entry: dict[int, str] = {}
+    for entry, profession_tier in profession_tier_by_entry.items():
+        node_tier_by_entry[entry] = f"{profession_tier[0]}|{profession_tier[1]}"
+    for entry, guid, map_id, x, y in spawn_rows_raw:
+        if entry not in profession_tier_by_entry:
+            continue
+        zone_tags = resolve_area_or_instance_tags_for_positions(
+            [(map_id, x, y)], world_map_areas, area_zone_ids, area_names,
+            map_instance_types, map_names,
+        )
+        if zone_tags:
+            zone_pool_spawn_zones[guid] = sorted(zone_tags)
 
-        locations.append({
-            "name": f"Gathersanity: {display}",
-            "trigger": {"kind": "gameobject_loot", "loot_id": loot_id, "item_entry": item_entry},
-            "tags": tags,
-        })
-        items.append({
-            "name": f"Gathersanity Item: {display}",
-            "delivery": {"kind": "mail", "wow_item_entry": item_entry},
-        })
-    return locations, items
+    return locations, items, zone_pool_spawn_zones, node_tier_by_entry
 
 
 def _extract_skinning(
@@ -276,9 +356,7 @@ def extract() -> dict:
     map_instance_types = parse_map_instance_types()
     map_names = parse_map_names()
 
-    node_locs, node_items = _extract_gathering_nodes(
-        rules, map_expansions, world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
-    )
+    node_locs, node_items, zone_pool_spawn_zones, node_tier_by_entry = _extract_gathering_nodes()
     skin_locs, skin_items = _extract_skinning(
         rules, map_expansions, world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
     )
@@ -296,7 +374,11 @@ def extract() -> dict:
         loc["location_id"] = _LOCATION_ID_BASE + idx
         item["item_id"] = _ITEM_ID_BASE + idx
 
-    return {"family": "gathersanity", "locations": locations, "items": items, "constants": {}}
+    return {
+        "family": "gathersanity", "locations": locations, "items": items, "constants": {},
+        "zone_pool_spawn_zones": zone_pool_spawn_zones,
+        "zone_pool_node_tier_by_entry": node_tier_by_entry,
+    }
 
 
 if __name__ == "__main__":
