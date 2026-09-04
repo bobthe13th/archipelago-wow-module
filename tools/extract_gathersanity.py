@@ -186,7 +186,28 @@ def _extract_gathering_nodes() -> tuple[list, list, dict[int, list[str]], dict[i
                 locations.append({
                     "name": f"Gathersanity: {display}",
                     "trigger": {"kind": "zone_pool_credit", "zone_key": composite_key, "ordinal": ordinal},
-                    "tags": {"area": [zone_key]},
+                    # M4.11.4.2 fix (real bug found by Task 5's full-suite
+                    # run): every OTHER real Gathersanity source
+                    # (skinning/mob_herbalism/mob_mining/mob_engineering/
+                    # disenchant) tags its own rows with "source", which is
+                    # what makes gathersanity_source_pools' own tag_options
+                    # filter (locations.py's _location_matches_pools) able to
+                    # gate that source on/off at all -- a dimension entirely
+                    # absent from a row's tags is treated as "doesn't apply,
+                    # auto-pass" (M4.10.5's own documented craftsanity
+                    # precedent), so a gathering_node row with no "source" key
+                    # at all was silently un-gateable by
+                    # gathersanity_source_pools regardless of the player's
+                    # real selection. "gathering_node" is real,
+                    # already-declared valid_keys vocabulary
+                    # (GathersanitySourcePools, options.py) -- this was
+                    # already the intended value for this exact source, never
+                    # wired onto the row itself until now. (Real "expansion"
+                    # tagging for these abstract zone+tier pools -- which map
+                    # ids each zone's own real spawn units span -- is a
+                    # separate, non-trivial follow-up not attempted here; see
+                    # this task's own report/commit message.)
+                    "tags": {"area": [zone_key], "source": ["gathering_node"]},
                 })
                 items.append({
                     "name": f"Gathersanity Item: {display}",
