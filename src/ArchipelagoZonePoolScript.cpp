@@ -34,22 +34,28 @@ namespace
     // window, a chest that's already fully credited for its zone still
     // drops its own real vanilla loot normally; no synthesized item is
     // ever inserted for this trigger kind).
-    void CreditZonePool(
+    //
+    // M4.11.4.1 final review fix (I2): returns true iff it actually sent a
+    // real location check, so the caller can stop after the FIRST zone that
+    // credited instead of crediting every zone a border-ambiguous spawn
+    // resolves to (see OnGameObjectLootStateChanged below).
+    bool CreditZonePool(
         std::map<std::string, std::vector<int64_t>> const& candidatesByZone,
         std::string const& zoneKey)
     {
         auto it = candidatesByZone.find(zoneKey);
         if (it == candidatesByZone.end())
-            return;
+            return false;
 
         for (int64_t locationId : it->second)
         {
             if (!sArchipelagoRealmState->HasSentLocationCheck(static_cast<uint64_t>(locationId)))
             {
                 sArchipelagoMgr->SendLocationChecks({ locationId });
-                return;
+                return true;
             }
         }
+        return false;
     }
 }
 
@@ -58,9 +64,16 @@ class ArchipelagoZonePoolScript : public AllGameObjectScript
 public:
     ArchipelagoZonePoolScript() : AllGameObjectScript("ArchipelagoZonePoolScript") { }
 
-    void OnGameObjectLootStateChanged(GameObject* go, uint32 state, Unit* /*unit*/) override
+    void OnGameObjectLootStateChanged(GameObject* go, uint32 state, Unit* unit) override
     {
         if (state != GO_ACTIVATED)
+            return;
+        // M4.11.4.1 final review fix (minor): GO_ACTIVATED is also reached
+        // from non-player paths (scripted/creature-driven GameObject::Use
+        // callers, and GameObject::SetLootState called with a null user),
+        // so the `unit` this hook is handed is the only thing that makes
+        // this file's own "a player opened this object" premise true.
+        if (!unit || !unit->IsPlayer())
             return;
         if (!sArchipelagoRealmState->IsEnabled())
             return;
@@ -70,8 +83,20 @@ public:
         if (it == ArchipelagoCONTAINERSANITYContent::ZONE_POOL_SPAWN_ZONE_KEYS.end())
             return;
 
+        // M4.11.4.1 final review fix (I2): credit AT MOST ONE zone per real
+        // interaction. A border-ambiguous spawn resolves to more than one
+        // zone_key (extract_containersanity.py stores every zone a spawn's
+        // own position falls in, sorted), and the previous unconditional
+        // loop credited a check in EVERY one of them from a single chest
+        // open -- doubling the pacing this design explicitly budgets at one
+        // check per interaction. The first zone (in the stored sorted
+        // order) that still has an uncollected slot wins; the rest are left
+        // for the player's next real interaction with that zone.
         for (std::string const& zoneKey : it->second)
-            CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey);
+        {
+            if (CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey))
+                return;
+        }
     }
 };
 
