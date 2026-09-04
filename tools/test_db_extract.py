@@ -878,5 +878,39 @@ def test_resolve_zone_pool_units_unit_spanning_two_zones_counts_in_both():
     assert units_by_zone == {"barrens": {("standalone", 300)}, "durotar": {("standalone", 300)}}
 
 
+def test_skill_tier_for_level_boundaries():
+    assert db_extract.skill_tier_for_level(0) == "apprentice"
+    assert db_extract.skill_tier_for_level(74) == "apprentice"
+    assert db_extract.skill_tier_for_level(75) == "journeyman"
+    assert db_extract.skill_tier_for_level(149) == "journeyman"
+    assert db_extract.skill_tier_for_level(150) == "expert"
+    assert db_extract.skill_tier_for_level(224) == "expert"
+    assert db_extract.skill_tier_for_level(225) == "artisan"
+    assert db_extract.skill_tier_for_level(299) == "artisan"
+    assert db_extract.skill_tier_for_level(300) == "master"
+    assert db_extract.skill_tier_for_level(374) == "master"
+    assert db_extract.skill_tier_for_level(375) == "northrend_capped"
+    assert db_extract.skill_tier_for_level(450) == "northrend_capped"
+
+
+def test_parse_lock_skill_requirements_reads_real_lock_dbc():
+    # Real, well-known WotLK lockIds (spec §6): Copper Vein-family Mining
+    # locks require skill 0 (Apprentice tier), Peacebloom-family Herbalism
+    # locks also require skill 0. This test only asserts SHAPE + that at
+    # least one real herbalism and one real mining entry decode with a
+    # plausible (0-450) skill level -- it deliberately does not hardcode a
+    # specific lockId's numeric value as an equality assertion, since this
+    # project's real Lock.dbc content is external client data this repo
+    # does not control the exact ids of beyond what's already cited in the
+    # spec's own verified examples.
+    result = db_extract.parse_lock_skill_requirements()
+    assert isinstance(result, dict)
+    assert len(result) > 0
+    herbalism_levels = [v["herbalism"] for v in result.values() if "herbalism" in v]
+    mining_levels = [v["mining"] for v in result.values() if "mining" in v]
+    assert herbalism_levels and all(0 <= lvl <= 450 for lvl in herbalism_levels)
+    assert mining_levels and all(0 <= lvl <= 450 for lvl in mining_levels)
+
+
 if __name__ == "__main__":
     unittest.main()

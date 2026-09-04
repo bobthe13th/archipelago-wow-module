@@ -319,6 +319,69 @@ def parse_area_names(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[int,
     return names
 
 
+_LOCK_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Lock.dbc"
+
+# Real LockType enum values (SharedDefines.h:2594-2617) this parser cares
+# about -- only these two real values map to a real gathering profession
+# per SkillByLockType() (SharedDefines.h:3253-3271); every other real
+# LockType value (PICKLOCK, OPEN, TREASURE, FISHING, INSCRIPTION, and the
+# several "special open animation" values) is a real lock kind but not
+# one this parser resolves to a profession.
+_LOCK_TYPE_HERBALISM = 2
+_LOCK_TYPE_MINING = 3
+_LOCK_TYPE_SLOT_COUNT = 8  # Type[8]/Skill[8] are both real fixed-size 8-element arrays
+_LOCK_TYPE_FIELD_START = 1   # Type[0] is field 1
+_LOCK_SKILL_FIELD_START = 17  # Skill[0] is field 17
+
+
+def parse_lock_skill_requirements(dbc_path: pathlib.Path = _LOCK_DBC_PATH) -> dict[int, dict[str, int]]:
+    """Parse Lock.dbc's real Type[8]/Skill[8] array fields (WDBC format, no
+    string block -- 33 real int32 fields/record) into lockId ->
+    {"herbalism": skill} and/or {"mining": skill}, per M4.11.4's own
+    verified real field layout (this plan's Global Constraints). A lockId
+    with neither a real Herbalism nor Mining slot among its 8 is absent
+    from the returned dict entirely -- most real locks in this game are
+    Lockpicking/OPEN/other non-gathering kinds and are irrelevant to
+    Gathersanity's own skill-tier grouping. Only includes plausible
+    player-facing skill levels (0-450); impossible locks and special
+    lock kinds (like quest objects with 5000+ skill requirements) are
+    excluded as they cannot be opened by normal gathering."""
+    field_count, records, _string_block = _read_wdbc(dbc_path)
+    result: dict[int, dict[str, int]] = {}
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        lock_id = fields[0]
+        entry: dict[str, int] = {}
+        for slot in range(_LOCK_TYPE_SLOT_COUNT):
+            lock_type = fields[_LOCK_TYPE_FIELD_START + slot]
+            skill_level = fields[_LOCK_SKILL_FIELD_START + slot]
+            if lock_type == _LOCK_TYPE_HERBALISM and 0 <= skill_level <= 450:
+                entry["herbalism"] = skill_level
+            elif lock_type == _LOCK_TYPE_MINING and 0 <= skill_level <= 450:
+                entry["mining"] = skill_level
+        if entry:
+            result[lock_id] = entry
+    return result
+
+
+_SKILL_TIER_BOUNDARIES = [
+    (75, "apprentice"), (150, "journeyman"), (225, "expert"),
+    (300, "artisan"), (375, "master"), (451, "northrend_capped"),
+]
+
+
+def skill_tier_for_level(skill_level: int) -> str:
+    """Real WotLK profession rank bands (M4.11.4 design spec §6):
+    Apprentice 0-75 / Journeyman 75-150 / Expert 150-225 / Artisan
+    225-300 / Master 300-375 / Northrend-capped 375-450. Each boundary
+    below is the tier's own EXCLUSIVE upper bound (451 for the last tier
+    so skill_level==450 still matches it)."""
+    for upper_bound, tier in _SKILL_TIER_BOUNDARIES:
+        if skill_level < upper_bound:
+            return tier
+    return "northrend_capped"
+
+
 _WORLD_MAP_AREA_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "WorldMapArea.dbc"
 # WorldMapAreaEntryfmt = "xinxffffixx" (src/server/shared/DataStores/DBCfmt.h:131),
 # confirmed against this same checkout's own WorldMapAreaEntry struct
