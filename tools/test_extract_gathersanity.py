@@ -26,12 +26,15 @@ class TestSkinningSourceTag(unittest.TestCase):
 
 
 def test_extract_gathering_nodes_groups_by_zone_and_tier(monkeypatch):
-    # M4.11.4.2 Task 2: _extract_gathering_nodes no longer takes params and
-    # no longer emits one location per gameobject_loot_template row --
-    # instead every real spawn is grouped into an abstract
-    # zone+profession+skill-tier zone-pool location (zone_pool_credit
-    # trigger), mirroring extract_containersanity.py's own zone-pool
-    # rewrite (M4.11.4.1).
+    # M4.11.4.2 Task 2: _extract_gathering_nodes no longer emits one
+    # location per gameobject_loot_template row -- instead every real spawn
+    # is grouped into an abstract zone+profession+skill-tier zone-pool
+    # location (zone_pool_credit trigger), mirroring
+    # extract_containersanity.py's own zone-pool rewrite (M4.11.4.1).
+    # M4.11.4.2 fix round 1: now takes a real map_expansions param (same
+    # shape parse_map_expansions() returns) so it can compute each
+    # zone_key's own real "expansion" tag, mirroring
+    # extract_containersanity.py's own zone_to_maps mechanism.
     import db_extract
     import extract_gathersanity
 
@@ -40,7 +43,8 @@ def test_extract_gathering_nodes_groups_by_zone_and_tier(monkeypatch):
             return []
         if "FROM gameobject g" in sql:
             # One real Copper Vein spawn (entry 1731, guid 500), one real
-            # Silverleaf spawn (entry 1617, guid 501) -- both in "barrens".
+            # Silverleaf spawn (entry 1617, guid 501) -- both in "barrens",
+            # both on map 1 (kalimdor).
             return [("1731", "500", "1", "10.0", "10.0"), ("1617", "501", "1", "11.0", "11.0")]
         return []
 
@@ -64,7 +68,9 @@ def test_extract_gathering_nodes_groups_by_zone_and_tier(monkeypatch):
     monkeypatch.setattr(extract_gathersanity, "parse_map_instance_types", lambda: {1: 0})
     monkeypatch.setattr(extract_gathersanity, "parse_map_names", lambda: {1: "kalimdor"})
 
-    locations, items, zone_pool_spawn_zones, node_tier_by_entry = extract_gathersanity._extract_gathering_nodes()
+    locations, items, zone_pool_spawn_zones, node_tier_by_entry = extract_gathersanity._extract_gathering_nodes(
+        {1: "tbc"}
+    )
     zone_keys = {loc["trigger"]["zone_key"] for loc in locations}
     # Mining (entry 1731) and Herbalism (entry 1617) get INDEPENDENT abstract
     # pools even though both are Apprentice tier in the same zone -- spec §6's
@@ -77,6 +83,15 @@ def test_extract_gathering_nodes_groups_by_zone_and_tier(monkeypatch):
     assert all(item["delivery"] == {"kind": "mail", "wow_item_entry": 117} for item in items)
     assert node_tier_by_entry == {1731: "mining|apprentice", 1617: "herbalism|apprentice"}
     assert zone_pool_spawn_zones == {500: ["barrens"], 501: ["barrens"]}
+    # M4.11.4.2 fix round 1: real "source"/"expansion" tags, not just "area"
+    # -- both real spawns are on map 1, mocked above as a real "tbc" map, so
+    # every location's own expansion tag must reflect that real value (not a
+    # blind ["vanilla"] default -- this map_expansions fixture deliberately
+    # uses "tbc" instead of "vanilla" so a fallback-to-default bug couldn't
+    # hide behind a coincidentally-matching default value).
+    for loc in locations:
+        assert loc["tags"]["source"] == ["gathering_node"]
+        assert loc["tags"]["expansion"] == ["tbc"]
 
 
 class TestExtract(unittest.TestCase):
@@ -295,6 +310,27 @@ class TestExtractGathersanityAreaTags(unittest.TestCase):
                 for tier in rows["zone_pool_node_tier_by_entry"].values()
             )
         )
+
+    def test_gathering_node_rows_carry_source_and_expansion_tags(self) -> None:
+        # M4.11.4.2 fix round 1: real bug found by Task 5's full-suite
+        # pytest run -- gathering_node's own zone_pool_credit rows used to
+        # carry only tags["area"], with no "source"/"expansion" key at all,
+        # which silently made them un-gateable by
+        # gathersanity_source_pools/gathersanity_expansion_pools (a tag
+        # dimension entirely absent from a row's tags auto-passes that
+        # dimension's own player-option filter, locations.py's
+        # _location_matches_pools). Pins both fixes at the extraction layer
+        # they were actually made, mirroring the "area" tag's own
+        # test_gathering_node_rows_carry_area_tag above.
+        rows = extract()
+        gathering_rows = [
+            loc for loc in rows["locations"]
+            if loc["trigger"]["kind"] == "zone_pool_credit"
+        ]
+        self.assertTrue(gathering_rows)
+        for loc in gathering_rows:
+            self.assertEqual(loc["tags"].get("source"), ["gathering_node"])
+            self.assertTrue(loc["tags"].get("expansion"))
 
     def test_disenchant_rows_have_no_area_tag(self) -> None:
         rows = extract()

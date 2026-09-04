@@ -202,6 +202,20 @@ namespace Archipelago::ItemDisplay
     // header. BuildLocationIdToGameobjectLootSlot and its
     // SynthesizeAndRewireLocations branch (APItemDisplay.cpp) were removed
     // here rather than left referencing a now-undefined symbol.
+    //
+    // Migration note (M4.11.4.2 fix round 1): a realm previously set up
+    // under the old per-item Containersanity/Gathersanity mechanism (any
+    // build before M4.11.4.1's Containersanity rewrite, or before this
+    // milestone's own Gathersanity gathering_node rewrite) has real
+    // gameobject_loot_template rows this module already rewrote to point at
+    // a synthesized AP-display item entry. This milestone does not revert
+    // those rows -- the same real, precedented exposure M4.11.4.1 already
+    // accepted for Containersanity's own migration, now also applying to
+    // Gathersanity's gathering_node. A fresh realm set up under this
+    // version never touches gameobject_loot_template at all (Containersanity
+    // and Gathersanity's own abstract zone-pool locations draw rewards from
+    // the shared filler pool instead, credited by ArchipelagoZonePoolScript.cpp),
+    // so this is a one-time, migration-only residue, not an ongoing concern.
     inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToSkinningLootSlot()
     {
         std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;

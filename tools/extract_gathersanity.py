@@ -123,7 +123,9 @@ def _profession_and_tier_by_entry(
     return result
 
 
-def _extract_gathering_nodes() -> tuple[list, list, dict[int, list[str]], dict[int, str]]:
+def _extract_gathering_nodes(
+    map_expansions: dict[int, str],
+) -> tuple[list, list, dict[int, list[str]], dict[int, str]]:
     lock_requirements = parse_lock_skill_requirements()
     world_map_areas = parse_world_map_areas()
     area_zone_ids = parse_area_zone_ids()
@@ -165,6 +167,42 @@ def _extract_gathering_nodes() -> tuple[list, list, dict[int, list[str]], dict[i
             continue
         spawn_rows_by_profession_tier.setdefault(profession_tier, []).append((guid, map_id, x, y))
 
+    # Real per-spawn zone resolution + per-entry "profession|tier" (for the
+    # new C++ runtime lookups, this plan's Task 3) -- same "resolve this ONE
+    # spawn's own individual position" shape as
+    # extract_containersanity.py's own zone_pool_spawn_zones (M4.11.4.1
+    # Task 6), not the unioned-per-unit shape resolve_zone_pool_units
+    # produces for cap-sizing. The stored value is "profession|tier" (not
+    # tier alone) so the C++ side can composite the full 3-part zone_key
+    # (zoneKey + "|" + this value) without a separate profession lookup.
+    #
+    # M4.11.4.2 fix round 1: this loop now ALSO accumulates zone_to_maps
+    # (zone_key -> the set of real map ids of every spawn resolving to it),
+    # the exact same shape/purpose as extract_containersanity.py's own
+    # zone_to_maps (M4.11.4.1) -- moved ahead of the location-building loop
+    # below so it's ready to feed each zone_key's real "expansion" tag via
+    # this file's own existing _expansion_tags_for_maps helper. Expansion is
+    # a real property of a zone's own physical geography, not of which
+    # profession/tier a node happens to be, so this is computed once per
+    # zone_key here (from EVERY real spawn, regardless of profession/tier),
+    # not separately per profession+tier bucket.
+    zone_pool_spawn_zones: dict[int, list[str]] = {}
+    zone_to_maps: dict[str, set[int]] = {}
+    node_tier_by_entry: dict[int, str] = {}
+    for entry, profession_tier in profession_tier_by_entry.items():
+        node_tier_by_entry[entry] = f"{profession_tier[0]}|{profession_tier[1]}"
+    for entry, guid, map_id, x, y in spawn_rows_raw:
+        if entry not in profession_tier_by_entry:
+            continue
+        zone_tags = resolve_area_or_instance_tags_for_positions(
+            [(map_id, x, y)], world_map_areas, area_zone_ids, area_names,
+            map_instance_types, map_names,
+        )
+        if zone_tags:
+            zone_pool_spawn_zones[guid] = sorted(zone_tags)
+        for zone_key in zone_tags:
+            zone_to_maps.setdefault(zone_key, set()).add(map_id)
+
     locations, items = [], []
     for profession, tier in sorted(spawn_rows_by_profession_tier):
         units_by_zone = resolve_zone_pool_units(
@@ -181,60 +219,41 @@ def _extract_gathering_nodes() -> tuple[list, list, dict[int, list[str]], dict[i
             # and made per-profession item-gating (Task 4) ill-defined.
             composite_key = f"{zone_key}|{profession}|{tier}"
             real_unit_count = len(units_by_zone[zone_key])
+            expansions = _expansion_tags_for_maps(zone_to_maps.get(zone_key, set()), map_expansions)
             for ordinal in range(1, real_unit_count + 1):
                 display = f"{zone_key} - {profession_label} Node ({tier_label}) {ordinal}"
                 locations.append({
                     "name": f"Gathersanity: {display}",
                     "trigger": {"kind": "zone_pool_credit", "zone_key": composite_key, "ordinal": ordinal},
-                    # M4.11.4.2 fix (real bug found by Task 5's full-suite
-                    # run): every OTHER real Gathersanity source
+                    # M4.11.4.2 fix round 1 (real bug found by Task 5's
+                    # full-suite run): every OTHER real Gathersanity source
                     # (skinning/mob_herbalism/mob_mining/mob_engineering/
-                    # disenchant) tags its own rows with "source", which is
-                    # what makes gathersanity_source_pools' own tag_options
-                    # filter (locations.py's _location_matches_pools) able to
-                    # gate that source on/off at all -- a dimension entirely
-                    # absent from a row's tags is treated as "doesn't apply,
-                    # auto-pass" (M4.10.5's own documented craftsanity
-                    # precedent), so a gathering_node row with no "source" key
-                    # at all was silently un-gateable by
-                    # gathersanity_source_pools regardless of the player's
-                    # real selection. "gathering_node" is real,
-                    # already-declared valid_keys vocabulary
-                    # (GathersanitySourcePools, options.py) -- this was
-                    # already the intended value for this exact source, never
-                    # wired onto the row itself until now. (Real "expansion"
-                    # tagging for these abstract zone+tier pools -- which map
-                    # ids each zone's own real spawn units span -- is a
-                    # separate, non-trivial follow-up not attempted here; see
-                    # this task's own report/commit message.)
-                    "tags": {"area": [zone_key], "source": ["gathering_node"]},
+                    # disenchant) tags its own rows with "source" AND
+                    # "expansion", which is what makes
+                    # gathersanity_source_pools/gathersanity_expansion_pools'
+                    # own tag_options filter (locations.py's
+                    # _location_matches_pools) able to gate a dimension on/off
+                    # at all -- a dimension entirely absent from a row's tags
+                    # is treated as "doesn't apply, auto-pass" (M4.10.5's own
+                    # documented craftsanity precedent), so a gathering_node
+                    # row with NEITHER key at all was silently un-gateable by
+                    # either option regardless of the player's real selection.
+                    # "gathering_node" is real, already-declared valid_keys
+                    # vocabulary (GathersanitySourcePools, options.py); the
+                    # expansion tag is the real expansion(s) this zone_key's
+                    # own physical spawn units genuinely exist in (zone_to_maps
+                    # above), same real-data discipline every other source in
+                    # this file already uses -- not guessed or defaulted
+                    # blind (falls back to ["vanilla"] only for a zone_key
+                    # with literally no real spawn map on record, which
+                    # should not occur here since every zone_key iterated
+                    # below came from real spawn rows in the first place).
+                    "tags": {"area": [zone_key], "source": ["gathering_node"], "expansion": expansions},
                 })
                 items.append({
                     "name": f"Gathersanity Item: {display}",
                     "delivery": {"kind": "mail", "wow_item_entry": _FILLER_CONSUMABLE_ITEM_ENTRY},
                 })
-
-    # Real per-spawn zone resolution + per-entry "profession|tier" (for the
-    # new C++ runtime lookups, this plan's Task 3) -- same "resolve this ONE
-    # spawn's own individual position" shape as
-    # extract_containersanity.py's own zone_pool_spawn_zones (M4.11.4.1
-    # Task 6), not the unioned-per-unit shape resolve_zone_pool_units
-    # produces for cap-sizing. The stored value is "profession|tier" (not
-    # tier alone) so the C++ side can composite the full 3-part zone_key
-    # (zoneKey + "|" + this value) without a separate profession lookup.
-    zone_pool_spawn_zones: dict[int, list[str]] = {}
-    node_tier_by_entry: dict[int, str] = {}
-    for entry, profession_tier in profession_tier_by_entry.items():
-        node_tier_by_entry[entry] = f"{profession_tier[0]}|{profession_tier[1]}"
-    for entry, guid, map_id, x, y in spawn_rows_raw:
-        if entry not in profession_tier_by_entry:
-            continue
-        zone_tags = resolve_area_or_instance_tags_for_positions(
-            [(map_id, x, y)], world_map_areas, area_zone_ids, area_names,
-            map_instance_types, map_names,
-        )
-        if zone_tags:
-            zone_pool_spawn_zones[guid] = sorted(zone_tags)
 
     return locations, items, zone_pool_spawn_zones, node_tier_by_entry
 
@@ -377,7 +396,7 @@ def extract() -> dict:
     map_instance_types = parse_map_instance_types()
     map_names = parse_map_names()
 
-    node_locs, node_items, zone_pool_spawn_zones, node_tier_by_entry = _extract_gathering_nodes()
+    node_locs, node_items, zone_pool_spawn_zones, node_tier_by_entry = _extract_gathering_nodes(map_expansions)
     skin_locs, skin_items = _extract_skinning(
         rules, map_expansions, world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
     )
