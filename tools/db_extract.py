@@ -355,6 +355,11 @@ def parse_lock_skill_requirements(dbc_path: pathlib.Path = _LOCK_DBC_PATH) -> di
         for slot in range(_LOCK_TYPE_SLOT_COUNT):
             lock_type = fields[_LOCK_TYPE_FIELD_START + slot]
             skill_level = fields[_LOCK_SKILL_FIELD_START + slot]
+            # M4.11.4.2 amendment: filter to plausible WotLK skill range (0-450).
+            # Real data includes lockId=1620 Type=2 Skill=5000 (impossible, likely
+            # a stale internal entry for a quest-locked object). Without this
+            # filter, skill_tier_for_level(5000) would silently fallthrough to
+            # "northrend_capped", misclassifying non-existent content as endgame.
             if lock_type == _LOCK_TYPE_HERBALISM and 0 <= skill_level <= 450:
                 entry["herbalism"] = skill_level
             elif lock_type == _LOCK_TYPE_MINING and 0 <= skill_level <= 450:
