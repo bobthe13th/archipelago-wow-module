@@ -55,6 +55,27 @@ family: filler
 # Filler Check 137-139 / location_id 740136-740138 are the +3 rows added for
 # this resize.
 #
+# M4.11.4.2 (Task 4 final-review fix wave 2, Fix 4): Row count grown
+# 139 -> 151 = 37 (gates) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (Progressive Mining/Herbalism, items.py's
+# count_gathering_skill_progression_items -- one copy per real skill tier
+# with at least one real gathering_node location, 6 tiers x 2 professions
+# in this checkout's real regenerated content). Neither Progressive item
+# has an AP location of its own (same "no location of its own" shape as
+# gates/traps/holidaysanity), so locations.py's create_filler_locations
+# already added a 5th `needed` term for this family (M4.11.4.2 fix round 1)
+# -- but this row-count resize was missed at the time, so every generation
+# silently truncated 12 filler locations short of that `needed` total
+# (`list(...)[:needed]` on a too-short list truncates rather than raising),
+# breaking item/location parity by exactly 12 the moment Task 5 regenerated
+# real zone_pool_credit content. Caught by the whole-milestone final review's
+# full local pytest run (TestTrapsGatesAndHolidaysanityCombinedParity /
+# TestNorthshireGeneration::test_default_item_pool_size), not by
+# TestFillerPoolCoversWorstCaseGatesTrapsAndHolidaysanity -- that trip-wire's
+# own assertion also didn't have a term for this family yet (fixed alongside
+# this resize, see test_basic.py). Filler Check 140-151 / location_id
+# 740139-740150 are the +12 rows added for this resize.
+#
 # History of this file's prior sizings, kept for context:
 # - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
 #   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
@@ -517,4 +538,40 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 139"
     location_id: 740138
+    trigger: {kind: always_available}
+  - name: "Filler Check 140"
+    location_id: 740139
+    trigger: {kind: always_available}
+  - name: "Filler Check 141"
+    location_id: 740140
+    trigger: {kind: always_available}
+  - name: "Filler Check 142"
+    location_id: 740141
+    trigger: {kind: always_available}
+  - name: "Filler Check 143"
+    location_id: 740142
+    trigger: {kind: always_available}
+  - name: "Filler Check 144"
+    location_id: 740143
+    trigger: {kind: always_available}
+  - name: "Filler Check 145"
+    location_id: 740144
+    trigger: {kind: always_available}
+  - name: "Filler Check 146"
+    location_id: 740145
+    trigger: {kind: always_available}
+  - name: "Filler Check 147"
+    location_id: 740146
+    trigger: {kind: always_available}
+  - name: "Filler Check 148"
+    location_id: 740147
+    trigger: {kind: always_available}
+  - name: "Filler Check 149"
+    location_id: 740148
+    trigger: {kind: always_available}
+  - name: "Filler Check 150"
+    location_id: 740149
+    trigger: {kind: always_available}
+  - name: "Filler Check 151"
+    location_id: 740150
     trigger: {kind: always_available}

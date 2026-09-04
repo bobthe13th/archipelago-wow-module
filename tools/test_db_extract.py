@@ -912,5 +912,35 @@ def test_parse_lock_skill_requirements_reads_real_lock_dbc():
     assert mining_levels and all(0 <= lvl <= 450 for lvl in mining_levels)
 
 
+def test_parse_lock_skill_requirements_pins_real_gathering_node_locks():
+    # M4.11.4.2 final-review regression pin. The original decode read the
+    # profession out of Lock.dbc's Type[8] array (really LockKeyType:
+    # NONE/ITEM/SKILL/SPELL) instead of Index[8] (really LockType:
+    # PICKLOCK/HERBALISM/MINING/...). Because LOCK_KEY_SKILL == 2 ==
+    # LOCKTYPE_HERBALISM, EVERY real skill-gated node -- Mining included --
+    # decoded as "herbalism", and "Progressive Mining" pooled zero copies.
+    #
+    # These lockIds come from this checkout's own live acore_world
+    # gameobject_template.Data0 for the real, well-known WotLK gathering
+    # nodes named below, and their expected values from the real Lock.dbc
+    # rows (Type[0]=LOCK_KEY_SKILL for all three):
+    #   lock 38 -> Index[0]=3 (MINING),    Skill[0]=0    Copper Vein
+    #              (gameobject_template entries 1731/2055/3763/103713/181248)
+    #   lock 39 -> Index[0]=3 (MINING),    Skill[0]=65   Tin Vein
+    #              (entries 1732/2054/3764/103711/181249)
+    #   lock 29 -> Index[0]=2 (HERBALISM), Skill[0]=0    Peacebloom/Silverleaf
+    #              (entries 1617/1618/3724/3725)
+    # Under the old (wrong) decode all three assert as {"herbalism": ...},
+    # so the two mining pins below fail; under the corrected decode they pass.
+    result = db_extract.parse_lock_skill_requirements()
+    assert result[38] == {"mining": 0}, f"Copper Vein lock 38 decoded as {result.get(38)!r}"
+    assert result[39] == {"mining": 65}, f"Tin Vein lock 39 decoded as {result.get(39)!r}"
+    assert result[29] == {"herbalism": 0}, f"Peacebloom lock 29 decoded as {result.get(29)!r}"
+    # lockId 1620's real slot 1 is Index=1 (LOCKTYPE_PICKLOCK) with the
+    # implausible Skill=5000 -- it is NOT a herbalism slot, and must not
+    # appear in the result at all under the corrected decode.
+    assert 1620 not in result
+
+
 if __name__ == "__main__":
     unittest.main()

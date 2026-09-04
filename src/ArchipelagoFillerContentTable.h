@@ -156,5 +156,17 @@ namespace Archipelago::Filler
         740136, // Filler Check 137
         740137, // Filler Check 138
         740138, // Filler Check 139
+        740139, // Filler Check 140
+        740140, // Filler Check 141
+        740141, // Filler Check 142
+        740142, // Filler Check 143
+        740143, // Filler Check 144
+        740144, // Filler Check 145
+        740145, // Filler Check 146
+        740146, // Filler Check 147
+        740147, // Filler Check 148
+        740148, // Filler Check 149
+        740149, // Filler Check 150
+        740150, // Filler Check 151
     };
 }

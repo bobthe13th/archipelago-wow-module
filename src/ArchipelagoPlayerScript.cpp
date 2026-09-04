@@ -24,6 +24,7 @@
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoGatesContentTable.h"
 #include "ArchipelagoGATHERSANITYContent.h"
+#include "ArchipelagoGatheringSkillItems.h"
 #include "ArchipelagoGoals.h"
 #include "ArchipelagoGoldenBoarStatuesContentTable.h"
 #include "ArchipelagoHOLIDAYSANITYContent.h"
@@ -517,6 +518,24 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             Archipelago::Delivery::DeliverItem(deliveryPolicy, vendorStockEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", vendorStockEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.11.4.2 final review fix wave 2 (Fix 2): Gathersanity's two
+        // "Progressive <profession>" items are recognized here with NO
+        // server-side effect, by design -- real gathering-node interaction is
+        // already gated by the player's own real profession skill via
+        // GameObject::GetSpellForLock, so there is nothing to grant, mail, or
+        // flag. They exist purely to gate the abstract check-crediting logic
+        // on the AP side (worlds/wow/rules.py). See
+        // ArchipelagoGatheringSkillItems.h for the full rationale. This branch
+        // exists so they stop hitting the "unknown AP item id" LOG_ERROR
+        // below, which must keep meaning "a real family's items reach nothing".
+        if (Archipelago::GatheringSkills::IsProgressionItem(received.item))
+        {
+            LOG_DEBUG("module.archipelago_wow", "Archipelago: received {} (AP item id {}) -- recognized, no server-side effect by design",
+                Archipelago::GatheringSkills::ProgressionItemName(received.item), received.item);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

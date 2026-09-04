@@ -321,24 +321,44 @@ def parse_area_names(dbc_path: pathlib.Path = _AREA_TABLE_DBC_PATH) -> dict[int,
 
 _LOCK_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "Lock.dbc"
 
-# Real LockType enum values (SharedDefines.h:2594-2617) this parser cares
-# about -- only these two real values map to a real gathering profession
+# M4.11.4.2 final-review correction: Lock.dbc has THREE real parallel
+# 8-element arrays, not two (LockEntry, DBCStructure.h:1307-1314):
+#   Type[8]  -- fields 1-8   -- the real LockKeyType enum
+#                              (SharedDefines.h:2586-2592: NONE=0, ITEM=1,
+#                               SKILL=2, SPELL=3), i.e. only "what KIND of
+#                               key opens this slot", NOT a profession.
+#   Index[8] -- fields 9-16  -- for a LOCK_KEY_SKILL slot, the real LockType
+#                              enum (SharedDefines.h:2594-2616: PICKLOCK=1,
+#                              HERBALISM=2, MINING=3, ...) -- THIS is the
+#                              field that identifies the gathering profession.
+#   Skill[8] -- fields 17-24 -- the required skill level for that slot.
+# The core's own GameObject::GetSpellForLock (GameObject.cpp:3035-3092) uses
+# exactly this split: it `break`s unless `Type[i] == LOCK_KEY_SKILL`, then
+# matches `Index[i]` against a SPELL_EFFECT_OPEN_LOCK effect's MiscValue and
+# compares the effect value against `Skill[i]`. Reading the profession out
+# of Type[i] (as this parser originally did) is wrong: LockKeyType::SKILL
+# coincidentally shares the value 2 with LockType::HERBALISM, so every real
+# skill-gated slot -- Mining nodes included -- decoded as "herbalism".
+_LOCK_KEY_TYPE_SKILL = 2   # LockKeyType::LOCK_KEY_SKILL, checked against Type[slot]
+# Real LockType enum values (SharedDefines.h:2594-2616), checked against
+# Index[slot]. Only these two real values map to a real gathering profession
 # per SkillByLockType() (SharedDefines.h:3253-3271); every other real
 # LockType value (PICKLOCK, OPEN, TREASURE, FISHING, INSCRIPTION, and the
 # several "special open animation" values) is a real lock kind but not
 # one this parser resolves to a profession.
 _LOCK_TYPE_HERBALISM = 2
 _LOCK_TYPE_MINING = 3
-_LOCK_TYPE_SLOT_COUNT = 8  # Type[8]/Skill[8] are both real fixed-size 8-element arrays
+_LOCK_TYPE_SLOT_COUNT = 8  # Type[8]/Index[8]/Skill[8] are all real fixed-size 8-element arrays
 _LOCK_TYPE_FIELD_START = 1   # Type[0] is field 1
+_LOCK_INDEX_FIELD_START = 9   # Index[0] is field 9
 _LOCK_SKILL_FIELD_START = 17  # Skill[0] is field 17
 
 
 def parse_lock_skill_requirements(dbc_path: pathlib.Path = _LOCK_DBC_PATH) -> dict[int, dict[str, int]]:
-    """Parse Lock.dbc's real Type[8]/Skill[8] array fields (WDBC format, no
-    string block -- 33 real int32 fields/record) into lockId ->
-    {"herbalism": skill} and/or {"mining": skill}, per M4.11.4's own
-    verified real field layout (this plan's Global Constraints). A lockId
+    """Parse Lock.dbc's real Type[8]/Index[8]/Skill[8] array fields (WDBC
+    format, no string block -- 33 real int32 fields/record) into lockId ->
+    {"herbalism": skill} and/or {"mining": skill}, per the real LockEntry
+    layout documented on the constants above. A lockId
     with neither a real Herbalism nor Mining slot among its 8 is absent
     from the returned dict entirely -- most real locks in this game are
     Lockpicking/OPEN/other non-gathering kinds and are irrelevant to
@@ -353,13 +373,22 @@ def parse_lock_skill_requirements(dbc_path: pathlib.Path = _LOCK_DBC_PATH) -> di
         lock_id = fields[0]
         entry: dict[str, int] = {}
         for slot in range(_LOCK_TYPE_SLOT_COUNT):
-            lock_type = fields[_LOCK_TYPE_FIELD_START + slot]
+            # Only a LOCK_KEY_SKILL slot carries a LockType in Index[slot]; an
+            # ITEM/SPELL/empty slot's Index[slot] is an item or spell id and
+            # must never be compared against the LockType profession values.
+            if fields[_LOCK_TYPE_FIELD_START + slot] != _LOCK_KEY_TYPE_SKILL:
+                continue
+            lock_type = fields[_LOCK_INDEX_FIELD_START + slot]
             skill_level = fields[_LOCK_SKILL_FIELD_START + slot]
             # M4.11.4.2 amendment: filter to plausible WotLK skill range (0-450).
-            # Real data includes lockId=1620 Type=2 Skill=5000 (impossible, likely
-            # a stale internal entry for a quest-locked object). Without this
-            # filter, skill_tier_for_level(5000) would silently fallthrough to
-            # "northrend_capped", misclassifying non-existent content as endgame.
+            # Real data includes lockId=1620 slot 1 with Skill=5000 (impossible;
+            # likely a stale internal entry for a quest-locked object). Under the
+            # corrected decode that slot is Index=1 (LOCKTYPE_PICKLOCK), so it no
+            # longer reaches either gathering branch at all -- but the filter is
+            # kept as a cheap, correct-under-either-decode safety net: without it,
+            # any future implausible Herbalism/Mining skill value would silently
+            # fall through skill_tier_for_level() to "northrend_capped",
+            # misclassifying non-existent content as endgame.
             if lock_type == _LOCK_TYPE_HERBALISM and 0 <= skill_level <= 450:
                 entry["herbalism"] = skill_level
             elif lock_type == _LOCK_TYPE_MINING and 0 <= skill_level <= 450:

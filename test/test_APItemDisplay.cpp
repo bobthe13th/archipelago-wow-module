@@ -163,7 +163,10 @@ TEST_CASE("BuildLocationIdToSkinningLootSlot resolves a real generated row")
     // first skinning_loot row's location_id is now 9,000,000 + 21,084 =
     // 9,021,084 -- guaranteed to exist as long as gathersanity_content_data.py
     // has at least one skinning_loot row (1,895 real rows, unchanged by
-    // this milestone).
+    // this milestone). Re-verified after the M4.11.4.2 final-review Lock.dbc
+    // decode fix: that fix only re-LABELS gathering-node pools Mining vs
+    // Herbalism (4,080 herbalism / 17,004 mining, was 21,084 / 0), it does
+    // not add or remove any row, so this offset is unchanged.
     REQUIRE(map.find(9021084) != map.end());
 }
 
