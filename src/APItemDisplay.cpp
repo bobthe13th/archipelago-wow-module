@@ -111,7 +111,6 @@ namespace Archipelago::ItemDisplay
     {
         auto locationToQuestId = BuildLocationIdToQuestId();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
-        auto locationToGameobjectLootSlot = BuildLocationIdToGameobjectLootSlot();
         auto locationToSkinningLootSlot = BuildLocationIdToSkinningLootSlot();
         auto locationToDisenchantLootSlot = BuildLocationIdToDisenchantLootSlot();
         uint32_t newlySynthesizedCount = 0;
@@ -316,33 +315,13 @@ namespace Archipelago::ItemDisplay
                 continue;
             }
 
-            if (auto it = locationToGameobjectLootSlot.find(locationId); it != locationToGameobjectLootSlot.end())
-            {
-                auto const& [lootId, originalItemEntry] = it->second;
-
-                // gameobject_loot_template's real PK is (Entry, Item) ONLY --
-                // NOT (Entry, Item, Reference, GroupId) like creature_loot_template
-                // (M4.7 spec's Sec9 assumption was wrong for this table; see this
-                // milestone's plan, Global Constraints). Matching on the PK's
-                // old value in the WHERE clause is safe and naturally
-                // idempotent, same as every other synthesis branch here.
-                WorldDatabase.Execute(
-                    "UPDATE gameobject_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
-                    entry, lootId, originalItemEntry
-                );
-
-                // Persist the ORIGINAL wow item entry, same rationale/shape
-                // as archipelago_vendor_original_items above --
-                // ArchipelagoLootSlotScript.cpp's repeat-loot behaviors
-                // (vanilla_item/gold_conversion) need it back after Item has
-                // been overwritten to point at the synthesized entry.
-                WorldDatabase.Execute(
-                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
-                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
-                    locationId, originalItemEntry
-                );
-                continue;
-            }
+            // M4.11.4.2: the gameobject_loot branch that used to live here
+            // (Gathersanity's own gathering_node rows, keyed through
+            // BuildLocationIdToGameobjectLootSlot) was removed once
+            // gathering_node was rewritten to zone_pool_credit -- see
+            // APItemDisplay.h's comment on the removed
+            // BuildLocationIdToGameobjectLootSlot for the full history. No
+            // family emits a gameobject_loot-triggered row anymore.
 
             if (auto it = locationToSkinningLootSlot.find(locationId); it != locationToSkinningLootSlot.end())
             {

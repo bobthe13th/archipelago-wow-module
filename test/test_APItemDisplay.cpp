@@ -133,23 +133,7 @@ TEST_CASE("APItemDisplay::FallbackRewardColumnForFillerQuestReturnsRewardItem1Ma
     CHECK(originalValue == 0u);
 }
 
-TEST_CASE("BuildLocationIdToGameobjectLootSlot resolves a real generated row")
-{
-    auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
-    // M4.11.4.1 final review fix (C1): this used to assert on
-    // location_id 8000000, a real Containersanity gameobject_loot row.
-    // Containersanity has no gameobject_loot rows at all anymore (its
-    // locations are abstract zone_pool_credit ones now, and 8000000 is the
-    // first of THOSE -- a location id that must NOT resolve through this
-    // map). Repointed at Gathersanity's own first real gameobject_loot row,
-    // location_id 9000000 ("Gathersanity: Incendicite Mineral Vein -
-    // Incendicite Ore", loot_id 1409 / item entry 3340), whose mechanism
-    // this plan never touched.
-    REQUIRE(map.find(9000000) != map.end());
-    CHECK(map.at(9000000) == std::make_pair(1409u, 3340u));
-}
-
-TEST_CASE("SynthesizeAndRewireLocations gameobject_loot branch is idempotent on entry id")
+TEST_CASE("SynthesizeAndRewireLocations is idempotent on entry id")
 {
     // SynthesizedEntryFor is a pure function -- re-deriving the entry for
     // the same location_id twice must produce the same value (the whole
@@ -170,38 +154,25 @@ TEST_CASE("Containersanity synthesized entry range never overlaps ArchipelagoLoo
     CHECK(Archipelago::ItemDisplay::AP_ITEM_SYNTH_BASE > 56806u);
 }
 
-TEST_CASE("BuildLocationIdToGameobjectLootSlot excludes Containersanity's abstract locations")
-{
-    // M4.11.4.1 final review fix (C1): M4.10.2 had this map merge
-    // Containersanity's and Gathersanity's gameobject_loot rows. Containersanity
-    // no longer contributes any -- every one of its locations is now an
-    // abstract zone_pool_credit check credited by ArchipelagoZonePoolScript.cpp,
-    // with no real loot row to substitute an item into. This guards against a
-    // future change re-merging that family in: nothing in the 8,000,000 range
-    // (Containersanity's own location_id base) may resolve through this map,
-    // or ArchipelagoLootSlotScript would try to hand out a synthesized item
-    // for a check that has no backing loot slot.
-    auto map = Archipelago::ItemDisplay::BuildLocationIdToGameobjectLootSlot();
-    CHECK(map.find(8000000) == map.end());
-    for (auto const& entry : map)
-        CHECK(entry.first >= 9000000);
-}
-
 TEST_CASE("BuildLocationIdToSkinningLootSlot resolves a real generated row")
 {
     auto map = Archipelago::ItemDisplay::BuildLocationIdToSkinningLootSlot();
-    // Real: 284 gathering_node rows come first in extraction order (Task
-    // 2), so the first skinning_loot row's location_id is 9,000,000 + 284
-    // = 9,000,284 -- guaranteed to exist as long as gathersanity_content_data.py
-    // has at least one skinning_loot row (1,895 real rows as of this plan).
-    REQUIRE(map.find(9000284) != map.end());
+    // M4.11.4.2: gathering_node is no longer gameobject_loot rows but
+    // 21,084 zone_pool_credit abstract locations (real, regenerated count
+    // -- see extract_gathersanity.py/content/gathersanity.yaml), so the
+    // first skinning_loot row's location_id is now 9,000,000 + 21,084 =
+    // 9,021,084 -- guaranteed to exist as long as gathersanity_content_data.py
+    // has at least one skinning_loot row (1,895 real rows, unchanged by
+    // this milestone).
+    REQUIRE(map.find(9021084) != map.end());
 }
 
 TEST_CASE("BuildLocationIdToDisenchantLootSlot resolves a real generated row")
 {
     auto map = Archipelago::ItemDisplay::BuildLocationIdToDisenchantLootSlot();
-    // Real: 284 (gathering_node) + 1,895 (skinning, all four source tags
-    // combined) = 2,179 rows precede the first disenchant row, so its
-    // location_id is 9,000,000 + 2,179 = 9,002,179.
-    REQUIRE(map.find(9002179) != map.end());
+    // M4.11.4.2: 21,084 (gathering_node, zone_pool_credit) + 1,895
+    // (skinning, all four source tags combined, unchanged) = 22,979 rows
+    // precede the first disenchant row, so its location_id is
+    // 9,000,000 + 22,979 = 9,022,979.
+    REQUIRE(map.find(9022979) != map.end());
 }

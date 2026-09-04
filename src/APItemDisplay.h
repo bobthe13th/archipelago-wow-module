@@ -171,17 +171,9 @@ namespace Archipelago::ItemDisplay
         return std::make_pair(std::string("RewardItem1"), uint32_t(0));
     }
 
-    // location_id -> (loot_id, original_item_entry). Named generically
-    // (not "Gameobject"-specific in the outward map name) because
-    // M4.10.2's skinning_loot_template/disenchant_loot_template slots
-    // (BuildLocationIdToSkinningLootSlot/BuildLocationIdToDisenchantLootSlot
-    // below) reuse this exact function's SHAPE -- not this function itself,
-    // since the source tables differ -- but share
-    // archipelago_lootslot_original_items and ArchipelagoLootSlotScript
-    // downstream.
-    //
-    // Defined inline here (not in APItemDisplay.cpp alongside its
-    // quest/vendor-map siblings, BuildLocationIdToQuestId/
+    // location_id -> (loot_id, original_item_entry) for skinning_loot_template
+    // rows (M4.10.2). Defined inline here (not in APItemDisplay.cpp
+    // alongside its quest/vendor-map siblings, BuildLocationIdToQuestId/
     // BuildLocationIdToVendorSlot) so it stays independently unit-testable
     // from test_APItemDisplay.cpp's standalone doctest harness, which links
     // only this header plus doctest -- never APItemDisplay.cpp itself,
@@ -193,29 +185,23 @@ namespace Archipelago::ItemDisplay
     // (SynthesizedEntryFor, PickRewardColumn, RewardColumnsToRewrite,
     // FallbackRewardColumnForFillerQuest) is inline here for exactly this
     // reason.
-    // M4.10.2 merged Containersanity's own gameobject_loot map in here
-    // alongside Gathersanity's. M4.11.4.1 final review fix (C1):
-    // Containersanity no longer participates at all -- its rewrite to
-    // abstract zone-pool locations (trigger kind zone_pool_credit) removed
-    // per-loot-row item substitution from that family entirely, so
-    // ArchipelagoCONTAINERSANITYContent no longer emits a
-    // GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID map to merge (its abstract
-    // locations draw rewards from the shared filler pool instead, credited
-    // by ArchipelagoZonePoolScript.cpp, never by a real substituted item).
-    // Gathersanity's own gameobject_loot mechanism is untouched and is now
-    // the sole source of this map.
-    inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToGameobjectLootSlot()
-    {
-        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
-        for (auto const& [key, locationId] : ArchipelagoGATHERSANITYContent::GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID)
-            result.emplace(locationId, key);
-        return result;
-    }
-
-    // location_id -> (loot_id, original_item_entry) for skinning_loot_template
-    // rows (M4.10.2) -- same shape as BuildLocationIdToGameobjectLootSlot,
-    // different backing table. Inline here for the same standalone-testability
-    // reason documented on BuildLocationIdToGameobjectLootSlot above.
+    //
+    // M4.10.2 originally had a sibling BuildLocationIdToGameobjectLootSlot
+    // here too, covering both families' `gameobject_loot`-triggered rows.
+    // M4.11.4.1 removed Containersanity's own contribution to that map
+    // (its rewrite to abstract zone-pool locations, credited by
+    // ArchipelagoZonePoolScript.cpp instead, has no per-loot-row item to
+    // substitute). M4.11.4.2 completed the retirement: Gathersanity's own
+    // gathering_node sub-family was rewritten the same way (also now
+    // zone_pool_credit-triggered, also credited by
+    // ArchipelagoZonePoolScript.cpp), so no family emits a
+    // GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID map at all anymore --
+    // generate_content.py's per-kind emitter (_emit_cpp_trigger_lookup)
+    // only emits a map for a trigger kind actually present in a family's
+    // locations, so the symbol itself no longer exists in any regenerated
+    // header. BuildLocationIdToGameobjectLootSlot and its
+    // SynthesizeAndRewireLocations branch (APItemDisplay.cpp) were removed
+    // here rather than left referencing a now-undefined symbol.
     inline std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToSkinningLootSlot()
     {
         std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
