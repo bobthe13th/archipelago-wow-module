@@ -12,7 +12,7 @@ import yaml
 from db_extract import (
     run_query, parse_pool_gameobject_memberships, resolve_zone_pool_units,
     parse_world_map_areas, parse_area_zone_ids, parse_area_names, parse_map_instance_types,
-    parse_map_names, resolve_area_or_instance_tags_for_positions,
+    parse_map_names, resolve_area_or_instance_tags_for_positions, parse_map_expansions,
 )
 
 _LOCATION_ID_BASE = 8_000_000
@@ -29,7 +29,30 @@ _MAX_CHESTS_PER_ZONE = 15  # generation-time ceiling -- must be >= options.py's
                             # to trim FROM.
 
 
+def _expansion_tags_for_zone_key(
+    zone_key: str, zone_to_maps: dict[str, set[int]], map_expansions: dict[int, str]
+) -> list[str]:
+    """Every expansion where a real chest SPAWN exists for this abstract
+    zone-pool location's own zone_key, across every real spawn map id that
+    resolves to it (zone_to_maps, built below from the SAME spawn_rows this
+    module already collects). Falls back to ["vanilla"] for a zone_key with
+    no real spawn map on record (should not occur in practice -- extract()
+    only ever builds locations for zone_keys already present in
+    units_by_zone, which itself is derived from these exact spawn_rows) --
+    same fallback convention extract_enemysanity.py's own
+    _expansion_tags_for_creature_entry established (that function's own
+    docstring in turn credits this module's now-deleted, loot-table-based
+    _expansion_tags_for_loot_id as the original precedent for this
+    "expansion" tag family)."""
+    maps = zone_to_maps.get(zone_key)
+    if not maps:
+        return ["vanilla"]
+    expansions = {map_expansions.get(map_id, "vanilla") for map_id in maps}
+    return sorted(expansions)
+
+
 def extract() -> dict:
+    map_expansions = parse_map_expansions()
     world_map_areas = parse_world_map_areas()
     area_zone_ids = parse_area_zone_ids()
     area_names = parse_area_names()
@@ -53,26 +76,15 @@ def extract() -> dict:
         map_instance_types, map_names,
     )
 
-    locations = []
-    for zone_key in sorted(units_by_zone):
-        real_unit_count = len(units_by_zone[zone_key])
-        count = min(_MAX_CHESTS_PER_ZONE, real_unit_count)
-        for ordinal in range(1, count + 1):
-            locations.append({
-                "name": f"Container: {zone_key} - Chest {ordinal}",
-                "trigger": {"kind": "zone_pool_credit", "zone_key": zone_key, "ordinal": ordinal},
-                "tags": {"area": [zone_key]},
-            })
-    for idx, loc in enumerate(locations):
-        loc["location_id"] = _LOCATION_ID_BASE + idx
-
-    # Real per-spawn zone resolution for the new C++ runtime lookup
-    # (Task 2's _emit_cpp_zone_pool_spawn_zones) -- deliberately NOT the
-    # same as units_by_zone above (which unions a whole POOL's positions
-    # together for cap-sizing purposes): the runtime hook only ever knows
-    # the ONE specific gameobject a player just opened, so this resolves
-    # each spawn's OWN individual position independently.
+    # Real per-spawn zone resolution -- feeds BOTH the new C++ runtime lookup
+    # (Task 2's _emit_cpp_zone_pool_spawn_zones) AND, below, this zone_key's
+    # own real "expansion" tag (zone_to_maps). Deliberately NOT the same as
+    # units_by_zone above (which unions a whole POOL's positions together for
+    # cap-sizing purposes): each spawn's OWN individual position is resolved
+    # independently, since the runtime hook only ever knows the ONE specific
+    # gameobject a player just opened.
     zone_pool_spawn_zones: dict[int, list[str]] = {}
+    zone_to_maps: dict[str, set[int]] = {}
     for guid, map_id, x, y in spawn_rows:
         zone_tags = resolve_area_or_instance_tags_for_positions(
             [(map_id, x, y)], world_map_areas, area_zone_ids, area_names,
@@ -80,6 +92,22 @@ def extract() -> dict:
         )
         if zone_tags:
             zone_pool_spawn_zones[guid] = sorted(zone_tags)
+        for zone_key in zone_tags:
+            zone_to_maps.setdefault(zone_key, set()).add(map_id)
+
+    locations = []
+    for zone_key in sorted(units_by_zone):
+        real_unit_count = len(units_by_zone[zone_key])
+        count = min(_MAX_CHESTS_PER_ZONE, real_unit_count)
+        expansions = _expansion_tags_for_zone_key(zone_key, zone_to_maps, map_expansions)
+        for ordinal in range(1, count + 1):
+            locations.append({
+                "name": f"Container: {zone_key} - Chest {ordinal}",
+                "trigger": {"kind": "zone_pool_credit", "zone_key": zone_key, "ordinal": ordinal},
+                "tags": {"area": [zone_key], "expansion": expansions},
+            })
+    for idx, loc in enumerate(locations):
+        loc["location_id"] = _LOCATION_ID_BASE + idx
 
     return {
         "family": "containersanity", "locations": locations, "items": [],
