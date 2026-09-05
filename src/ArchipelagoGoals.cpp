@@ -232,7 +232,7 @@ namespace Archipelago::Goals
         else if (mode == "classic")
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE);
         else if (mode == "burning_crusade")
-            complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL_PLATEAU);
+            complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL);
         else if (mode == "wrath")
             complete = sArchipelagoRealmState->IsInstanceUnlocked(Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL);
         else if (mode == "completionist")

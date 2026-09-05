@@ -548,7 +548,19 @@ locations:
     location_id: 720003
     trigger:
       kind: instance_clear
-      instance_key: sunwell_plateau
+      # M4.11.4.2 (final review, source-of-truth fix): was "sunwell_plateau"
+      # -- the one real instance_key here that didn't match its own Map.dbc
+      # slug (every other instance_key in this file is the bare DBC slug,
+      # no suffix). M4.11.3's final review already found and hand-patched
+      # the GENERATED worlds/wow/core_loop_content_data.py to say "sunwell"
+      # (matching instance_entrance_data.py's own real Map.dbc-derived key,
+      # and closing a real bug where zone_leveler_content_data.py's
+      # curated_instance_keys silently dropped this instance from every
+      # zone that should reach it) -- but explicitly left THIS source file
+      # unfixed as out of scope for that review (a different submodule).
+      # Fixing it here for real, at the root, so future regenerations no
+      # longer need that hand-patch at all.
+      instance_key: sunwell
       final_boss_entry: 25315
       expansion: tbc
       bosses:
@@ -619,7 +631,7 @@ items:
   - name: "Instance Unlock: Sunwell Plateau"
     item_id: 810006
     count: 1
-    delivery: {kind: realm_state, effect: unlock_instance, instance_key: sunwell_plateau}
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: sunwell}
   - name: "Instance Unlock: Icecrown Citadel"
     item_id: 810007
     count: 1

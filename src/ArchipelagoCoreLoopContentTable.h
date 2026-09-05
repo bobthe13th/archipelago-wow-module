@@ -57,7 +57,7 @@ namespace Archipelago::CoreLoop
     inline std::string const INSTANCE_KEY_RAZORFEN_KRAUL = "razorfen_kraul";
     inline std::string const INSTANCE_KEY_RAZORFEN_DOWNS = "razorfen_downs";
     inline std::string const INSTANCE_KEY_MOLTEN_CORE = "molten_core";
-    inline std::string const INSTANCE_KEY_SUNWELL_PLATEAU = "sunwell_plateau";
+    inline std::string const INSTANCE_KEY_SUNWELL = "sunwell";
     inline std::string const INSTANCE_KEY_ICECROWN_CITADEL = "icecrown_citadel";
 
     // Every item whose delivery is realm_state/unlock_instance, keyed by its
@@ -72,7 +72,7 @@ namespace Archipelago::CoreLoop
         { 810001, INSTANCE_KEY_RAGEFIRE_CHASM },
         { 810002, INSTANCE_KEY_DEADMINES },
         { 810005, INSTANCE_KEY_MOLTEN_CORE },
-        { 810006, INSTANCE_KEY_SUNWELL_PLATEAU },
+        { 810006, INSTANCE_KEY_SUNWELL },
         { 810007, INSTANCE_KEY_ICECROWN_CITADEL },
         { 810008, INSTANCE_KEY_WAILING_CAVERNS },
         { 810009, INSTANCE_KEY_RAZORFEN_KRAUL },
@@ -86,7 +86,7 @@ namespace Archipelago::CoreLoop
         { INSTANCE_KEY_RAZORFEN_KRAUL, 4421 },
         { INSTANCE_KEY_RAZORFEN_DOWNS, 7358 },
         { INSTANCE_KEY_MOLTEN_CORE, 11502 },
-        { INSTANCE_KEY_SUNWELL_PLATEAU, 25315 },
+        { INSTANCE_KEY_SUNWELL, 25315 },
         { INSTANCE_KEY_ICECROWN_CITADEL, 36597 },
     };
 
@@ -214,7 +214,7 @@ namespace Archipelago::CoreLoop
         { INSTANCE_KEY_RAZORFEN_KRAUL, 720006 },
         { INSTANCE_KEY_RAZORFEN_DOWNS, 720007 },
         { INSTANCE_KEY_MOLTEN_CORE, 720002 },
-        { INSTANCE_KEY_SUNWELL_PLATEAU, 720003 },
+        { INSTANCE_KEY_SUNWELL, 720003 },
         { INSTANCE_KEY_ICECROWN_CITADEL, 720004 },
     };
 
@@ -226,7 +226,7 @@ namespace Archipelago::CoreLoop
     // connect time, not a worldserver.conf setting -- see ArchipelagoInstanceScript.cpp).
     inline std::unordered_map<std::string, std::vector<uint32_t>> const INSTANCE_BOSS_ENTRIES = {
         { INSTANCE_KEY_MOLTEN_CORE, { 12118, 11982, 12259, 12057, 12264, 12056, 12098, 11988, 12018, 11502 } },
-        { INSTANCE_KEY_SUNWELL_PLATEAU, { 24892, 24882, 25038, 25165, 25166, 25840, 25315 } },
+        { INSTANCE_KEY_SUNWELL, { 24892, 24882, 25038, 25165, 25166, 25840, 25315 } },
         { INSTANCE_KEY_ICECROWN_CITADEL, { 36612, 36855, 37813, 36626, 36627, 36678, 37972, 37973, 37970, 37955, 36853, 36597 } },
     };
 
@@ -237,7 +237,7 @@ namespace Archipelago::CoreLoop
     // for parity with the Python side per this task's own Files list.
     inline std::unordered_map<std::string, std::vector<std::string>> const INSTANCES_BY_EXPANSION = {
         { "vanilla", { INSTANCE_KEY_RAGEFIRE_CHASM, INSTANCE_KEY_DEADMINES, INSTANCE_KEY_WAILING_CAVERNS, INSTANCE_KEY_RAZORFEN_KRAUL, INSTANCE_KEY_RAZORFEN_DOWNS, INSTANCE_KEY_MOLTEN_CORE } },
-        { "tbc", { INSTANCE_KEY_SUNWELL_PLATEAU } },
+        { "tbc", { INSTANCE_KEY_SUNWELL } },
         { "wotlk", { INSTANCE_KEY_ICECROWN_CITADEL } },
     };
 }

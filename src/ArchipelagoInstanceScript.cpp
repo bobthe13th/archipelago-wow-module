@@ -190,7 +190,7 @@ public:
             { 389, Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM },
             { 36, Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES },
             { 409, Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE },
-            { 580, Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL_PLATEAU },
+            { 580, Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL },
             { 631, Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL },
         };
 
