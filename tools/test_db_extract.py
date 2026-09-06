@@ -344,6 +344,79 @@ class TestParseSpellCreatedItemIds(unittest.TestCase):
         self.assertIn(3827, result)
 
 
+class TestParseCharStartOutfitItemIds(unittest.TestCase):
+    def _write_fake_dbc(self, tmpdir: str, records: list[tuple[int, list[int]]]) -> pathlib.Path:
+        """records: list of (record_id, item_ids) where item_ids is up to
+        24 real item entries (padded with -1 for "no item", matching the
+        real client convention). Writes a minimal real WDBC file whose
+        HEADER-DECLARED field_count is deliberately WRONG (77, matching
+        this checkout's real CharStartOutfit.dbc quirk -- Global
+        Constraints) while the real per-record byte layout is 74 int32
+        words: field[0]=ID, field[1]=packed Race/Class/Gender/OutfitId
+        bytes (irrelevant to this parser, always 0 here), fields[2:26] =
+        the real ItemId[24] array, fields[26:74] = DisplayItemId[24]/
+        InventoryType[24] (irrelevant to this parser, always 0 here).
+        This test's own real_field_count is derived from record_size //
+        4, exactly like the real implementation must -- NOT from the
+        (deliberately wrong) declared field_count written into the
+        header, so a regression that trusted the declared header value
+        instead would still fail this test."""
+        declared_field_count = 77  # deliberately wrong, matches the real file's own quirk
+        real_field_count = 74
+        record_size = real_field_count * 4
+        path = pathlib.Path(tmpdir) / "CharStartOutfit.dbc"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), declared_field_count, record_size, 1))
+            for record_id, item_ids in records:
+                fields = [0] * real_field_count
+                fields[0] = record_id
+                padded = (item_ids + [-1] * 24)[:24]
+                fields[2:26] = padded
+                f.write(struct.pack("<" + "i" * real_field_count, *fields))
+            f.write(b"\x00")
+        return path
+
+    def test_collects_real_item_ids_from_the_correct_offset(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                (1, [38, 39, 40, -1, 6948]),
+                (14, [38, 39, 40, -1, 6948]),  # 6948 repeats across race/class/gender combos -- still a set
+                (79, [45, 43, 44, 6948, 2361]),
+            ])
+            result = db_extract.parse_char_start_outfit_item_ids(path)
+        self.assertEqual(result, frozenset({38, 39, 40, 6948, 45, 43, 44, 2361}))
+
+    def test_negative_one_placeholder_is_not_a_real_item(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [(1, [38])])
+            result = db_extract.parse_char_start_outfit_item_ids(path)
+        self.assertEqual(result, frozenset({38}))
+        self.assertNotIn(-1, result)
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                db_extract.parse_char_start_outfit_item_ids(path)
+
+    def test_real_char_start_outfit_dbc_finds_hearthstone(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # CharStartOutfit.dbc. Verified live this session: 126 real
+        # records, header-declared field_count=77 does NOT match the real
+        # 296-byte (74-int32-word) record size -- confirms the parser
+        # derives real_field_count from record_size // 4, not the
+        # declared header value. Real distinct-item count at the correct
+        # fields[2:26] offset: 119 (NOT 141 -- that wrong number comes
+        # from the spec's own incorrect fields[5:29] guess, see Global
+        # Constraints). Item 6948 ("Hearthstone") is real starting gear
+        # for a Human Warrior (record id 1).
+        result = db_extract.parse_char_start_outfit_item_ids()
+        self.assertEqual(len(result), 119)
+        self.assertIn(6948, result)
+
+
 class TestParseAchievements(unittest.TestCase):
     def _write_fake_achievement_dbc(self, tmpdir: str, records: list[tuple[int, str, int, int]]) -> pathlib.Path:
         """records: list of (id, name, category_id, flags) -- writes a

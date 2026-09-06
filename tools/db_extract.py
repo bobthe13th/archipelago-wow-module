@@ -748,6 +748,56 @@ def parse_spell_created_item_ids(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> fr
     return frozenset(item_ids)
 
 
+_CHAR_START_OUTFIT_DBC_PATH = pathlib.Path(__file__).parent.parent.parent.parent / "var" / "extractors" / "dbc" / "CharStartOutfit.dbc"
+_CHAR_START_OUTFIT_ITEM_ID_START = 2   # real per-record word offset -- see docstring below
+_CHAR_START_OUTFIT_ITEM_ID_COUNT = 24
+
+
+def parse_char_start_outfit_item_ids(dbc_path: pathlib.Path = _CHAR_START_OUTFIT_DBC_PATH) -> frozenset[int]:
+    """Parse CharStartOutfit.dbc's real, client-side starting-gear
+    ItemId[24] array into the set of every distinct real item entry any
+    race/class/gender combination starts with. Deliberately does NOT use
+    the shared _read_wdbc helper: this one file's header-declared
+    field_count (77) does not match its real per-record byte length (296
+    bytes = 74 real int32 fields) -- a genuine quirk of this specific
+    file, verified live against this checkout's actual
+    CharStartOutfit.dbc. _read_wdbc trusts the declared header value,
+    which would misalign every field read past the very first one, so
+    this parser derives the real field count directly from record_size //
+    4 instead.
+
+    Real per-record layout (74 int32 words, confirmed against known real
+    data -- item 6948 "Hearthstone" appears at fields[2:26] for a real
+    Human Warrior row, and fields[1]'s packed bytes decode to valid real
+    Race=1/Class=1/Gender=0 enum values): field[0]=ID, field[1]=Race
+    (byte 0) + Class (byte 1) + Gender (byte 2) + OutfitId (byte 3)
+    packed into ONE dword (not four separate dwords -- this project's own
+    first investigation incorrectly assumed four separate dwords, which
+    is why an earlier draft of this spec's own research claimed
+    ItemId[24] lived at fields[5:29]; it does not), fields[2:26] =
+    ItemId[24] (the real field this function reads), fields[26:50] =
+    DisplayItemId[24], fields[50:74] = InventoryType[24]. Only this
+    function's own ItemId[24] range is ever read -- Race/Class/Gender
+    resolution is not needed for M4.11.5.1's acquisition-route check and
+    is deliberately left unparsed here."""
+    with open(dbc_path, "rb") as f:
+        data = f.read()
+    magic = data[0:4]
+    if magic != b"WDBC":
+        raise ValueError(f"{dbc_path}: not a WDBC file (magic={magic!r})")
+    record_count, _declared_field_count, record_size, _string_block_size = struct.unpack("<4I", data[4:20])
+    real_field_count = record_size // 4
+    records_start = 20
+    item_ids: set[int] = set()
+    for i in range(record_count):
+        rec_off = records_start + i * record_size
+        fields = struct.unpack("<" + "i" * real_field_count, data[rec_off:rec_off + record_size])
+        for value in fields[_CHAR_START_OUTFIT_ITEM_ID_START:_CHAR_START_OUTFIT_ITEM_ID_START + _CHAR_START_OUTFIT_ITEM_ID_COUNT]:
+            if value > 0:
+                item_ids.add(value)
+    return frozenset(item_ids)
+
+
 _FILLER_BUFF_SPELL_ID_FIELD = 0
 _FILLER_BUFF_DISPEL_FIELD = 2
 _FILLER_BUFF_ATTRIBUTES_FIELD = 4       # Attributes (Attr0) -- SharedDefines.h SPELL_ATTR0_*
