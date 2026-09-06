@@ -1559,11 +1559,15 @@ def _emit_cpp_trigger_lookup_item_first_held(locations: list) -> list[str]:
     runtime-builder pattern as _emit_cpp_trigger_lookup_learn_spell (M4.9)
     -- Itemsanity is the largest family to ever go through this emitter
     (raw live count 68,298 item_template rows before any filtering;
-    46,096 after the test-pollution + reserved-range SQL filters; 39,292
-    real rows after exclusion_rules.yaml's name denylist plus the small
-    GM-only entry denylist, M4.10.6 final whole-branch review fixes
-    I1/I5/M1), which is exactly why this family is registered generic=True
-    from the start rather than needing its own bespoke stack-safety work."""
+    46,096 after the test-pollution + reserved-range SQL filters --
+    M4.10.6 final whole-branch review fixes I1/I5/M1). No row is dropped
+    by name or GM-only status any more (M4.11.5.1): every one of those
+    46,096 rows becomes a location, tagged into exactly one of three
+    tiers (debug/unobtainable/untagged-"normal") via `debug_category`;
+    which tiers actually become checkable AP locations is a player
+    option (itemsanity_debug_item_inclusion, locations.py). This is
+    exactly why this family is registered generic=True from the start
+    rather than needing its own bespoke stack-safety work."""
     lines = ["inline constexpr std::pair<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID_RAW[] = {"]
     for loc in locations:
         lines.append(f'    {{ {loc["trigger"]["item_entry"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
