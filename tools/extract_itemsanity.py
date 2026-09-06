@@ -6,13 +6,13 @@ rewrite. Deliberately the largest DB-extracted family in this project by
 row count: raw entry>0 universe is 68,298 item_template rows; after the
 test-pollution filter (entry < 4,000,000) plus this module's own
 reserved-range filter (see _RESERVED_RANGE_FILTER below, excludes the 21
-rows in 850000-850016/850100-850103) that's 46,096; after
-exclusion_rules.yaml's name denylist that's 39,299; after the small
-GM-only entry denylist (_GM_ONLY_ENTRY_DENYLIST below) the real final
-count is 39,292 real locations/items (re-verified live, M4.10.6 final
-whole-branch review fixes I1/I5/M1 -- re-derive by re-running this script
-if the live DB or either denylist changes again; never hardcode a stale
-number here). Registered generic=True in
+rows in 850000-850016/850100-850103) that's 46,096; after this
+milestone's own three-tier debug_category tagging (M4.11.5.1), no row is
+dropped by name or GM-only status any more -- every one of the 46,096
+real rows becomes a location, tagged debug/unobtainable/untagged
+(normal); which tiers actually become checkable AP locations is now a
+player option, see itemsanity_debug_item_inclusion (locations.py).
+Registered generic=True in
 generate_content.py's FAMILY_SCHEMAS so it inherits the already-safe
 raw-array-plus-runtime-builder C++ emission M4.7.1 built, rather than
 needing any bespoke stack-safety work."""
@@ -22,7 +22,10 @@ import pathlib
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules,
+    compute_acquired_item_ids, parse_spell_created_item_ids, parse_char_start_outfit_item_ids,
+)
 
 _LOCATION_ID_BASE = 12_500_000
 _ITEM_ID_BASE = 13_500_000  # deliberately 1,000,000 clear of the location range -- see Global Constraints
@@ -55,30 +58,6 @@ _TEST_POLLUTION_FILTER = "entry < 4000000"
 _RESERVED_RANGE_FILTER = (
     "NOT (entry BETWEEN 850000 AND 850016) AND NOT (entry BETWEEN 850100 AND 850103)"
 )
-
-# Final whole-branch review fix I5 (M4.10.6): a small number of real,
-# live-DB item_template rows are GM-only/developer artifacts that no
-# generic exclusion_rules.yaml name pattern can safely catch (their names
-# read as ordinary, sometimes celebrated, player-facing items -- "Martin
-# Fury", "Frostmourne" -- so a name-based denylist pattern would be far too
-# broad). Same local-entry-denylist convention extract_repsanity.py's own
-# _LOCAL_DENYLIST already established for this exact situation (a handful
-# of items that don't belong in exclusion_rules.yaml because the SHARED
-# file affects other families' unrelated real content). Keyed by entry id,
-# not name, because "Frostmourne" legitimately appears twice (33475 and
-# 36942 are two distinct real rows) and a name-based exclusion would be
-# less precise here than the entry ids the review already pinned down:
-#   - 17 "Martin Fury": GM-only artifact shirt, notoriously never meant to
-#     be player-obtainable -- this is the single most important entry in
-#     this set, since #17 sorts first and becomes location_id 12,500,000,
-#     the very FIRST location in the whole Itemsanity family.
-#   - 12947 "Alex's Ring of Audacity", 32824 "Tigole's Trashbringer",
-#     44807 "Indalamar's Holy Hand Grenade", 20880 "Golden Token": GM/dev
-#     joke or event-only items, never obtainable through any of
-#     Itemsanity's covered acquisition routes.
-#   - 33475, 36942 "Frostmourne": the real weapon's non-obtainable
-#     GM/cinematic item rows.
-_GM_ONLY_ENTRY_DENYLIST = frozenset({17, 12947, 32824, 44807, 20880, 33475, 36942})
 
 # Real ItemClass enum values (src/server/game/Entities/Item/ItemTemplate.h:289-308).
 _CLASS_NAMES = {
@@ -125,6 +104,11 @@ def _expansion_tag(required_level: int) -> str:
 
 def extract() -> dict:
     rules = load_exclusion_rules()
+    acquired_item_ids = (
+        compute_acquired_item_ids()
+        | parse_spell_created_item_ids()
+        | parse_char_start_outfit_item_ids()
+    )
 
     rows = run_query(f"""
         SELECT entry, name, class, Quality, RequiredLevel
@@ -137,8 +121,25 @@ def extract() -> dict:
     for entry_str, name, class_str, quality_str, required_level_str in rows:
         entry = int(entry_str)
         name = name.strip() if name else name
-        if not name or is_denylisted(name, rules) or entry in _GM_ONLY_ENTRY_DENYLIST:
+        if not name:
             continue
+
+        tags = {
+            "class": [_class_tag(int(class_str))],
+            "quality": [_quality_tag(int(quality_str))],
+            "expansion": [_expansion_tag(int(required_level_str))],
+        }
+        # M4.11.5.1: three-tier categorization, replacing the old
+        # permanent-drop denylist. `debug` (name-signature match) is
+        # checked first and is mutually exclusive with `unobtainable`
+        # (no real acquisition route) -- everything else is tagged
+        # `normal` implicitly, by omitting the key entirely (the same
+        # "omit when not applicable" convention every other tag dimension
+        # in this project already uses, e.g. Quest Rewards' `area`).
+        if is_denylisted(name, rules):
+            tags["debug_category"] = ["debug"]
+        elif entry not in acquired_item_ids:
+            tags["debug_category"] = ["unobtainable"]
 
         idx = len(locations)
         display = f"{name} (#{entry})"
@@ -146,21 +147,8 @@ def extract() -> dict:
         locations.append({
             "name": f"Itemsanity: {display}",
             "location_id": _LOCATION_ID_BASE + idx,
-            # min_level: real item_template.RequiredLevel (M4.11.1 Task 12) --
-            # lives in `trigger`, not `tags`, same placement
-            # extract_quest_rewards.py's own min_level/zone_id already use:
-            # TAGS is exported as dict[str, frozenset[str]] (generate_content.py's
-            # export_tags emission), which can't hold a numeric value, while
-            # TRIGGERS keeps the raw trigger dict verbatim (any value type).
-            # Consumed by locations.py's Zone Leveler whole_game_scaled filter
-            # to decide whether this row's own real level requirement falls
-            # inside the selected zone's level band.
             "trigger": {"kind": "item_first_held", "item_entry": entry, "min_level": int(required_level_str)},
-            "tags": {
-                "class": [_class_tag(int(class_str))],
-                "quality": [_quality_tag(int(quality_str))],
-                "expansion": [_expansion_tag(int(required_level_str))],
-            },
+            "tags": tags,
         })
         items.append({
             "name": f"Itemsanity Item: {display}",
