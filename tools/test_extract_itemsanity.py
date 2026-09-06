@@ -1,7 +1,12 @@
+import pathlib
 import unittest
 from unittest.mock import patch
 
+import yaml
+
 from extract_itemsanity import extract, _class_tag, _quality_tag, _expansion_tag
+
+_CONTENT_DIR = pathlib.Path(__file__).parent.parent / "content"
 
 
 class TestClassTag(unittest.TestCase):
@@ -41,13 +46,14 @@ class TestExpansionTag(unittest.TestCase):
 
 
 class TestExtract(unittest.TestCase):
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_extracts_one_location_and_item_per_real_row(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
@@ -62,6 +68,7 @@ class TestExtract(unittest.TestCase):
         # of exercising ordinary, untagged row extraction.
         mock_outfit_ids.return_value = frozenset({6948})
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         # Real values verified live against this checkout's DB during
         # planning: entry=6948 ("Hearthstone"), class=15 (misc),
         # Quality=1 (normal), RequiredLevel=0.
@@ -77,18 +84,20 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(item["name"], "Itemsanity Item: Hearthstone (#6948)")
         self.assertEqual(item["delivery"], {"kind": "mail", "wow_item_entry": 6948})
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_sequential_ids_assigned_in_query_order(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [
             ("25", "Worn Shortsword", "2", "0", "0"),
             ("117", "Tigerseye", "3", "0", "0"),
@@ -104,13 +113,14 @@ class TestExtract(unittest.TestCase):
             [13_500_000, 13_500_001, 13_500_002],
         )
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_denylisted_item_name_is_tagged_debug_not_excluded(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         # M4.11.5.1: a denylisted row is now a real, tagged location --
         # no longer silently dropped -- so a player can opt back in via
@@ -119,51 +129,57 @@ class TestExtract(unittest.TestCase):
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("999", "Deprecated Test Item", "15", "0", "0")]
         result = extract()
         self.assertEqual(len(result["locations"]), 1)
         self.assertEqual(result["locations"][0]["tags"]["debug_category"], ["debug"])
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_unacquired_real_item_is_tagged_unobtainable(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()  # entry 17 acquired via nothing
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("17", "Martin Fury", "4", "6", "0")]
         result = extract()
         self.assertEqual(len(result["locations"]), 1)
         self.assertEqual(result["locations"][0]["tags"]["debug_category"], ["unobtainable"])
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_acquired_item_from_any_of_the_three_sources_is_normal_and_untagged(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset({6948})  # Hearthstone via starting gear
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("6948", "Hearthstone", "15", "1", "0")]
         result = extract()
         self.assertNotIn("debug_category", result["locations"][0]["tags"])
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_debug_tag_takes_priority_even_if_the_name_also_matches_an_acquired_id(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         # A denylisted row is ALWAYS `debug`, never `unobtainable`, even if
         # its entry happens to also appear in the acquired set -- the two
@@ -173,22 +189,25 @@ class TestExtract(unittest.TestCase):
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset({999})
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("999", "QA Test Item", "15", "0", "0")]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"]["debug_category"], ["debug"])
 
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_high_required_level_tags_wotlk(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("40395", "Bloodsurge", "4", "4", "78")]
         result = extract()
         self.assertEqual(result["locations"][0]["tags"]["expansion"], ["wotlk"])
@@ -197,18 +216,20 @@ class TestExtract(unittest.TestCase):
     # RequiredLevel, exported verbatim into `trigger` (not `tags` --
     # TAGS is frozenset[str]-only) so Zone Leveler's whole_game_scaled
     # filter (Archipelago's locations.py) can read it.
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_trigger_carries_real_required_level_as_min_level(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("40395", "Bloodsurge", "4", "4", "78")]
         result = extract()
         self.assertEqual(result["locations"][0]["trigger"]["min_level"], 78)
@@ -222,18 +243,20 @@ class TestExtract(unittest.TestCase):
     # every test above while still re-polluting content/itemsanity.yaml
     # with test rows and this module's own internal icon/trap item rows.
     # This inspects the real SQL text passed to the mocked run_query.
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_query_contains_test_pollution_and_reserved_range_filters(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = []
         extract()
         self.assertEqual(mock_run_query.call_count, 1)
@@ -255,13 +278,14 @@ class TestExtract(unittest.TestCase):
     # icon/trap item_template rows are excluded end-to-end even if a row
     # for one somehow reached the Python-side filtering (defense in depth
     # alongside the SQL-level test above).
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_gm_only_entries_are_now_tagged_unobtainable_not_excluded(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         # M4.11.5.1: replaces the old hand-maintained _GM_ONLY_ENTRY_DENYLIST
         # (which used to drop these rows outright) with the comprehensive
@@ -283,6 +307,7 @@ class TestExtract(unittest.TestCase):
         # says Martin Fury alone is "STILL not a normal, always-on
         # location").
         mock_acquired.return_value = frozenset({25})
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [
             ("17", "Martin Fury", "4", "6", "0"),
             ("25", "Worn Shortsword", "2", "1", "0"),
@@ -297,22 +322,66 @@ class TestExtract(unittest.TestCase):
     # M1 (final whole-branch review, M4.10.6): a real trailing-whitespace
     # item_template.name (204 real rows found live) must not compile into
     # a location name with a double space before "(#entry)".
+    @patch("extract_itemsanity.parse_vendor_stock_item_ids")
     @patch("extract_itemsanity.compute_acquired_item_ids")
     @patch("extract_itemsanity.parse_char_start_outfit_item_ids")
     @patch("extract_itemsanity.parse_spell_created_item_ids")
     @patch("extract_itemsanity.load_exclusion_rules")
     @patch("extract_itemsanity.run_query")
     def test_trailing_whitespace_in_name_is_stripped(
-        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired
+        self, mock_run_query, mock_load_rules, mock_spell_ids, mock_outfit_ids, mock_acquired, mock_vendor_ids
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_spell_ids.return_value = frozenset()
         mock_outfit_ids.return_value = frozenset()
         mock_acquired.return_value = frozenset()
+        mock_vendor_ids.return_value = frozenset()
         mock_run_query.return_value = [("14940", "Warbringer's Sabatons  ", "4", "4", "80")]
         result = extract()
         self.assertEqual(result["locations"][0]["name"], "Itemsanity: Warbringer's Sabatons (#14940)")
         self.assertNotIn("  (", result["locations"][0]["name"])
+
+
+class TestRealDeliveredItemsAreNeverTaggedUnobtainable(unittest.TestCase):
+    """I4 (final whole-branch review, M4.11.5.1): a cross-family
+    data-quality invariant guarding against a C1-style regression
+    recurring silently -- C1 was exactly this shape of bug (a real,
+    genuinely-delivered item wrongly tagged `unobtainable` because its
+    real acquisition route wasn't recognized). Reads the real, regenerated
+    content/itemsanity.yaml plus content/vendor_stock.yaml and
+    content/quest_rewards.yaml directly (no mocking -- a real-data
+    integration check) and asserts that no item entry either of those two
+    sibling families actually delivers is tagged `unobtainable` in
+    itemsanity.yaml. Cheap (three yaml.safe_load calls plus a set
+    intersection) and real, not a placeholder."""
+
+    def test_vendor_stock_and_quest_reward_items_are_not_unobtainable_in_itemsanity(self) -> None:
+        with open(_CONTENT_DIR / "itemsanity.yaml", "r", encoding="utf-8") as f:
+            itemsanity_data = yaml.safe_load(f)
+        with open(_CONTENT_DIR / "vendor_stock.yaml", "r", encoding="utf-8") as f:
+            vendor_stock_data = yaml.safe_load(f)
+        with open(_CONTENT_DIR / "quest_rewards.yaml", "r", encoding="utf-8") as f:
+            quest_rewards_data = yaml.safe_load(f)
+
+        really_delivered_entries = {
+            item["delivery"]["wow_item_entry"] for item in vendor_stock_data["items"]
+        } | {
+            item["delivery"]["wow_item_entry"] for item in quest_rewards_data["items"]
+        }
+
+        unobtainable_entries = {
+            loc["trigger"]["item_entry"]
+            for loc in itemsanity_data["locations"]
+            if loc["tags"].get("debug_category") == ["unobtainable"]
+        }
+
+        wrongly_tagged = really_delivered_entries & unobtainable_entries
+        self.assertEqual(
+            wrongly_tagged, set(),
+            f"itemsanity.yaml tags {wrongly_tagged} unobtainable, but "
+            "vendor_stock.yaml/quest_rewards.yaml both genuinely deliver "
+            "them -- a C1-style regression.",
+        )
 
 
 if __name__ == "__main__":

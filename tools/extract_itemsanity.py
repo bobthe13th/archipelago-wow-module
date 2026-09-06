@@ -25,6 +25,7 @@ import yaml
 from db_extract import (
     run_query, is_denylisted, load_exclusion_rules,
     compute_acquired_item_ids, parse_spell_created_item_ids, parse_char_start_outfit_item_ids,
+    parse_vendor_stock_item_ids,
 )
 
 _LOCATION_ID_BASE = 12_500_000
@@ -108,6 +109,7 @@ def extract() -> dict:
         compute_acquired_item_ids()
         | parse_spell_created_item_ids()
         | parse_char_start_outfit_item_ids()
+        | parse_vendor_stock_item_ids()
     )
 
     rows = run_query(f"""

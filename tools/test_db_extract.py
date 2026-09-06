@@ -1,8 +1,11 @@
 import pathlib
+import re
 import struct
 import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
+
+import yaml
 
 import db_extract
 
@@ -52,6 +55,10 @@ class TestExclusionRules(unittest.TestCase):
         self.assertFalse(is_denylisted("Qannik", rules))
         self.assertFalse(is_denylisted("Qatiichii", rules))
         self.assertTrue(is_denylisted("QA Test Dummy 80 Normal", rules))  # correctly caught by the pre-existing \btest\b pattern (unrelated to this task's own ^QA(Ench|Test) fix, which does NOT match this spaced-out name)
+        # Directly demonstrates this task's own new ^QA(Ench|Test) pattern's non-overreach on
+        # this exact string: it's caught above only via the pre-existing \btest\b pattern, not
+        # this one -- the space after "QA" means the glued-prefix pattern never matches here.
+        self.assertIsNone(re.search(r"(?i)^QA(Ench|Test)", "QA Test Dummy 80 Normal"))
 
 
 class TestDatabaseQueries(unittest.TestCase):
@@ -420,25 +427,10 @@ class TestParseCharStartOutfitItemIds(unittest.TestCase):
 
 class TestComputeAcquiredItemIds(unittest.TestCase):
     @patch("db_extract.run_query")
-    def test_direct_vendor_item_is_acquired(self, mock_run_query) -> None:
-        mock_run_query.side_effect = [
-            [("100",)],   # npc_vendor
-            [],           # quest_template union
-            [],           # fake_loot_template Item (Reference=0)
-            [],           # fake_loot_template Reference (!=0)
-            [],           # reference_loot_template Entry/Reference edges
-            [],           # reference_loot_template terminal Item (Reference=0)
-            [],           # achievement_reward
-        ]
-        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
-        self.assertEqual(result, frozenset({100}))
-
-    @patch("db_extract.run_query")
     def test_direct_quest_reward_item_is_acquired(self, mock_run_query) -> None:
         mock_run_query.side_effect = [
-            [],
-            [("200",)],   # quest_template union
-            [], [], [], [], [],
+            [("200",)],
+            [], [], [], [], [], [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset({200}))
@@ -446,10 +438,10 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
     @patch("db_extract.run_query")
     def test_direct_loot_item_with_reference_zero_is_acquired(self, mock_run_query) -> None:
         mock_run_query.side_effect = [
-            [], [],
-            [("300",)],   # fake_loot_template Item (Reference=0) -- a real direct drop
-            [],           # fake_loot_template Reference (!=0) -- none in this fixture
-            [], [], [],
+            [],
+            [("300",)],
+            [],
+            [], [], [], [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset({300}))
@@ -460,12 +452,12 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
         # reference_loot_template group); that group's own Entry=4632
         # row has Item=400, Reference=0 -- a genuine terminal item.
         mock_run_query.side_effect = [
-            [], [],
-            [],                # fake_loot_template Item (Reference=0) -- none direct
-            [("4632",)],       # fake_loot_template Reference (!=0) -- reaches group 4632
-            [],                # reference_loot_template Entry/Reference edges -- no nesting
-            [("4632", "400")],  # reference_loot_template terminal Item (Reference=0)
             [],
+            [],
+            [("4632",)],
+            [],
+            [("4632", "400")],
+            [], [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset({400}))
@@ -478,11 +470,11 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
         # that group's own Entry -- the item must NOT be counted as
         # acquired, even though it has an Item>0 row somewhere.
         mock_run_query.side_effect = [
-            [], [],
-            [], [],           # no table ever references group 4632
-            [],               # no nested edges either
-            [("4632", "17")],  # the orphaned group's own terminal row (never reached)
             [],
+            [], [],
+            [],
+            [("4632", "17")],
+            [], [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset())
@@ -493,12 +485,12 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
         # row nests onward to group 200 (Reference=200); group 200's own
         # terminal row has Item=500.
         mock_run_query.side_effect = [
-            [], [],
             [],
-            [("100",)],              # fake_loot_template Reference (!=0) -- reaches group 100
-            [("100", "200")],        # reference_loot_template Entry=100 -> Reference=200
-            [("200", "500")],        # reference_loot_template terminal Item (Reference=0)
             [],
+            [("100",)],
+            [("100", "200")],
+            [("200", "500")],
+            [], [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset({500}))
@@ -507,11 +499,30 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
     def test_direct_achievement_reward_item_is_acquired(self, mock_run_query) -> None:
         mock_run_query.side_effect = [
             [], [], [], [], [],
-            [],
-            [("600",)],   # achievement_reward
+            [("600",)],
+            [], [],
         ]
         result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
         self.assertEqual(result, frozenset({600}))
+
+    @patch("db_extract.run_query")
+    def test_direct_game_event_vendor_item_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [], [], [], [], [], [],
+            [("700",)],
+            [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({700}))
+
+    @patch("db_extract.run_query")
+    def test_direct_smart_script_add_item_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [], [], [], [], [], [], [],
+            [("800",)],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({800}))
 
     @patch("db_extract.run_query")
     def test_query_text_uses_reference_equals_zero_for_direct_items(self, mock_run_query) -> None:
@@ -522,14 +533,14 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
         # RETURN values) would still pass.
         mock_run_query.return_value = []
         db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
-        item_query = mock_run_query.call_args_list[2][0][0]
+        item_query = mock_run_query.call_args_list[1][0][0]
         self.assertIn("fake_loot_template", item_query)
         self.assertIn("Item > 0", item_query)
         self.assertIn("Reference = 0", item_query)
-        reference_query = mock_run_query.call_args_list[3][0][0]
+        reference_query = mock_run_query.call_args_list[2][0][0]
         self.assertIn("fake_loot_template", reference_query)
         self.assertIn("Reference != 0", reference_query)
-        terminal_query = mock_run_query.call_args_list[5][0][0]
+        terminal_query = mock_run_query.call_args_list[4][0][0]
         self.assertIn("reference_loot_template", terminal_query)
         self.assertIn("Reference = 0", terminal_query)
 
@@ -537,13 +548,60 @@ class TestComputeAcquiredItemIds(unittest.TestCase):
     def test_query_text_covers_all_ten_quest_reward_columns(self, mock_run_query) -> None:
         mock_run_query.return_value = []
         db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
-        quest_query = mock_run_query.call_args_list[1][0][0]
+        quest_query = mock_run_query.call_args_list[0][0][0]
         for column in (
             "RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4",
             "RewardChoiceItemID1", "RewardChoiceItemID2", "RewardChoiceItemID3",
             "RewardChoiceItemID4", "RewardChoiceItemID5", "RewardChoiceItemID6",
         ):
             self.assertIn(column, quest_query)
+
+    @patch("db_extract.run_query")
+    def test_query_text_for_game_event_and_smart_script_routes(self, mock_run_query) -> None:
+        mock_run_query.return_value = []
+        db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        game_event_query = mock_run_query.call_args_list[6][0][0]
+        self.assertIn("game_event_npc_vendor", game_event_query)
+        smart_script_query = mock_run_query.call_args_list[7][0][0]
+        self.assertIn("smart_scripts", smart_script_query)
+        self.assertIn("action_type = 56", smart_script_query)
+
+
+class TestParseVendorStockItemIds(unittest.TestCase):
+    def _write_fake_yaml(self, tmpdir: str, item_entries: list[int]) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "vendor_stock.yaml"
+        data = {
+            "family": "vendor_stock",
+            "locations": [],
+            "items": [
+                {
+                    "name": f"Vendor Item: Fake Vendor - Item {i} (#{entry})",
+                    "item_id": 2_500_000 + i,
+                    "delivery": {"kind": "mail", "wow_item_entry": entry},
+                }
+                for i, entry in enumerate(item_entries)
+            ],
+            "constants": {},
+        }
+        with open(path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(data, f)
+        return path
+
+    def test_collects_distinct_wow_item_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_yaml(tmp, [100, 200, 100])
+            result = db_extract.parse_vendor_stock_item_ids(path)
+        self.assertEqual(result, frozenset({100, 200}))
+
+    def test_real_vendor_stock_yaml_contains_known_real_items(self) -> None:
+        # Real-file integration check: see parse_vendor_stock_item_ids's own
+        # docstring for why this file, not a live npc_vendor query, is this
+        # route's real ground truth. Verified live: entry 2320 ("Coarse
+        # Thread") and 13086 ("Reins of the Winterspring Frostsaber") are
+        # both real, currently-sold items.
+        result = db_extract.parse_vendor_stock_item_ids()
+        self.assertIn(2320, result)
+        self.assertIn(13086, result)
 
 
 class TestParseAchievements(unittest.TestCase):

@@ -11,6 +11,8 @@ import re
 import struct
 import subprocess
 
+import yaml
+
 DEFAULT_RULES_PATH = pathlib.Path(__file__).parent / "exclusion_rules.yaml"
 
 _MYSQL_EXE = os.environ.get(
@@ -814,12 +816,25 @@ _QUEST_REWARD_COLUMNS = (
 
 def compute_acquired_item_ids(loot_tables: tuple[str, ...] = _LOOT_TABLES) -> frozenset[int]:
     """Every real item entry reachable through a real, live acquisition
-    route in this checkout's DB tables: npc_vendor sales, quest_template
-    reward columns, every real *_loot_template table, and
-    achievement_reward. Does NOT cover crafting (Spell.dbc
-    EffectItemType) or client-side starting gear (CharStartOutfit.dbc) --
-    those are parse_spell_created_item_ids/parse_char_start_outfit_item_ids
-    above; extract_itemsanity.py unions all three.
+    route in this checkout's DB tables: quest_template reward columns,
+    every real *_loot_template table, achievement_reward,
+    game_event_npc_vendor (seasonal/holiday vendor stock), and
+    smart_scripts SMART_ACTION_ADD_ITEM rows (action_type=56, itemID in
+    action_param1). Does NOT cover crafting (Spell.dbc EffectItemType),
+    client-side starting gear (CharStartOutfit.dbc), or regular vendor
+    stock (content/vendor_stock.yaml) -- those are
+    parse_spell_created_item_ids/parse_char_start_outfit_item_ids/
+    parse_vendor_stock_item_ids above; extract_itemsanity.py unions all
+    four.
+
+    Deliberately does NOT query the live npc_vendor table directly (an
+    earlier version of this function did, and was wrong): verified live
+    that this checkout's npc_vendor table is currently dominated by old
+    M4.7 manual-verification-tooling mirror rows (37,750 of 37,753 rows
+    have item>=4,000,000), making a live query unable to answer "is this
+    item vendor-sold" reliably. See parse_vendor_stock_item_ids's own
+    docstring for the real fix (content/vendor_stock.yaml as ground
+    truth).
 
     reference_loot_template needs two-hop resolution, not a flat `SELECT
     DISTINCT Item`: verified directly against
@@ -838,9 +853,6 @@ def compute_acquired_item_ids(loot_tables: tuple[str, ...] = _LOOT_TABLES) -> fr
     Reference != 0, meaning Item=17 there is inert leftover data, not a
     real drop)."""
     acquired: set[int] = set()
-
-    for (item,) in run_query("SELECT DISTINCT item FROM npc_vendor"):
-        acquired.add(int(item))
 
     quest_union_sql = " UNION ".join(
         f"SELECT DISTINCT {column} AS item FROM quest_template WHERE {column} > 0"
@@ -879,7 +891,37 @@ def compute_acquired_item_ids(loot_tables: tuple[str, ...] = _LOOT_TABLES) -> fr
     for (item,) in run_query("SELECT DISTINCT ItemID FROM achievement_reward WHERE ItemID > 0"):
         acquired.add(int(item))
 
+    for (item,) in run_query("SELECT DISTINCT item FROM game_event_npc_vendor"):
+        acquired.add(int(item))
+
+    for (item,) in run_query("SELECT DISTINCT action_param1 FROM smart_scripts WHERE action_type = 56"):
+        acquired.add(int(item))
+
     return frozenset(acquired)
+
+
+_VENDOR_STOCK_YAML_PATH = pathlib.Path(__file__).parent.parent / "content" / "vendor_stock.yaml"
+
+
+def parse_vendor_stock_item_ids(yaml_path: pathlib.Path = _VENDOR_STOCK_YAML_PATH) -> frozenset[int]:
+    """Real vendor-sold item entries, sourced from this project's own
+    already-extracted, git-tracked content/vendor_stock.yaml -- NOT a live
+    re-query of npc_vendor. Verified live during this fix's own
+    investigation: this checkout's live npc_vendor table is currently
+    dominated by old M4.7 manual-verification-tooling mirror rows (37,750
+    of 37,753 rows have item>=4,000,000, e.g. item 5000000 is literally
+    named "m4-7test's Vendor Item: ..."), so a live query cannot answer
+    "is this item vendor-sold" reliably in this checkout. content/
+    vendor_stock.yaml was extracted from npc_vendor at an earlier point,
+    while it still held real data (confirmed live: it has exactly 7,647
+    real, all-<4,000,000, distinct wow_item_entry values and zero
+    polluted ones) -- this project's own stable source of truth for this
+    route, the same "trust a sibling family's already-correct generated
+    content" pattern used throughout this project rather than re-deriving
+    from a possibly-unreliable live source."""
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return frozenset(item["delivery"]["wow_item_entry"] for item in data["items"])
 
 
 _FILLER_BUFF_SPELL_ID_FIELD = 0
