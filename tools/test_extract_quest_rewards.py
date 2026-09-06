@@ -2,32 +2,47 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from extract_quest_rewards import (
-    pick_representative_reward,
     extract,
+    _nonzero_reward_slots,
     _compute_quest_type_tags,
     _load_quest_expansions,
     _resolve_zone_id,
 )
 
 
-class TestPickRepresentativeReward(unittest.TestCase):
-    def test_prefers_first_nonzero_fixed_reward(self) -> None:
-        row = {"RewardItem1": 0, "RewardItem2": 12345, "RewardItem3": 0, "RewardItem4": 0,
-               "RewardChoiceItemID1": 999, "RewardChoiceItemID2": 0, "RewardChoiceItemID3": 0,
+class TestNonzeroRewardSlots(unittest.TestCase):
+    def test_a_single_fixed_reward_is_column_index_zero(self) -> None:
+        row = {"RewardItem1": 12345, "RewardItem2": 0, "RewardItem3": 0, "RewardItem4": 0,
+               "RewardChoiceItemID1": 0, "RewardChoiceItemID2": 0, "RewardChoiceItemID3": 0,
                "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
-        self.assertEqual(pick_representative_reward(row), 12345)
+        self.assertEqual(_nonzero_reward_slots(row), [(0, "RewardItem1", 12345)])
 
-    def test_falls_back_to_first_choice_reward_when_no_fixed_reward(self) -> None:
+    def test_a_single_choice_reward_gets_its_own_real_column_index(self) -> None:
         row = {"RewardItem1": 0, "RewardItem2": 0, "RewardItem3": 0, "RewardItem4": 0,
                "RewardChoiceItemID1": 0, "RewardChoiceItemID2": 777, "RewardChoiceItemID3": 0,
                "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
-        self.assertEqual(pick_representative_reward(row), 777)
+        self.assertEqual(_nonzero_reward_slots(row), [(5, "RewardChoiceItemID2", 777)])
 
-    def test_returns_none_when_only_a_spell_reward_exists(self) -> None:
+    def test_two_simultaneous_fixed_rewards_both_returned(self) -> None:
+        row = {"RewardItem1": 100, "RewardItem2": 0, "RewardItem3": 200, "RewardItem4": 0,
+               "RewardChoiceItemID1": 0, "RewardChoiceItemID2": 0, "RewardChoiceItemID3": 0,
+               "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
+        self.assertEqual(_nonzero_reward_slots(row), [(0, "RewardItem1", 100), (2, "RewardItem3", 200)])
+
+    def test_multiple_real_choice_alternatives_all_returned(self) -> None:
+        row = {"RewardItem1": 0, "RewardItem2": 0, "RewardItem3": 0, "RewardItem4": 0,
+               "RewardChoiceItemID1": 40000, "RewardChoiceItemID2": 40001, "RewardChoiceItemID3": 0,
+               "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
+        self.assertEqual(
+            _nonzero_reward_slots(row),
+            [(4, "RewardChoiceItemID1", 40000), (5, "RewardChoiceItemID2", 40001)],
+        )
+
+    def test_returns_empty_list_when_only_a_spell_reward_exists(self) -> None:
         row = {"RewardItem1": 0, "RewardItem2": 0, "RewardItem3": 0, "RewardItem4": 0,
                "RewardChoiceItemID1": 0, "RewardChoiceItemID2": 0, "RewardChoiceItemID3": 0,
                "RewardChoiceItemID4": 0, "RewardChoiceItemID5": 0, "RewardChoiceItemID6": 0}
-        self.assertIsNone(pick_representative_reward(row))
+        self.assertEqual(_nonzero_reward_slots(row), [])
 
 
 class TestComputeQuestTypeTags(unittest.TestCase):
@@ -399,6 +414,83 @@ class TestExtractQuestRewardsAreaTags(unittest.TestCase):
         rows = extract()
         sample = next(loc for loc in rows["locations"] if loc["trigger"]["quest_id"] == 26)
         self.assertNotIn("area", sample["tags"])
+
+
+class TestSplitRewardSlots(unittest.TestCase):
+    @patch("extract_quest_rewards._load_quest_expansions")
+    @patch("extract_quest_rewards.parse_area_zone_ids")
+    @patch("extract_quest_rewards.parse_area_names")
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_a_quest_with_two_real_choice_rewards_produces_two_locations(
+        self, mock_run_query, mock_load_rules, mock_area_names, mock_area_zone_ids, mock_expansions,
+    ) -> None:
+        mock_expansions.return_value = {}
+        mock_area_zone_ids.return_value = {}
+        mock_area_names.return_value = {}
+        mock_load_rules.return_value = {"name_denylist": []}
+        # quest 500: no fixed rewards, two real choices (40000, 40001), rest zero.
+        mock_run_query.return_value = [
+            ("500", "Test Quest", "10", "NULL",
+             "0", "0", "0", "0",
+             "40000", "40001", "0", "0", "0", "0",
+             "0", "0", "0", "0"),
+        ]
+        result = extract()
+        self.assertEqual(len(result["locations"]), 2)
+        self.assertEqual(len(result["items"]), 2)
+        column_indices = {loc["trigger"]["column_index"] for loc in result["locations"]}
+        self.assertEqual(column_indices, {4, 5})  # RewardChoiceItemID1, RewardChoiceItemID2
+        location_ids = {loc["location_id"] for loc in result["locations"]}
+        self.assertEqual(location_ids, {1_000_000 + 500 * 10 + 4, 1_000_000 + 500 * 10 + 5})
+        for loc in result["locations"]:
+            self.assertNotIn("is_filler_reward", loc["trigger"])
+            self.assertIn("[", loc["name"])  # disambiguating suffix present for multi-slot quests
+
+    @patch("extract_quest_rewards._load_quest_expansions")
+    @patch("extract_quest_rewards.parse_area_zone_ids")
+    @patch("extract_quest_rewards.parse_area_names")
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_a_quest_with_no_real_reward_still_produces_exactly_one_filler_location(
+        self, mock_run_query, mock_load_rules, mock_area_names, mock_area_zone_ids, mock_expansions,
+    ) -> None:
+        mock_expansions.return_value = {}
+        mock_area_zone_ids.return_value = {}
+        mock_area_names.return_value = {}
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_run_query.return_value = [
+            ("501", "Filler Quest", "10", "NULL", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+        ]
+        result = extract()
+        self.assertEqual(len(result["locations"]), 1)
+        self.assertEqual(result["locations"][0]["trigger"]["column_index"], 0)
+        self.assertTrue(result["locations"][0]["trigger"]["is_filler_reward"])
+        self.assertEqual(result["items"][0]["delivery"], {"kind": "mail", "wow_item_entry": 7073})
+        self.assertNotIn("[", result["locations"][0]["name"])  # single-slot quest keeps unsuffixed name
+
+    @patch("extract_quest_rewards._load_quest_expansions")
+    @patch("extract_quest_rewards.parse_area_zone_ids")
+    @patch("extract_quest_rewards.parse_area_names")
+    @patch("extract_quest_rewards.load_exclusion_rules")
+    @patch("extract_quest_rewards.run_query")
+    def test_two_simultaneous_fixed_rewards_both_become_their_own_location(
+        self, mock_run_query, mock_load_rules, mock_area_names, mock_area_zone_ids, mock_expansions,
+    ) -> None:
+        mock_expansions.return_value = {}
+        mock_area_zone_ids.return_value = {}
+        mock_area_names.return_value = {}
+        mock_load_rules.return_value = {"name_denylist": []}
+        # quest 502: RewardItem1 and RewardItem3 both real and simultaneous
+        # (not alternatives) -- both must become their own location.
+        mock_run_query.return_value = [
+            ("502", "Two Fixed Rewards", "10", "NULL",
+             "5000", "0", "5001", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+        ]
+        result = extract()
+        self.assertEqual(len(result["locations"]), 2)
+        column_indices = {loc["trigger"]["column_index"] for loc in result["locations"]}
+        self.assertEqual(column_indices, {0, 2})  # RewardItem1, RewardItem3
 
 
 if __name__ == "__main__":

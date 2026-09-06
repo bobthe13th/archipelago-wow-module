@@ -5,6 +5,7 @@
 #include "ScriptMgr.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoQuestRewardsContentTable.h"
 
 // M4.8.0: the standalone `quests` family's ArchipelagoQuestScript
 // (PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST, keyed off a curated
@@ -52,7 +53,38 @@ public:
     }
 };
 
+// M4.11.5.0.6: ArchipelagoQuestRewardScript above only ever fires for the
+// ONE real item the engine actually grants (whichever choice the player
+// picked, plus every fixed slot) -- the OTHER choice slots a quest offered
+// are never physically granted to anyone by the engine, so they need a
+// separate signal. PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST fires once per
+// quest turn-in, after every OnPlayerQuestRewardItem call in the same real
+// Player::RewardQuest function (confirmed live: OnPlayerQuestRewardItem at
+// PlayerQuest.cpp:718/739, OnPlayerCompleteQuest at :903) -- so the one
+// choice the player DID pick is credited twice (once via each hook), a
+// safe, idempotent no-op under this project's own established
+// already-sent-check dedup discipline (ArchipelagoRealmState::
+// HasSentLocationCheck, same as ArchipelagoLootSlotScript's own repeat-visit
+// handling).
+class ArchipelagoQuestChoiceSiblingScript : public PlayerScript
+{
+public:
+    ArchipelagoQuestChoiceSiblingScript()
+        : PlayerScript("ArchipelagoQuestChoiceSiblingScript", { PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST }) { }
+
+    void OnPlayerCompleteQuest(Player* /*player*/, Quest const* quest) override
+    {
+        if (quest == nullptr)
+            return;
+        auto it = ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_CHOICE_LOCATION_IDS.find(quest->GetQuestId());
+        if (it == ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_CHOICE_LOCATION_IDS.end())
+            return;
+        sArchipelagoMgr->SendLocationChecks(it->second);
+    }
+};
+
 void AddArchipelagoQuestScripts()
 {
     new ArchipelagoQuestRewardScript();
+    new ArchipelagoQuestChoiceSiblingScript();
 }

@@ -23,15 +23,16 @@ namespace
         return 850103; // unreachable, keeps MSVC's exhaustiveness warning quiet
     }
 
-    // Builds an unordered_map<int64_t /*location_id*/, uint32_t /*original quest_id*/>
-    // reversed from QUEST_ID_TO_LOCATION_ID -- SynthesizeAndRewireLocations iterates
-    // `display` by location_id and needs to go the OTHER direction (location -> trigger
-    // fields) to know which quest_template row to touch.
-    std::unordered_map<int64_t, uint32_t> BuildLocationIdToQuestId()
+    // Reversed from QUEST_REWARD_SLOT_TO_LOCATION_ID (M4.11.5.0.6) --
+    // SynthesizeAndRewireLocations iterates `display` by location_id and
+    // needs to go the OTHER direction (location -> its own exact quest_id +
+    // column_index) to know which single quest_template column this
+    // location's own reward slot is.
+    std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToQuestRewardSlot()
     {
-        std::unordered_map<int64_t, uint32_t> result;
-        for (auto const& [questId, locationId] : ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_LOCATION_ID)
-            result[locationId] = questId;
+        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
+        for (auto const& [questIdAndColumn, locationId] : ArchipelagoQUEST_REWARDSContent::QUEST_REWARD_SLOT_TO_LOCATION_ID)
+            result[locationId] = questIdAndColumn;
         return result;
     }
 
@@ -109,7 +110,7 @@ namespace Archipelago::ItemDisplay
 
     void SynthesizeAndRewireLocations(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display)
     {
-        auto locationToQuestId = BuildLocationIdToQuestId();
+        auto locationToQuestRewardSlot = BuildLocationIdToQuestRewardSlot();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
         auto locationToSkinningLootSlot = BuildLocationIdToSkinningLootSlot();
         auto locationToDisenchantLootSlot = BuildLocationIdToDisenchantLootSlot();
@@ -145,90 +146,47 @@ namespace Archipelago::ItemDisplay
             auto itemClass = Archipelago::Interception::ClassifyItem(itemDisplay.flags);
             SynthesizeItemTemplateRow(entry, itemDisplay.name, IconEntryFor(itemClass));
 
-            if (auto it = locationToQuestId.find(locationId); it != locationToQuestId.end())
+            if (auto it = locationToQuestRewardSlot.find(locationId); it != locationToQuestRewardSlot.end())
             {
-                uint32_t questId = it->second;
+                auto const& [questId, columnIndex] = it->second;
+                std::string column = Archipelago::ItemDisplay::QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER[columnIndex];
 
-                // QUEST_ID_TO_LOCATION_ID doesn't carry which of the 10
-                // reward-item columns held the real trigger item (unlike the
-                // vendor map below, which does), so that column has to be
-                // re-derived at runtime -- via the exact same preference
-                // order pick_representative_reward() used at generation
-                // time (see PickRewardColumn's doc comment). Blindly setting
-                // all 10 columns unconditionally would corrupt the fixed
-                // RewardItem1-4 slots, which are separate items always
-                // granted together, not mutually-exclusive alternatives.
-                // (The 6 RewardChoiceItemID columns are handled deliberately
-                // below -- see Finding I5's comment after PickRewardColumn.)
-                std::array<uint32_t, 10> columnValues{};
-                bool questRowFound = false;
                 if (QueryResult result = WorldDatabase.Query(
-                        "SELECT RewardItem1, RewardItem2, RewardItem3, RewardItem4, "
-                        "RewardChoiceItemID1, RewardChoiceItemID2, RewardChoiceItemID3, "
-                        "RewardChoiceItemID4, RewardChoiceItemID5, RewardChoiceItemID6 "
-                        "FROM quest_template WHERE ID = {}",
-                        questId))
+                        "SELECT {}, RewardAmount1 FROM quest_template WHERE ID = {}", column, questId))
                 {
-                    questRowFound = true;
                     Field* fields = result->Fetch();
-                    for (size_t i = 0; i < columnValues.size(); ++i)
-                        columnValues[i] = fields[i].Get<uint32_t>();
-                }
-
-                if (auto picked = Archipelago::ItemDisplay::PickRewardColumn(columnValues))
-                {
-                    // Finding I5 (M4.7 final review): RewardColumnsToRewrite
-                    // returns just the one picked (column, originalValue)
-                    // pair for a fixed-slot quest, or that pair PLUS every
-                    // other non-zero choice column when the picked column is
-                    // itself a player-choice column -- see its own doc
-                    // comment in APItemDisplay.h for why the latter is
-                    // necessary (a player who picks a different real choice
-                    // must still trigger the synthesized reward). Each pair
-                    // is matched on its own original value per this task's
-                    // idempotency constraint -- after a given UPDATE runs
-                    // once, that column no longer equals originalValue, so a
-                    // second run of the same statement matches zero rows and
-                    // is a safe no-op.
-                    for (auto const& [column, originalValue] :
-                         Archipelago::ItemDisplay::RewardColumnsToRewrite(*picked, columnValues))
+                    uint32_t originalValue = fields[0].Get<uint32_t>();
+                    uint32_t rewardAmount1 = fields[1].Get<uint32_t>();
+                    if (columnIndex == 0 && rewardAmount1 == 0)
+                    {
+                        // M4.11.5.0.6: the is_filler_reward fallback case (a
+                        // quest with no real reward at all) always lands here
+                        // as column_index 0 (RewardItem1) with its own real
+                        // RewardAmount1 still at 0 -- force it to 1 in the
+                        // same UPDATE, same "RewardItemId != 0 with count ==
+                        // 0 means don't actually reward it" bug this project
+                        // already found and fixed once (M4.7.1.3). A genuine
+                        // real RewardItem1 fixed-slot reward never has
+                        // RewardAmount1 == 0 in real vanilla data, so this
+                        // branch never fires for a real reward by
+                        // construction.
+                        WorldDatabase.Execute(
+                            "UPDATE quest_template SET {} = {}, RewardAmount1 = 1 WHERE ID = {} AND {} = {}",
+                            column, entry, questId, column, originalValue);
+                    }
+                    else
                     {
                         WorldDatabase.Execute(
                             "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
-                            column, entry, questId, column, originalValue
-                        );
+                            column, entry, questId, column, originalValue);
                     }
-                }
-                else if (!questRowFound)
-                {
-                    LOG_ERROR("module.archipelago_wow",
-                        "Archipelago: quest {} (location {}) has no quest_template row at all "
-                        "-- content/data desync, no trigger column to rewrite, skipped",
-                        questId, locationId);
                 }
                 else
                 {
-                    // M4.7.1.3: no longer an error case -- a quest with
-                    // zero real reward columns is now expected for any
-                    // is_filler_reward-tagged location (extract_quest_rewards.py).
-                    // Give it a real reward: RewardItem1, matched on its
-                    // own current value 0. RewardAmount1 MUST also be set
-                    // to a nonzero count in the same statement -- AzerothCore
-                    // treats RewardItemId != 0 with RewardItemIdCount == 0 as
-                    // "don't actually reward this item" (ObjectMgr.cpp's
-                    // LoadQuests validation), which cascades to
-                    // Item::CreateItem returning nullptr and this module's
-                    // own OnPlayerQuestRewardItem hook silently no-op'ing on
-                    // a null item -- the location would never be checkable.
-                    // Confirmed the hard way: this bug shipped once already
-                    // and left all 5,504 filler-tagged locations uncheckable
-                    // before this fix (caught in M4.7.1.3's final review).
-                    auto const& [column, originalValue] =
-                        Archipelago::ItemDisplay::FallbackRewardColumnForFillerQuest();
-                    WorldDatabase.Execute(
-                        "UPDATE quest_template SET {} = {}, RewardAmount1 = 1 WHERE ID = {} AND {} = {}",
-                        column, entry, questId, column, originalValue
-                    );
+                    LOG_ERROR("module.archipelago_wow",
+                        "Archipelago: quest {} slot {} (location {}) has no quest_template row at all "
+                        "-- content/data desync, no trigger column to rewrite, skipped",
+                        questId, columnIndex, locationId);
                 }
                 continue;
             }

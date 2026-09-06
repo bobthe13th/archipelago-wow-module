@@ -419,13 +419,19 @@ def _validate_trigger_lookup_uniqueness_one_kind(
     seen_keys: dict = {}
 
     if kind == "quest_reward":
+        # M4.11.5.0.6: keyed by the real composite (quest_id, column_index)
+        # QUEST_REWARD_SLOT_TO_LOCATION_ID is emitted with, not quest_id
+        # alone -- multiple locations sharing one quest_id is now the
+        # expected, correct shape for a multi-choice/multi-fixed-reward
+        # quest (each real reward slot is its own location); only the SAME
+        # (quest_id, column_index) pair repeating is still a real collision.
         for _index, loc in indexed_locations:
-            key = loc["trigger"]["quest_id"]
+            key = (loc["trigger"]["quest_id"], loc["trigger"]["column_index"])
             if key in seen_keys:
                 raise ValidationError(
                     f"{yaml_path}: locations {seen_keys[key]!r} and {loc['name']!r} "
-                    f"both have quest_id={key}, which would produce a collision in "
-                    f"QUEST_ID_TO_LOCATION_ID trigger-lookup map"
+                    f"both have (quest_id, column_index)={key}, which would produce a "
+                    f"collision in QUEST_REWARD_SLOT_TO_LOCATION_ID trigger-lookup map"
                 )
             seen_keys[key] = loc["name"]
 
@@ -697,7 +703,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "trainer_spells": FamilySchema(
-        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail"},
+        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail", "learn_spell"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "filler_reward_items": FamilySchema(
@@ -816,6 +822,12 @@ def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_p
                     raise ValidationError(
                         f"{yaml_path}: item {item['name']!r} has delivery.kind "
                         f"'trap' but is missing required key 'lethal'"
+                    )
+            if kind == "learn_spell":
+                if "spell_id" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'learn_spell' but is missing required key 'spell_id'"
                     )
 
 
@@ -1429,38 +1441,55 @@ def emit_cpp_generic(data: dict) -> str:
         lines.extend(_emit_cpp_zone_pool_node_tiers(data))
         lines.append("")
     if schema is not None and schema.export_item_delivery:
-        lines.extend(_emit_cpp_item_delivery_lookup(data["items"]))
+        lines.extend(_emit_cpp_item_delivery_lookup(data["items"], schema.valid_delivery_kinds))
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
 
 
 def _emit_cpp_trigger_lookup_quest_reward(locations: list) -> list[str]:
-    """QUEST_ID_TO_LOCATION_ID via the same raw-constexpr-array-plus-runtime-
-    builder pattern as _emit_cpp_large_string_map (M4.7.1 Task 3 -- empirical
-    correction: this map's key/value types are fully trivial, and the
-    original M4.7.1.1 plan argued on that basis it could never overflow the
-    stack the way LOCATIONS/ITEMS did. A real rebuild-and-launch proved that
-    argument wrong for VENDOR_SLOT_TO_LOCATION_ID's larger sibling below, so
-    this one gets the same treatment rather than re-trusting the same
-    falsified reasoning a second time -- it's small enough (~3,735 rows for
-    quest_rewards) to likely never have been at real risk, but "likely" was
-    exactly the confidence level that was already wrong once."""
-    lines = ["inline constexpr std::pair<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID_RAW[] = {"]
+    """QUEST_REWARD_SLOT_TO_LOCATION_ID (M4.11.5.0.6): composite (quest_id,
+    column_index) -> location_id, replacing the old bare quest_id-keyed map
+    now that every real reward slot is its own location. Same std::map
+    composite-key pattern VENDOR_SLOT_TO_LOCATION_ID already established
+    (below) -- proven safe at this row count in this codebase already.
+
+    Also emits QUEST_ID_TO_CHOICE_LOCATION_IDS (quest_id -> every location_id
+    among this quest's own choice-kind slots, column_index >= 4) -- consumed
+    by ArchipelagoQuestChoiceSiblingScript (M4.11.5.0.6) to credit every
+    choice slot a quest offered, not just whichever one the player actually
+    picked."""
+    lines = ["inline constexpr std::pair<std::pair<uint32_t, uint32_t>, int64_t> QUEST_REWARD_SLOT_TO_LOCATION_ID_RAW[] = {"]
     for loc in locations:
-        lines.append(f'    {{ {loc["trigger"]["quest_id"]}, {loc["location_id"]} }}, // {_string_literal(loc["name"])}')
+        trigger = loc["trigger"]
+        lines.append(
+            f'    {{ {{ {trigger["quest_id"]}, {trigger["column_index"]} }}, {loc["location_id"]} }}, '
+            f'// {_string_literal(loc["name"])}'
+        )
     lines.append("};")
-    lines.append("inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()")
+    lines.append("inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildQUEST_REWARD_SLOT_TO_LOCATION_ID()")
     lines.append("{")
-    lines.append("    std::unordered_map<uint32_t, int64_t> result;")
-    lines.append("    for (auto const& row : QUEST_ID_TO_LOCATION_ID_RAW)")
+    lines.append("    std::map<std::pair<uint32_t, uint32_t>, int64_t> result;")
+    lines.append("    for (auto const& row : QUEST_REWARD_SLOT_TO_LOCATION_ID_RAW)")
     lines.append("        result.emplace(row.first, row.second);")
     lines.append("    return result;")
     lines.append("}")
     lines.append(
-        "inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = "
-        "BuildQUEST_ID_TO_LOCATION_ID();"
+        "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> QUEST_REWARD_SLOT_TO_LOCATION_ID = "
+        "BuildQUEST_REWARD_SLOT_TO_LOCATION_ID();"
     )
+
+    choice_location_ids_by_quest: dict[int, list[int]] = {}
+    for loc in locations:
+        trigger = loc["trigger"]
+        if trigger["column_index"] >= 4:
+            choice_location_ids_by_quest.setdefault(trigger["quest_id"], []).append(loc["location_id"])
+
+    lines.append("inline const std::unordered_map<uint32_t, std::vector<int64_t>> QUEST_ID_TO_CHOICE_LOCATION_IDS = {")
+    for quest_id, location_ids in sorted(choice_location_ids_by_quest.items()):
+        ids_csv = ", ".join(str(loc_id) for loc_id in location_ids)
+        lines.append(f"    {{ {quest_id}, {{ {ids_csv} }} }},")
+    lines.append("};")
     return lines
 
 
@@ -1890,31 +1919,65 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
     )
 
 
-def _emit_cpp_item_delivery_lookup(items: list) -> list[str]:
-    """AP item id -> real wow_item_entry to mail, for a generic family's
-    `mail`-delivery items -- the same map shape/name Archipelago::Fish's/
-    Archipelago::Collections' own hand-rolled emitters already produce
-    (ApItemIdToWowItemEntry), but reusable via FamilySchema.
-    export_item_delivery for any generic family instead of requiring its
-    own bespoke emitter just for this one map. Uses the same
-    raw-constexpr-array-plus-runtime-builder pattern every other
+def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> list[str]:
+    """AP item id -> real wow_item_entry to mail (ApItemIdToWowItemEntry), OR
+    AP item id -> real spell_id to grant directly (ApItemIdToSpellId,
+    M4.11.5.0.5) -- whichever delivery.kind each item actually has. A family
+    with only "mail" items (every generic family before M4.11.5.0.5) emits
+    only the first map, byte-identical to before this change; a family with
+    only "learn_spell" items would emit only the second. valid_delivery_kinds
+    (the family's own FamilySchema, not just its CURRENT rows) additionally
+    forces ApItemIdToSpellId to be emitted (empty, if no row uses it yet)
+    whenever "learn_spell" is a kind this family is schema-eligible for --
+    Trainer Spells (the only such family today) currently has zero real
+    "learn_spell" rows in its compiled data (see that family's own
+    extraction plan for why), but its C++ dispatch code unconditionally
+    references ApItemIdToSpellId, so the symbol must always exist even
+    when empty, not only when at least one row happens to use it. Uses the
+    same raw-constexpr-array-plus-runtime-builder pattern every other
     large-row-count C++ export in this file uses (recipes: 1,912 items,
     trainer_spells: 1,966 items -- well past the M4.7.1 stack-overflow
     threshold a bare aggregate initializer proved unsafe at, twice, before
     this project learned that lesson -- see _emit_cpp_trigger_lookup's own
     docstring)."""
-    lines = ["inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {"]
-    for item in items:
-        lines.append(f'    {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // {_string_literal(item["name"])}')
-    lines.append("};")
-    lines.append("inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()")
-    lines.append("{")
-    lines.append("    std::unordered_map<int64_t, uint32_t> result;")
-    lines.append("    for (auto const& row : AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW)")
-    lines.append("        result.emplace(row.first, row.second);")
-    lines.append("    return result;")
-    lines.append("}")
-    lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();")
+    mail_items = [item for item in items if item["delivery"]["kind"] == "mail"]
+    spell_items = [item for item in items if item["delivery"]["kind"] == "learn_spell"]
+    lines: list[str] = []
+    if mail_items:
+        lines.append("inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {")
+        for item in mail_items:
+            lines.append(f'    {{ {item["item_id"]}, {item["delivery"]["wow_item_entry"]} }}, // {_string_literal(item["name"])}')
+        lines.append("};")
+        lines.append("inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()")
+        lines.append("{")
+        lines.append("    std::unordered_map<int64_t, uint32_t> result;")
+        lines.append("    for (auto const& row : AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW)")
+        lines.append("        result.emplace(row.first, row.second);")
+        lines.append("    return result;")
+        lines.append("}")
+        lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();")
+    if spell_items:
+        lines.append("inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_SPELL_ID_RAW[] = {")
+        for item in spell_items:
+            lines.append(f'    {{ {item["item_id"]}, {item["delivery"]["spell_id"]} }}, // {_string_literal(item["name"])}')
+        lines.append("};")
+        lines.append("inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToSpellId()")
+        lines.append("{")
+        lines.append("    std::unordered_map<int64_t, uint32_t> result;")
+        lines.append("    for (auto const& row : AP_ITEM_ID_TO_SPELL_ID_RAW)")
+        lines.append("        result.emplace(row.first, row.second);")
+        lines.append("    return result;")
+        lines.append("}")
+        lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = BuildApItemIdToSpellId();")
+    elif "learn_spell" in valid_delivery_kinds:
+        # M4.11.5.0.5: schema-eligible for "learn_spell" but zero real rows
+        # use it today (Trainer Spells' real, gated case) -- the symbol must
+        # still exist since C++ dispatch code references it unconditionally,
+        # but an empty `T arr[] = {};` cannot be used in a range-based for
+        # (MSVC C3316: "array of unknown size") the way a non-empty one can,
+        # so this branch defines the map directly instead of going through
+        # the raw-array-plus-builder pattern the non-empty case above uses.
+        lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};")
     return lines
 
 

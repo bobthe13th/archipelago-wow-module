@@ -405,7 +405,7 @@ class TestGenericEmitter(unittest.TestCase):
         data = {
             "family": "quest_rewards",
             "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
-                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 1}}],
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "column_index": 0, "min_level": 1}}],
             "items": [],
             "constants": {},
         }
@@ -460,23 +460,31 @@ class TestGenericEmitter(unittest.TestCase):
 
 
 class TestEmitCppGenericTriggers(unittest.TestCase):
-    def test_quest_reward_family_emits_quest_id_to_location_id_via_raw_array_builder(self) -> None:
+    def test_quest_reward_family_emits_composite_slot_map_via_raw_array_builder(self) -> None:
+        # M4.11.5.0.6: QUEST_ID_TO_LOCATION_ID (bare quest_id key) was
+        # replaced by QUEST_REWARD_SLOT_TO_LOCATION_ID (composite (quest_id,
+        # column_index) key) now that every real reward slot is its own
+        # location -- see TestQuestRewardSlotTriggerLookup below for full
+        # coverage of the new shape; this test only pins that the raw-array
+        # -plus-builder pattern itself is still used (M4.7.1 stack-overflow
+        # safety), same as it always has been for this family.
         data = {
             "family": "quest_rewards",
             "locations": [
                 {"name": "Quest: A Reward (#1)", "location_id": 1000001,
-                 "trigger": {"kind": "quest_reward", "quest_id": 1, "min_level": 1, "prev_quest_id": None}},
+                 "trigger": {"kind": "quest_reward", "quest_id": 1, "column_index": 0, "min_level": 1, "prev_quest_id": None}},
             ],
             "items": [],
         }
         cpp = emit_cpp_generic(data)
-        self.assertIn("QUEST_ID_TO_LOCATION_ID_RAW[]", cpp)
-        self.assertIn("inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()", cpp)
+        self.assertIn("QUEST_REWARD_SLOT_TO_LOCATION_ID_RAW[]", cpp)
+        self.assertIn("inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildQUEST_REWARD_SLOT_TO_LOCATION_ID()", cpp)
         self.assertIn(
-            "inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = BuildQUEST_ID_TO_LOCATION_ID();",
+            "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> QUEST_REWARD_SLOT_TO_LOCATION_ID = "
+            "BuildQUEST_REWARD_SLOT_TO_LOCATION_ID();",
             cpp,
         )
-        self.assertIn("{ 1, 1000001 }", cpp)
+        self.assertIn("{ { 1, 0 }, 1000001 }", cpp)
 
     def test_vendor_purchase_family_emits_slot_to_location_id_via_raw_array_builder(self) -> None:
         data = {
@@ -685,7 +693,7 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
                     locations:
                       - name: 'Quest: No Tags Reward (#1)'
                         location_id: 1000001
-                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                        trigger: {kind: quest_reward, quest_id: 1, column_index: 0, min_level: 1}
                     items: []
                 """), encoding="utf-8")
                 with self.assertRaises(ValidationError):
@@ -708,7 +716,7 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
                     locations:
                       - name: 'Quest: Empty Dim Reward (#1)'
                         location_id: 1000001
-                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                        trigger: {kind: quest_reward, quest_id: 1, column_index: 0, min_level: 1}
                         tags: {type: [], expansion: [vanilla]}
                     items: []
                 """), encoding="utf-8")
@@ -1146,7 +1154,7 @@ class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
         # duplicate learn_spell rows second. Pre-fix this returned silently.
         locations = [
             {"name": "Q: A (#1)", "location_id": 1,
-             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
             {"name": "S: B (#2)", "location_id": 2,
              "trigger": {"kind": "learn_spell", "spell_id": 100}},
             {"name": "S: C (#3)", "location_id": 3,
@@ -1163,9 +1171,9 @@ class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
         # with a clean second kind following it.
         locations = [
             {"name": "Q: A (#1)", "location_id": 1,
-             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
             {"name": "Q: B (#2)", "location_id": 2,
-             "trigger": {"kind": "quest_reward", "quest_id": 10}},
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
             {"name": "S: C (#3)", "location_id": 3,
              "trigger": {"kind": "learn_spell", "spell_id": 100}},
         ]
@@ -1173,7 +1181,7 @@ class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
             generate_content._validate_trigger_lookup_uniqueness(
                 "recipes", locations, [], pathlib.Path("test.yaml")
             )
-        self.assertIn("quest_id=10", str(ctx.exception))
+        self.assertIn("(quest_id, column_index)=(10, 0)", str(ctx.exception))
 
     def test_each_kind_gets_its_own_seen_keys_scope(self) -> None:
         # A quest_id and a spell_id that happen to share the same numeric
@@ -1184,12 +1192,28 @@ class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
         # now that both kinds really are processed in one call.
         locations = [
             {"name": "Q: A (#1)", "location_id": 1,
-             "trigger": {"kind": "quest_reward", "quest_id": 42}},
+             "trigger": {"kind": "quest_reward", "quest_id": 42, "column_index": 0}},
             {"name": "S: B (#2)", "location_id": 2,
              "trigger": {"kind": "learn_spell", "spell_id": 42}},
         ]
         generate_content._validate_trigger_lookup_uniqueness(
             "recipes", locations, [], pathlib.Path("test.yaml")
+        )  # must not raise
+
+    def test_same_quest_id_different_column_index_is_not_a_collision(self) -> None:
+        # M4.11.5.0.6: a multi-choice/multi-fixed-reward quest legitimately
+        # produces several locations sharing one quest_id, distinguished by
+        # column_index -- only a repeated (quest_id, column_index) PAIR is a
+        # real collision now (test_first_kind_is_still_validated_in_a_mixed_
+        # family covers that case).
+        locations = [
+            {"name": "Q: A (#1) [RewardChoiceItemID1]", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 4}},
+            {"name": "Q: A (#1) [RewardChoiceItemID2]", "location_id": 2,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 5}},
+        ]
+        generate_content._validate_trigger_lookup_uniqueness(
+            "quest_rewards", locations, [], pathlib.Path("test.yaml")
         )  # must not raise
 
     def test_vendor_purchase_indexes_items_by_original_position(self) -> None:
@@ -1460,6 +1484,64 @@ class TestGathersanityZonePoolNodeTiers(unittest.TestCase):
         self.assertIn('"mining|apprentice"', text)
         self.assertIn("9999", text)
         self.assertIn('"mining|expert"', text)
+
+
+class TestQuestRewardSlotTriggerLookup(unittest.TestCase):
+    def test_quest_reward_trigger_lookup_emits_composite_slot_map_and_choice_siblings(self) -> None:
+        from generate_content import _emit_cpp_trigger_lookup_quest_reward
+        locations = [
+            {"name": "a", "location_id": 1000005000, "trigger": {"kind": "quest_reward", "quest_id": 500, "column_index": 4}},
+            {"name": "b", "location_id": 1000005001, "trigger": {"kind": "quest_reward", "quest_id": 500, "column_index": 5}},
+            {"name": "c", "location_id": 1000005020, "trigger": {"kind": "quest_reward", "quest_id": 502, "column_index": 0}},
+        ]
+        lines = "\n".join(_emit_cpp_trigger_lookup_quest_reward(locations))
+        self.assertIn("QUEST_REWARD_SLOT_TO_LOCATION_ID", lines)
+        self.assertIn("{ { 500, 4 }, 1000005000 }", lines)
+        self.assertIn("{ { 500, 5 }, 1000005001 }", lines)
+        self.assertIn("{ { 502, 0 }, 1000005020 }", lines)
+        self.assertIn("QUEST_ID_TO_CHOICE_LOCATION_IDS", lines)
+        self.assertIn("{ 500, { 1000005000, 1000005001 } }", lines)
+        self.assertNotIn("{ 502,", lines.split("QUEST_ID_TO_CHOICE_LOCATION_IDS")[1])
+
+
+class TestItemDeliveryLookupLearnSpellKind(unittest.TestCase):
+    def test_emits_both_maps_when_both_kinds_present(self) -> None:
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 7500116, "name": "x", "delivery": {"kind": "learn_spell", "spell_id": 116}},
+            {"item_id": 7500118, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 117}},
+        ]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_spell"}))
+        self.assertIn("ApItemIdToSpellId", lines)
+        self.assertIn("{ 7500116, 116 }", lines)
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertIn("{ 7500118, 117 }", lines)
+
+    def test_mail_only_family_output_is_unaffected(self) -> None:
+        # Every generic family before M4.11.5.0.5 (quest_rewards, vendor_stock,
+        # recipes, filler_reward_items) has only "mail" in valid_delivery_kinds
+        # -- confirm their output stays byte-identical (no ApItemIdToSpellId
+        # emitted at all when the family isn't even schema-eligible for it).
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 1750001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail"}))
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertNotIn("ApItemIdToSpellId", lines)
+
+    def test_learn_spell_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
+        # Trainer Spells' real case today: schema-eligible for "learn_spell"
+        # but zero real rows currently use it -- the symbol must still exist
+        # (empty) since the C++ dispatch code references it unconditionally.
+        # Must NOT go through the raw-array-plus-builder pattern with zero
+        # elements -- MSVC rejects `T arr[] = {};` in a range-based for
+        # (C3316: array of unknown size) -- so the empty case defines the
+        # map directly instead.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 7500001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_spell"}))
+        self.assertIn("ApItemIdToSpellId", lines)
+        self.assertNotIn("AP_ITEM_ID_TO_SPELL_ID_RAW", lines)
+        self.assertIn("std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};", lines)
 
 
 if __name__ == "__main__":
