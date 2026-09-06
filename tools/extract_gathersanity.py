@@ -87,6 +87,46 @@ def _query_lock_id_by_entry(entries: set[int]) -> dict[int, int]:
     return {int(entry): int(lock_id) for entry, lock_id in rows}
 
 
+def _query_loot_items_by_entry(entries: set[int]) -> dict[int, list[tuple[int, str]]]:
+    """Real gameobject_template.entry -> its own real candidate drop items,
+    via entry -> Data1 (lootId, confirmed live: GameObjectData.h's chest
+    union member, field index 1) -> gameobject_loot_template.Item. Same real
+    join plan M4.11.5.0.3's container_loot filler category uses, scoped here
+    to just this family's own real GATHERING_NODE_NAMES entries. Only
+    direct, unconditional loot rows count (QuestRequired/Reference-gated
+    rows excluded), same discipline as this file's own _extract_skinning
+    query against skinning_loot_template."""
+    if not entries:
+        return {}
+    entries_csv = ",".join(str(e) for e in sorted(entries))
+    rows = run_query(f"""
+        SELECT gt.entry, glt.Item, it.name
+        FROM gameobject_template gt
+        JOIN gameobject_loot_template glt ON glt.Entry = gt.Data1
+        JOIN item_template it ON it.entry = glt.Item
+        WHERE gt.entry IN ({entries_csv}) AND glt.QuestRequired = 0 AND glt.Reference = 0
+        ORDER BY gt.entry, glt.Item
+    """)
+    result: dict[int, list[tuple[int, str]]] = {}
+    for entry, item_entry, name in rows:
+        result.setdefault(int(entry), []).append((int(item_entry), name))
+    return result
+
+
+def _assign_candidate_item(candidates: list[tuple[int, str]], ordinal: int, fallback_entry: int) -> int:
+    """Cycles a zone+profession+tier bucket's real candidate items across
+    its ordinals as evenly as possible (wrapping once ordinals exceed
+    candidates) -- fixed once at generation time, same "no live re-roll"
+    discipline every other family's item assignment in this project already
+    uses. Falls back to fallback_entry only for the genuinely degenerate
+    case of a bucket with zero real candidates found (should not occur for
+    any real GATHERING_NODE_NAMES entry, but excluded-not-crashed per this
+    project's established "unknown means excluded" convention)."""
+    if not candidates:
+        return fallback_entry
+    return candidates[(ordinal - 1) % len(candidates)][0]
+
+
 def _profession_and_tier_by_entry(
     entries: set[int], lock_requirements: dict[int, dict[str, int]]
 ) -> dict[int, tuple[str, str]]:
@@ -203,6 +243,19 @@ def _extract_gathering_nodes(
         for zone_key in zone_tags:
             zone_to_maps.setdefault(zone_key, set()).add(map_id)
 
+    # M4.11.5.0.4: real candidate items per zone+profession+tier bucket --
+    # every real entry that contributed at least one spawn to a given
+    # zone_key, keyed by that spawn's own (profession, tier).
+    entries_by_zone_profession_tier: dict[tuple[str, str, str], set[int]] = {}
+    for entry, guid, map_id, x, y in spawn_rows_raw:
+        profession_tier = profession_tier_by_entry.get(entry)
+        if profession_tier is None:
+            continue
+        for zone_key in zone_pool_spawn_zones.get(guid, []):
+            bucket = (zone_key, profession_tier[0], profession_tier[1])
+            entries_by_zone_profession_tier.setdefault(bucket, set()).add(entry)
+    loot_items_by_entry = _query_loot_items_by_entry(real_entries)
+
     locations, items = [], []
     for profession, tier in sorted(spawn_rows_by_profession_tier):
         units_by_zone = resolve_zone_pool_units(
@@ -220,6 +273,12 @@ def _extract_gathering_nodes(
             composite_key = f"{zone_key}|{profession}|{tier}"
             real_unit_count = len(units_by_zone[zone_key])
             expansions = _expansion_tags_for_maps(zone_to_maps.get(zone_key, set()), map_expansions)
+            bucket_entries = entries_by_zone_profession_tier.get((zone_key, profession, tier), set())
+            candidate_items = sorted({
+                (item_entry, name)
+                for entry in bucket_entries
+                for item_entry, name in loot_items_by_entry.get(entry, [])
+            })
             for ordinal in range(1, real_unit_count + 1):
                 display = f"{zone_key} - {profession_label} Node ({tier_label}) {ordinal}"
                 locations.append({
@@ -250,9 +309,10 @@ def _extract_gathering_nodes(
                     # below came from real spawn rows in the first place).
                     "tags": {"area": [zone_key], "source": ["gathering_node"], "expansion": expansions},
                 })
+                wow_item_entry = _assign_candidate_item(candidate_items, ordinal, _FILLER_CONSUMABLE_ITEM_ENTRY)
                 items.append({
                     "name": f"Gathersanity Item: {display}",
-                    "delivery": {"kind": "mail", "wow_item_entry": _FILLER_CONSUMABLE_ITEM_ENTRY},
+                    "delivery": {"kind": "mail", "wow_item_entry": wow_item_entry},
                 })
 
     return locations, items, zone_pool_spawn_zones, node_tier_by_entry

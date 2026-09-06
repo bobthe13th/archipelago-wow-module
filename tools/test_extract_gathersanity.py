@@ -195,6 +195,7 @@ class TestExtract(unittest.TestCase):
             "extract_gathersanity",
             parse_lock_skill_requirements=lambda: {8: {"mining": 0}},
             _query_lock_id_by_entry=lambda entries: {1731: 8},
+            _query_loot_items_by_entry=lambda entries: {},
             parse_world_map_areas=lambda: [(1, 17, 0.0, 100.0, 0.0, 100.0)],
             parse_area_zone_ids=lambda: {17: 17},
             parse_area_names=lambda: {17: "barrens"},
@@ -342,6 +343,91 @@ class TestExtractGathersanityAreaTags(unittest.TestCase):
         for loc in disenchant_rows:
             self.assertFalse(loc["tags"].get("area"))
             self.assertNotIn("area", loc["tags"])
+
+
+class TestQueryLootItemsByEntry(unittest.TestCase):
+    def test_empty_entries_short_circuits_without_querying(self) -> None:
+        from extract_gathersanity import _query_loot_items_by_entry
+        with patch("extract_gathersanity.run_query") as mock_run_query:
+            result = _query_loot_items_by_entry(set())
+        mock_run_query.assert_not_called()
+        self.assertEqual(result, {})
+
+    @patch("extract_gathersanity.run_query")
+    def test_groups_real_candidate_items_by_template_entry(self, mock_run_query) -> None:
+        from extract_gathersanity import _query_loot_items_by_entry
+        mock_run_query.return_value = [
+            ("1731", "2770", "Tin Ore"),
+            ("1731", "2775", "Iron Ore"),
+            ("1617", "765", "Silverleaf"),
+        ]
+        result = _query_loot_items_by_entry({1731, 1617})
+        self.assertEqual(result, {
+            1731: [(2770, "Tin Ore"), (2775, "Iron Ore")],
+            1617: [(765, "Silverleaf")],
+        })
+        sql = mock_run_query.call_args[0][0]
+        self.assertIn("gt.Data1", sql)
+        self.assertIn("gameobject_loot_template", sql)
+        self.assertIn("QuestRequired = 0", sql)
+        self.assertIn("Reference = 0", sql)
+
+
+class TestAssignCandidateItem(unittest.TestCase):
+    def test_single_candidate_used_for_every_ordinal(self) -> None:
+        from extract_gathersanity import _assign_candidate_item
+        candidates = [(2770, "Tin Ore")]
+        self.assertEqual(_assign_candidate_item(candidates, 1, 117), 2770)
+        self.assertEqual(_assign_candidate_item(candidates, 2, 117), 2770)
+
+    def test_cycles_through_multiple_candidates_in_order(self) -> None:
+        from extract_gathersanity import _assign_candidate_item
+        candidates = [(2770, "Tin Ore"), (2775, "Iron Ore")]
+        self.assertEqual(_assign_candidate_item(candidates, 1, 117), 2770)
+        self.assertEqual(_assign_candidate_item(candidates, 2, 117), 2775)
+        self.assertEqual(_assign_candidate_item(candidates, 3, 117), 2770)  # wraps
+
+    def test_falls_back_when_no_real_candidates_exist(self) -> None:
+        from extract_gathersanity import _assign_candidate_item
+        self.assertEqual(_assign_candidate_item([], 1, 117), 117)
+
+
+class TestGatheringNodesUseRealCandidateItems(unittest.TestCase):
+    def test_real_candidates_are_cycled_across_ordinals_instead_of_hardcoded_filler(self) -> None:
+        import db_extract
+        import extract_gathersanity
+
+        def fake_run_query(sql):
+            if "pool_gameobject" in sql:
+                return []
+            if "FROM gameobject g" in sql:
+                # Two real Copper Vein spawns (entry 1731), same bucket ->
+                # two ordinals to cycle across.
+                return [
+                    ("1731", "500", "1", "10.0", "10.0"),
+                    ("1731", "502", "1", "12.0", "12.0"),
+                ]
+            return []
+
+        with patch.object(extract_gathersanity, "run_query", side_effect=fake_run_query), \
+             patch.object(db_extract, "run_query", side_effect=fake_run_query), \
+             patch.object(extract_gathersanity, "parse_lock_skill_requirements",
+                          return_value={8: {"mining": 0}}), \
+             patch.object(extract_gathersanity, "_query_lock_id_by_entry", return_value={1731: 8}), \
+             patch.object(extract_gathersanity, "_query_loot_items_by_entry",
+                          return_value={1731: [(2770, "Tin Ore"), (2775, "Iron Ore")]}), \
+             patch.object(extract_gathersanity, "parse_world_map_areas",
+                          return_value=[(1, 17, 0.0, 100.0, 0.0, 100.0)]), \
+             patch.object(extract_gathersanity, "parse_area_zone_ids", return_value={17: 17}), \
+             patch.object(extract_gathersanity, "parse_area_names", return_value={17: "barrens"}), \
+             patch.object(extract_gathersanity, "parse_map_instance_types", return_value={1: 0}), \
+             patch.object(extract_gathersanity, "parse_map_names", return_value={1: "kalimdor"}):
+            locations, items, _zones, _tiers = extract_gathersanity._extract_gathering_nodes({1: "vanilla"})
+
+        self.assertEqual(len(items), 2)
+        entries = [item["delivery"]["wow_item_entry"] for item in items]
+        self.assertEqual(sorted(entries), [2770, 2775])
+        self.assertTrue(all(entry != 117 for entry in entries))
 
 
 if __name__ == "__main__":
