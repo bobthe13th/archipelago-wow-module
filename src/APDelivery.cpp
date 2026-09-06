@@ -134,12 +134,26 @@ namespace
         return true;
     }
 
-    void MailToDeliveryCharacter(uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans)
+    // M4.11.5.0.2: SingleDeliveryCharacter's recipient IS the finder in every
+    // realistic single-character-slot setup this policy exists for (its own
+    // doc comment: "M2/M2.1's existing, only behavior" -- one WoW character
+    // is the entire multiworld slot). Handing them the item directly, right
+    // now, when they're actually online to receive it removes the delayed
+    // mail round-trip design spec M4.11.5.0's own live-tester complaint --
+    // with zero risk to the offline case, which still gets exactly today's
+    // mail behavior via GiveOrMailItem's own mail-fallback branch below.
+    void GrantOrMailToDeliveryCharacter(uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans)
     {
         ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
         if (receiverGuid.IsEmpty())
         {
             LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, dropping item", deliveryCharacter);
+            return;
+        }
+
+        if (Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter()))
+        {
+            Archipelago::Delivery::GiveOrMailItem(onlineReceiver, wowItemEntry, trans);
             return;
         }
 
@@ -236,7 +250,7 @@ namespace Archipelago::Delivery
 
             case Policy::SingleDeliveryCharacter:
             default:
-                MailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
+                GrantOrMailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
                 break;
         }
     }
