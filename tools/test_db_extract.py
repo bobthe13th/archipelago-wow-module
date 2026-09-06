@@ -15,6 +15,7 @@ from db_extract import (
     parse_world_map_areas, resolve_zone_id_from_position,
     resolve_zone_ids_from_position, parse_area_names, _slugify_area_name,
     resolve_area_tags_for_positions, resolve_area_or_instance_tags_for_positions,
+    compute_acquired_item_ids,
 )
 
 
@@ -415,6 +416,134 @@ class TestParseCharStartOutfitItemIds(unittest.TestCase):
         result = db_extract.parse_char_start_outfit_item_ids()
         self.assertEqual(len(result), 119)
         self.assertIn(6948, result)
+
+
+class TestComputeAcquiredItemIds(unittest.TestCase):
+    @patch("db_extract.run_query")
+    def test_direct_vendor_item_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [("100",)],   # npc_vendor
+            [],           # quest_template union
+            [],           # fake_loot_template Item (Reference=0)
+            [],           # fake_loot_template Reference (!=0)
+            [],           # reference_loot_template Entry/Reference edges
+            [],           # reference_loot_template terminal Item (Reference=0)
+            [],           # achievement_reward
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({100}))
+
+    @patch("db_extract.run_query")
+    def test_direct_quest_reward_item_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [],
+            [("200",)],   # quest_template union
+            [], [], [], [], [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({200}))
+
+    @patch("db_extract.run_query")
+    def test_direct_loot_item_with_reference_zero_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [], [],
+            [("300",)],   # fake_loot_template Item (Reference=0) -- a real direct drop
+            [],           # fake_loot_template Reference (!=0) -- none in this fixture
+            [], [], [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({300}))
+
+    @patch("db_extract.run_query")
+    def test_item_in_a_reachable_reference_group_is_acquired(self, mock_run_query) -> None:
+        # A real loot table row has Reference=4632 (pointing at a
+        # reference_loot_template group); that group's own Entry=4632
+        # row has Item=400, Reference=0 -- a genuine terminal item.
+        mock_run_query.side_effect = [
+            [], [],
+            [],                # fake_loot_template Item (Reference=0) -- none direct
+            [("4632",)],       # fake_loot_template Reference (!=0) -- reaches group 4632
+            [],                # reference_loot_template Entry/Reference edges -- no nesting
+            [("4632", "400")],  # reference_loot_template terminal Item (Reference=0)
+            [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({400}))
+
+    @patch("db_extract.run_query")
+    def test_item_in_an_unreachable_reference_group_is_not_acquired(self, mock_run_query) -> None:
+        # Real regression case (Martin Fury, entry 17): a
+        # reference_loot_template group contains a real Item value, but no
+        # real loot table (and no reachable nested chain) ever points at
+        # that group's own Entry -- the item must NOT be counted as
+        # acquired, even though it has an Item>0 row somewhere.
+        mock_run_query.side_effect = [
+            [], [],
+            [], [],           # no table ever references group 4632
+            [],               # no nested edges either
+            [("4632", "17")],  # the orphaned group's own terminal row (never reached)
+            [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset())
+
+    @patch("db_extract.run_query")
+    def test_reachability_chains_through_a_nested_reference(self, mock_run_query) -> None:
+        # A real loot table reaches group 100 directly; group 100's own
+        # row nests onward to group 200 (Reference=200); group 200's own
+        # terminal row has Item=500.
+        mock_run_query.side_effect = [
+            [], [],
+            [],
+            [("100",)],              # fake_loot_template Reference (!=0) -- reaches group 100
+            [("100", "200")],        # reference_loot_template Entry=100 -> Reference=200
+            [("200", "500")],        # reference_loot_template terminal Item (Reference=0)
+            [],
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({500}))
+
+    @patch("db_extract.run_query")
+    def test_direct_achievement_reward_item_is_acquired(self, mock_run_query) -> None:
+        mock_run_query.side_effect = [
+            [], [], [], [], [],
+            [],
+            [("600",)],   # achievement_reward
+        ]
+        result = db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        self.assertEqual(result, frozenset({600}))
+
+    @patch("db_extract.run_query")
+    def test_query_text_uses_reference_equals_zero_for_direct_items(self, mock_run_query) -> None:
+        # Regression guard: a query that dropped "AND Reference = 0" would
+        # silently start counting reference-row placeholder Item values
+        # as real acquisitions again (the exact Martin Fury bug this task
+        # fixes) while every test above (which only inspects mocked
+        # RETURN values) would still pass.
+        mock_run_query.return_value = []
+        db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        item_query = mock_run_query.call_args_list[2][0][0]
+        self.assertIn("fake_loot_template", item_query)
+        self.assertIn("Item > 0", item_query)
+        self.assertIn("Reference = 0", item_query)
+        reference_query = mock_run_query.call_args_list[3][0][0]
+        self.assertIn("fake_loot_template", reference_query)
+        self.assertIn("Reference != 0", reference_query)
+        terminal_query = mock_run_query.call_args_list[5][0][0]
+        self.assertIn("reference_loot_template", terminal_query)
+        self.assertIn("Reference = 0", terminal_query)
+
+    @patch("db_extract.run_query")
+    def test_query_text_covers_all_ten_quest_reward_columns(self, mock_run_query) -> None:
+        mock_run_query.return_value = []
+        db_extract.compute_acquired_item_ids(loot_tables=("fake_loot_template",))
+        quest_query = mock_run_query.call_args_list[1][0][0]
+        for column in (
+            "RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4",
+            "RewardChoiceItemID1", "RewardChoiceItemID2", "RewardChoiceItemID3",
+            "RewardChoiceItemID4", "RewardChoiceItemID5", "RewardChoiceItemID6",
+        ):
+            self.assertIn(column, quest_query)
 
 
 class TestParseAchievements(unittest.TestCase):

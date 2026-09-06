@@ -798,6 +798,90 @@ def parse_char_start_outfit_item_ids(dbc_path: pathlib.Path = _CHAR_START_OUTFIT
     return frozenset(item_ids)
 
 
+_LOOT_TABLES = (
+    "creature_loot_template", "gameobject_loot_template", "skinning_loot_template",
+    "disenchant_loot_template", "fishing_loot_template", "item_loot_template",
+    "mail_loot_template", "milling_loot_template", "pickpocketing_loot_template",
+    "player_loot_template", "prospecting_loot_template", "spell_loot_template",
+)
+
+_QUEST_REWARD_COLUMNS = (
+    "RewardItem1", "RewardItem2", "RewardItem3", "RewardItem4",
+    "RewardChoiceItemID1", "RewardChoiceItemID2", "RewardChoiceItemID3",
+    "RewardChoiceItemID4", "RewardChoiceItemID5", "RewardChoiceItemID6",
+)
+
+
+def compute_acquired_item_ids(loot_tables: tuple[str, ...] = _LOOT_TABLES) -> frozenset[int]:
+    """Every real item entry reachable through a real, live acquisition
+    route in this checkout's DB tables: npc_vendor sales, quest_template
+    reward columns, every real *_loot_template table, and
+    achievement_reward. Does NOT cover crafting (Spell.dbc
+    EffectItemType) or client-side starting gear (CharStartOutfit.dbc) --
+    those are parse_spell_created_item_ids/parse_char_start_outfit_item_ids
+    above; extract_itemsanity.py unions all three.
+
+    reference_loot_template needs two-hop resolution, not a flat `SELECT
+    DISTINCT Item`: verified directly against
+    src/server/game/Loot/LootMgr.cpp -- a loot row's own `Item` column is
+    only ever resolved as a real item when that SAME row's `Reference`
+    column is 0; when `Reference != 0`, the engine ignores `Item` entirely
+    and instead rolls from reference_loot_template WHERE Entry = Reference.
+    So a reference_loot_template GROUP (its own Entry) only contributes
+    real items if it is actually reachable -- pointed at by some real loot
+    table's own Reference column, or (verified live: a real, confirmed
+    case in this checkout) reachable via ANOTHER reference_loot_template
+    row's own nested Reference chain. Getting this wrong silently
+    resurrects items belonging to orphaned/unreferenced groups that no
+    real content ever rolls (verified live regression case: item 17
+    "Martin Fury" sits in 129 reference_loot_template rows, every one with
+    Reference != 0, meaning Item=17 there is inert leftover data, not a
+    real drop)."""
+    acquired: set[int] = set()
+
+    for (item,) in run_query("SELECT DISTINCT item FROM npc_vendor"):
+        acquired.add(int(item))
+
+    quest_union_sql = " UNION ".join(
+        f"SELECT DISTINCT {column} AS item FROM quest_template WHERE {column} > 0"
+        for column in _QUEST_REWARD_COLUMNS
+    )
+    for (item,) in run_query(quest_union_sql):
+        acquired.add(int(item))
+
+    reachable_groups: set[int] = set()
+    for table in loot_tables:
+        for (item,) in run_query(f"SELECT DISTINCT Item FROM {table} WHERE Item > 0 AND Reference = 0"):
+            acquired.add(int(item))
+        for (reference,) in run_query(f"SELECT DISTINCT Reference FROM {table} WHERE Reference != 0"):
+            reachable_groups.add(int(reference))
+
+    edges: dict[int, set[int]] = {}
+    for entry, reference in run_query(
+        "SELECT DISTINCT Entry, Reference FROM reference_loot_template WHERE Reference != 0"
+    ):
+        edges.setdefault(int(entry), set()).add(int(reference))
+
+    frontier = list(reachable_groups)
+    while frontier:
+        group = frontier.pop()
+        for next_group in edges.get(group, ()):
+            if next_group not in reachable_groups:
+                reachable_groups.add(next_group)
+                frontier.append(next_group)
+
+    for entry, item in run_query(
+        "SELECT Entry, Item FROM reference_loot_template WHERE Item > 0 AND Reference = 0"
+    ):
+        if int(entry) in reachable_groups:
+            acquired.add(int(item))
+
+    for (item,) in run_query("SELECT DISTINCT ItemID FROM achievement_reward WHERE ItemID > 0"):
+        acquired.add(int(item))
+
+    return frozenset(acquired)
+
+
 _FILLER_BUFF_SPELL_ID_FIELD = 0
 _FILLER_BUFF_DISPEL_FIELD = 2
 _FILLER_BUFF_ATTRIBUTES_FIELD = 4       # Attributes (Attr0) -- SharedDefines.h SPELL_ATTR0_*
