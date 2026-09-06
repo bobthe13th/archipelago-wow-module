@@ -20,10 +20,10 @@ _ITEM_ID_BASE = 7_500_000
 
 _TRAINER_TYPE_CLASS = 0  # Trainer::Type::Class, Trainer.h:33 -- Mount(1)/Tradeskill(2)/Pet(3)
                           # excluded (see this plan's Global Constraints).
-_FILLER_ITEM_ENTRY = 7073  # "Broken Fang" -- same M4.7.1.3 filler-reward item quest_rewards
-                            # reuses for a reward-less location; no natural WoW item exists
-                            # for "you may now train this class ability" the way a quest
-                            # reward or recipe item does.
+_FILLER_ITEM_ENTRY = 7073  # "Broken Fang" -- M4.11.5.0.5's own safe-fallback-of-last-resort
+                            # value, kept for parity with quest_rewards' identical constant;
+                            # in practice _query_consumable_items() below always has real
+                            # candidates, so this is never actually used against real data.
 
 # Real WotLK class ids (Trainer::IsTrainerValidForPlayer, Trainer.cpp:
 # 216-219: for Type::Class, trainer.Requirement IS player->getClass()
@@ -53,6 +53,56 @@ def _load_recipe_spell_ids() -> frozenset[int]:
     with open(recipes_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     return frozenset(loc["trigger"]["spell_id"] for loc in data.get("locations", []))
+
+
+def _query_consumable_items() -> list[tuple[int, str]]:
+    """Real, safe fallback item universe for a Trainer Spells reward that
+    isn't safe to grant as a direct spell (see
+    _is_spell_safe_to_grant_directly): the exact same real WHERE clause
+    extract_filler_reward_items.py's own "consumable" category already uses
+    and has already been vetted safe there (denylist-filtered, no learn-on-
+    use side effect, unlike a recipe item) -- deliberately NOT importing
+    that module (this file stays independently runnable, same discipline as
+    _load_recipe_spell_ids' own missing-file fallback), just reusing its
+    real, already-proven-safe query shape."""
+    rows = run_query("""
+        SELECT entry, name FROM item_template
+        WHERE class = 0 AND subclass IN (1,2,3,4,5) AND HolidayId = 0 AND entry < 4000000
+        ORDER BY entry
+    """)
+    return [(int(entry), name) for entry, name in rows]
+
+
+def _assign_consumable_item(candidates: list[tuple[int, str]], index: int) -> int:
+    """Cycles the real consumable universe across every Trainer Spells row
+    needing a safe fallback item, as evenly as possible -- same "fixed once
+    at generation time" discipline as every other family's item assignment
+    in this project (mirrors extract_gathersanity.py's own
+    _assign_candidate_item, M4.11.5.0.4). Falls back to _FILLER_ITEM_ENTRY
+    only for the genuinely degenerate case of zero real candidates found."""
+    if not candidates:
+        return _FILLER_ITEM_ENTRY
+    return candidates[index % len(candidates)][0]
+
+
+def _is_spell_safe_to_grant_directly(spell_id: int, all_trigger_spell_ids: frozenset[int]) -> bool:
+    """A spell is safe to deliver as a direct "learn this spell now" grant
+    ONLY if it is not ALSO the trigger spell for some Trainer Spells
+    location -- granting it would otherwise silently auto-complete that
+    other location's check out of band (without genuine player action,
+    and bypassing that location's own real min_level gate), the exact
+    multiworld-integrity risk documented in
+    extract_filler_reward_items.py's header for why the "recipe" Filler
+    category was removed entirely rather than fixed. Confirmed during
+    M4.11.5.0.5's own planning: every real spell_id in this family's own
+    data IS, by construction, one of its own trigger spells (items.py's
+    create_optional_category_item_pool only ever pools items 1:1 with this
+    family's own sampled locations) -- so this always returns False against
+    this checkout's real data today. Kept as a real, checked gate (not
+    silently assumed) so a future data change that ever introduces a
+    genuinely disjoint spell cannot silently regress into the unsafe
+    behavior this plan's research found and avoided."""
+    return spell_id not in all_trigger_spell_ids
 
 
 def _load_trainer_expansions() -> dict[int, str]:
@@ -155,6 +205,9 @@ def extract() -> dict:
         entry["req_level"] = min(entry["req_level"], int(req_level_str))
         entry["trainer_ids"].add(int(trainer_id_str))
 
+    all_trigger_spell_ids = frozenset(by_spell.keys())
+    consumable_candidates = _query_consumable_items()
+
     locations, items = [], []
     for spell_id in sorted(by_spell):
         info = by_spell[spell_id]
@@ -198,15 +251,20 @@ def extract() -> dict:
             # (generate_content.py's export_tags emission), TRIGGERS keeps the
             # raw trigger dict verbatim.
             "trigger": {
-                "kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True,
+                "kind": "learn_spell", "spell_id": spell_id,
                 "min_level": info["req_level"],
             },
             "tags": tags,
         })
+        if _is_spell_safe_to_grant_directly(spell_id, all_trigger_spell_ids):
+            delivery = {"kind": "learn_spell", "spell_id": spell_id}
+        else:
+            wow_item_entry = _assign_consumable_item(consumable_candidates, len(items))
+            delivery = {"kind": "mail", "wow_item_entry": wow_item_entry}
         items.append({
             "name": f"Trainer Spell Item: {name} (#{spell_id})",
             "item_id": _ITEM_ID_BASE + spell_id,
-            "delivery": {"kind": "mail", "wow_item_entry": _FILLER_ITEM_ENTRY},
+            "delivery": delivery,
         })
 
     return {"family": "trainer_spells", "locations": locations, "items": items, "constants": {}}

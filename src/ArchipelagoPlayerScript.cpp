@@ -14,6 +14,7 @@
 #include "APFillerRewardEffects.h"
 #include "APGating.h"
 #include "APProtocol.h"
+#include "APSpellGrant.h"
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoCollectionsContentTable.h"
@@ -366,6 +367,28 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
+        // M4.11.5.0.5: direct spell grant. deliveryCharacter is the same
+        // single named recipient every other SingleDeliveryCharacter-policy
+        // branch in this function targets -- Archipelago::SpellGrant::
+        // GrantOrQueue handles the online/offline split exactly like
+        // APDelivery::GiveOrMailItem does for physical items, just with no
+        // mail fallback (there is none for a spell). Currently unreachable
+        // against this checkout's real compiled data (the map is always
+        // empty -- see that family's own extraction plan for why), kept as
+        // real, correct dispatch code for the day it isn't.
+        auto trainerSpellSpellIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.find(received.item);
+        if (trainerSpellSpellIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.end())
+        {
+            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+            if (!receiverGuid.IsEmpty())
+            {
+                Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+                Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), trainerSpellSpellIt->second, trans);
+            }
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
         // M4.11.4.1 final review fix (C1): containersanity used to have its
         // own block here (added by the M4.10.1 final review fix, mailing the
         // real WoW item behind a Container Item another player received
@@ -573,6 +596,7 @@ public:
         // OnPlayerFirstLogin only after every OnPlayerLogin hook returns), so this is
         // the correct in-hook test for "this character's very first login ever".
         Archipelago::CatchUp::OnPlayerLogin(player, player->HasAtLoginFlag(AT_LOGIN_FIRST));
+        Archipelago::SpellGrant::ApplyPendingGrants(player);
     }
 };
 
