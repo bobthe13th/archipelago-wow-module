@@ -63,22 +63,28 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Dirty Leather Gloves (#714)", 8000714},
     {"Filler: Scalemail Gloves (#718)", 8000718},
     {"Filler: Rabbit Handler Gloves (#719)", 8000719},
+    {"Filler: Brawler Gloves (#720)", 8000720},
     {"Filler: Goretusk Liver Pie (#724)", 8000724},
     {"Filler: Notched Shortsword (#727)", 8000727},
     {"Filler: Westfall Stew (#733)", 8000733},
     {"Filler: Thunderbrew's Boot Flask (#744)", 8000744},
     {"Filler: Dragonmaw Shortsword (#753)", 8000753},
+    {"Filler: Shortsword of Vengeance (#754)", 8000754},
     {"Filler: Tunnel Pick (#756)", 8000756},
     {"Filler: Ice-covered Bracers (#763)", 8000763},
+    {"Filler: Silverleaf (#765)", 8000765},
     {"Filler: Flanged Mace (#766)", 8000766},
     {"Filler: Long Bo Staff (#767)", 8000767},
     {"Filler: Lumberjack Axe (#768)", 8000768},
     {"Filler: Malachite (#774)", 8000774},
     {"Filler: Kobold Excavation Pick (#778)", 8000778},
     {"Filler: Stone Gnoll Hammer (#781)", 8000781},
+    {"Filler: Light Hide (#783)", 8000783},
+    {"Filler: Mageroyal (#785)", 8000785},
     {"Filler: Slitherskin Mackerel (#787)", 8000787},
     {"Filler: Stout Battlehammer (#789)", 8000789},
     {"Filler: Forester's Axe (#790)", 8000790},
+    {"Filler: Gnarled Ash Staff (#791)", 8000791},
     {"Filler: Knitted Sandals (#792)", 8000792},
     {"Filler: Knitted Gloves (#793)", 8000793},
     {"Filler: Knitted Pants (#794)", 8000794},
@@ -122,10 +128,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Knightly Longsword (#864)", 8000864},
     {"Filler: Leaden Mace (#865)", 8000865},
     {"Filler: Monk's Staff (#866)", 8000866},
+    {"Filler: Dazzling Longsword (#869)", 8000869},
+    {"Filler: Staff of Jordan (#873)", 8000873},
     {"Filler: Worn Wooden Buckler (#876)", 8000876},
     {"Filler: Staff of Horrors (#880)", 8000880},
     {"Filler: Black Metal Axe (#885)", 8000885},
     {"Filler: Black Metal Shortsword (#886)", 8000886},
+    {"Filler: Twisted Chanter's Staff (#890)", 8000890},
     {"Filler: Gnoll Casting Gloves (#892)", 8000892},
     {"Filler: Madwolf Bracers (#897)", 8000897},
     {"Filler: Venom Web Fang (#899)", 8000899},
@@ -144,6 +153,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Healing Potion (#929)", 8000929},
     {"Filler: Fel Steed Saddlebags (#932)", 8000932},
     {"Filler: Large Rucksack (#933)", 8000933},
+    {"Filler: Stalvan's Reaper (#934)", 8000934},
+    {"Filler: Midnight Mace (#936)", 8000936},
+    {"Filler: Black Duskwood Staff (#937)", 8000937},
     {"Filler: Shadow Sword (#945)", 8000945},
     {"Filler: Nature Sword (#948)", 8000948},
     {"Filler: Scroll of Strength (#954)", 8000954},
@@ -165,6 +177,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Conjured Rye (#1114)", 8001114},
     {"Filler: Ring of Pure Silver (#1116)", 8001116},
     {"Filler: Bottled Spirits (#1119)", 8001119},
+    {"Filler: Feet of the Lynx (#1121)", 8001121},
     {"Filler: Totem of Infliction (#1131)", 8001131},
     {"Filler: Belt of the People's Militia (#1154)", 8001154},
     {"Filler: Solid Metal Club (#1158)", 8001158},
@@ -191,6 +204,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Large Wooden Shield (#1200)", 8001200},
     {"Filler: Dull Heater Shield (#1201)", 8001201},
     {"Filler: Wall Shield (#1202)", 8001202},
+    {"Filler: Aegis of Stormwind (#1203)", 8001203},
+    {"Filler: The Green Tower (#1204)", 8001204},
     {"Filler: Melon Juice (#1205)", 8001205},
     {"Filler: Moss Agate (#1206)", 8001206},
     {"Filler: Murphstar (#1207)", 8001207},
@@ -204,6 +219,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Redridge Machete (#1219)", 8001219},
     {"Filler: Lupine Axe (#1220)", 8001220},
     {"Filler: Headbasher (#1264)", 8001264},
+    {"Filler: Scorpion Sting (#1265)", 8001265},
     {"Filler: Finely Woven Cloak (#1270)", 8001270},
     {"Filler: Forest Chain (#1273)", 8001273},
     {"Filler: Deputy Chain Coat (#1275)", 8001275},
@@ -228,6 +244,18 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Buckskin Cape (#1355)", 8001355},
     {"Filler: Lion-stamped Gloves (#1359)", 8001359},
     {"Filler: Stormwind Chain Gloves (#1360)", 8001360},
+    {"Filler: Ragged Leather Vest (#1364)", 8001364},
+    {"Filler: Ragged Leather Pants (#1366)", 8001366},
+    {"Filler: Ragged Leather Boots (#1367)", 8001367},
+    {"Filler: Ragged Leather Gloves (#1368)", 8001368},
+    {"Filler: Ragged Leather Belt (#1369)", 8001369},
+    {"Filler: Ragged Leather Bracers (#1370)", 8001370},
+    {"Filler: Ragged Cloak (#1372)", 8001372},
+    {"Filler: Frayed Shoes (#1374)", 8001374},
+    {"Filler: Frayed Cloak (#1376)", 8001376},
+    {"Filler: Frayed Gloves (#1377)", 8001377},
+    {"Filler: Frayed Pants (#1378)", 8001378},
+    {"Filler: Frayed Robe (#1380)", 8001380},
     {"Filler: Rock Mace (#1382)", 8001382},
     {"Filler: Stone Tomahawk (#1383)", 8001383},
     {"Filler: Dull Blade (#1384)", 8001384},
@@ -241,6 +269,25 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Tidal Charm (#1404)", 8001404},
     {"Filler: Foamspittle Staff (#1405)", 8001405},
     {"Filler: Pearl-encrusted Spear (#1406)", 8001406},
+    {"Filler: Withered Staff (#1411)", 8001411},
+    {"Filler: Crude Bastard Sword (#1412)", 8001412},
+    {"Filler: Feeble Sword (#1413)", 8001413},
+    {"Filler: Cracked Sledge (#1414)", 8001414},
+    {"Filler: Carpenter's Mallet (#1415)", 8001415},
+    {"Filler: Rusty Hatchet (#1416)", 8001416},
+    {"Filler: Beaten Battle Axe (#1417)", 8001417},
+    {"Filler: Worn Leather Belt (#1418)", 8001418},
+    {"Filler: Worn Leather Boots (#1419)", 8001419},
+    {"Filler: Worn Leather Bracers (#1420)", 8001420},
+    {"Filler: Worn Hide Cloak (#1421)", 8001421},
+    {"Filler: Worn Leather Gloves (#1422)", 8001422},
+    {"Filler: Worn Leather Pants (#1423)", 8001423},
+    {"Filler: Worn Leather Vest (#1425)", 8001425},
+    {"Filler: Patchwork Shoes (#1427)", 8001427},
+    {"Filler: Patchwork Cloak (#1429)", 8001429},
+    {"Filler: Patchwork Gloves (#1430)", 8001430},
+    {"Filler: Patchwork Pants (#1431)", 8001431},
+    {"Filler: Patchwork Armor (#1433)", 8001433},
     {"Filler: Frontier Britches (#1436)", 8001436},
     {"Filler: Warrior's Shield (#1438)", 8001438},
     {"Filler: Gnoll Skull Basher (#1440)", 8001440},
@@ -266,6 +313,25 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fist of the People's Militia (#1480)", 8001480},
     {"Filler: Conjured Pumpernickel (#1487)", 8001487},
     {"Filler: Guardian Talisman (#1490)", 8001490},
+    {"Filler: Calico Shoes (#1495)", 8001495},
+    {"Filler: Calico Cloak (#1497)", 8001497},
+    {"Filler: Calico Gloves (#1498)", 8001498},
+    {"Filler: Calico Pants (#1499)", 8001499},
+    {"Filler: Calico Tunic (#1501)", 8001501},
+    {"Filler: Warped Leather Belt (#1502)", 8001502},
+    {"Filler: Warped Leather Boots (#1503)", 8001503},
+    {"Filler: Warped Leather Bracers (#1504)", 8001504},
+    {"Filler: Warped Cloak (#1505)", 8001505},
+    {"Filler: Warped Leather Gloves (#1506)", 8001506},
+    {"Filler: Warped Leather Pants (#1507)", 8001507},
+    {"Filler: Warped Leather Vest (#1509)", 8001509},
+    {"Filler: Heavy Hammer (#1510)", 8001510},
+    {"Filler: Commoner's Sword (#1511)", 8001511},
+    {"Filler: Crude Battle Axe (#1512)", 8001512},
+    {"Filler: Old Greatsword (#1513)", 8001513},
+    {"Filler: Rusty Warhammer (#1514)", 8001514},
+    {"Filler: Rough Wooden Staff (#1515)", 8001515},
+    {"Filler: Worn Hatchet (#1516)", 8001516},
     {"Filler: Lumbering Ogre Axe (#1521)", 8001521},
     {"Filler: Headhunting Spear (#1522)", 8001522},
     {"Filler: Huge Stone Club (#1523)", 8001523},
@@ -278,6 +344,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Harvester's Robe (#1561)", 8001561},
     {"Filler: Edge of the People's Militia (#1566)", 8001566},
     {"Filler: Chromatic Sword (#1604)", 8001604},
+    {"Filler: Soulkeeper (#1607)", 8001607},
     {"Filler: Skullcrusher Mace (#1608)", 8001608},
     {"Filler: Spiritchaser Staff (#1613)", 8001613},
     {"Filler: Raptor Skin Pouch (#1623)", 8001623},
@@ -299,8 +366,112 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Greater Healing Potion (#1710)", 8001710},
     {"Filler: Scroll of Stamina II (#1711)", 8001711},
     {"Filler: Scroll of Spirit II (#1712)", 8001712},
+    {"Filler: Ankh of Life (#1713)", 8001713},
+    {"Filler: Necklace of Calisea (#1714)", 8001714},
+    {"Filler: Polished Jazeraint Armor (#1715)", 8001715},
+    {"Filler: Robe of the Magi (#1716)", 8001716},
+    {"Filler: Double Link Tunic (#1717)", 8001717},
+    {"Filler: Basilisk Hide Pants (#1718)", 8001718},
+    {"Filler: Tanglewood Staff (#1720)", 8001720},
+    {"Filler: Viking Warhammer (#1721)", 8001721},
+    {"Filler: Thornstone Sledgehammer (#1722)", 8001722},
     {"Filler: Large Knapsack (#1725)", 8001725},
+    {"Filler: Poison-tipped Bone Spear (#1726)", 8001726},
     {"Filler: Gunnysack of the Night Watch (#1729)", 8001729},
+    {"Filler: Worn Mail Belt (#1730)", 8001730},
+    {"Filler: Worn Mail Boots (#1731)", 8001731},
+    {"Filler: Worn Mail Bracers (#1732)", 8001732},
+    {"Filler: Worn Cloak (#1733)", 8001733},
+    {"Filler: Worn Mail Gloves (#1734)", 8001734},
+    {"Filler: Worn Mail Pants (#1735)", 8001735},
+    {"Filler: Worn Mail Vest (#1737)", 8001737},
+    {"Filler: Laced Mail Belt (#1738)", 8001738},
+    {"Filler: Laced Mail Boots (#1739)", 8001739},
+    {"Filler: Laced Mail Bracers (#1740)", 8001740},
+    {"Filler: Laced Cloak (#1741)", 8001741},
+    {"Filler: Laced Mail Gloves (#1742)", 8001742},
+    {"Filler: Laced Mail Pants (#1743)", 8001743},
+    {"Filler: Laced Mail Shoulderpads (#1744)", 8001744},
+    {"Filler: Laced Mail Vest (#1745)", 8001745},
+    {"Filler: Linked Chain Belt (#1746)", 8001746},
+    {"Filler: Linked Chain Boots (#1747)", 8001747},
+    {"Filler: Linked Chain Bracers (#1748)", 8001748},
+    {"Filler: Linked Chain Cloak (#1749)", 8001749},
+    {"Filler: Linked Chain Gloves (#1750)", 8001750},
+    {"Filler: Linked Chain Pants (#1751)", 8001751},
+    {"Filler: Linked Chain Shoulderpads (#1752)", 8001752},
+    {"Filler: Linked Chain Vest (#1753)", 8001753},
+    {"Filler: Reinforced Chain Belt (#1754)", 8001754},
+    {"Filler: Reinforced Chain Boots (#1755)", 8001755},
+    {"Filler: Reinforced Chain Bracers (#1756)", 8001756},
+    {"Filler: Reinforced Chain Cloak (#1757)", 8001757},
+    {"Filler: Reinforced Chain Gloves (#1758)", 8001758},
+    {"Filler: Reinforced Chain Pants (#1759)", 8001759},
+    {"Filler: Reinforced Chain Shoulderpads (#1760)", 8001760},
+    {"Filler: Reinforced Chain Vest (#1761)", 8001761},
+    {"Filler: Canvas Shoes (#1764)", 8001764},
+    {"Filler: Canvas Cloak (#1766)", 8001766},
+    {"Filler: Canvas Gloves (#1767)", 8001767},
+    {"Filler: Canvas Pants (#1768)", 8001768},
+    {"Filler: Canvas Shoulderpads (#1769)", 8001769},
+    {"Filler: Canvas Vest (#1770)", 8001770},
+    {"Filler: Brocade Shoes (#1772)", 8001772},
+    {"Filler: Brocade Cloak (#1774)", 8001774},
+    {"Filler: Brocade Gloves (#1775)", 8001775},
+    {"Filler: Brocade Pants (#1776)", 8001776},
+    {"Filler: Brocade Shoulderpads (#1777)", 8001777},
+    {"Filler: Brocade Vest (#1778)", 8001778},
+    {"Filler: Cross-stitched Sandals (#1780)", 8001780},
+    {"Filler: Cross-stitched Cloak (#1782)", 8001782},
+    {"Filler: Cross-stitched Gloves (#1783)", 8001783},
+    {"Filler: Cross-stitched Pants (#1784)", 8001784},
+    {"Filler: Cross-stitched Shoulderpads (#1785)", 8001785},
+    {"Filler: Cross-stitched Vest (#1786)", 8001786},
+    {"Filler: Patched Leather Belt (#1787)", 8001787},
+    {"Filler: Patched Leather Boots (#1788)", 8001788},
+    {"Filler: Patched Leather Bracers (#1789)", 8001789},
+    {"Filler: Patched Cloak (#1790)", 8001790},
+    {"Filler: Patched Leather Gloves (#1791)", 8001791},
+    {"Filler: Patched Leather Pants (#1792)", 8001792},
+    {"Filler: Patched Leather Shoulderpads (#1793)", 8001793},
+    {"Filler: Patched Leather Jerkin (#1794)", 8001794},
+    {"Filler: Rawhide Belt (#1795)", 8001795},
+    {"Filler: Rawhide Boots (#1796)", 8001796},
+    {"Filler: Rawhide Bracers (#1797)", 8001797},
+    {"Filler: Rawhide Cloak (#1798)", 8001798},
+    {"Filler: Rawhide Gloves (#1799)", 8001799},
+    {"Filler: Rawhide Pants (#1800)", 8001800},
+    {"Filler: Rawhide Shoulderpads (#1801)", 8001801},
+    {"Filler: Rawhide Tunic (#1802)", 8001802},
+    {"Filler: Tough Leather Belt (#1803)", 8001803},
+    {"Filler: Tough Leather Boots (#1804)", 8001804},
+    {"Filler: Tough Leather Bracers (#1805)", 8001805},
+    {"Filler: Tough Cloak (#1806)", 8001806},
+    {"Filler: Tough Leather Gloves (#1807)", 8001807},
+    {"Filler: Tough Leather Pants (#1808)", 8001808},
+    {"Filler: Tough Leather Shoulderpads (#1809)", 8001809},
+    {"Filler: Tough Leather Armor (#1810)", 8001810},
+    {"Filler: Blunt Claymore (#1811)", 8001811},
+    {"Filler: Short-handled Battle Axe (#1812)", 8001812},
+    {"Filler: Chipped Quarterstaff (#1813)", 8001813},
+    {"Filler: Battered Mallet (#1814)", 8001814},
+    {"Filler: Ornamental Mace (#1815)", 8001815},
+    {"Filler: Unbalanced Axe (#1816)", 8001816},
+    {"Filler: Stock Shortsword (#1817)", 8001817},
+    {"Filler: Standard Claymore (#1818)", 8001818},
+    {"Filler: Gouging Pick (#1819)", 8001819},
+    {"Filler: Wooden Maul (#1820)", 8001820},
+    {"Filler: Warped Blade (#1821)", 8001821},
+    {"Filler: Cedar Walking Stick (#1822)", 8001822},
+    {"Filler: Bludgeoning Cudgel (#1823)", 8001823},
+    {"Filler: Shiny War Axe (#1824)", 8001824},
+    {"Filler: Bulky Bludgeon (#1825)", 8001825},
+    {"Filler: Rock Maul (#1826)", 8001826},
+    {"Filler: Meat Cleaver (#1827)", 8001827},
+    {"Filler: Stone War Axe (#1828)", 8001828},
+    {"Filler: Short Cutlass (#1829)", 8001829},
+    {"Filler: Long Bastard Sword (#1830)", 8001830},
+    {"Filler: Oaken War Staff (#1831)", 8001831},
     {"Filler: Lucky Trousers (#1832)", 8001832},
     {"Filler: Dirty Leather Belt (#1835)", 8001835},
     {"Filler: Dirty Leather Bracers (#1836)", 8001836},
@@ -335,7 +506,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Petrified Shinbone (#1958)", 8001958},
     {"Filler: Cold Iron Pick (#1959)", 8001959},
     {"Filler: White Wolf Gloves (#1965)", 8001965},
+    {"Filler: Orb of Deception (#1973)", 8001973},
     {"Filler: 20-slot Bag (#1977)", 8001977},
+    {"Filler: Underworld Band (#1980)", 8001980},
     {"Filler: Gutrender (#1986)", 8001986},
     {"Filler: Chief Brigadier Gauntlets (#1988)", 8001988},
     {"Filler: Ballast Maul (#1990)", 8001990},
@@ -346,6 +519,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Pressed Felt Robe (#1997)", 8001997},
     {"Filler: Bloodscalp Channeling Staff (#1998)", 8001998},
     {"Filler: Archeus (#2000)", 8002000},
+    {"Filler: Twisted Sabre (#2011)", 8002011},
     {"Filler: Cryptbone Staff (#2013)", 8002013},
     {"Filler: Black Metal Greatsword (#2014)", 8002014},
     {"Filler: Black Metal War Axe (#2015)", 8002015},
@@ -374,6 +548,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Small Wooden Hammer (#2055)", 8002055},
     {"Filler: Pitted Defias Shortsword (#2057)", 8002057},
     {"Filler: Kazon's Maul (#2058)", 8002058},
+    {"Filler: Sentry Cloak (#2059)", 8002059},
     {"Filler: Trogg Club (#2064)", 8002064},
     {"Filler: Rockjaw Blade (#2065)", 8002065},
     {"Filler: Skull Hatchet (#2066)", 8002066},
@@ -394,6 +569,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Long Crawler Limb (#2088)", 8002088},
     {"Filler: Scrimshaw Dagger (#2089)", 8002089},
     {"Filler: Worn Dagger (#2092)", 8002092},
+    {"Filler: Double-barreled Shotgun (#2098)", 8002098},
     {"Filler: Thug Shirt (#2105)", 8002105},
     {"Filler: Frostmane Leather Vest (#2108)", 8002108},
     {"Filler: Frostmane Chain Vest (#2109)", 8002109},
@@ -419,6 +595,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Hand Axe (#2134)", 8002134},
     {"Filler: Conjured Purified Water (#2136)", 8002136},
     {"Filler: Whittling Knife (#2137)", 8002137},
+    {"Filler: Sharpened Letter Opener (#2138)", 8002138},
     {"Filler: Dirk (#2139)", 8002139},
     {"Filler: Carving Knife (#2140)", 8002140},
     {"Filler: Cuirboulli Vest (#2141)", 8002141},
@@ -437,6 +614,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Padded Gloves (#2158)", 8002158},
     {"Filler: Padded Pants (#2159)", 8002159},
     {"Filler: Padded Armor (#2160)", 8002160},
+    {"Filler: Gut Ripper (#2164)", 8002164},
     {"Filler: Old Blanchy's Blanket (#2165)", 8002165},
     {"Filler: Foreman's Leggings (#2166)", 8002166},
     {"Filler: Foreman's Gloves (#2167)", 8002167},
@@ -445,13 +623,26 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Old Leather Belt (#2173)", 8002173},
     {"Filler: Shadowhide Battle Axe (#2175)", 8002175},
     {"Filler: Outfitter Belt (#2186)", 8002186},
+    {"Filler: Diamond Hammer (#2194)", 8002194},
     {"Filler: Anvilmar Knife (#2195)", 8002195},
     {"Filler: Brashclaw's Chopper (#2203)", 8002203},
     {"Filler: Brashclaw's Skewer (#2204)", 8002204},
     {"Filler: Jambiya (#2207)", 8002207},
     {"Filler: Poniard (#2208)", 8002208},
     {"Filler: Kris (#2209)", 8002209},
+    {"Filler: Battered Buckler (#2210)", 8002210},
+    {"Filler: Bent Large Shield (#2211)", 8002211},
+    {"Filler: Cracked Buckler (#2212)", 8002212},
+    {"Filler: Worn Large Shield (#2213)", 8002213},
+    {"Filler: Wooden Buckler (#2214)", 8002214},
+    {"Filler: Wooden Shield (#2215)", 8002215},
+    {"Filler: Simple Buckler (#2216)", 8002216},
+    {"Filler: Rectangular Shield (#2217)", 8002217},
     {"Filler: Craftsman's Dagger (#2218)", 8002218},
+    {"Filler: Small Round Shield (#2219)", 8002219},
+    {"Filler: Box Shield (#2220)", 8002220},
+    {"Filler: Targe Shield (#2221)", 8002221},
+    {"Filler: Tower Shield (#2222)", 8002222},
     {"Filler: Militia Dagger (#2224)", 8002224},
     {"Filler: Sharp Kitchen Knife (#2225)", 8002225},
     {"Filler: Ogremage Staff (#2226)", 8002226},
@@ -462,12 +653,14 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Shadow Weaver Leggings (#2233)", 8002233},
     {"Filler: Nightwalker Armor (#2234)", 8002234},
     {"Filler: Brackclaw (#2235)", 8002235},
+    {"Filler: Blackfang (#2236)", 8002236},
     {"Filler: Patched Pants (#2237)", 8002237},
     {"Filler: Urchin's Pants (#2238)", 8002238},
     {"Filler: Rugged Cape (#2240)", 8002240},
     {"Filler: Desperado Cape (#2241)", 8002241},
     {"Filler: Militia Buckler (#2249)", 8002249},
     {"Filler: Icepane Warhammer (#2254)", 8002254},
+    {"Filler: Skeletal Club (#2256)", 8002256},
     {"Filler: Frostmane Staff (#2257)", 8002257},
     {"Filler: Frostmane Shortsword (#2258)", 8002258},
     {"Filler: Frostmane Club (#2259)", 8002259},
@@ -479,6 +672,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Stonesplinter Blade (#2268)", 8002268},
     {"Filler: Guerrilla Armor (#2273)", 8002273},
     {"Filler: Sapper's Gloves (#2274)", 8002274},
+    {"Filler: Swampwalker Boots (#2276)", 8002276},
+    {"Filler: Necromancer Leggings (#2277)", 8002277},
+    {"Filler: Forest Tracker Epaulets (#2278)", 8002278},
     {"Filler: Rodentia Flint Axe (#2281)", 8002281},
     {"Filler: Rodentia Shortsword (#2282)", 8002282},
     {"Filler: Rat Cloth Belt (#2283)", 8002283},
@@ -487,6 +683,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Conjured Fresh Water (#2288)", 8002288},
     {"Filler: Scroll of Strength II (#2289)", 8002289},
     {"Filler: Scroll of Intellect II (#2290)", 8002290},
+    {"Filler: Burning War Axe (#2299)", 8002299},
     {"Filler: Embossed Leather Vest (#2300)", 8002300},
     {"Filler: Handstitched Leather Boots (#2302)", 8002302},
     {"Filler: Handstitched Leather Pants (#2303)", 8002303},
@@ -499,6 +696,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Dark Leather Boots (#2315)", 8002315},
     {"Filler: Dark Leather Cloak (#2316)", 8002316},
     {"Filler: Dark Leather Tunic (#2317)", 8002317},
+    {"Filler: Light Leather (#2318)", 8002318},
+    {"Filler: Medium Leather (#2319)", 8002319},
     {"Filler: Ivy-weave Bracers (#2326)", 8002326},
     {"Filler: Sturdy Leather Bracers (#2327)", 8002327},
     {"Filler: Battleworn Hammer (#2361)", 8002361},
@@ -538,6 +737,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Light Chain Boots (#2401)", 8002401},
     {"Filler: Light Chain Bracers (#2402)", 8002402},
     {"Filler: Light Chain Gloves (#2403)", 8002403},
+    {"Filler: Pattern: Fine Leather Boots (#2406)", 8002406},
+    {"Filler: Pattern: White Leather Jerkin (#2407)", 8002407},
+    {"Filler: Pattern: Fine Leather Gloves (#2408)", 8002408},
+    {"Filler: Pattern: Dark Leather Tunic (#2409)", 8002409},
     {"Filler: Smoky Torch (#2410)", 8002410},
     {"Filler: Augmented Chain Vest (#2417)", 8002417},
     {"Filler: Augmented Chain Leggings (#2418)", 8002418},
@@ -565,8 +768,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Ornate Buckler (#2444)", 8002444},
     {"Filler: Large Metal Shield (#2445)", 8002445},
     {"Filler: Kite Shield (#2446)", 8002446},
+    {"Filler: Peacebloom (#2447)", 8002447},
     {"Filler: Heavy Pavise (#2448)", 8002448},
+    {"Filler: Earthroot (#2449)", 8002449},
+    {"Filler: Briarthorn (#2450)", 8002450},
     {"Filler: Crested Heater Shield (#2451)", 8002451},
+    {"Filler: Swiftthistle (#2452)", 8002452},
+    {"Filler: Bruiseweed (#2453)", 8002453},
     {"Filler: Elixir of Lion's Strength (#2454)", 8002454},
     {"Filler: Minor Mana Potion (#2455)", 8002455},
     {"Filler: Minor Rejuvenation Potion (#2456)", 8002456},
@@ -638,7 +846,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Malleable Chain Leggings (#2545)", 8002545},
     {"Filler: Royal Frostmane Girdle (#2546)", 8002546},
     {"Filler: Boar Handler Gloves (#2547)", 8002547},
+    {"Filler: Recipe: Elixir of Minor Agility (#2553)", 8002553},
+    {"Filler: Recipe: Swiftness Potion (#2555)", 8002555},
     {"Filler: Bouquet of Scarlet Begonias (#2562)", 8002562},
+    {"Filler: Elven Spirit Claws (#2564)", 8002564},
+    {"Filler: Rod of Molten Fire (#2565)", 8002565},
     {"Filler: Sacrificial Robes (#2566)", 8002566},
     {"Filler: Brown Linen Vest (#2568)", 8002568},
     {"Filler: Linen Boots (#2569)", 8002569},
@@ -657,10 +869,14 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Gray Woolen Robe (#2585)", 8002585},
     {"Filler: Gamemaster's Robe (#2586)", 8002586},
     {"Filler: Gray Woolen Shirt (#2587)", 8002587},
+    {"Filler: Linen Cloth (#2589)", 8002589},
+    {"Filler: Wool Cloth (#2592)", 8002592},
     {"Filler: Flask of Port (#2593)", 8002593},
     {"Filler: Flagon of Mead (#2594)", 8002594},
     {"Filler: Jug of Bourbon (#2595)", 8002595},
     {"Filler: Skin of Dwarven Stout (#2596)", 8002596},
+    {"Filler: Pattern: Red Linen Robe (#2598)", 8002598},
+    {"Filler: Pattern: Gray Woolen Robe (#2601)", 8002601},
     {"Filler: Plain Robe (#2612)", 8002612},
     {"Filler: Double-stitched Robes (#2613)", 8002613},
     {"Filler: Robe of Apprenticeship (#2614)", 8002614},
@@ -675,8 +891,23 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Thinking Cap (#2624)", 8002624},
     {"Filler: Curved Dagger (#2632)", 8002632},
     {"Filler: Jungle Remedy (#2633)", 8002633},
+    {"Filler: Loose Chain Belt (#2635)", 8002635},
+    {"Filler: Loose Chain Boots (#2642)", 8002642},
+    {"Filler: Loose Chain Bracers (#2643)", 8002643},
+    {"Filler: Loose Chain Cloak (#2644)", 8002644},
+    {"Filler: Loose Chain Gloves (#2645)", 8002645},
+    {"Filler: Loose Chain Pants (#2646)", 8002646},
+    {"Filler: Loose Chain Vest (#2648)", 8002648},
+    {"Filler: Flimsy Chain Belt (#2649)", 8002649},
+    {"Filler: Flimsy Chain Boots (#2650)", 8002650},
+    {"Filler: Flimsy Chain Bracers (#2651)", 8002651},
+    {"Filler: Flimsy Chain Cloak (#2652)", 8002652},
+    {"Filler: Flimsy Chain Gloves (#2653)", 8002653},
+    {"Filler: Flimsy Chain Pants (#2654)", 8002654},
+    {"Filler: Flimsy Chain Vest (#2656)", 8002656},
     {"Filler: Red Leather Bag (#2657)", 8002657},
     {"Filler: Spinner Fang (#2664)", 8002664},
+    {"Filler: Stringy Wolf Meat (#2672)", 8002672},
     {"Filler: Charred Wolf Meat (#2679)", 8002679},
     {"Filler: Spiced Wolf Meat (#2680)", 8002680},
     {"Filler: Roasted Boar Meat (#2681)", 8002681},
@@ -689,11 +920,34 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Latched Belt (#2690)", 8002690},
     {"Filler: Outfitter Boots (#2691)", 8002691},
     {"Filler: Settler's Leggings (#2694)", 8002694},
+    {"Filler: Holy Shroud (#2721)", 8002721},
     {"Filler: Bottle of Pinot Noir (#2723)", 8002723},
     {"Filler: Tarnished Bastard Sword (#2754)", 8002754},
+    {"Filler: Fisherman Knife (#2763)", 8002763},
+    {"Filler: Small Dagger (#2764)", 8002764},
+    {"Filler: Hunting Knife (#2765)", 8002765},
+    {"Filler: Deft Stiletto (#2766)", 8002766},
+    {"Filler: Copper Ore (#2770)", 8002770},
+    {"Filler: Tin Ore (#2771)", 8002771},
+    {"Filler: Iron Ore (#2772)", 8002772},
+    {"Filler: Cracked Shortbow (#2773)", 8002773},
+    {"Filler: Rust-covered Blunderbuss (#2774)", 8002774},
+    {"Filler: Silver Ore (#2775)", 8002775},
+    {"Filler: Gold Ore (#2776)", 8002776},
+    {"Filler: Feeble Shortbow (#2777)", 8002777},
+    {"Filler: Cheap Blunderbuss (#2778)", 8002778},
+    {"Filler: Light Hunting Bow (#2780)", 8002780},
+    {"Filler: Dirty Blunderbuss (#2781)", 8002781},
+    {"Filler: Mishandled Recurve Bow (#2782)", 8002782},
+    {"Filler: Shoddy Blunderbuss (#2783)", 8002783},
+    {"Filler: Stiff Recurve Bow (#2785)", 8002785},
+    {"Filler: Oiled Blunderbuss (#2786)", 8002786},
     {"Filler: Trogg Dagger (#2787)", 8002787},
+    {"Filler: Black Velvet Robes (#2800)", 8002800},
+    {"Filler: Blazing Emblem (#2802)", 8002802},
     {"Filler: Yeti Fur Cloak (#2805)", 8002805},
     {"Filler: Torch of Holy Flame (#2808)", 8002808},
+    {"Filler: Curve-bladed Ripper (#2815)", 8002815},
     {"Filler: Soft Leather Tunic (#2817)", 8002817},
     {"Filler: Stretched Leather Trousers (#2818)", 8002818},
     {"Filler: Cross Dagger (#2819)", 8002819},
@@ -701,6 +955,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mo'grosh Masher (#2821)", 8002821},
     {"Filler: Mo'grosh Toothpick (#2822)", 8002822},
     {"Filler: Mo'grosh Can Opener (#2823)", 8002823},
+    {"Filler: Bow of Searing Arrows (#2825)", 8002825},
+    {"Filler: Rough Stone (#2835)", 8002835},
+    {"Filler: Coarse Stone (#2836)", 8002836},
+    {"Filler: Heavy Stone (#2838)", 8002838},
+    {"Filler: Silver Bar (#2842)", 8002842},
     {"Filler: Copper Mace (#2844)", 8002844},
     {"Filler: Copper Axe (#2845)", 8002845},
     {"Filler: Copper Shortsword (#2847)", 8002847},
@@ -718,6 +977,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Rough Bronze Bracers (#2867)", 8002867},
     {"Filler: Patterned Bronze Bracers (#2868)", 8002868},
     {"Filler: Silvered Bronze Breastplate (#2869)", 8002869},
+    {"Filler: Combatant Claymore (#2877)", 8002877},
+    {"Filler: Bearded Boneaxe (#2878)", 8002878},
+    {"Filler: Antipodean Rod (#2879)", 8002879},
+    {"Filler: Plans: Runed Copper Breastplate (#2881)", 8002881},
+    {"Filler: Plans: Silvered Bronze Shoulders (#2882)", 8002882},
+    {"Filler: Plans: Deadly Bronze Poniard (#2883)", 8002883},
     {"Filler: Beer Basted Boar Ribs (#2888)", 8002888},
     {"Filler: Rhapsody Malt (#2894)", 8002894},
     {"Filler: Creeping Pain (#2895)", 8002895},
@@ -734,6 +999,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Dwarven Tree Chopper (#2907)", 8002907},
     {"Filler: Thornblade (#2908)", 8002908},
     {"Filler: Gold Militia Boots (#2910)", 8002910},
+    {"Filler: Keller's Girdle (#2911)", 8002911},
+    {"Filler: Claw of the Shadowmancer (#2912)", 8002912},
     {"Filler: Silk Mantle of Gamn (#2913)", 8002913},
     {"Filler: Gold Lion Shield (#2916)", 8002916},
     {"Filler: Tranquil Ring (#2917)", 8002917},
@@ -743,10 +1010,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Spirit Relic (#2922)", 8002922},
     {"Filler: Relic of Righteousness (#2923)", 8002923},
     {"Filler: Creeping Torment (#2927)", 8002927},
+    {"Filler: Ruined Leather Scraps (#2934)", 8002934},
     {"Filler: Eye of Paleth (#2943)", 8002943},
     {"Filler: Cursed Eye of Paleth (#2944)", 8002944},
     {"Filler: Mariner Boots (#2949)", 8002949},
     {"Filler: Icicle Rod (#2950)", 8002950},
+    {"Filler: Ring of the Underwood (#2951)", 8002951},
     {"Filler: Watch Master's Cloak (#2953)", 8002953},
     {"Filler: Night Watch Pantaloons (#2954)", 8002954},
     {"Filler: First Mate Hat (#2955)", 8002955},
@@ -786,6 +1055,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Burnished Leggings (#2990)", 8002990},
     {"Filler: Burnished Boots (#2991)", 8002991},
     {"Filler: Burnished Gloves (#2992)", 8002992},
+    {"Filler: Bolt of Linen Cloth (#2996)", 8002996},
+    {"Filler: Bolt of Woolen Cloth (#2997)", 8002997},
     {"Filler: Brood Mother Carapace (#3000)", 8003000},
     {"Filler: Relic Horn of Justice (#3002)", 8003002},
     {"Filler: Relic of the Eye (#3003)", 8003003},
@@ -798,6 +1069,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Scroll of Protection (#3013)", 8003013},
     {"Filler: Hide of Lupos (#3018)", 8003018},
     {"Filler: Noble's Robe (#3019)", 8003019},
+    {"Filler: Enduring Cap (#3020)", 8003020},
+    {"Filler: Ranger Bow (#3021)", 8003021},
     {"Filler: Bluegill Breeches (#3022)", 8003022},
     {"Filler: Large Bore Blunderbuss (#3023)", 8003023},
     {"Filler: BKP 2700 \"Enforcer\" (#3024)", 8003024},
@@ -840,7 +1113,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Burnt Hide Bracers (#3158)", 8003158},
     {"Filler: Ironplate Buckler (#3160)", 8003160},
     {"Filler: Robe of the Keeper (#3161)", 8003161},
+    {"Filler: Discolored Worg Heart (#3164)", 8003164},
     {"Filler: Ironheart Chain (#3166)", 8003166},
+    {"Filler: Partially Digested Meat (#3181)", 8003181},
     {"Filler: Hook Dagger (#3184)", 8003184},
     {"Filler: Acrobatic Staff (#3185)", 8003185},
     {"Filler: Viking Sword (#3186)", 8003186},
@@ -858,6 +1133,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Burnt Leather Bracers (#3200)", 8003200},
     {"Filler: Barbarian War Axe (#3201)", 8003201},
     {"Filler: Forest Leather Bracers (#3202)", 8003202},
+    {"Filler: Dense Triangle Mace (#3203)", 8003203},
     {"Filler: Deepwood Bracers (#3204)", 8003204},
     {"Filler: Inscribed Leather Bracers (#3205)", 8003205},
     {"Filler: Cavalier Two-hander (#3206)", 8003206},
@@ -913,6 +1189,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Deadman Club (#3294)", 8003294},
     {"Filler: Deadman Blade (#3295)", 8003295},
     {"Filler: Deadman Dagger (#3296)", 8003296},
+    {"Filler: Fractured Canine (#3299)", 8003299},
+    {"Filler: Rabbit's Foot (#3300)", 8003300},
     {"Filler: Brackwater Boots (#3302)", 8003302},
     {"Filler: Brackwater Bracers (#3303)", 8003303},
     {"Filler: Brackwater Gauntlets (#3304)", 8003304},
@@ -943,13 +1221,31 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Farmer's Shovel (#3334)", 8003334},
     {"Filler: Farmer's Broom (#3335)", 8003335},
     {"Filler: Flesh Piercer (#3336)", 8003336},
+    {"Filler: Incendicite Ore (#3340)", 8003340},
     {"Filler: Gauntlets of Ogre Strength (#3341)", 8003341},
     {"Filler: Captain Sanders' Shirt (#3342)", 8003342},
     {"Filler: Captain Sanders' Booty Bag (#3343)", 8003343},
     {"Filler: Captain Sanders' Sash (#3344)", 8003344},
     {"Filler: Silk Wizard Hat (#3345)", 8003345},
     {"Filler: Ooze-covered Bag (#3352)", 8003352},
+    {"Filler: Wild Steelbloom (#3355)", 8003355},
+    {"Filler: Kingsblood (#3356)", 8003356},
+    {"Filler: Liferoot (#3357)", 8003357},
+    {"Filler: Khadgar's Whisker (#3358)", 8003358},
     {"Filler: Stitches' Femur (#3360)", 8003360},
+    {"Filler: Frayed Belt (#3363)", 8003363},
+    {"Filler: Frayed Bracers (#3365)", 8003365},
+    {"Filler: Grave Moss (#3369)", 8003369},
+    {"Filler: Patchwork Belt (#3370)", 8003370},
+    {"Filler: Patchwork Bracers (#3373)", 8003373},
+    {"Filler: Calico Belt (#3374)", 8003374},
+    {"Filler: Calico Bracers (#3375)", 8003375},
+    {"Filler: Canvas Belt (#3376)", 8003376},
+    {"Filler: Canvas Bracers (#3377)", 8003377},
+    {"Filler: Brocade Belt (#3378)", 8003378},
+    {"Filler: Brocade Bracers (#3379)", 8003379},
+    {"Filler: Cross-stitched Belt (#3380)", 8003380},
+    {"Filler: Cross-stitched Bracers (#3381)", 8003381},
     {"Filler: Weak Troll's Blood Elixir (#3382)", 8003382},
     {"Filler: Elixir of Wisdom (#3383)", 8003383},
     {"Filler: Minor Magic Resistance Potion (#3384)", 8003384},
@@ -961,6 +1257,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Elixir of Lesser Agility (#3390)", 8003390},
     {"Filler: Elixir of Ogre's Strength (#3391)", 8003391},
     {"Filler: Ringed Helm (#3392)", 8003392},
+    {"Filler: Recipe: Minor Magic Resistance Potion (#3393)", 8003393},
+    {"Filler: Recipe: Potion of Curing (#3394)", 8003394},
+    {"Filler: Recipe: Limited Invulnerability Potion (#3395)", 8003395},
+    {"Filler: Recipe: Elixir of Lesser Agility (#3396)", 8003396},
     {"Filler: Lucine Longsword (#3400)", 8003400},
     {"Filler: Red Rose (#3419)", 8003419},
     {"Filler: Black Rose (#3420)", 8003420},
@@ -1046,6 +1346,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Bonegrinding Pestle (#3570)", 8003570},
     {"Filler: Trogg Beater (#3571)", 8003571},
     {"Filler: Daryl's Shortsword (#3572)", 8003572},
+    {"Filler: Gold Bar (#3577)", 8003577},
     {"Filler: Harvester's Pants (#3578)", 8003578},
     {"Filler: Serrated Knife (#3581)", 8003581},
     {"Filler: Acidproof Cloak (#3582)", 8003582},
@@ -1070,6 +1371,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Knitted Bracers (#3603)", 8003603},
     {"Filler: Woven Belt (#3606)", 8003606},
     {"Filler: Woven Bracers (#3607)", 8003607},
+    {"Filler: Plans: Mighty Iron Hammer (#3608)", 8003608},
+    {"Filler: Plans: Copper Chain Vest (#3609)", 8003609},
+    {"Filler: Plans: Gemmed Copper Gauntlets (#3610)", 8003610},
+    {"Filler: Plans: Green Iron Boots (#3611)", 8003611},
+    {"Filler: Plans: Green Iron Gauntlets (#3612)", 8003612},
     {"Filler: Journeyman's Bracers (#3641)", 8003641},
     {"Filler: Ancestral Bracers (#3642)", 8003642},
     {"Filler: Spellbinder Bracers (#3643)", 8003643},
@@ -1091,7 +1397,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Crocolisk Gumbo (#3664)", 8003664},
     {"Filler: Curiously Tasty Omelet (#3665)", 8003665},
     {"Filler: Gooey Spider Cake (#3666)", 8003666},
+    {"Filler: Lifeless Skull (#3671)", 8003671},
     {"Filler: Southshore Stout (#3703)", 8003703},
+    {"Filler: Ensorcelled Parchment (#3706)", 8003706},
     {"Filler: Hillman's Cloak (#3719)", 8003719},
     {"Filler: Big Bear Steak (#3726)", 8003726},
     {"Filler: Hot Lion Chops (#3727)", 8003727},
@@ -1121,19 +1429,65 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Lunar Buckler (#3763)", 8003763},
     {"Filler: Mantis Boots (#3764)", 8003764},
     {"Filler: Brigand's Pauldrons (#3765)", 8003765},
+    {"Filler: Gryphon Feather Quill (#3766)", 8003766},
+    {"Filler: Fine Parchment (#3767)", 8003767},
+    {"Filler: Broken Wand (#3769)", 8003769},
     {"Filler: Mutton Chop (#3770)", 8003770},
     {"Filler: Wild Hog Shank (#3771)", 8003771},
     {"Filler: Conjured Spring Water (#3772)", 8003772},
+    {"Filler: Taut Compound Bow (#3778)", 8003778},
+    {"Filler: Hefty War Axe (#3779)", 8003779},
+    {"Filler: Long-barreled Musket (#3780)", 8003780},
+    {"Filler: Broad Claymore (#3781)", 8003781},
+    {"Filler: Large War Club (#3782)", 8003782},
+    {"Filler: Light Scimitar (#3783)", 8003783},
+    {"Filler: Metal Stave (#3784)", 8003784},
+    {"Filler: Keen Axe (#3785)", 8003785},
+    {"Filler: Shiny Dirk (#3786)", 8003786},
+    {"Filler: Stone Club (#3787)", 8003787},
     {"Filler: Soul Crystal Relic (#3788)", 8003788},
     {"Filler: Relic Stone of Piety (#3789)", 8003789},
     {"Filler: Consecrated Relic Parchment (#3790)", 8003790},
     {"Filler: Relic of the Light (#3791)", 8003791},
+    {"Filler: Interlaced Belt (#3792)", 8003792},
+    {"Filler: Interlaced Boots (#3793)", 8003793},
+    {"Filler: Interlaced Bracers (#3794)", 8003794},
+    {"Filler: Interlaced Cloak (#3795)", 8003795},
+    {"Filler: Interlaced Gloves (#3796)", 8003796},
+    {"Filler: Interlaced Pants (#3797)", 8003797},
+    {"Filler: Interlaced Shoulderpads (#3798)", 8003798},
+    {"Filler: Interlaced Vest (#3799)", 8003799},
+    {"Filler: Hardened Leather Belt (#3800)", 8003800},
+    {"Filler: Hardened Leather Boots (#3801)", 8003801},
+    {"Filler: Hardened Leather Bracers (#3802)", 8003802},
+    {"Filler: Hardened Cloak (#3803)", 8003803},
+    {"Filler: Hardened Leather Gloves (#3804)", 8003804},
+    {"Filler: Hardened Leather Pants (#3805)", 8003805},
+    {"Filler: Hardened Leather Shoulderpads (#3806)", 8003806},
+    {"Filler: Hardened Leather Tunic (#3807)", 8003807},
+    {"Filler: Double Mail Belt (#3808)", 8003808},
+    {"Filler: Double Mail Boots (#3809)", 8003809},
+    {"Filler: Double Mail Bracers (#3810)", 8003810},
+    {"Filler: Double-stitched Cloak (#3811)", 8003811},
+    {"Filler: Double Mail Gloves (#3812)", 8003812},
+    {"Filler: Double Mail Pants (#3813)", 8003813},
+    {"Filler: Double Mail Shoulderpads (#3814)", 8003814},
+    {"Filler: Double Mail Vest (#3815)", 8003815},
+    {"Filler: Reflective Heater (#3816)", 8003816},
+    {"Filler: Reinforced Buckler (#3817)", 8003817},
+    {"Filler: Fadeleaf (#3818)", 8003818},
+    {"Filler: Wintersbite (#3819)", 8003819},
+    {"Filler: Stranglekelp (#3820)", 8003820},
+    {"Filler: Goldthorn (#3821)", 8003821},
     {"Filler: Runic Darkblade (#3822)", 8003822},
     {"Filler: Lesser Invisibility Potion (#3823)", 8003823},
     {"Filler: Elixir of Fortitude (#3825)", 8003825},
     {"Filler: Major Troll's Blood Elixir (#3826)", 8003826},
     {"Filler: Mana Potion (#3827)", 8003827},
     {"Filler: Elixir of Detect Lesser Invisibility (#3828)", 8003828},
+    {"Filler: Recipe: Elixir of Fortitude (#3830)", 8003830},
+    {"Filler: Recipe: Major Troll's Blood Elixir (#3831)", 8003831},
+    {"Filler: Recipe: Elixir of Detect Lesser Invisibility (#3832)", 8003832},
     {"Filler: Adept's Cloak (#3833)", 8003833},
     {"Filler: Sturdy Cloth Trousers (#3834)", 8003834},
     {"Filler: Green Iron Bracers (#3835)", 8003835},
@@ -1155,7 +1509,17 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Frost Tiger Blade (#3854)", 8003854},
     {"Filler: Massive Iron Axe (#3855)", 8003855},
     {"Filler: Shadow Crescent Axe (#3856)", 8003856},
+    {"Filler: Mithril Ore (#3858)", 8003858},
     {"Filler: Citrine (#3864)", 8003864},
+    {"Filler: Plans: Jade Serpentblade (#3866)", 8003866},
+    {"Filler: Plans: Golden Iron Destroyer (#3867)", 8003867},
+    {"Filler: Plans: Frost Tiger Blade (#3868)", 8003868},
+    {"Filler: Plans: Shadow Crescent Axe (#3869)", 8003869},
+    {"Filler: Plans: Green Iron Shoulders (#3870)", 8003870},
+    {"Filler: Plans: Golden Scale Shoulders (#3871)", 8003871},
+    {"Filler: Plans: Golden Scale Leggings (#3872)", 8003872},
+    {"Filler: Plans: Golden Scale Cuirass (#3873)", 8003873},
+    {"Filler: Plans: Polished Steel Boots (#3874)", 8003874},
     {"Filler: Russet Hat (#3889)", 8003889},
     {"Filler: Studded Hat (#3890)", 8003890},
     {"Filler: Augmented Chain Helm (#3891)", 8003891},
@@ -1167,7 +1531,69 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fine Aged Cheddar (#3927)", 8003927},
     {"Filler: Superior Healing Potion (#3928)", 8003928},
     {"Filler: Smotts' Cutlass (#3935)", 8003935},
+    {"Filler: Crochet Belt (#3936)", 8003936},
+    {"Filler: Crochet Boots (#3937)", 8003937},
+    {"Filler: Crochet Bracers (#3938)", 8003938},
+    {"Filler: Crochet Cloak (#3939)", 8003939},
+    {"Filler: Crochet Gloves (#3940)", 8003940},
+    {"Filler: Crochet Pants (#3941)", 8003941},
+    {"Filler: Crochet Shoulderpads (#3942)", 8003942},
+    {"Filler: Crochet Vest (#3943)", 8003943},
+    {"Filler: Twill Belt (#3944)", 8003944},
+    {"Filler: Twill Boots (#3945)", 8003945},
+    {"Filler: Twill Bracers (#3946)", 8003946},
+    {"Filler: Twill Cloak (#3947)", 8003947},
+    {"Filler: Twill Gloves (#3948)", 8003948},
+    {"Filler: Twill Pants (#3949)", 8003949},
+    {"Filler: Twill Shoulderpads (#3950)", 8003950},
+    {"Filler: Twill Vest (#3951)", 8003951},
+    {"Filler: Thick Leather Belt (#3961)", 8003961},
+    {"Filler: Thick Leather Boots (#3962)", 8003962},
+    {"Filler: Thick Leather Bracers (#3963)", 8003963},
+    {"Filler: Thick Cloak (#3964)", 8003964},
+    {"Filler: Thick Leather Gloves (#3965)", 8003965},
+    {"Filler: Thick Leather Pants (#3966)", 8003966},
+    {"Filler: Thick Leather Shoulderpads (#3967)", 8003967},
+    {"Filler: Thick Leather Tunic (#3968)", 8003968},
+    {"Filler: Smooth Leather Belt (#3969)", 8003969},
+    {"Filler: Smooth Leather Boots (#3970)", 8003970},
+    {"Filler: Smooth Leather Bracers (#3971)", 8003971},
+    {"Filler: Smooth Cloak (#3972)", 8003972},
+    {"Filler: Smooth Leather Gloves (#3973)", 8003973},
+    {"Filler: Smooth Leather Pants (#3974)", 8003974},
+    {"Filler: Smooth Leather Shoulderpads (#3975)", 8003975},
+    {"Filler: Smooth Leather Armor (#3976)", 8003976},
     {"Filler: Monogrammed Sash (#3985)", 8003985},
+    {"Filler: Protective Pavise (#3986)", 8003986},
+    {"Filler: Deflecting Tower (#3987)", 8003987},
+    {"Filler: Blocking Targe (#3989)", 8003989},
+    {"Filler: Crested Buckler (#3990)", 8003990},
+    {"Filler: Laminated Scale Belt (#3992)", 8003992},
+    {"Filler: Laminated Scale Boots (#3993)", 8003993},
+    {"Filler: Laminated Scale Bracers (#3994)", 8003994},
+    {"Filler: Laminated Scale Cloak (#3995)", 8003995},
+    {"Filler: Laminated Scale Gloves (#3996)", 8003996},
+    {"Filler: Laminated Scale Pants (#3997)", 8003997},
+    {"Filler: Laminated Scale Shoulderpads (#3998)", 8003998},
+    {"Filler: Laminated Scale Armor (#3999)", 8003999},
+    {"Filler: Overlinked Chain Belt (#4000)", 8004000},
+    {"Filler: Overlinked Chain Boots (#4001)", 8004001},
+    {"Filler: Overlinked Chain Bracers (#4002)", 8004002},
+    {"Filler: Overlinked Chain Cloak (#4003)", 8004003},
+    {"Filler: Overlinked Chain Gloves (#4004)", 8004004},
+    {"Filler: Overlinked Chain Pants (#4005)", 8004005},
+    {"Filler: Overlinked Chain Shoulderpads (#4006)", 8004006},
+    {"Filler: Overlinked Chain Armor (#4007)", 8004007},
+    {"Filler: Sharp Shortsword (#4017)", 8004017},
+    {"Filler: Whetted Claymore (#4018)", 8004018},
+    {"Filler: Heavy Flint Axe (#4019)", 8004019},
+    {"Filler: Splintering Battle Axe (#4020)", 8004020},
+    {"Filler: Blunting Mace (#4021)", 8004021},
+    {"Filler: Crushing Maul (#4022)", 8004022},
+    {"Filler: Fine Pointed Dagger (#4023)", 8004023},
+    {"Filler: Heavy War Staff (#4024)", 8004024},
+    {"Filler: Balanced Long Bow (#4025)", 8004025},
+    {"Filler: Sentinel Musket (#4026)", 8004026},
     {"Filler: Holy Relic Water (#4030)", 8004030},
     {"Filler: Hallowed Relic Charm (#4031)", 8004031},
     {"Filler: Radiant Relic Hammer (#4032)", 8004032},
@@ -1192,6 +1618,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Insignia Cap (#4052)", 8004052},
     {"Filler: Insignia Leggings (#4054)", 8004054},
     {"Filler: Insignia Boots (#4055)", 8004055},
+    {"Filler: Cortello's Riddle (#4056)", 8004056},
     {"Filler: Insignia Chestguard (#4057)", 8004057},
     {"Filler: Glyphed Breastplate (#4058)", 8004058},
     {"Filler: Glyphed Bracers (#4059)", 8004059},
@@ -1223,6 +1650,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Trueshot Bow (#4087)", 8004087},
     {"Filler: Dreadblade (#4088)", 8004088},
     {"Filler: Ricochet Blunderbuss (#4089)", 8004089},
+    {"Filler: Mug O' Hurt (#4090)", 8004090},
+    {"Filler: Widowmaker (#4091)", 8004091},
+    {"Filler: Carefully Folded Note (#4098)", 8004098},
+    {"Filler: Crumpled Note (#4100)", 8004100},
+    {"Filler: Ripped Note (#4101)", 8004101},
+    {"Filler: Torn Note (#4102)", 8004102},
     {"Filler: Tiger Hunter Gloves (#4107)", 8004107},
     {"Filler: Panther Hunter Leggings (#4108)", 8004108},
     {"Filler: Excelsior Boots (#4109)", 8004109},
@@ -1259,6 +1692,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Feathered Leggings (#4191)", 8004191},
     {"Filler: Feathered Bracers (#4194)", 8004194},
     {"Filler: Feathered Boots (#4195)", 8004195},
+    {"Filler: Medium Hide (#4232)", 8004232},
+    {"Filler: Heavy Leather (#4234)", 8004234},
+    {"Filler: Heavy Hide (#4235)", 8004235},
     {"Filler: Handstitched Leather Belt (#4237)", 8004237},
     {"Filler: Linen Bag (#4238)", 8004238},
     {"Filler: Embossed Leather Gloves (#4239)", 8004239},
@@ -1285,9 +1721,22 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Solliden's Trousers (#4261)", 8004261},
     {"Filler: Standard Issue Shield (#4263)", 8004263},
     {"Filler: Barbaric Belt (#4264)", 8004264},
+    {"Filler: Lesser Bloodstone Ore (#4278)", 8004278},
     {"Filler: Dust Bowl (#4290)", 8004290},
+    {"Filler: Pattern: Green Woolen Bag (#4292)", 8004292},
+    {"Filler: Pattern: Hillman's Leather Vest (#4293)", 8004293},
+    {"Filler: Pattern: Hillman's Belt (#4294)", 8004294},
+    {"Filler: Pattern: Dark Leather Shoulders (#4296)", 8004296},
+    {"Filler: Pattern: Barbaric Gloves (#4297)", 8004297},
+    {"Filler: Pattern: Guardian Belt (#4298)", 8004298},
+    {"Filler: Pattern: Guardian Armor (#4299)", 8004299},
+    {"Filler: Pattern: Guardian Leather Bracers (#4300)", 8004300},
+    {"Filler: Pattern: Barbaric Belt (#4301)", 8004301},
     {"Filler: Small Green Dagger (#4302)", 8004302},
     {"Filler: Cranial Thumper (#4303)", 8004303},
+    {"Filler: Thick Leather (#4304)", 8004304},
+    {"Filler: Bolt of Silk Cloth (#4305)", 8004305},
+    {"Filler: Silk Cloth (#4306)", 8004306},
     {"Filler: Heavy Linen Gloves (#4307)", 8004307},
     {"Filler: Green Linen Bracers (#4308)", 8004308},
     {"Filler: Handstitched Linen Britches (#4309)", 8004309},
@@ -1316,21 +1765,50 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Formal White Shirt (#4334)", 8004334},
     {"Filler: Rich Purple Silk Shirt (#4335)", 8004335},
     {"Filler: Black Swashbuckler's Shirt (#4336)", 8004336},
+    {"Filler: Mageweave Cloth (#4338)", 8004338},
+    {"Filler: Bolt of Mageweave (#4339)", 8004339},
     {"Filler: Brown Linen Pants (#4343)", 8004343},
     {"Filler: Brown Linen Shirt (#4344)", 8004344},
+    {"Filler: Pattern: Red Woolen Boots (#4345)", 8004345},
+    {"Filler: Pattern: Heavy Woolen Cloak (#4346)", 8004346},
+    {"Filler: Pattern: Reinforced Woolen Shoulders (#4347)", 8004347},
+    {"Filler: Pattern: Phoenix Gloves (#4348)", 8004348},
+    {"Filler: Pattern: Phoenix Pants (#4349)", 8004349},
+    {"Filler: Pattern: Spider Silk Slippers (#4350)", 8004350},
+    {"Filler: Pattern: Shadow Hood (#4351)", 8004351},
+    {"Filler: Pattern: Boots of the Enchanter (#4352)", 8004352},
+    {"Filler: Pattern: Spider Belt (#4353)", 8004353},
+    {"Filler: Pattern: Rich Purple Silk Shirt (#4354)", 8004354},
+    {"Filler: Handful of Copper Bolts (#4359)", 8004359},
+    {"Filler: Copper Tube (#4361)", 8004361},
     {"Filler: Rough Boomstick (#4362)", 8004362},
+    {"Filler: Copper Modulator (#4363)", 8004363},
+    {"Filler: Coarse Blasting Powder (#4364)", 8004364},
     {"Filler: Flying Tiger Goggles (#4368)", 8004368},
     {"Filler: Deadly Blunderbuss (#4369)", 8004369},
+    {"Filler: Bronze Tube (#4371)", 8004371},
     {"Filler: Lovingly Crafted Boomstick (#4372)", 8004372},
     {"Filler: Shadow Goggles (#4373)", 8004373},
+    {"Filler: Heavy Blasting Powder (#4377)", 8004377},
     {"Filler: Silver-plated Shotgun (#4379)", 8004379},
     {"Filler: Minor Recombobulator (#4381)", 8004381},
+    {"Filler: Bronze Framework (#4382)", 8004382},
     {"Filler: Moonsight Rifle (#4383)", 8004383},
     {"Filler: Green Tinted Goggles (#4385)", 8004385},
     {"Filler: Craftsman's Monocle (#4393)", 8004393},
     {"Filler: Mechanical Dragonling (#4396)", 8004396},
     {"Filler: Gnomish Cloaking Device (#4397)", 8004397},
     {"Filler: Mechanical Squirrel Box (#4401)", 8004401},
+    {"Filler: Crude Scope (#4405)", 8004405},
+    {"Filler: Standard Scope (#4406)", 8004406},
+    {"Filler: Schematic: Mechanical Squirrel Box (#4408)", 8004408},
+    {"Filler: Schematic: Small Seaforium Charge (#4409)", 8004409},
+    {"Filler: Schematic: Shadow Goggles (#4410)", 8004410},
+    {"Filler: Schematic: Moonsight Rifle (#4412)", 8004412},
+    {"Filler: Schematic: Portable Bronze Mortar (#4414)", 8004414},
+    {"Filler: Schematic: Craftsman's Monocle (#4415)", 8004415},
+    {"Filler: Schematic: Goblin Land Mine (#4416)", 8004416},
+    {"Filler: Schematic: Large Seaforium Charge (#4417)", 8004417},
     {"Filler: Scroll of Intellect III (#4419)", 8004419},
     {"Filler: Scroll of Protection III (#4421)", 8004421},
     {"Filler: Scroll of Stamina III (#4422)", 8004422},
@@ -1338,6 +1816,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Scroll of Agility III (#4425)", 8004425},
     {"Filler: Scroll of Strength III (#4426)", 8004426},
     {"Filler: Ethereal Talisman (#4430)", 8004430},
+    {"Filler: Waterlogged Envelope (#4433)", 8004433},
     {"Filler: Scarecrow Trousers (#4434)", 8004434},
     {"Filler: Jewel-encrusted Sash (#4436)", 8004436},
     {"Filler: Channeler's Staff (#4437)", 8004437},
@@ -1413,12 +1892,17 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Spongy Morel (#4606)", 8004606},
     {"Filler: Delicious Cave Mold (#4607)", 8004607},
     {"Filler: Raw Black Truffle (#4608)", 8004608},
+    {"Filler: Blue Pearl (#4611)", 8004611},
     {"Filler: Pendant of Myzrael (#4614)", 8004614},
     {"Filler: Ryedol's Lucky Pick (#4616)", 8004616},
     {"Filler: Lesser Stoneshield Potion (#4623)", 8004623},
+    {"Filler: Firebloom (#4625)", 8004625},
+    {"Filler: Strong Iron Lockbox (#4636)", 8004636},
+    {"Filler: Steel Lockbox (#4637)", 8004637},
     {"Filler: Grimsteel Cape (#4643)", 8004643},
     {"Filler: Salbac Shield (#4652)", 8004652},
     {"Filler: Ironheel Boots (#4653)", 8004653},
+    {"Filler: Giant Clam Meat (#4655)", 8004655},
     {"Filler: Small Pumpkin (#4656)", 8004656},
     {"Filler: Warrior's Cloak (#4658)", 8004658},
     {"Filler: Warrior's Girdle (#4659)", 8004659},
@@ -1449,6 +1933,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Ceremonial Leather Belt (#4693)", 8004693},
     {"Filler: Burnished Pauldrons (#4694)", 8004694},
     {"Filler: Burnished Cloak (#4695)", 8004695},
+    {"Filler: Lapidis Tankard of Tidesippe (#4696)", 8004696},
     {"Filler: Burnished Girdle (#4697)", 8004697},
     {"Filler: Seer's Mantle (#4698)", 8004698},
     {"Filler: Seer's Belt (#4699)", 8004699},
@@ -1539,8 +2024,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Strength of Will (#4837)", 8004837},
     {"Filler: Orb of Power (#4838)", 8004838},
     {"Filler: Long Bayonet (#4840)", 8004840},
+    {"Filler: Amethyst Runestone (#4843)", 8004843},
+    {"Filler: Opal Runestone (#4844)", 8004844},
+    {"Filler: Diamond Runestone (#4845)", 8004845},
     {"Filler: Demon Scarred Cloak (#4854)", 8004854},
     {"Filler: Sleek Feathered Tunic (#4861)", 8004861},
+    {"Filler: Aged Envelope (#4881)", 8004881},
     {"Filler: Rainwalker Boots (#4906)", 8004906},
     {"Filler: Woodland Tunic (#4907)", 8004907},
     {"Filler: Nomadic Bracers (#4908)", 8004908},
@@ -1559,6 +2048,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Primitive Hatchet (#4923)", 8004923},
     {"Filler: Primitive Club (#4924)", 8004924},
     {"Filler: Primitive Hand Blade (#4925)", 8004925},
+    {"Filler: Chen's Empty Keg (#4926)", 8004926},
     {"Filler: Sandrunner Wristguards (#4928)", 8004928},
     {"Filler: Light Scorpid Armor (#4929)", 8004929},
     {"Filler: Handmade Leather Bag (#4930)", 8004930},
@@ -1629,6 +2119,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fissure Plant (#5066)", 8005066},
     {"Filler: Fire Wand (#5069)", 8005069},
     {"Filler: Shadow Wand (#5071)", 8005071},
+    {"Filler: Blood Shard (#5075)", 8005075},
     {"Filler: Cold Basilisk Eye (#5079)", 8005079},
     {"Filler: Kodo Hide Bag (#5081)", 8005081},
     {"Filler: Charred Razormane Wand (#5092)", 8005092},
@@ -1678,7 +2169,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Goblin Igniter (#5253)", 8005253},
     {"Filler: Quilboar Tomahawk (#5255)", 8005255},
     {"Filler: Kovork's Rattle (#5256)", 8005256},
+    {"Filler: Pocket Lint (#5263)", 8005263},
     {"Filler: Watered-down Beer (#5265)", 8005265},
+    {"Filler: Eye of Adaegus (#5266)", 8005266},
     {"Filler: Rose Mantle (#5274)", 8005274},
     {"Filler: Binding Girdle (#5275)", 8005275},
     {"Filler: Harpy Skinner (#5279)", 8005279},
@@ -1705,6 +2198,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Flaring Baton (#5326)", 8005326},
     {"Filler: Greasy Tinker's Pants (#5327)", 8005327},
     {"Filler: Cinched Belt (#5328)", 8005328},
+    {"Filler: Cat Figurine (#5329)", 8005329},
     {"Filler: A Sack of Coins (#5335)", 8005335},
     {"Filler: Wayfaring Gloves (#5337)", 8005337},
     {"Filler: Cauldron Stirrer (#5340)", 8005340},
@@ -1721,11 +2215,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Beastmaster's Girdle (#5355)", 8005355},
     {"Filler: Branding Rod (#5356)", 8005356},
     {"Filler: Ward of the Vale (#5357)", 8005357},
+    {"Filler: Gnawed Bone (#5369)", 8005369},
     {"Filler: Enchanted Moonstalker Cloak (#5387)", 8005387},
     {"Filler: Thistlewood Dagger (#5392)", 8005392},
     {"Filler: Thistlewood Staff (#5393)", 8005393},
     {"Filler: Archery Training Gloves (#5394)", 8005394},
     {"Filler: Woodland Shield (#5395)", 8005395},
+    {"Filler: Defias Gunpowder (#5397)", 8005397},
     {"Filler: Canopy Leggings (#5398)", 8005398},
     {"Filler: Tracking Boots (#5399)", 8005399},
     {"Filler: Draped Cloak (#5405)", 8005405},
@@ -1746,6 +2242,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Black Supe (#5495)", 8005495},
     {"Filler: Small Lustrous Pearl (#5498)", 8005498},
     {"Filler: Iridescent Pearl (#5500)", 8005500},
+    {"Filler: Clam Meat (#5503)", 8005503},
+    {"Filler: Tangy Clam Meat (#5504)", 8005504},
     {"Filler: Mana Agate (#5514)", 8005514},
     {"Filler: Tiny Bronze Key (#5517)", 8005517},
     {"Filler: Tiny Iron Key (#5518)", 8005518},
@@ -1755,6 +2253,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Pearl-handled Dagger (#5540)", 8005540},
     {"Filler: Iridescent Hammer (#5541)", 8005541},
     {"Filler: Pearl-clasped Cloak (#5542)", 8005542},
+    {"Filler: Plans: Iridescent Hammer (#5543)", 8005543},
     {"Filler: Infernal Stone (#5565)", 8005565},
     {"Filler: Small Black Pouch (#5571)", 8005571},
     {"Filler: Small Green Pouch (#5572)", 8005572},
@@ -1762,6 +2261,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: White Leather Bag (#5574)", 8005574},
     {"Filler: Large Green Sack (#5575)", 8005575},
     {"Filler: Large Brown Sack (#5576)", 8005576},
+    {"Filler: Plans: Silvered Bronze Breastplate (#5578)", 8005578},
     {"Filler: Militia Warhammer (#5579)", 8005579},
     {"Filler: Militia Hammer (#5580)", 8005580},
     {"Filler: Smooth Walking Staff (#5581)", 8005581},
@@ -1774,6 +2274,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Crag Buckler (#5593)", 8005593},
     {"Filler: Thicket Hammer (#5595)", 8005595},
     {"Filler: Ashwood Bow (#5596)", 8005596},
+    {"Filler: Hatched Egg Sac (#5601)", 8005601},
+    {"Filler: Sticky Spider Webbing (#5602)", 8005602},
     {"Filler: Wizbang's Gunnysack (#5603)", 8005603},
     {"Filler: Elven Wand (#5604)", 8005604},
     {"Filler: Pruning Knife (#5605)", 8005605},
@@ -1798,9 +2300,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Cowardly Flight Potion (#5632)", 8005632},
     {"Filler: Great Rage Potion (#5633)", 8005633},
     {"Filler: Free Action Potion (#5634)", 8005634},
+    {"Filler: Sharp Claw (#5635)", 8005635},
     {"Filler: Instant Toxin (#5654)", 8005654},
     {"Filler: Covert Ops Pack (#5738)", 8005738},
     {"Filler: Barbaric Harness (#5739)", 8005739},
+    {"Filler: Red Fireworks Rocket (#5740)", 8005740},
     {"Filler: Gemstone Dagger (#5742)", 8005742},
     {"Filler: Prismstone Ring (#5743)", 8005743},
     {"Filler: Pale Skinner (#5744)", 8005744},
@@ -1821,6 +2325,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Lesser Wizard's Robe (#5766)", 8005766},
     {"Filler: Violet Robes (#5767)", 8005767},
     {"Filler: Robes of Arcana (#5770)", 8005770},
+    {"Filler: Pattern: Green Silk Pack (#5774)", 8005774},
     {"Filler: Elder's Cane (#5776)", 8005776},
     {"Filler: Brave's Axe (#5777)", 8005777},
     {"Filler: Primitive Walking Stick (#5778)", 8005778},
@@ -1829,6 +2334,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Murloc Scale Breastplate (#5781)", 8005781},
     {"Filler: Thick Murloc Armor (#5782)", 8005782},
     {"Filler: Murloc Scale Bracers (#5783)", 8005783},
+    {"Filler: Henrig Lonebrow's Journal (#5791)", 8005791},
     {"Filler: Robes of Antiquity (#5812)", 8005812},
     {"Filler: Emil's Brand (#5813)", 8005813},
     {"Filler: Snapbrook Armor (#5814)", 8005814},
@@ -1839,6 +2345,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Faerie Mantle (#5820)", 8005820},
     {"Filler: Darkstalker Boots (#5821)", 8005821},
     {"Filler: Hedgeseed Gauntlets (#5822)", 8005822},
+    {"Filler: Indurium Ore (#5833)", 8005833},
     {"Filler: Animal Skin Belt (#5936)", 8005936},
     {"Filler: Sewing Gloves (#5939)", 8005939},
     {"Filler: Bone Buckler (#5940)", 8005940},
@@ -1857,12 +2364,17 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Rugged Boots (#5968)", 8005968},
     {"Filler: Regent's Cloak (#5969)", 8005969},
     {"Filler: Feathered Cape (#5971)", 8005971},
+    {"Filler: Pattern: Fine Leather Pants (#5972)", 8005972},
+    {"Filler: Pattern: Guardian Cloak (#5974)", 8005974},
     {"Filler: Ruffian Belt (#5975)", 8005975},
     {"Filler: Guild Tabard (#5976)", 8005976},
     {"Filler: Elixir of Water Breathing (#5996)", 8005996},
     {"Filler: Elixir of Minor Defense (#5997)", 8005997},
+    {"Filler: Truesilver Bar (#6037)", 8006037},
     {"Filler: Giant Clam Scorcho (#6038)", 8006038},
     {"Filler: Golden Scale Bracers (#6040)", 8006040},
+    {"Filler: Plans: Iron Shield Spike (#6044)", 8006044},
+    {"Filler: Plans: Iron Counterweight (#6045)", 8006045},
     {"Filler: Shadow Protection Potion (#6048)", 8006048},
     {"Filler: Fire Protection Potion (#6049)", 8006049},
     {"Filler: Frost Protection Potion (#6050)", 8006050},
@@ -1898,6 +2410,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Web-covered Boots (#6148)", 8006148},
     {"Filler: Greater Mana Potion (#6149)", 8006149},
     {"Filler: Wolf Handler Gloves (#6171)", 8006171},
+    {"Filler: Lost Supplies (#6172)", 8006172},
     {"Filler: Snow Boots (#6173)", 8006173},
     {"Filler: Dwarven Kite Shield (#6176)", 8006176},
     {"Filler: Ironwrought Bracers (#6177)", 8006177},
@@ -1922,6 +2435,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Tribal Worg Helm (#6204)", 8006204},
     {"Filler: Burrowing Shovel (#6205)", 8006205},
     {"Filler: Rock Chipper (#6206)", 8006206},
+    {"Filler: Recipe: Elixir of Ogre's Strength (#6211)", 8006211},
     {"Filler: Heavy Copper Maul (#6214)", 8006214},
     {"Filler: Balanced Fighting Stick (#6215)", 8006215},
     {"Filler: Arclight Spanner (#6219)", 8006219},
@@ -1932,7 +2446,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: White Linen Robe (#6241)", 8006241},
     {"Filler: Blue Linen Robe (#6242)", 8006242},
     {"Filler: Green Woolen Robe (#6243)", 8006243},
-    {"Filler: Fishing Pole (JEFFTEST) (#6255)", 8006255},
     {"Filler: Fishing Pole (#6256)", 8006256},
     {"Filler: Blue Overalls (#6263)", 8006263},
     {"Filler: Greater Adept's Robe (#6264)", 8006264},
@@ -1941,6 +2454,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Disciple's Pants (#6267)", 8006267},
     {"Filler: Pioneer Tunic (#6268)", 8006268},
     {"Filler: Pioneer Trousers (#6269)", 8006269},
+    {"Filler: Pattern: Red Linen Vest (#6271)", 8006271},
     {"Filler: Sacred Burial Trousers (#6282)", 8006282},
     {"Filler: Brilliant Smallfish (#6290)", 8006290},
     {"Filler: Sickly Looking Fish (#6299)", 8006299},
@@ -1951,6 +2465,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Grizzled Boots (#6335)", 8006335},
     {"Filler: Infantry Tunic (#6336)", 8006336},
     {"Filler: Infantry Leggings (#6337)", 8006337},
+    {"Filler: Formula: Enchant Chest - Minor Mana (#6342)", 8006342},
+    {"Filler: Formula: Enchant Bracer - Minor Spirit (#6344)", 8006344},
+    {"Filler: Formula: Enchant Bracer - Minor Strength (#6347)", 8006347},
+    {"Filler: Formula: Enchant Weapon - Minor Beastslayer (#6348)", 8006348},
     {"Filler: Rough Bronze Boots (#6350)", 8006350},
     {"Filler: Small Chest (#6353)", 8006353},
     {"Filler: Battered Chest (#6356)", 8006356},
@@ -1960,6 +2478,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Big Iron Fishing Pole (#6367)", 8006367},
     {"Filler: Swim Speed Potion (#6372)", 8006372},
     {"Filler: Elixir of Firepower (#6373)", 8006373},
+    {"Filler: Formula: Enchant Bracer - Lesser Spirit (#6375)", 8006375},
     {"Filler: Seer's Cape (#6378)", 8006378},
     {"Filler: Inscribed Leather Belt (#6379)", 8006379},
     {"Filler: Inscribed Buckler (#6380)", 8006380},
@@ -1972,6 +2491,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Glimmering Mail Bracers (#6387)", 8006387},
     {"Filler: Glimmering Mail Pauldrons (#6388)", 8006388},
     {"Filler: Glimmering Mail Coif (#6389)", 8006389},
+    {"Filler: Pattern: Stylish Blue Shirt (#6390)", 8006390},
+    {"Filler: Pattern: Stylish Green Shirt (#6391)", 8006391},
     {"Filler: Silver-thread Gloves (#6393)", 8006393},
     {"Filler: Silver-thread Boots (#6394)", 8006394},
     {"Filler: Silver-thread Amice (#6395)", 8006395},
@@ -2012,6 +2533,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Imperial Cloak (#6432)", 8006432},
     {"Filler: Imperial Leather Helm (#6433)", 8006433},
     {"Filler: Snakeskin Bag (#6446)", 8006446},
+    {"Filler: Manual: Strong Anti-Venom (#6454)", 8006454},
+    {"Filler: Acidic Slime (#6456)", 8006456},
+    {"Filler: Rusted Engineering Parts (#6457)", 8006457},
     {"Filler: Deviate Scale Cloak (#6466)", 8006466},
     {"Filler: Deviate Scale Gloves (#6467)", 8006467},
     {"Filler: Grassland Sash (#6477)", 8006477},
@@ -2128,6 +2652,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Broken Wine Bottle (#6651)", 8006651},
     {"Filler: Savory Deviate Delight (#6657)", 8006657},
     {"Filler: Scarab Trousers (#6659)", 8006659},
+    {"Filler: Julie's Dagger (#6660)", 8006660},
     {"Filler: Elixir of Giant Growth (#6662)", 8006662},
     {"Filler: Voodoo Mantle (#6664)", 8006664},
     {"Filler: Hexed Bracers (#6665)", 8006665},
@@ -2142,7 +2667,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Spellcrafter Wand (#6677)", 8006677},
     {"Filler: Band of Elven Grace (#6678)", 8006678},
     {"Filler: Moonglow Vest (#6709)", 8006709},
+    {"Filler: Practice Lock (#6712)", 8006712},
     {"Filler: Ripped Pants (#6713)", 8006713},
+    {"Filler: Schematic: EZ-Thro Dynamite (#6716)", 8006716},
     {"Filler: Windborne Belt (#6719)", 8006719},
     {"Filler: Spirit Hunter Headdress (#6720)", 8006720},
     {"Filler: Chestplate of Kor (#6721)", 8006721},
@@ -2246,6 +2773,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Crimson Silk Robe (#7063)", 8007063},
     {"Filler: Crimson Silk Gloves (#7064)", 8007064},
     {"Filler: Green Silk Armor (#7065)", 8007065},
+    {"Filler: Essence of Earth (#7076)", 8007076},
+    {"Filler: Pattern: Crimson Silk Shoulders (#7084)", 8007084},
+    {"Filler: Pattern: Azure Shoulders (#7085)", 8007085},
+    {"Filler: Pattern: Earthen Silk Belt (#7086)", 8007086},
+    {"Filler: Pattern: Green Silk Armor (#7090)", 8007090},
+    {"Filler: Pattern: Truefaith Gloves (#7091)", 8007091},
+    {"Filler: Pattern: Hands of Darkness (#7092)", 8007092},
     {"Filler: Driftwood Branch (#7094)", 8007094},
     {"Filler: Bog Boots (#7095)", 8007095},
     {"Filler: Leg Meat (#7097)", 8007097},
@@ -2265,6 +2799,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Brutal Gauntlets (#7129)", 8007129},
     {"Filler: Brutal Helm (#7130)", 8007130},
     {"Filler: Brutal Legguards (#7132)", 8007132},
+    {"Filler: The Scarlet Key (#7146)", 8007146},
     {"Filler: Copper Dagger (#7166)", 8007166},
     {"Filler: Stormwind Guard Shield (#7188)", 8007188},
     {"Filler: Goblin Rocket Boots (#7189)", 8007189},
@@ -2279,6 +2814,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Black Whelp Cloak (#7283)", 8007283},
     {"Filler: Red Whelp Gloves (#7284)", 8007284},
     {"Filler: Nimble Leather Gloves (#7285)", 8007285},
+    {"Filler: Pattern: Rugged Leather Pants (#7288)", 8007288},
     {"Filler: Morbent's Bane (#7297)", 8007297},
     {"Filler: Blade of Cunning (#7298)", 8007298},
     {"Filler: Thun'grim's Axe (#7326)", 8007326},
@@ -2309,6 +2845,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Elder's Hat (#7357)", 8007357},
     {"Filler: Pilferer's Gloves (#7358)", 8007358},
     {"Filler: Heavy Earthen Gloves (#7359)", 8007359},
+    {"Filler: Pattern: Dark Leather Gloves (#7360)", 8007360},
+    {"Filler: Pattern: Pilferer's Gloves (#7363)", 8007363},
+    {"Filler: Pattern: Heavy Earthen Gloves (#7364)", 8007364},
     {"Filler: Elder's Gloves (#7366)", 8007366},
     {"Filler: Elder's Mantle (#7367)", 8007367},
     {"Filler: Elder's Pants (#7368)", 8007368},
@@ -2363,6 +2902,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Sentinel Cloak (#7446)", 8007446},
     {"Filler: Sentinel Bracers (#7447)", 8007447},
     {"Filler: Sentinel Girdle (#7448)", 8007448},
+    {"Filler: Pattern: Dusky Leather Leggings (#7449)", 8007449},
+    {"Filler: Pattern: Green Whelp Armor (#7450)", 8007450},
+    {"Filler: Pattern: Dusky Boots (#7452)", 8007452},
+    {"Filler: Pattern: Swift Boots (#7453)", 8007453},
     {"Filler: Knight's Breastplate (#7454)", 8007454},
     {"Filler: Knight's Legguards (#7455)", 8007455},
     {"Filler: Knight's Headguard (#7456)", 8007456},
@@ -2463,8 +3006,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Aurora Sphere (#7610)", 8007610},
     {"Filler: Mistscape Stave (#7611)", 8007611},
     {"Filler: Thistle Tea (#7676)", 8007676},
+    {"Filler: Six Demon Bag (#7734)", 8007734},
     {"Filler: Evergreen Gloves (#7738)", 8007738},
     {"Filler: Timberland Cape (#7739)", 8007739},
+    {"Filler: Gni'kiv Medallion (#7740)", 8007740},
     {"Filler: Explorers' League Commendation (#7746)", 8007746},
     {"Filler: Vile Protector (#7747)", 8007747},
     {"Filler: Forcestone Buckler (#7748)", 8007748},
@@ -2477,6 +3022,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Easter Dress (#7809)", 8007809},
     {"Filler: Aquamarine (#7909)", 8007909},
     {"Filler: Star Ruby (#7910)", 8007910},
+    {"Filler: Truesilver Ore (#7911)", 8007911},
+    {"Filler: Solid Stone (#7912)", 8007912},
     {"Filler: Barbaric Iron Shoulders (#7913)", 8007913},
     {"Filler: Barbaric Iron Breastplate (#7914)", 8007914},
     {"Filler: Barbaric Iron Helm (#7915)", 8007915},
@@ -2519,13 +3066,30 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Bronze Battle Axe (#7958)", 8007958},
     {"Filler: Steel Breastplate (#7963)", 8007963},
     {"Filler: Black Pearl (#7971)", 8007971},
+    {"Filler: Plans: Heavy Mithril Pants (#7975)", 8007975},
+    {"Filler: Plans: Mithril Shield Spike (#7976)", 8007976},
+    {"Filler: Plans: Mithril Spurs (#7989)", 8007989},
+    {"Filler: Plans: Heavy Mithril Helm (#7990)", 8007990},
+    {"Filler: Plans: Mithril Scale Shoulders (#7991)", 8007991},
+    {"Filler: Plans: Blue Glittering Axe (#7992)", 8007992},
+    {"Filler: Plans: Dazzling Mithril Rapier (#7993)", 8007993},
     {"Filler: Worn Fishing Hat (#7996)", 8007996},
+    {"Filler: The Ziggler (#8006)", 8008006},
+    {"Filler: Plans: Runed Mithril Hammer (#8028)", 8008028},
+    {"Filler: Plans: Wicked Mithril Blade (#8029)", 8008029},
     {"Filler: Sizzle Stick (#8071)", 8008071},
     {"Filler: Conjured Sourdough (#8075)", 8008075},
     {"Filler: Conjured Sweet Roll (#8076)", 8008076},
     {"Filler: Conjured Mineral Water (#8077)", 8008077},
     {"Filler: Conjured Sparkling Water (#8078)", 8008078},
     {"Filler: Conjured Crystal Water (#8079)", 8008079},
+    {"Filler: Light Plate Chestpiece (#8080)", 8008080},
+    {"Filler: Light Plate Belt (#8081)", 8008081},
+    {"Filler: Light Plate Boots (#8082)", 8008082},
+    {"Filler: Light Plate Bracers (#8083)", 8008083},
+    {"Filler: Light Plate Gloves (#8084)", 8008084},
+    {"Filler: Light Plate Pants (#8085)", 8008085},
+    {"Filler: Light Plate Shoulderpads (#8086)", 8008086},
     {"Filler: Platemail Belt (#8088)", 8008088},
     {"Filler: Platemail Boots (#8089)", 8008089},
     {"Filler: Platemail Bracers (#8090)", 8008090},
@@ -2571,8 +3135,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Chromite Barbute (#8142)", 8008142},
     {"Filler: Chromite Legplates (#8143)", 8008143},
     {"Filler: Chromite Pauldrons (#8144)", 8008144},
+    {"Filler: Wicked Claw (#8146)", 8008146},
     {"Filler: Tiny Copper Key (#8147)", 8008147},
     {"Filler: Tiny Silver Key (#8148)", 8008148},
+    {"Filler: Flask of Mojo (#8151)", 8008151},
+    {"Filler: Wildvine (#8153)", 8008153},
     {"Filler: Jouster's Wristguards (#8156)", 8008156},
     {"Filler: Jouster's Chestplate (#8157)", 8008157},
     {"Filler: Jouster's Gauntlets (#8158)", 8008158},
@@ -2581,6 +3148,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Jouster's Visor (#8161)", 8008161},
     {"Filler: Jouster's Legplates (#8162)", 8008162},
     {"Filler: Jouster's Pauldrons (#8163)", 8008163},
+    {"Filler: Thick Hide (#8169)", 8008169},
     {"Filler: Nightscape Tunic (#8175)", 8008175},
     {"Filler: Nightscape Headband (#8176)", 8008176},
     {"Filler: Practice Sword (#8177)", 8008177},
@@ -2596,6 +3164,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Turtle Scale Gloves (#8187)", 8008187},
     {"Filler: Explosive Shotgun (#8188)", 8008188},
     {"Filler: Turtle Scale Breastplate (#8189)", 8008189},
+    {"Filler: Hanzo Sword (#8190)", 8008190},
     {"Filler: Turtle Scale Helm (#8191)", 8008191},
     {"Filler: Nightscape Shoulders (#8192)", 8008192},
     {"Filler: Nightscape Pants (#8193)", 8008193},
@@ -2702,6 +3271,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Alabaster Shield (#8320)", 8008320},
     {"Filler: The 1 Ring (#8350)", 8008350},
     {"Filler: Mithril Head Trout (#8364)", 8008364},
+    {"Filler: Pattern: Turtle Scale Gloves (#8385)", 8008385},
+    {"Filler: Pattern: Big Voodoo Robe (#8386)", 8008386},
+    {"Filler: Pattern: Big Voodoo Mask (#8387)", 8008387},
+    {"Filler: Pattern: Big Voodoo Pants (#8389)", 8008389},
+    {"Filler: Pattern: Big Voodoo Cloak (#8390)", 8008390},
     {"Filler: Gadgetzan Water Co. Care Package (#8484)", 8008484},
     {"Filler: Bronze Lotterybox (#8502)", 8008502},
     {"Filler: Heavy Bronze Lotterybox (#8503)", 8008503},
@@ -2711,12 +3285,29 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Heavy Mithril Lotterybox (#8507)", 8008507},
     {"Filler: Noggenfogger Elixir (#8529)", 8008529},
     {"Filler: Underwater Mushroom Cap (#8543)", 8008543},
+    {"Filler: Hippogryph Egg (#8564)", 8008564},
     {"Filler: Whistle of the Mottled Red Raptor (#8586)", 8008586},
     {"Filler: Red Sparkler (#8624)", 8008624},
     {"Filler: White Sparkler (#8625)", 8008625},
     {"Filler: Blue Sparkler (#8626)", 8008626},
+    {"Filler: Interlaced Cowl (#8746)", 8008746},
+    {"Filler: Hardened Leather Helm (#8747)", 8008747},
+    {"Filler: Double Mail Coif (#8748)", 8008748},
+    {"Filler: Crochet Hat (#8749)", 8008749},
+    {"Filler: Thick Leather Hat (#8750)", 8008750},
+    {"Filler: Overlinked Coif (#8751)", 8008751},
+    {"Filler: Laminated Scale Circlet (#8752)", 8008752},
+    {"Filler: Smooth Leather Helmet (#8753)", 8008753},
+    {"Filler: Twill Cover (#8754)", 8008754},
+    {"Filler: Light Plate Helmet (#8755)", 8008755},
     {"Filler: Morning Glory Dew (#8766)", 8008766},
     {"Filler: Elixir of Water Walking (#8827)", 8008827},
+    {"Filler: Purple Lotus (#8831)", 8008831},
+    {"Filler: Arthas' Tears (#8836)", 8008836},
+    {"Filler: Sungrass (#8838)", 8008838},
+    {"Filler: Blindweed (#8839)", 8008839},
+    {"Filler: Ghost Mushroom (#8845)", 8008845},
+    {"Filler: Gromsblood (#8846)", 8008846},
     {"Filler: Alterac Swiss (#8932)", 8008932},
     {"Filler: Dried King Bolete (#8948)", 8008948},
     {"Filler: Elixir of Agility (#8949)", 8008949},
@@ -2739,8 +3330,14 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Elixir of Giants (#9206)", 8009206},
     {"Filler: Elixir of Demonslaying (#9224)", 8009224},
     {"Filler: Elixir of Detect Demon (#9233)", 8009233},
+    {"Filler: Ancient Tablet (#9242)", 8009242},
     {"Filler: Shriveled Heart (#9243)", 8009243},
+    {"Filler: Lahassa Essence (#9255)", 8009255},
+    {"Filler: Imbel Essence (#9256)", 8009256},
+    {"Filler: Samha Essence (#9257)", 8009257},
+    {"Filler: Byltan Essence (#9258)", 8009258},
     {"Filler: Volatile Rum (#9260)", 8009260},
+    {"Filler: Black Vitriol (#9262)", 8009262},
     {"Filler: Elixir of Shadow Power (#9264)", 8009264},
     {"Filler: Pirate's Footlocker (#9276)", 8009276},
     {"Filler: Field Plate Vambraces (#9285)", 8009285},
@@ -2751,12 +3348,34 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Field Plate Helmet (#9290)", 8009290},
     {"Filler: Field Plate Leggings (#9291)", 8009291},
     {"Filler: Field Plate Pauldrons (#9292)", 8009292},
+    {"Filler: Recipe: Magic Resistance Potion (#9293)", 8009293},
+    {"Filler: Recipe: Invisibility Potion (#9295)", 8009295},
+    {"Filler: Recipe: Elixir of Dream Vision (#9297)", 8009297},
+    {"Filler: Recipe: Elixir of Giants (#9298)", 8009298},
+    {"Filler: Crusted Bandages (#9332)", 8009332},
+    {"Filler: Tarnished Silver Necklace (#9333)", 8009333},
+    {"Filler: Cracked Pottery (#9334)", 8009334},
+    {"Filler: Broken Obsidian Club (#9335)", 8009335},
+    {"Filler: Gold-capped Troll Tusk (#9336)", 8009336},
+    {"Filler: Hoop Earring (#9355)", 8009355},
+    {"Filler: A Wooden Leg (#9356)", 8009356},
+    {"Filler: A Parrot Skeleton (#9357)", 8009357},
+    {"Filler: A Head Rag (#9358)", 8009358},
+    {"Filler: Wirt's Third Leg (#9359)", 8009359},
     {"Filler: Cuergo's Gold (#9360)", 8009360},
     {"Filler: Cuergo's Gold with Worm (#9361)", 8009361},
     {"Filler: Brilliant Gold Ring (#9362)", 8009362},
     {"Filler: Sparklematic-Wrapped Box (#9363)", 8009363},
     {"Filler: Golden Scale Gauntlets (#9366)", 8009366},
+    {"Filler: Gordunni Scroll (#9370)", 8009370},
     {"Filler: Tromping Miner's Boots (#9382)", 8009382},
+    {"Filler: Archaic Defender (#9385)", 8009385},
+    {"Filler: Gloves of Old (#9395)", 8009395},
+    {"Filler: Earthborn Kilt (#9402)", 8009402},
+    {"Filler: Girdle of Golem Strength (#9405)", 8009405},
+    {"Filler: Forgotten Wraps (#9433)", 8009433},
+    {"Filler: Elemental Raiment (#9434)", 8009434},
+    {"Filler: Reticulated Bone Gauntlets (#9435)", 8009435},
     {"Filler: Techbot CPU Shell (#9444)", 8009444},
     {"Filler: Bubbling Water (#9451)", 8009451},
     {"Filler: Gyromatic Icemaker (#9489)", 8009489},
@@ -2770,9 +3389,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Skullsplitter (#9521)", 8009521},
     {"Filler: Energized Stone Circle (#9522)", 8009522},
     {"Filler: Spellshifter Rod (#9527)", 8009527},
-    {"Filler: Internal Warrior Equipment Kit L25 (#9529)", 8009529},
     {"Filler: Gemshale Pauldrons (#9531)", 8009531},
-    {"Filler: Internal Warrior Equipment Kit L30 (#9532)", 8009532},
     {"Filler: Fire-welded Bracers (#9535)", 8009535},
     {"Filler: Fairywing Mantle (#9536)", 8009536},
     {"Filler: Neatly Wrapped Box (#9537)", 8009537},
@@ -2836,6 +3453,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Rustler Gloves (#9704)", 8009704},
     {"Filler: Tharg's Shoelace (#9705)", 8009705},
     {"Filler: Tharg's Disk (#9706)", 8009706},
+    {"Filler: Broken Blade of Heroes (#9719)", 8009719},
     {"Filler: Simple Cord (#9742)", 8009742},
     {"Filler: Simple Shoes (#9743)", 8009743},
     {"Filler: Simple Bands (#9744)", 8009744},
@@ -3341,12 +3959,19 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Durable Hat (#10289)", 8010289},
     {"Filler: Gnomeregan Band (#10298)", 8010298},
     {"Filler: Gnomeregan Amulet (#10299)", 8010299},
+    {"Filler: Pattern: Red Mageweave Vest (#10300)", 8010300},
+    {"Filler: Pattern: White Bandit Mask (#10301)", 8010301},
+    {"Filler: Pattern: Red Mageweave Pants (#10302)", 8010302},
     {"Filler: Scroll of Protection IV (#10305)", 8010305},
     {"Filler: Scroll of Spirit IV (#10306)", 8010306},
     {"Filler: Scroll of Stamina IV (#10307)", 8010307},
     {"Filler: Scroll of Intellect IV (#10308)", 8010308},
     {"Filler: Scroll of Agility IV (#10309)", 8010309},
     {"Filler: Scroll of Strength IV (#10310)", 8010310},
+    {"Filler: Pattern: Red Mageweave Gloves (#10312)", 8010312},
+    {"Filler: Pattern: Red Mageweave Shoulders (#10315)", 8010315},
+    {"Filler: Pattern: Colorful Kilt (#10316)", 8010316},
+    {"Filler: Pattern: Red Mageweave Headband (#10320)", 8010320},
     {"Filler: Scarlet Belt (#10329)", 8010329},
     {"Filler: Scarlet Gauntlets (#10331)", 8010331},
     {"Filler: Scarlet Wristguards (#10333)", 8010333},
@@ -3393,6 +4018,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Banded Boots (#10409)", 8010409},
     {"Filler: Rough Copper Vest (#10421)", 8010421},
     {"Filler: Silvered Bronze Leggings (#10423)", 8010423},
+    {"Filler: Plans: Silvered Bronze Leggings (#10424)", 8010424},
     {"Filler: Chained Essence of Eranikus (#10455)", 8010455},
     {"Filler: A Bulging Coin Purse (#10456)", 8010456},
     {"Filler: Shadowy Bracers (#10461)", 8010461},
@@ -3425,6 +4051,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Goblin Rocket Helmet (#10588)", 8010588},
     {"Filler: Catseye Elixir (#10592)", 8010592},
     {"Filler: Kum'sha's Junk (#10595)", 8010595},
+    {"Filler: Schematic: Bright-Eye Goggles (#10601)", 8010601},
+    {"Filler: Schematic: Catseye Ultra Goggles (#10603)", 8010603},
+    {"Filler: Schematic: Mithril Heavy-bore Rifle (#10604)", 8010604},
+    {"Filler: Schematic: Spellpower Goggles Xtreme (#10605)", 8010605},
+    {"Filler: Schematic: Parachute Cloak (#10606)", 8010606},
+    {"Filler: Schematic: Sniper Scope (#10608)", 8010608},
+    {"Filler: Thorium Ore (#10620)", 8010620},
     {"Filler: Painted Chain Leggings (#10635)", 8010635},
     {"Filler: Nomadic Gloves (#10636)", 8010636},
     {"Filler: Brewer's Gloves (#10637)", 8010637},
@@ -3482,14 +4115,29 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Staff of Lore (#10826)", 8010826},
     {"Filler: Surveyor's Tunic (#10827)", 8010827},
     {"Filler: Felhound Tracker Kit (#10834)", 8010834},
+    {"Filler: Crystallized Note (#10839)", 8010839},
+    {"Filler: Crystallized Note (#10840)", 8010840},
     {"Filler: Goldthorn Tea (#10841)", 8010841},
     {"Filler: Apothecary Gloves (#10919)", 8010919},
     {"Filler: Demon Hide Sack (#10959)", 8010959},
+    {"Filler: Un'Goro Soil (#11018)", 8011018},
+    {"Filler: Formula: Enchant 2H Weapon - Lesser Spirit (#11038)", 8011038},
+    {"Filler: Formula: Enchant Cloak - Minor Agility (#11039)", 8011039},
+    {"Filler: Formula: Enchant Shield - Lesser Protection (#11081)", 8011081},
+    {"Filler: Formula: Enchant Cloak - Lesser Shadow Resistance (#11098)", 8011098},
     {"Filler: Special Chicken Feed (#11109)", 8011109},
     {"Filler: Chicken Egg (#11110)", 8011110},
     {"Filler: Belgrom's Hammer (#11120)", 8011120},
     {"Filler: Carrot on a Stick (#11122)", 8011122},
+    {"Filler: Formula: Enchant Weapon - Lesser Beastslayer (#11164)", 8011164},
+    {"Filler: Formula: Enchant Weapon - Lesser Elemental Slayer (#11165)", 8011165},
+    {"Filler: Formula: Enchant Boots - Lesser Spirit (#11167)", 8011167},
+    {"Filler: Formula: Enchant Shield - Lesser Block (#11168)", 8011168},
+    {"Filler: Blue Power Crystal (#11184)", 8011184},
+    {"Filler: Green Power Crystal (#11185)", 8011185},
+    {"Filler: Red Power Crystal (#11186)", 8011186},
     {"Filler: Stemleaf Bracers (#11187)", 8011187},
+    {"Filler: Yellow Power Crystal (#11188)", 8011188},
     {"Filler: Woodland Robes (#11189)", 8011189},
     {"Filler: Viny Gloves (#11190)", 8011190},
     {"Filler: Farmer's Boots (#11191)", 8011191},
@@ -3501,20 +4149,30 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Engineer's Shield 1 (#11199)", 8011199},
     {"Filler: Engineer's Shield 2 (#11200)", 8011200},
     {"Filler: Engineer's Shield 3 (#11201)", 8011201},
+    {"Filler: Formula: Enchant Shield - Stamina (#11202)", 8011202},
+    {"Filler: Formula: Enchant Bracer - Greater Spirit (#11204)", 8011204},
+    {"Filler: Formula: Enchant Weapon - Demonslaying (#11208)", 8011208},
+    {"Filler: Formula: Enchant Shield - Frost Resistance (#11224)", 8011224},
+    {"Filler: Formula: Enchant Bracer - Greater Stamina (#11225)", 8011225},
+    {"Filler: Formula: Enchant Gloves - Riding Skill (#11226)", 8011226},
     {"Filler: Brightscale Girdle (#11229)", 8011229},
     {"Filler: Cragwood Maul (#11265)", 8011265},
     {"Filler: Lesser Magic Wand (#11287)", 8011287},
     {"Filler: Greater Magic Wand (#11288)", 8011288},
     {"Filler: Lesser Mystic Wand (#11289)", 8011289},
     {"Filler: Greater Mystic Wand (#11290)", 8011290},
+    {"Filler: Uther's Strength (#11302)", 8011302},
     {"Filler: Fine Shortbow (#11303)", 8011303},
     {"Filler: Fine Longbow (#11304)", 8011304},
     {"Filler: Dense Shortbow (#11305)", 8011305},
     {"Filler: Sturdy Recurve (#11306)", 8011306},
     {"Filler: Massive Longbow (#11307)", 8011307},
     {"Filler: Sylvan Shortbow (#11308)", 8011308},
+    {"Filler: Bloodpetal Sprout (#11315)", 8011315},
     {"Filler: Explorer's Knapsack (#11324)", 8011324},
+    {"Filler: Dark Iron Ale Mug (#11325)", 8011325},
     {"Filler: Tabard of Stormwind (#11364)", 8011364},
+    {"Filler: Dark Iron Ore (#11370)", 8011370},
     {"Filler: Blood of the Mountain (#11382)", 8011382},
     {"Filler: Mixed Berries (#11415)", 8011415},
     {"Filler: Goblin Engineer's Renewal Gift (#11422)", 8011422},
@@ -3525,12 +4183,20 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wine-stained Cloak (#11475)", 8011475},
     {"Filler: Loreskin Shoulders (#11502)", 8011502},
     {"Filler: Gamemaster's Slippers (#11508)", 8011508},
+    {"Filler: Tainted Vitriol (#11513)", 8011513},
+    {"Filler: Fel Creep (#11514)", 8011514},
     {"Filler: Silver Totem of Aquementas (#11522)", 8011522},
     {"Filler: Torwa's Pouch (#11568)", 8011568},
     {"Filler: Cactus Apple Surprise (#11584)", 8011584},
     {"Filler: Dark Iron Shoulders (#11605)", 8011605},
     {"Filler: Dark Iron Mail (#11606)", 8011606},
+    {"Filler: Plans: Dark Iron Mail (#11614)", 8011614},
+    {"Filler: Plans: Dark Iron Shoulders (#11615)", 8011615},
     {"Filler: Wayfarer's Knapsack (#11742)", 8011742},
+    {"Filler: Burning Essence (#11751)", 8011751},
+    {"Filler: Black Blood of the Tormented (#11752)", 8011752},
+    {"Filler: Eye of Kajal (#11753)", 8011753},
+    {"Filler: Black Diamond (#11754)", 8011754},
     {"Filler: Pet Bombling (#11825)", 8011825},
     {"Filler: Lil' Smoky (#11826)", 8011826},
     {"Filler: Master Builder's Shirt (#11840)", 8011840},
@@ -3591,6 +4257,14 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Relic Hunter Belt (#11936)", 8011936},
     {"Filler: Fat Sack of Coins (#11937)", 8011937},
     {"Filler: Sack of Gems (#11938)", 8011938},
+    {"Filler: Shiny Bracelet (#11939)", 8011939},
+    {"Filler: Sparkly Necklace (#11940)", 8011940},
+    {"Filler: False Documents (#11941)", 8011941},
+    {"Filler: Legal Documents (#11942)", 8011942},
+    {"Filler: Deed to Thandol Span (#11943)", 8011943},
+    {"Filler: Dark Iron Baby Booties (#11944)", 8011944},
+    {"Filler: Dark Iron Ring (#11945)", 8011945},
+    {"Filler: Fire Opal Necklace (#11946)", 8011946},
     {"Filler: Whipper Root Tuber (#11951)", 8011951},
     {"Filler: Bag of Empty Ooze Containers (#11955)", 8011955},
     {"Filler: Penance Spaulders (#11963)", 8011963},
@@ -3752,6 +4426,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Blue Sapphire (#12361)", 8012361},
     {"Filler: Arcane Crystal (#12363)", 8012363},
     {"Filler: Huge Emerald (#12364)", 8012364},
+    {"Filler: Dense Stone (#12365)", 8012365},
     {"Filler: Thorium Armor (#12405)", 8012405},
     {"Filler: Thorium Belt (#12406)", 8012406},
     {"Filler: Thorium Bracers (#12408)", 8012408},
@@ -3778,6 +4453,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Light Hunting Rifle (#12448)", 8012448},
     {"Filler: Primitive Bow (#12449)", 8012449},
     {"Filler: Bingles' Flying Gloves (#12522)", 8012522},
+    {"Filler: Roughshod Pike (#12533)", 8012533},
     {"Filler: Runic Plate Shoulders (#12610)", 8012610},
     {"Filler: Runic Plate Boots (#12611)", 8012611},
     {"Filler: Runic Plate Helm (#12612)", 8012612},
@@ -3786,6 +4462,23 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Savage Mail Tunic (#12615)", 8012615},
     {"Filler: Savage Mail Boots (#12616)", 8012616},
     {"Filler: Savage Mail Shoulders (#12617)", 8012617},
+    {"Filler: Plans: Thorium Armor (#12682)", 8012682},
+    {"Filler: Plans: Thorium Belt (#12683)", 8012683},
+    {"Filler: Plans: Thorium Bracers (#12684)", 8012684},
+    {"Filler: Plans: Radiant Belt (#12685)", 8012685},
+    {"Filler: Plans: Radiant Breastplate (#12689)", 8012689},
+    {"Filler: Plans: Wildthorn Mail (#12691)", 8012691},
+    {"Filler: Plans: Thorium Shield Spike (#12692)", 8012692},
+    {"Filler: Plans: Thorium Boots (#12693)", 8012693},
+    {"Filler: Plans: Thorium Helm (#12694)", 8012694},
+    {"Filler: Plans: Radiant Gloves (#12695)", 8012695},
+    {"Filler: Plans: Radiant Boots (#12697)", 8012697},
+    {"Filler: Plans: Radiant Circlet (#12702)", 8012702},
+    {"Filler: Plans: Storm Gauntlets (#12703)", 8012703},
+    {"Filler: Plans: Thorium Leggings (#12704)", 8012704},
+    {"Filler: Plans: Whitesoul Helm (#12711)", 8012711},
+    {"Filler: Plans: Radiant Leggings (#12713)", 8012713},
+    {"Filler: Frostwhisper's Embalming Fluid (#12736)", 8012736},
     {"Filler: Un'Goro Etherfruit (#12763)", 8012763},
     {"Filler: Thorium Greatsword (#12764)", 8012764},
     {"Filler: Inlaid Thorium Hammer (#12772)", 8012772},
@@ -3796,12 +4489,157 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Large Opal (#12799)", 8012799},
     {"Filler: Azerothian Diamond (#12800)", 8012800},
     {"Filler: Orb of Fire (#12805)", 8012805},
+    {"Filler: Unfired Plate Gauntlets (#12812)", 8012812},
     {"Filler: Winterfall Firewater (#12820)", 8012820},
+    {"Filler: Plans: Serenity (#12827)", 8012827},
+    {"Filler: Plans: Corruption (#12830)", 8012830},
+    {"Filler: Medallion of Faith (#12845)", 8012845},
     {"Filler: Argent Dawn Commission (#12846)", 8012846},
     {"Filler: Jade Bracers (#12866)", 8012866},
     {"Filler: Shawn's Super Special Swami Hat (#12904)", 8012904},
+    {"Filler: Ritual Candle (#12924)", 8012924},
+    {"Filler: Blood of Heroes (#12938)", 8012938},
+    {"Filler: Scarlet Cannonball (#12973)", 8012973},
+    {"Filler: The Black Knight (#12974)", 8012974},
+    {"Filler: Firebane Cloak (#12979)", 8012979},
+    {"Filler: Silver-linked Footguards (#12982)", 8012982},
+    {"Filler: Rakzur Club (#12983)", 8012983},
+    {"Filler: Skycaller (#12984)", 8012984},
+    {"Filler: Ring of Defense (#12985)", 8012985},
+    {"Filler: Darkweave Breeches (#12987)", 8012987},
+    {"Filler: Starsight Tunic (#12988)", 8012988},
+    {"Filler: Gargoyle's Bite (#12989)", 8012989},
+    {"Filler: Razor's Edge (#12990)", 8012990},
+    {"Filler: Searing Blade (#12992)", 8012992},
+    {"Filler: Thorbia's Gauntlets (#12994)", 8012994},
+    {"Filler: Band of Purification (#12996)", 8012996},
+    {"Filler: Redbeard Crest (#12997)", 8012997},
+    {"Filler: Magician's Mantle (#12998)", 8012998},
+    {"Filler: Drakewing Bands (#12999)", 8012999},
+    {"Filler: Lady Alizabeth's Pendant (#13002)", 8013002},
+    {"Filler: Lord Alexander's Battle Axe (#13003)", 8013003},
+    {"Filler: Torch of Austen (#13004)", 8013004},
+    {"Filler: Amy's Blanket (#13005)", 8013005},
+    {"Filler: Mageflame Cloak (#13007)", 8013007},
+    {"Filler: Dalewind Trousers (#13008)", 8013008},
+    {"Filler: Cow King's Hide (#13009)", 8013009},
+    {"Filler: Dreamsinger Legguards (#13010)", 8013010},
+    {"Filler: Silver-lined Belt (#13011)", 8013011},
+    {"Filler: Yorgen Bracers (#13012)", 8013012},
+    {"Filler: Elder Wizard's Mantle (#13013)", 8013013},
+    {"Filler: Axe of Rin'ji (#13014)", 8013014},
+    {"Filler: Killmaim (#13016)", 8013016},
+    {"Filler: Hellslayer Battle Axe (#13017)", 8013017},
+    {"Filler: Executioner's Cleaver (#13018)", 8013018},
+    {"Filler: Harpyclaw Short Bow (#13019)", 8013019},
+    {"Filler: Skystriker Bow (#13020)", 8013020},
+    {"Filler: Needle Threader (#13021)", 8013021},
+    {"Filler: Gryphonwing Long Bow (#13022)", 8013022},
+    {"Filler: Beazel's Basher (#13024)", 8013024},
+    {"Filler: Deadwood Sledge (#13025)", 8013025},
+    {"Filler: Heaven's Light (#13026)", 8013026},
+    {"Filler: Bonesnapper (#13027)", 8013027},
+    {"Filler: Umbral Crystal (#13029)", 8013029},
+    {"Filler: Basilisk Bone (#13030)", 8013030},
+    {"Filler: Orb of Mistmantle (#13031)", 8013031},
+    {"Filler: Sword of Corruption (#13032)", 8013032},
+    {"Filler: Zealot Blade (#13033)", 8013033},
+    {"Filler: Speedsteel Rapier (#13034)", 8013034},
+    {"Filler: Serpent Slicer (#13035)", 8013035},
+    {"Filler: Assassination Blade (#13036)", 8013036},
+    {"Filler: Crystalpine Stinger (#13037)", 8013037},
+    {"Filler: Swiftwind (#13038)", 8013038},
+    {"Filler: Skull Splitting Crossbow (#13039)", 8013039},
+    {"Filler: Heartseeking Crossbow (#13040)", 8013040},
+    {"Filler: Guardian Blade (#13041)", 8013041},
+    {"Filler: Sword of the Magistrate (#13042)", 8013042},
+    {"Filler: Blade of the Titans (#13043)", 8013043},
+    {"Filler: Demonslayer (#13044)", 8013044},
+    {"Filler: Viscous Hammer (#13045)", 8013045},
+    {"Filler: Blanchard's Stout (#13046)", 8013046},
+    {"Filler: Twig of the World Tree (#13047)", 8013047},
+    {"Filler: Looming Gavel (#13048)", 8013048},
+    {"Filler: Deanship Claymore (#13049)", 8013049},
+    {"Filler: Witchfury (#13051)", 8013051},
+    {"Filler: Warmonger (#13052)", 8013052},
+    {"Filler: Doombringer (#13053)", 8013053},
+    {"Filler: Grim Reaper (#13054)", 8013054},
+    {"Filler: Bonechewer (#13055)", 8013055},
+    {"Filler: Frenzied Striker (#13056)", 8013056},
+    {"Filler: Bloodpike (#13057)", 8013057},
+    {"Filler: Khoo's Point (#13058)", 8013058},
+    {"Filler: Stoneraven (#13059)", 8013059},
+    {"Filler: The Needler (#13060)", 8013060},
+    {"Filler: Thunderwood (#13062)", 8013062},
+    {"Filler: Starfaller (#13063)", 8013063},
+    {"Filler: Jaina's Firestarter (#13064)", 8013064},
+    {"Filler: Wand of Allistarj (#13065)", 8013065},
+    {"Filler: Wyrmslayer Spaulders (#13066)", 8013066},
+    {"Filler: Hydralick Armor (#13067)", 8013067},
+    {"Filler: Obsidian Greaves (#13068)", 8013068},
+    {"Filler: Sapphiron's Scale Boots (#13070)", 8013070},
+    {"Filler: Plated Fist of Hakoo (#13071)", 8013071},
+    {"Filler: Stonegrip Gauntlets (#13072)", 8013072},
+    {"Filler: Mugthol's Helm (#13073)", 8013073},
+    {"Filler: Golem Shard Leggings (#13074)", 8013074},
+    {"Filler: Giantslayer Bracers (#13076)", 8013076},
+    {"Filler: Girdle of Uther (#13077)", 8013077},
+    {"Filler: Shield of Thorsen (#13079)", 8013079},
+    {"Filler: Skullance Shield (#13081)", 8013081},
+    {"Filler: Mountainside Buckler (#13082)", 8013082},
+    {"Filler: Kaleidoscope Chain (#13084)", 8013084},
+    {"Filler: Horizon Choker (#13085)", 8013085},
+    {"Filler: River Pride Choker (#13087)", 8013087},
+    {"Filler: Gazlowe's Charm (#13088)", 8013088},
+    {"Filler: Skibi's Pendant (#13089)", 8013089},
+    {"Filler: Medallion of Grand Marshal Morris (#13091)", 8013091},
+    {"Filler: Blush Ember Ring (#13093)", 8013093},
+    {"Filler: The Queen's Jewel (#13094)", 8013094},
+    {"Filler: Assault Band (#13095)", 8013095},
+    {"Filler: Band of the Hierophant (#13096)", 8013096},
+    {"Filler: Thunderbrow Ring (#13097)", 8013097},
+    {"Filler: Moccasins of the White Hare (#13099)", 8013099},
+    {"Filler: Furen's Boots (#13100)", 8013100},
+    {"Filler: Wolfrunner Shoes (#13101)", 8013101},
+    {"Filler: Cassandra's Grace (#13102)", 8013102},
+    {"Filler: Pads of the Venom Spider (#13103)", 8013103},
+    {"Filler: Sutarn's Ring (#13105)", 8013105},
+    {"Filler: Glowing Magical Bracelets (#13106)", 8013106},
+    {"Filler: Tigerstrike Mantle (#13108)", 8013108},
+    {"Filler: Blackflame Cape (#13109)", 8013109},
+    {"Filler: Wolffear Harness (#13110)", 8013110},
+    {"Filler: Sandals of the Insurgent (#13111)", 8013111},
+    {"Filler: Winged Helm (#13112)", 8013112},
+    {"Filler: Troll's Bane Leggings (#13114)", 8013114},
+    {"Filler: Sheepshear Mantle (#13115)", 8013115},
+    {"Filler: Ogron's Sash (#13117)", 8013117},
+    {"Filler: Serpentine Sash (#13118)", 8013118},
+    {"Filler: Enchanted Kodo Bracers (#13119)", 8013119},
+    {"Filler: Deepfury Bracers (#13120)", 8013120},
+    {"Filler: Wing of the Whelpling (#13121)", 8013121},
+    {"Filler: Dark Phantom Cape (#13122)", 8013122},
+    {"Filler: Ravasaur Scale Boots (#13124)", 8013124},
+    {"Filler: Elven Chain Boots (#13125)", 8013125},
+    {"Filler: Battlecaller Gauntlets (#13126)", 8013126},
+    {"Filler: Frostreaver Crown (#13127)", 8013127},
+    {"Filler: High Bergg Helm (#13128)", 8013128},
+    {"Filler: Firemane Leggings (#13129)", 8013129},
+    {"Filler: Windrunner Legguards (#13130)", 8013130},
+    {"Filler: Sparkleshell Mantle (#13131)", 8013131},
+    {"Filler: Skeletal Shoulders (#13132)", 8013132},
+    {"Filler: Belt of the Gladiator (#13134)", 8013134},
+    {"Filler: Lordly Armguards (#13135)", 8013135},
+    {"Filler: Lil Timmy's Peashooter (#13136)", 8013136},
+    {"Filler: Ironweaver (#13137)", 8013137},
+    {"Filler: The Silencer (#13138)", 8013138},
+    {"Filler: Guttbuster (#13139)", 8013139},
+    {"Filler: Serenity Belt (#13144)", 8013144},
+    {"Filler: Enormous Ogre Belt (#13145)", 8013145},
+    {"Filler: Shell Launcher Shotgun (#13146)", 8013146},
     {"Filler: Smokey's Lighter (#13171)", 8013171},
     {"Filler: Voone's Twitchbow (#13175)", 8013175},
+    {"Filler: Stratholme Holy Water (#13180)", 8013180},
+    {"Filler: Crushridge Bindings (#13199)", 8013199},
     {"Filler: Crown of the Penitent (#13216)", 8013216},
     {"Filler: Band of the Penitent (#13217)", 8013217},
     {"Filler: Quartermaster Zigris' Footlocker (#13247)", 8013247},
@@ -3814,6 +4652,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Black Ram (#13328)", 8013328},
     {"Filler: Frost Ram (#13329)", 8013329},
     {"Filler: Dereks Radish Bag (#13330)", 8013330},
+    {"Filler: Letter from the Front (#13362)", 8013362},
+    {"Filler: Municipal Proclamation (#13363)", 8013363},
+    {"Filler: Fras Siabi's Advertisement (#13364)", 8013364},
+    {"Filler: Town Meeting Notice (#13365)", 8013365},
+    {"Filler: Ingenious Toy (#13366)", 8013366},
+    {"Filler: Wrapped Gift (#13367)", 8013367},
     {"Filler: Father Flame (#13371)", 8013371},
     {"Filler: Mighty Rage Potion (#13442)", 8013442},
     {"Filler: Superior Mana Potion (#13443)", 8013443},
@@ -3832,14 +4676,28 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Greater Holy Protection Potion (#13460)", 8013460},
     {"Filler: Greater Arcane Protection Potion (#13461)", 8013461},
     {"Filler: Purification Potion (#13462)", 8013462},
+    {"Filler: Dreamfoil (#13463)", 8013463},
+    {"Filler: Golden Sansam (#13464)", 8013464},
+    {"Filler: Mountain Silversage (#13465)", 8013465},
+    {"Filler: Plaguebloom (#13466)", 8013466},
+    {"Filler: Icecap (#13467)", 8013467},
+    {"Filler: Black Lotus (#13468)", 8013468},
     {"Filler: Felstone Good Luck Charm (#13473)", 8013473},
     {"Filler: Farmer Dalson's Shotgun (#13474)", 8013474},
     {"Filler: Dalson Family Wedding Ring (#13475)", 8013475},
+    {"Filler: Recipe: Transmute Undeath to Water (#13486)", 8013486},
+    {"Filler: Recipe: Transmute Water to Undeath (#13487)", 8013487},
+    {"Filler: Recipe: Transmute Life to Earth (#13488)", 8013488},
+    {"Filler: Recipe: Transmute Earth to Life (#13489)", 8013489},
+    {"Filler: Recipe: Greater Stoneshield Potion (#13490)", 8013490},
+    {"Filler: Recipe: Purification Potion (#13492)", 8013492},
+    {"Filler: Recipe: Greater Arcane Elixir (#13493)", 8013493},
     {"Filler: Potion of Petrification (#13506)", 8013506},
     {"Filler: Flask of the Titans (#13510)", 8013510},
     {"Filler: Flask of Distilled Wisdom (#13511)", 8013511},
     {"Filler: Flask of Supreme Power (#13512)", 8013512},
     {"Filler: Flask of Chromatic Resistance (#13513)", 8013513},
+    {"Filler: Recipe: Potion of Petrification (#13518)", 8013518},
     {"Filler: Darkbind Fingers (#13525)", 8013525},
     {"Filler: Flamescarred Girdle (#13526)", 8013526},
     {"Filler: Lavawalker Greaves (#13527)", 8013527},
@@ -3853,12 +4711,23 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Windshrieker Pauldrons (#13538)", 8013538},
     {"Filler: Banshee's Touch (#13539)", 8013539},
     {"Filler: Spectral Essence (#13544)", 8013544},
+    {"Filler: Shellfish (#13545)", 8013545},
     {"Filler: Bloodbelly Fish (#13546)", 8013546},
     {"Filler: Enriched Manna Biscuit (#13724)", 8013724},
     {"Filler: Winter Squid (#13755)", 8013755},
     {"Filler: Blessed Sunfruit (#13810)", 8013810},
     {"Filler: Necklace of the Dawn (#13811)", 8013811},
     {"Filler: Ring of the Dawn (#13812)", 8013812},
+    {"Filler: Fine Longsword (#13816)", 8013816},
+    {"Filler: Tapered Greatsword (#13817)", 8013817},
+    {"Filler: Jagged Axe (#13818)", 8013818},
+    {"Filler: Balanced War Axe (#13819)", 8013819},
+    {"Filler: Clout Mace (#13820)", 8013820},
+    {"Filler: Bulky Maul (#13821)", 8013821},
+    {"Filler: Spiked Dagger (#13822)", 8013822},
+    {"Filler: Stout War Staff (#13823)", 8013823},
+    {"Filler: Recurve Long Bow (#13824)", 8013824},
+    {"Filler: Primed Musket (#13825)", 8013825},
     {"Filler: Hot Wolf Ribs (#13851)", 8013851},
     {"Filler: Runecloth Belt (#13856)", 8013856},
     {"Filler: Runecloth Tunic (#13857)", 8013857},
@@ -3896,6 +4765,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Cindercloth Cloak (#14044)", 8014044},
     {"Filler: Cindercloth Pants (#14045)", 8014045},
     {"Filler: Runecloth Bag (#14046)", 8014046},
+    {"Filler: Runecloth (#14047)", 8014047},
+    {"Filler: Bolt of Runecloth (#14048)", 8014048},
     {"Filler: Tyrande's Staff (#14083)", 8014083},
     {"Filler: Beaded Sandals (#14086)", 8014086},
     {"Filler: Beaded Cuffs (#14087)", 8014087},
@@ -4225,6 +5096,26 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Elunarian Spaulders (#14463)", 8014463},
     {"Filler: Elunarian Silk Robes (#14464)", 8014464},
     {"Filler: Elunarian Belt (#14465)", 8014465},
+    {"Filler: Pattern: Frostweave Tunic (#14466)", 8014466},
+    {"Filler: Pattern: Frostweave Robe (#14467)", 8014467},
+    {"Filler: Pattern: Runecloth Tunic (#14470)", 8014470},
+    {"Filler: Pattern: Frostweave Gloves (#14474)", 8014474},
+    {"Filler: Pattern: Brightcloth Robe (#14478)", 8014478},
+    {"Filler: Pattern: Brightcloth Gloves (#14479)", 8014479},
+    {"Filler: Pattern: Brightcloth Cloak (#14484)", 8014484},
+    {"Filler: Pattern: Frostweave Pants (#14489)", 8014489},
+    {"Filler: Pattern: Runecloth Pants (#14491)", 8014491},
+    {"Filler: Pattern: Felcloth Boots (#14492)", 8014492},
+    {"Filler: Pattern: Brightcloth Pants (#14494)", 8014494},
+    {"Filler: Pattern: Felcloth Hood (#14496)", 8014496},
+    {"Filler: Pattern: Mooncloth Leggings (#14497)", 8014497},
+    {"Filler: Pattern: Runecloth Headband (#14498)", 8014498},
+    {"Filler: Pattern: Mooncloth Bag (#14499)", 8014499},
+    {"Filler: Pattern: Mooncloth Vest (#14501)", 8014501},
+    {"Filler: Pattern: Runecloth Shoulders (#14504)", 8014504},
+    {"Filler: Pattern: Felcloth Robe (#14506)", 8014506},
+    {"Filler: Pattern: Mooncloth Shoulders (#14507)", 8014507},
+    {"Filler: Pattern: Felcloth Shoulders (#14508)", 8014508},
     {"Filler: Prospector's Sash (#14559)", 8014559},
     {"Filler: Prospector's Boots (#14560)", 8014560},
     {"Filler: Prospector's Cuffs (#14561)", 8014561},
@@ -5130,6 +6021,15 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Brantwood Sash (#15707)", 8015707},
     {"Filler: Blight Leather Gloves (#15708)", 8015708},
     {"Filler: Gearforge Girdle (#15709)", 8015709},
+    {"Filler: Pattern: Runic Leather Gauntlets (#15731)", 8015731},
+    {"Filler: Pattern: Chimeric Boots (#15737)", 8015737},
+    {"Filler: Pattern: Warbear Harness (#15742)", 8015742},
+    {"Filler: Pattern: Heavy Scorpid Belt (#15743)", 8015743},
+    {"Filler: Pattern: Runic Leather Belt (#15745)", 8015745},
+    {"Filler: Pattern: Chimeric Leggings (#15746)", 8015746},
+    {"Filler: Pattern: Chimeric Vest (#15755)", 8015755},
+    {"Filler: Pattern: Wicked Leather Pants (#15757)", 8015757},
+    {"Filler: Pattern: Runic Leather Pants (#15765)", 8015765},
     {"Filler: Beaststalker Blade (#15782)", 8015782},
     {"Filler: Beasthunter Dagger (#15783)", 8015783},
     {"Filler: Crystal Breeze Mantle (#15784)", 8015784},
@@ -5138,9 +6038,12 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Deep River Cloak (#15789)", 8015789},
     {"Filler: Turquoise Sash (#15791)", 8015791},
     {"Filler: Plow Wood Spaulders (#15792)", 8015792},
+    {"Filler: A Chewed Bone (#15793)", 8015793},
+    {"Filler: Ripped Ogre Loincloth (#15794)", 8015794},
     {"Filler: Emerald Mist Gauntlets (#15795)", 8015795},
     {"Filler: Seaspray Bracers (#15796)", 8015796},
     {"Filler: Shining Armplates (#15797)", 8015797},
+    {"Filler: Chipped Ogre Teeth (#15798)", 8015798},
     {"Filler: Cerise Drape (#15804)", 8015804},
     {"Filler: Light Crossbow (#15807)", 8015807},
     {"Filler: Fine Light Crossbow (#15808)", 8015808},
@@ -5252,6 +6155,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: PVP Cloth Robe Horde (#16036)", 8016036},
     {"Filler: PVP Cloth Legs Horde (#16037)", 8016037},
     {"Filler: PVP Cloth Shoulder Horde (#16038)", 8016038},
+    {"Filler: Schematic: Thorium Rifle (#16043)", 8016043},
+    {"Filler: Schematic: Lifelike Mechanical Toad (#16044)", 8016044},
+    {"Filler: Schematic: Thorium Shells (#16051)", 8016051},
+    {"Filler: Schematic: Arcane Bomb (#16055)", 8016055},
     {"Filler: Explorer's Knapsack (#16057)", 8016057},
     {"Filler: Common Brown Shirt (#16059)", 8016059},
     {"Filler: Common White Shirt (#16060)", 8016060},
@@ -5261,6 +6168,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wild Ricecake (#16169)", 8016169},
     {"Filler: Steamed Mandu (#16170)", 8016170},
     {"Filler: Shinsollo (#16171)", 8016171},
+    {"Filler: Formula: Enchant Boots - Greater Stamina (#16215)", 8016215},
+    {"Filler: Formula: Enchant Bracer - Superior Spirit (#16218)", 8016218},
+    {"Filler: Formula: Enchant Boots - Spirit (#16220)", 8016220},
+    {"Filler: Formula: Enchant Boots - Greater Agility (#16245)", 8016245},
+    {"Filler: Formula: Enchant Bracer - Superior Stamina (#16251)", 8016251},
     {"Filler: Demonic Figurine (#16583)", 8016583},
     {"Filler: Moon Robes of Elune (#16604)", 8016604},
     {"Filler: Friar's Robes of the Light (#16605)", 8016605},
@@ -5277,6 +6189,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Rugwood Mantle (#16739)", 8016739},
     {"Filler: Shredder Operating Gloves (#16740)", 8016740},
     {"Filler: Oilrag Handwraps (#16741)", 8016741},
+    {"Filler: Broken Lock (#16747)", 8016747},
+    {"Filler: Padded Lining (#16748)", 8016748},
     {"Filler: Undermine Clam Chowder (#16766)", 8016766},
     {"Filler: Furbolg Medicine Pouch (#16768)", 8016768},
     {"Filler: Furbolg Medicine Totem (#16769)", 8016769},
@@ -5346,6 +6260,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Gingerbread Cookie (#17197)", 8017197},
     {"Filler: Egg Nog (#17198)", 8017198},
     {"Filler: Bad Egg Nog (#17199)", 8017199},
+    {"Filler: Snowball (#17202)", 8017202},
     {"Filler: Spider Sausage (#17222)", 8017222},
     {"Filler: Candy Cane (#17344)", 8017344},
     {"Filler: Major Healing Draught (#17348)", 8017348},
@@ -5401,12 +6316,15 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Forest Mushroom Cap (#18002)", 8018002},
     {"Filler: Tender Wolf Steak (#18045)", 8018045},
     {"Filler: Sleeveless T-Shirt (#18231)", 8018231},
+    {"Filler: Ogre Tannin (#18240)", 8018240},
     {"Filler: Major Rejuvenation Potion (#18253)", 8018253},
     {"Filler: Runn Tum Tuber Surprise (#18254)", 8018254},
     {"Filler: Runn Tum Tuber (#18255)", 8018255},
+    {"Filler: Gordok Courtyard Key (#18266)", 8018266},
     {"Filler: Evermurky (#18287)", 8018287},
     {"Filler: Molasses Firewater (#18288)", 8018288},
     {"Filler: Elixir of Greater Water Breathing (#18294)", 8018294},
+    {"Filler: Thornling Seed (#18297)", 8018297},
     {"Filler: Hyjal Nectar (#18300)", 8018300},
     {"Filler: Lethtendris's Wand (#18301)", 8018301},
     {"Filler: Band of Vigor (#18302)", 8018302},
@@ -5414,6 +6332,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Gloves of Shadowy Mist (#18306)", 8018306},
     {"Filler: Riptide Shoes (#18307)", 8018307},
     {"Filler: Clever Hat (#18308)", 8018308},
+    {"Filler: Pristine Black Diamond (#18335)", 8018335},
     {"Filler: Orphic Bracers (#18337)", 8018337},
     {"Filler: Eidolon Cloak (#18339)", 8018339},
     {"Filler: Petrified Band (#18343)", 8018343},
@@ -5425,10 +6344,25 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Magically Sealed Bracers (#18351)", 8018351},
     {"Filler: Petrified Bark Shield (#18352)", 8018352},
     {"Filler: Stoneflower Staff (#18353)", 8018353},
+    {"Filler: Garona: A Study on Stealth and Treachery (#18356)", 8018356},
+    {"Filler: Codex of Defense (#18357)", 8018357},
+    {"Filler: The Arcanist's Cookbook (#18358)", 8018358},
+    {"Filler: The Light and How to Swing It (#18359)", 8018359},
+    {"Filler: Harnessing Shadows (#18360)", 8018360},
+    {"Filler: The Greatest Race of Hunters (#18361)", 8018361},
+    {"Filler: Holy Bologna: What the Light Won't Tell You (#18362)", 8018362},
+    {"Filler: Frost Shock and You (#18363)", 8018363},
+    {"Filler: The Emerald Dream (#18364)", 8018364},
+    {"Filler: A Thoroughly Read Copy of \"Nat Pagle's Extreme' Anglin.\" (#18365)", 8018365},
     {"Filler: Ring of Living Stone (#18400)", 8018400},
     {"Filler: Glowing Crystal Ring (#18402)", 8018402},
     {"Filler: Sprinter's Sword (#18410)", 8018410},
     {"Filler: Spry Boots (#18411)", 8018411},
+    {"Filler: Pattern: Belt of the Archmage (#18414)", 8018414},
+    {"Filler: Pattern: Felcloth Gloves (#18415)", 8018415},
+    {"Filler: Pattern: Inferno Gloves (#18416)", 8018416},
+    {"Filler: Pattern: Mooncloth Gloves (#18417)", 8018417},
+    {"Filler: Pattern: Cloak of Warding (#18418)", 8018418},
     {"Filler: Kreeg's Mug (#18425)", 8018425},
     {"Filler: Robe of Combustion (#18450)", 8018450},
     {"Filler: Hyena Hide Belt (#18451)", 8018451},
@@ -5446,6 +6380,24 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Scarab Plate Helm (#18480)", 8018480},
     {"Filler: Skullcracking Mace (#18481)", 8018481},
     {"Filler: Ogre Toothpick Shooter (#18482)", 8018482},
+    {"Filler: Redoubt Cloak (#18495)", 8018495},
+    {"Filler: Barrier Shield (#18499)", 8018499},
+    {"Filler: Tarnished Elven Ring (#18500)", 8018500},
+    {"Filler: Felvine Shard (#18501)", 8018501},
+    {"Filler: Pattern: Girdle of Insight (#18514)", 8018514},
+    {"Filler: Pattern: Mongoose Boots (#18515)", 8018515},
+    {"Filler: Pattern: Swift Flight Bracers (#18516)", 8018516},
+    {"Filler: Pattern: Chromatic Cloak (#18517)", 8018517},
+    {"Filler: Pattern: Hide of the Wild (#18518)", 8018518},
+    {"Filler: Pattern: Shifting Cloak (#18519)", 8018519},
+    {"Filler: Cyclone Spaulders (#18528)", 8018528},
+    {"Filler: Elemental Plate Girdle (#18529)", 8018529},
+    {"Filler: Ogre Forged Hauberk (#18530)", 8018530},
+    {"Filler: Unyielding Maul (#18531)", 8018531},
+    {"Filler: Mindsurge Robe (#18532)", 8018532},
+    {"Filler: Gordok Bracers of Power (#18533)", 8018533},
+    {"Filler: Rod of the Ogre Magi (#18534)", 8018534},
+    {"Filler: Counterattack Lodestone (#18537)", 8018537},
     {"Filler: Orcish Orphan Whistle (#18597)", 8018597},
     {"Filler: Human Orphan Whistle (#18598)", 8018598},
     {"Filler: Keen Machete (#18610)", 8018610},
@@ -5455,13 +6407,24 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Styleen's Sour Suckerpop (#18633)", 8018633},
     {"Filler: Bellara's Nutterbar (#18635)", 8018635},
     {"Filler: Major Recombobulator (#18637)", 8018637},
+    {"Filler: The Eye of Divinity (#18646)", 8018646},
+    {"Filler: Schematic: Major Recombobulator (#18655)", 8018655},
     {"Filler: Elemental Ember (#18672)", 8018672},
     {"Filler: Hardened Stone Band (#18674)", 8018674},
     {"Filler: Zephyr Cloak (#18677)", 8018677},
     {"Filler: Frigid Ring (#18679)", 8018679},
+    {"Filler: Coldstone Slippers (#18697)", 8018697},
+    {"Filler: Malefic Bracers (#18700)", 8018700},
+    {"Filler: Ancient Petrified Leaf (#18703)", 8018703},
+    {"Filler: Arena Master (#18706)", 8018706},
+    {"Filler: Arena Wristguards (#18709)", 8018709},
+    {"Filler: Arena Bracers (#18710)", 8018710},
+    {"Filler: Arena Bands (#18711)", 8018711},
+    {"Filler: Arena Vambraces (#18712)", 8018712},
     {"Filler: Reins of the Swift Dawnsaber (#18768)", 8018768},
     {"Filler: Combat Healing Potion (#18839)", 8018839},
     {"Filler: Combat Mana Potion (#18841)", 8018841},
+    {"Filler: Chambermaid Pillaclencher's Pillow (#18950)", 8018950},
     {"Filler: Evonice's Landin' Pilla (#18951)", 8018951},
     {"Filler: Brushwood Blade (#18957)", 8018957},
     {"Filler: Turtle Egg (Loggerhead) (#18964)", 8018964},
@@ -5526,14 +6489,27 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Maelstrom's Tendril (#19618)", 8019618},
     {"Filler: Harvest Bread (#19696)", 8019696},
     {"Filler: Bounty of the Harvest (#19697)", 8019697},
+    {"Filler: Bloodvine (#19726)", 8019726},
+    {"Filler: Blood Scythe (#19727)", 8019727},
     {"Filler: Souldarite (#19774)", 8019774},
     {"Filler: Rockhide Strongfish (#19808)", 8019808},
+    {"Filler: Punctured Voodoo Doll (#19813)", 8019813},
+    {"Filler: Punctured Voodoo Doll (#19814)", 8019814},
+    {"Filler: Punctured Voodoo Doll (#19815)", 8019815},
+    {"Filler: Punctured Voodoo Doll (#19816)", 8019816},
+    {"Filler: Punctured Voodoo Doll (#19817)", 8019817},
+    {"Filler: Punctured Voodoo Doll (#19818)", 8019818},
+    {"Filler: Punctured Voodoo Doll (#19819)", 8019819},
+    {"Filler: Punctured Voodoo Doll (#19820)", 8019820},
+    {"Filler: Punctured Voodoo Doll (#19821)", 8019821},
     {"Filler: Panther Hide Sack (#19914)", 8019914},
     {"Filler: Nat Pagle's Extreme Anglin' Boots (#19969)", 8019969},
     {"Filler: Lucky Fishing Hat (#19972)", 8019972},
+    {"Filler: Zulian Mudskunk (#19975)", 8019975},
     {"Filler: Harvest Fruit (#19994)", 8019994},
     {"Filler: Harvest Boar (#19995)", 8019995},
     {"Filler: Harvest Fish (#19996)", 8019996},
+    {"Filler: Harvest Nectar (#19997)", 8019997},
     {"Filler: Greater Dreamless Sleep Potion (#20002)", 8020002},
     {"Filler: Mighty Troll's Blood Elixir (#20004)", 8020004},
     {"Filler: Mageblood Elixir (#20007)", 8020007},
@@ -5676,6 +6652,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Citrine Ring of Rapid Healing (#20961)", 8020961},
     {"Filler: Jade Pendant of Blasting (#20966)", 8020966},
     {"Filler: Citrine Pendant of Golden Healing (#20967)", 8020967},
+    {"Filler: Design: Citrine Pendant of Golden Healing (#20976)", 8020976},
     {"Filler: Recruit's Shortsword (#20977)", 8020977},
     {"Filler: Apprentice's Staff (#20978)", 8020978},
     {"Filler: Warder's Axe (#20979)", 8020979},
@@ -5705,6 +6682,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Darnassus Kimchi Pie (#21030)", 8021030},
     {"Filler: Cabbage Kimchi (#21031)", 8021031},
     {"Filler: Radish Kimchi (#21033)", 8021033},
+    {"Filler: Hardpacked Snowball (#21038)", 8021038},
     {"Filler: Narain's Turban (#21039)", 8021039},
     {"Filler: Narain's Robe (#21040)", 8021040},
     {"Filler: Narain's Special Kit (#21042)", 8021042},
@@ -5720,6 +6698,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Scarab Bag (#21156)", 8021156},
     {"Filler: Festive Green Dress (#21157)", 8021157},
     {"Filler: Baby Shark (#21168)", 8021168},
+    {"Filler: Empty Festive Mug (#21174)", 8021174},
     {"Filler: Symbol of Kings (#21177)", 8021177},
     {"Filler: Carefully Wrapped Present (#21191)", 8021191},
     {"Filler: D'Sak's Sack (#21193)", 8021193},
@@ -5735,6 +6714,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Winter Veil Candy (#21240)", 8021240},
     {"Filler: Winter Veil Cookie (#21254)", 8021254},
     {"Filler: Logistics Assignment (#21266)", 8021266},
+    {"Filler: Toasting Goblet (#21267)", 8021267},
     {"Filler: Gently Shaken Gift (#21270)", 8021270},
     {"Filler: Gently Shaken Gift (#21271)", 8021271},
     {"Filler: Tranquil Mechanical Yeti (#21277)", 8021277},
@@ -5771,6 +6751,16 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Festive Blue Pant Suit (#21544)", 8021544},
     {"Filler: Elixir of Greater Firepower (#21546)", 8021546},
     {"Filler: Striped Yellowtail (#21552)", 8021552},
+    {"Filler: Small Red Rocket (#21557)", 8021557},
+    {"Filler: Small Blue Rocket (#21558)", 8021558},
+    {"Filler: Small Green Rocket (#21559)", 8021559},
+    {"Filler: Small White Rocket (#21561)", 8021561},
+    {"Filler: Small Yellow Rocket (#21562)", 8021562},
+    {"Filler: Large Blue Rocket (#21589)", 8021589},
+    {"Filler: Large Green Rocket (#21590)", 8021590},
+    {"Filler: Large Red Rocket (#21592)", 8021592},
+    {"Filler: Large White Rocket (#21593)", 8021593},
+    {"Filler: Large Yellow Rocket (#21595)", 8021595},
     {"Filler: Lunar Festival Fireworks Pack (#21640)", 8021640},
     {"Filler: Elune's Candle (#21713)", 8021713},
     {"Filler: Moonglow (#21721)", 8021721},
@@ -5800,6 +6790,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Heart Candy (#21821)", 8021821},
     {"Filler: Heart Candy (#21822)", 8021822},
     {"Filler: Heart Candy (#21823)", 8021823},
+    {"Filler: Bolt of Netherweave (#21840)", 8021840},
     {"Filler: Netherweave Bag (#21841)", 8021841},
     {"Filler: Imbued Netherweave Bag (#21843)", 8021843},
     {"Filler: Netherweave Bracers (#21849)", 8021849},
@@ -5812,11 +6803,17 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Spellfire Bag (#21858)", 8021858},
     {"Filler: Ebon Shadowbag (#21872)", 8021872},
     {"Filler: Primal Mooncloth Bag (#21876)", 8021876},
+    {"Filler: Netherweave Cloth (#21877)", 8021877},
     {"Filler: Flame Spessarite (#21929)", 8021929},
     {"Filler: Woven Copper Ring (#21931)", 8021931},
     {"Filler: Heavy Copper Ring (#21932)", 8021932},
     {"Filler: Thick Bronze Necklace (#21933)", 8021933},
     {"Filler: Ornate Tigerseye Necklace (#21934)", 8021934},
+    {"Filler: Design: Golden Hare (#21940)", 8021940},
+    {"Filler: Design: Truesilver Boar (#21944)", 8021944},
+    {"Filler: Design: Gem Studded Band (#21947)", 8021947},
+    {"Filler: Design: Ruby Serpent (#21949)", 8021949},
+    {"Filler: Design: Emerald Owl (#21953)", 8021953},
     {"Filler: Conjured Glacier Water (#22018)", 8022018},
     {"Filler: Conjured Croissant (#22019)", 8022019},
     {"Filler: Ysida's Satchel (#22137)", 8022137},
@@ -5824,6 +6821,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wild Quillvine (#22148)", 8022148},
     {"Filler: Anthion's Pouch (#22152)", 8022152},
     {"Filler: Silver Shafted Arrow (#22200)", 8022200},
+    {"Filler: Small Obsidian Shard (#22202)", 8022202},
+    {"Filler: Large Obsidian Shard (#22203)", 8022203},
+    {"Filler: Black Steel Bindings (#22205)", 8022205},
     {"Filler: Bouquet of Red Roses (#22206)", 8022206},
     {"Filler: Handful of Rose Petals (#22218)", 8022218},
     {"Filler: Zigris' Footlocker (#22233)", 8022233},
@@ -5839,6 +6839,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Herb Pouch (#22250)", 8022250},
     {"Filler: Cenarion Herb Bag (#22251)", 8022251},
     {"Filler: Satchel of Cenarius (#22252)", 8022252},
+    {"Filler: Wand of Eternal Light (#22254)", 8022254},
+    {"Filler: Magma Forged Band (#22255)", 8022255},
+    {"Filler: Mana Shaping Handwraps (#22256)", 8022256},
     {"Filler: Love Fool (#22261)", 8022261},
     {"Filler: Lovely Red Dress (#22276)", 8022276},
     {"Filler: Red Dinner Suit (#22277)", 8022277},
@@ -5847,17 +6850,32 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Lovely Purple Dress (#22280)", 8022280},
     {"Filler: Blue Dinner Suit (#22281)", 8022281},
     {"Filler: Purple Dinner Suit (#22282)", 8022282},
+    {"Filler: Ironweave Robe (#22301)", 8022301},
+    {"Filler: Ironweave Mantle (#22305)", 8022305},
+    {"Filler: Lefty's Brass Knuckle (#22317)", 8022317},
+    {"Filler: Malgen's Long Bow (#22318)", 8022318},
     {"Filler: Mux's Quality Goods (#22320)", 8022320},
     {"Filler: Winter Kimchi (#22324)", 8022324},
+    {"Filler: Amulet of the Redeemed (#22327)", 8022327},
+    {"Filler: Legplates of Vigilance (#22328)", 8022328},
+    {"Filler: Scepter of Interminable Focus (#22329)", 8022329},
+    {"Filler: Shroud of Arcane Mastery (#22330)", 8022330},
+    {"Filler: Band of Mending (#22334)", 8022334},
     {"Filler: Void Sphere (#22459)", 8022459},
     {"Filler: Prismatic Sphere (#22460)", 8022460},
     {"Filler: Sealed Craftsman's Writ (#22568)", 8022568},
     {"Filler: Courier's Bag (#22571)", 8022571},
+    {"Filler: Mote of Earth (#22573)", 8022573},
+    {"Filler: Mote of Fire (#22574)", 8022574},
+    {"Filler: Mote of Life (#22575)", 8022575},
+    {"Filler: Mote of Mana (#22576)", 8022576},
     {"Filler: Crunchy Spider Surprise (#22645)", 8022645},
     {"Filler: Hive'Ashi Dossier (#22648)", 8022648},
     {"Filler: Hive'Regal Dossier (#22649)", 8022649},
     {"Filler: Hive'Zora Dossier (#22650)", 8022650},
     {"Filler: Supply Bag (#22679)", 8022679},
+    {"Filler: Frozen Rune (#22682)", 8022682},
+    {"Filler: Bloodthistle (#22710)", 8022710},
     {"Filler: Bloodsail Shirt (#22742)", 8022742},
     {"Filler: Bloodsail Boots (#22744)", 8022744},
     {"Filler: Bloodsail Pants (#22745)", 8022745},
@@ -5865,6 +6883,17 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Sin'dorei Cloak of Warding (#22782)", 8022782},
     {"Filler: Sunwell Blade (#22783)", 8022783},
     {"Filler: Sunwell Orb (#22784)", 8022784},
+    {"Filler: Felweed (#22785)", 8022785},
+    {"Filler: Dreaming Glory (#22786)", 8022786},
+    {"Filler: Ragveil (#22787)", 8022787},
+    {"Filler: Flame Cap (#22788)", 8022788},
+    {"Filler: Terocone (#22789)", 8022789},
+    {"Filler: Ancient Lichen (#22790)", 8022790},
+    {"Filler: Netherbloom (#22791)", 8022791},
+    {"Filler: Nightmare Vine (#22792)", 8022792},
+    {"Filler: Mana Thistle (#22793)", 8022793},
+    {"Filler: Fel Lotus (#22794)", 8022794},
+    {"Filler: Fel Blossom (#22795)", 8022795},
     {"Filler: Elixir of Camouflage (#22823)", 8022823},
     {"Filler: Elixir of Major Strength (#22824)", 8022824},
     {"Filler: Elixir of Healing Power (#22825)", 8022825},
@@ -6017,6 +7046,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Engraved Sword (#23421)", 8023421},
     {"Filler: Engraved Dagger (#23422)", 8023422},
     {"Filler: Mercenary Greatsword (#23423)", 8023423},
+    {"Filler: Fel Iron Ore (#23424)", 8023424},
+    {"Filler: Adamantite Ore (#23425)", 8023425},
+    {"Filler: Khorium Ore (#23426)", 8023426},
+    {"Filler: Eternium Ore (#23427)", 8023427},
     {"Filler: Mercenary Clout (#23429)", 8023429},
     {"Filler: Mercenary Sword (#23430)", 8023430},
     {"Filler: Mercenary Stiletto (#23431)", 8023431},
@@ -6031,6 +7064,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Dawnstone (#23440)", 8023440},
     {"Filler: Nightseye (#23441)", 8023441},
     {"Filler: Goldenmist Special Brew (#23444)", 8023444},
+    {"Filler: Fel Iron Bar (#23445)", 8023445},
+    {"Filler: Adamantite Bar (#23446)", 8023446},
+    {"Filler: Eternium Bar (#23447)", 8023447},
+    {"Filler: Khorium Bar (#23449)", 8023449},
     {"Filler: Rugged Trapper's Pants (#23471)", 8023471},
     {"Filler: Recruit's Shirt (#23473)", 8023473},
     {"Filler: Recruit's Boots (#23475)", 8023475},
@@ -6042,12 +7079,14 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fel Iron Breastplate (#23489)", 8023489},
     {"Filler: Fel Iron Chain Tunic (#23490)", 8023490},
     {"Filler: Fel Iron Chain Gloves (#23491)", 8023491},
+    {"Filler: Suntouched Special Reserve (#23492)", 8023492},
     {"Filler: Fel Iron Chain Coif (#23493)", 8023493},
     {"Filler: Fel Iron Chain Bracers (#23494)", 8023494},
     {"Filler: Springpaw Appetizer (#23495)", 8023495},
     {"Filler: Fel Iron Hatchet (#23497)", 8023497},
     {"Filler: Fel Iron Hammer (#23498)", 8023498},
     {"Filler: Fel Iron Greatsword (#23499)", 8023499},
+    {"Filler: Bloodthistle Petal (#23501)", 8023501},
     {"Filler: Adamantite Maul (#23502)", 8023502},
     {"Filler: Adamantite Cleaver (#23503)", 8023503},
     {"Filler: Adamantite Dagger (#23504)", 8023504},
@@ -6069,6 +7108,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fel Iron Toolbox (#23774)", 8023774},
     {"Filler: Titanium Toolbox (#23775)", 8023775},
     {"Filler: Tree Disguise Kit (#23792)", 8023792},
+    {"Filler: Heavy Knothide Leather (#23793)", 8023793},
     {"Filler: Healing Potion Injector (#23822)", 8023822},
     {"Filler: Mana Potion Injector (#23823)", 8023823},
     {"Filler: Nolkai's Lantern (#23844)", 8023844},
@@ -6078,6 +7118,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Potion of Water Breathing (#23871)", 8023871},
     {"Filler: Blood Elf Bandit Mask (#23909)", 8023909},
     {"Filler: Bulging Sack of Silver (#23921)", 8023921},
+    {"Filler: Rat Skeleton (#23922)", 8023922},
     {"Filler: Amani Sacrificial Dagger (#23923)", 8023923},
     {"Filler: Robes of Silvermoon (#23924)", 8023924},
     {"Filler: Azure Watch Robes (#23931)", 8023931},
@@ -6144,9 +7185,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Battle Worn Gauntlets (#24141)", 8024141},
     {"Filler: Battle Worn Gloves (#24142)", 8024142},
     {"Filler: Battle Worn Handguards (#24144)", 8024144},
+    {"Filler: Copper Powder (#24186)", 8024186},
     {"Filler: Soft Leather Belt (#24227)", 8024227},
     {"Filler: Green Chain Belt (#24241)", 8024241},
+    {"Filler: Glowcap (#24245)", 8024245},
+    {"Filler: Sanguine Hibiscus (#24246)", 8024246},
     {"Filler: Bag of Jewels (#24270)", 8024270},
+    {"Filler: Mature Spore Sac (#24290)", 8024290},
     {"Filler: Wheel of the Lost Hope (#24334)", 8024334},
     {"Filler: Fireproof Satchel (#24336)", 8024336},
     {"Filler: Hellfire Spineleaf (#24338)", 8024338},
@@ -6165,6 +7210,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Blade of the Hand (#24352)", 8024352},
     {"Filler: Crossbow of the Hand (#24353)", 8024353},
     {"Filler: Staff of the Hand (#24354)", 8024354},
+    {"Filler: Unidentified Plant Parts (#24401)", 8024401},
     {"Filler: Package of Identified Plants (#24402)", 8024402},
     {"Filler: Beaten Chain Leggings (#24423)", 8024423},
     {"Filler: Rough Leather Leggings (#24424)", 8024424},
@@ -6947,6 +7993,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Feral Warp-Staff (#25335)", 8025335},
     {"Filler: Splintering Greatstaff (#25336)", 8025336},
     {"Filler: Swarming Sting-Staff (#25337)", 8025337},
+    {"Filler: Oshu'gun Crystal Fragment (#25416)", 8025416},
     {"Filler: Unmarked Bag of Gems (#25419)", 8025419},
     {"Filler: Bulging Sack of Gems (#25422)", 8025422},
     {"Filler: Bag of Premium Gems (#25423)", 8025423},
@@ -7065,6 +8112,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Oshu'gun Relic (#25634)", 8025634},
     {"Filler: Talbuk Cape (#25636)", 8025636},
     {"Filler: Ethereal Sash (#25637)", 8025637},
+    {"Filler: Knothide Leather Scraps (#25649)", 8025649},
     {"Filler: Felscale Gloves (#25654)", 8025654},
     {"Filler: Felscale Boots (#25655)", 8025655},
     {"Filler: Felscale Pants (#25656)", 8025656},
@@ -7306,6 +8354,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Soap on a Rope (#27978)", 8027978},
     {"Filler: Stone of Stupendous Springing Strides (#27979)", 8027979},
     {"Filler: Charm of Potent and Powerful Passions (#27982)", 8027982},
+    {"Filler: Shadow Labyrinth Key (#27991)", 8027991},
     {"Filler: Infallible Tikbalang Ward (#27992)", 8027992},
     {"Filler: Crazy Cenarion Cloak (#28026)", 8028026},
     {"Filler: Lunatic's Choker (#28027)", 8028027},
@@ -7352,6 +8401,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Tranquillien Defender's Girdle (#28162)", 8028162},
     {"Filler: Maltendis's Handguards (#28163)", 8028163},
     {"Filler: Tranquillien Flamberge (#28164)", 8028164},
+    {"Filler: Totem of the Void (#28248)", 8028248},
+    {"Filler: Capacitus' Cloak of Calibration (#28249)", 8028249},
+    {"Filler: Vestia's Pauldrons of Inner Grace (#28250)", 8028250},
+    {"Filler: Boots of the Glade-Keeper (#28251)", 8028251},
+    {"Filler: Bloodfyre Robes of Annihilation (#28252)", 8028252},
     {"Filler: Don Carlos Tequila (#28284)", 8028284},
     {"Filler: Smooth Golden Draenite (#28290)", 8028290},
     {"Filler: Invoker's Signet (#28303)", 8028303},
@@ -7433,6 +8487,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Abyssal Shroud (#29400)", 8029400},
     {"Filler: Sparkling Southshore Cider (#29401)", 8029401},
     {"Filler: Jessen's Special Slop (#29412)", 8029412},
+    {"Filler: Badge of Justice (#29434)", 8029434},
+    {"Filler: Bloodmaul Brutebane Brew (#29443)", 8029443},
     {"Filler: Mag'har Mild Cheese (#29448)", 8029448},
     {"Filler: Bladespire Bagel (#29449)", 8029449},
     {"Filler: Telaari Grapes (#29450)", 8029450},
@@ -7442,6 +8498,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Silverwine (#29454)", 8029454},
     {"Filler: Amani Scimitar (#29518)", 8029518},
     {"Filler: Reinforced Mining Bag (#29540)", 8029540},
+    {"Filler: Embalming Fluid (#29573)", 8029573},
+    {"Filler: Mummified Parts (#29574)", 8029574},
+    {"Filler: Troll Keepsake (#29577)", 8029577},
     {"Filler: Sinister Scimitar (#29583)", 8029583},
     {"Filler: Throat Piercers (#29584)", 8029584},
     {"Filler: Kirin'Var Journeyman's Belt (#29771)", 8029771},
@@ -7606,6 +8665,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Stromgarde Muenster (#30458)", 8030458},
     {"Filler: Leafblade Dagger (#30504)", 8030504},
     {"Filler: Ghostclaw Tunic (#30505)", 8030505},
+    {"Filler: Snipe Egg (#30506)", 8030506},
+    {"Filler: Lucky Rock (#30507)", 8030507},
+    {"Filler: Pickled Murloc Head (#30508)", 8030508},
+    {"Filler: Armor Fragment (#30509)", 8030509},
     {"Filler: Nether Guards (#30514)", 8030514},
     {"Filler: Junior Technician 3rd Grade Goggles (#30515)", 8030515},
     {"Filler: Chief Engineer's Belt (#30516)", 8030516},
@@ -7743,7 +8806,43 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Soothing Amethyst (#31117)", 8031117},
     {"Filler: Pulsing Amethyst (#31118)", 8031118},
     {"Filler: Overseer Disguise (#31122)", 8031122},
+    {"Filler: Boots of the Decimator (#31125)", 8031125},
+    {"Filler: Gloves of Ferocity (#31126)", 8031126},
+    {"Filler: Hauberk of Totemic Rage (#31127)", 8031127},
+    {"Filler: Sash of Silent Blades (#31131)", 8031131},
+    {"Filler: Leggings of Concentrated Darkness (#31133)", 8031133},
+    {"Filler: Blade of Misfortune (#31134)", 8031134},
+    {"Filler: Breastplate of Blade Turning (#31136)", 8031136},
+    {"Filler: Gauntlets of Purification (#31137)", 8031137},
+    {"Filler: Storm Lord's Girdle (#31138)", 8031138},
+    {"Filler: Fist of Reckoning (#31139)", 8031139},
+    {"Filler: Cloak of Entropy (#31140)", 8031140},
+    {"Filler: Blade of Trapped Knowledge (#31142)", 8031142},
+    {"Filler: Shroud of Frenzy (#31143)", 8031143},
+    {"Filler: Headdress of the Sleeper (#31145)", 8031145},
+    {"Filler: Pendant of Cunning (#31147)", 8031147},
+    {"Filler: Demon Hide Spaulders (#31148)", 8031148},
+    {"Filler: Gloves of Pandemonium (#31149)", 8031149},
+    {"Filler: Gloves of Piety (#31150)", 8031150},
+    {"Filler: Girdle of Siege (#31151)", 8031151},
+    {"Filler: Chestguard of Illumination (#31152)", 8031152},
+    {"Filler: Axe of the Legion (#31153)", 8031153},
     {"Filler: Bronze Torc (#31154)", 8031154},
+    {"Filler: Boots of Savagery (#31173)", 8031173},
+    {"Filler: Blade Dancer's Wristguards (#31175)", 8031175},
+    {"Filler: Amulet of Unstable Power (#31178)", 8031178},
+    {"Filler: Gauntlets of the Skullsplitter (#31180)", 8031180},
+    {"Filler: Braxxis' Staff of Slumber (#31186)", 8031186},
+    {"Filler: Boots of the Pathfinder (#31187)", 8031187},
+    {"Filler: The Dreamer's Shoulderpads (#31190)", 8031190},
+    {"Filler: Blade of Unquenched Thirst (#31193)", 8031193},
+    {"Filler: Shield of the Wayward Footman (#31200)", 8031200},
+    {"Filler: The Gunblade (#31204)", 8031204},
+    {"Filler: Headdress of Inner Rage (#31222)", 8031222},
+    {"Filler: Leggings of the Sly (#31226)", 8031226},
+    {"Filler: Abyss Walker's Boots (#31230)", 8031230},
+    {"Filler: Crystalblade of the Draenei (#31234)", 8031234},
+    {"Filler: Scales of the Beast (#31240)", 8031240},
     {"Filler: Silvermoon Armor (#31256)", 8031256},
     {"Filler: Silvermoon Tunic (#31263)", 8031263},
     {"Filler: Silvermoon Robes (#31264)", 8031264},
@@ -7751,7 +8850,26 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Abomination Cleaver (#31268)", 8031268},
     {"Filler: Ghoul Hammer (#31269)", 8031269},
     {"Filler: Banshee Rod (#31270)", 8031270},
+    {"Filler: Necklace of Trophies (#31275)", 8031275},
     {"Filler: Enchanted Illidari Tabard (#31279)", 8031279},
+    {"Filler: Thundercaller's Gauntlets (#31280)", 8031280},
+    {"Filler: Draenei Honor Guard Shield (#31287)", 8031287},
+    {"Filler: The Master's Treads (#31288)", 8031288},
+    {"Filler: Staff of Divine Infusion (#31289)", 8031289},
+    {"Filler: Band of Dominion (#31290)", 8031290},
+    {"Filler: Crystalforged War Axe (#31291)", 8031291},
+    {"Filler: Crystal Pulse Shield (#31292)", 8031292},
+    {"Filler: Girdle of Gale Force (#31293)", 8031293},
+    {"Filler: Pauldrons of Surging Mana (#31294)", 8031294},
+    {"Filler: Chestguard of the Dark Stalker (#31295)", 8031295},
+    {"Filler: Robe of the Crimson Order (#31297)", 8031297},
+    {"Filler: Legguards of the Shattered Hand (#31298)", 8031298},
+    {"Filler: The Oathkeeper (#31299)", 8031299},
+    {"Filler: Valanos' Longbow (#31303)", 8031303},
+    {"Filler: The Essence Focuser (#31304)", 8031304},
+    {"Filler: Ced's Carver (#31305)", 8031305},
+    {"Filler: Leggings of the Sacred Crest (#31306)", 8031306},
+    {"Filler: The Bringer of Death (#31308)", 8031308},
     {"Filler: Sinister Area 52 Boots (#31312)", 8031312},
     {"Filler: Nether-Rocket Gloves (#31313)", 8031313},
     {"Filler: Rocket-Chief Pauldrons (#31314)", 8031314},
@@ -7820,6 +8938,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Bear-Strength Harness (#31486)", 8031486},
     {"Filler: Wild Horned Helm (#31487)", 8031487},
     {"Filler: Boots of the Ancient-Killer (#31488)", 8031488},
+    {"Filler: Grishnath Orb (#31495)", 8031495},
     {"Filler: Coven Britches (#31508)", 8031508},
     {"Filler: Wyrmcultist's Hood (#31509)", 8031509},
     {"Filler: Hewing Gloves (#31510)", 8031510},
@@ -8000,8 +9119,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Star's Tears (#32453)", 8032453},
     {"Filler: Star's Lament (#32455)", 8032455},
     {"Filler: Morthis' Materials (#32462)", 8032462},
+    {"Filler: Nethercite Ore (#32464)", 8032464},
     {"Filler: Fortune Coin (#32465)", 8032465},
+    {"Filler: Netherdust Pollen (#32468)", 8032468},
     {"Filler: Fortune Coin (#32498)", 8032498},
+    {"Filler: Netherwing Egg (#32506)", 8032506},
+    {"Filler: Grilled Picnic Treat (#32563)", 8032563},
+    {"Filler: Apexis Shard (#32569)", 8032569},
     {"Filler: Banana Charm (#32588)", 8032588},
     {"Filler: Unstable Flask of the Elder (#32596)", 8032596},
     {"Filler: Unstable Flask of the Soldier (#32597)", 8032597},
@@ -8096,6 +9220,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Fisherman's Feast (#33052)", 8033052},
     {"Filler: Hot Buttered Trout (#33053)", 8033053},
     {"Filler: Murloc Costume (#33079)", 8033079},
+    {"Filler: Orcish Grog (#33083)", 8033083},
     {"Filler: Healing Potion Injector (#33092)", 8033092},
     {"Filler: Mana Potion Injector (#33093)", 8033093},
     {"Filler: Complimentary Brewfest Sampler (#33096)", 8033096},
@@ -8176,6 +9301,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Scroll of Spirit VI (#33460)", 8033460},
     {"Filler: Scroll of Stamina VI (#33461)", 8033461},
     {"Filler: Scroll of Strength VI (#33462)", 8033462},
+    {"Filler: Frostweave Cloth (#33470)", 8033470},
     {"Filler: Steady Talasite (#33782)", 8033782},
     {"Filler: Heavy Copper Longsword (#33791)", 8033791},
     {"Filler: Amani War Bear (#33809)", 8033809},
@@ -8187,14 +9313,20 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Brewfest Regalia (#33862)", 8033862},
     {"Filler: Brewfest Dress (#33863)", 8033863},
     {"Filler: Brown Brewfest Hat (#33864)", 8033864},
+    {"Filler: Amani Hex Stick (#33865)", 8033865},
     {"Filler: Stormchops (#33866)", 8033866},
     {"Filler: Broiled Bloodfin (#33867)", 8033867},
     {"Filler: Brewfest Boots (#33868)", 8033868},
     {"Filler: Spicy Hot Talbuk (#33872)", 8033872},
     {"Filler: Kibler's Bits (#33874)", 8033874},
     {"Filler: Delicious Chocolate Cake (#33924)", 8033924},
+    {"Filler: Amani Charm of the Bloodletter (#33930)", 8033930},
+    {"Filler: Amani Charm of Mighty Mojo (#33931)", 8033931},
+    {"Filler: Amani Charm of the Witch Doctor (#33932)", 8033932},
+    {"Filler: Amani Charm of the Raging Defender (#33933)", 8033933},
     {"Filler: Crystal Healing Potion (#33934)", 8033934},
     {"Filler: Crystal Mana Potion (#33935)", 8033935},
+    {"Filler: Harkor's Home Brew (#33956)", 8033956},
     {"Filler: Brewfest Slippers (#33966)", 8033966},
     {"Filler: Green Brewfest Hat (#33967)", 8033967},
     {"Filler: Blue Brewfest Hat (#33968)", 8033968},
@@ -8244,6 +9376,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Golden Pig Coin (#34518)", 8034518},
     {"Filler: Silver Pig Coin (#34519)", 8034519},
     {"Filler: Bloodberry Elixir (#34537)", 8034537},
+    {"Filler: Winterfin Clam (#34597)", 8034597},
     {"Filler: Heavy Tonk Armor (#34627)", 8034627},
     {"Filler: Acherus Knight's Greaves (#34648)", 8034648},
     {"Filler: Acherus Knight's Gauntlets (#34649)", 8034649},
@@ -8283,6 +9416,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Firecracker Salmon (#34767)", 8034767},
     {"Filler: Spicy Blue Nettlefish (#34768)", 8034768},
     {"Filler: Imperial Manta Steak (#34769)", 8034769},
+    {"Filler: Ith'rix's Hardened Carapace (#34777)", 8034777},
     {"Filler: Naaru Ration (#34780)", 8034780},
     {"Filler: Gold Wedding Band (#34826)", 8034826},
     {"Filler: Noble's Monocle (#34827)", 8034827},
@@ -8296,6 +9430,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Razor Sharp Fillet Knife (#34859)", 8034859},
     {"Filler: Bag of Fishing Treasures (#34863)", 8034863},
     {"Filler: Crafty's Sack (#34871)", 8034871},
+    {"Filler: Shattered Gem Fragments (#34907)", 8034907},
     {"Filler: Tabard of the Shattered Sun (#35221)", 8035221},
     {"Filler: X-51 Nether-Rocket (#35225)", 8035225},
     {"Filler: X-51 Nether-Rocket X-TREME (#35226)", 8035226},
@@ -8310,15 +9445,23 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Bright Crimson Spinel (#35487)", 8035487},
     {"Filler: Runed Crimson Spinel (#35488)", 8035488},
     {"Filler: Teardrop Crimson Spinel (#35489)", 8035489},
+    {"Filler: Formula: Enchant Weapon - Deathfrost (#35498)", 8035498},
     {"Filler: Eternal Earthstorm Diamond (#35501)", 8035501},
     {"Filler: Ember Skyfire Diamond (#35503)", 8035503},
     {"Filler: Sun Touched Satchel (#35516)", 8035516},
+    {"Filler: Huge Snowball (#35557)", 8035557},
     {"Filler: Charred Bear Kabobs (#35563)", 8035563},
     {"Filler: Juicy Bear Burger (#35565)", 8035565},
+    {"Filler: Eternal Earth (#35624)", 8035624},
+    {"Filler: Eternal Shadow (#35627)", 8035627},
+    {"Filler: Linked Armor of the Sphere (#35675)", 8035675},
+    {"Filler: Constellation Leggings (#35676)", 8035676},
+    {"Filler: Cosmos Vestments (#35677)", 8035677},
     {"Filler: Regal Nightseye (#35707)", 8035707},
     {"Filler: Shattrath Flask of Pure Death (#35716)", 8035716},
     {"Filler: Shattrath Flask of Blinding Light (#35717)", 8035717},
     {"Filler: Lord of Frost's Private Label (#35720)", 8035720},
+    {"Filler: Shards of Ahune (#35723)", 8035723},
     {"Filler: Steady Seaspray Emerald (#35758)", 8035758},
     {"Filler: Forceful Seaspray Emerald (#35759)", 8035759},
     {"Filler: Reckless Pyrestone (#35760)", 8035760},
@@ -9234,6 +10377,16 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Marshwalker Legguards (#36888)", 8036888},
     {"Filler: Demonic Spellstone (#36896)", 8036896},
     {"Filler: Fel Spellstone (#36897)", 8036897},
+    {"Filler: Goldclover (#36901)", 8036901},
+    {"Filler: Adder's Tongue (#36903)", 8036903},
+    {"Filler: Tiger Lily (#36904)", 8036904},
+    {"Filler: Lichbloom (#36905)", 8036905},
+    {"Filler: Icethorn (#36906)", 8036906},
+    {"Filler: Talandra's Rose (#36907)", 8036907},
+    {"Filler: Frost Lotus (#36908)", 8036908},
+    {"Filler: Cobalt Ore (#36909)", 8036909},
+    {"Filler: Titanium Ore (#36910)", 8036910},
+    {"Filler: Saronite Ore (#36912)", 8036912},
     {"Filler: Bloodstone (#36917)", 8036917},
     {"Filler: Scarlet Ruby (#36918)", 8036918},
     {"Filler: Cardinal Ruby (#36919)", 8036919},
@@ -9343,29 +10496,18 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mantle of Congealed Anger (#37275)", 8037275},
     {"Filler: Gorge's Loungewear (#37276)", 8037276},
     {"Filler: Ermine Ruff Cloak (#37277)", 8037277},
-    {"Filler: BT47 Cloth Healer Belt2 (#37278)", 8037278},
-    {"Filler: BT48 Cloth Spell Bracer3 (#37279)", 8037279},
     {"Filler: Flame Hardened Waistband (#37280)", 8037280},
-    {"Filler: BT52 Cloth Healer Chest2 (#37281)", 8037281},
     {"Filler: Cavernous Gauntlets (#37282)", 8037282},
     {"Filler: Wandering Healer's Kilt (#37283)", 8037283},
-    {"Filler: BT55 Cloth Spell Boots4 (#37284)", 8037284},
-    {"Filler: BT56 Cloth Spell Legs4 (#37285)", 8037285},
-    {"Filler: BT57 Cloth Healer Glove2 (#37286)", 8037286},
-    {"Filler: HF28 Cloth Spell Head4 (#37295)", 8037295},
-    {"Filler: BT59 Cloth Spell Gloves4  (#37296)", 8037296},
+    {"Filler: Ancient Dragon Spirit Cape (#37291)", 8037291},
+    {"Filler: Ley-Guardian's Legguards (#37292)", 8037292},
+    {"Filler: Mask of the Watcher (#37293)", 8037293},
+    {"Filler: Crown of Unbridled Magic (#37294)", 8037294},
     {"Filler: Gold Medallion (#37297)", 8037297},
     {"Filler: Competitor's Souvenir (#37298)", 8037298},
-    {"Filler: BT59 Leather Physical Boots4 (#37315)", 8037315},
-    {"Filler: HF28 Leather Physical Legs4  (#37316)", 8037316},
-    {"Filler: BT56 Leather Healer Boots2 (#37317)", 8037317},
-    {"Filler: BT55 Leather Physical Gloves4 (#37318)", 8037318},
     {"Filler: Grips of the Windswept Plains (#37319)", 8037319},
     {"Filler: Spaulders of Echoing Truth (#37320)", 8037320},
-    {"Filler: BT52 Leather Healer Legs2 (#37321)", 8037321},
     {"Filler: Flame Hardened Wristbindings (#37322)", 8037322},
-    {"Filler: BT48 Leather Physical Belt3 (#37323)", 8037323},
-    {"Filler: BT47 Leather Physical Gloves3 (#37324)", 8037324},
     {"Filler: Warsong Scout Spaulders (#37325)", 8037325},
     {"Filler: Reinforced Caribou-Hide Leggings (#37351)", 8037351},
     {"Filler: Regenerative Hide Harness (#37352)", 8037352},
@@ -9374,6 +10516,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Reinforced Caribou-Hide Chestguard (#37355)", 8037355},
     {"Filler: Rhinohide Wristwraps (#37356)", 8037356},
     {"Filler: Shivering Healer's Cloak (#37357)", 8037357},
+    {"Filler: Staff of Draconic Combat (#37360)", 8037360},
+    {"Filler: Cuffs of Winged Levitation (#37361)", 8037361},
+    {"Filler: Leggings of Protective Auras (#37362)", 8037362},
+    {"Filler: Gauntlets of Dragon Wrath (#37363)", 8037363},
     {"Filler: Rhinohide Gloves (#37375)", 8037375},
     {"Filler: Sealskin Bindings (#37378)", 8037378},
     {"Filler: Whalehunter Leggings (#37380)", 8037380},
@@ -9423,27 +10569,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wavekeeper's Helm (#37444)", 8037444},
     {"Filler: Tank Commander's Treads (#37446)", 8037446},
     {"Filler: Reinforced Mendicant's Cowl (#37447)", 8037447},
-    {"Filler: BT47 Mail Physical Legs3  (#37448)", 8037448},
     {"Filler: Breath of Murloc (#37449)", 8037449},
-    {"Filler: BT48 Mail Healer Chest3  (#37450)", 8037450},
-    {"Filler: BT49 Mail Physical Belt3 (#37451)", 8037451},
     {"Filler: Fatty Bluefin (#37452)", 8037452},
-    {"Filler: BT59 Mail Physical Belt4 (#37453)", 8037453},
-    {"Filler: HF28 Mail Physical Chest4 (#37454)", 8037454},
-    {"Filler: BT56 Mail Healer Gloves2 (#37455)", 8037455},
     {"Filler: Cauterizing Chain Leggings (#37456)", 8037456},
-    {"Filler: BT55 Mail Physical Legs4 (#37457)", 8037457},
     {"Filler: Wristguards of Rocky Horror (#37458)", 8037458},
     {"Filler: Sea King's Crown (#37462)", 8037462},
     {"Filler: Winterfin Patch of Honor (#37463)", 8037463},
-    {"Filler: BT59 Plate Physical Chest4 (#37466)", 8037466},
-    {"Filler: HF28 Plate Physical Boots4 (#37468)", 8037468},
-    {"Filler: BT57 Plate Healer Bracer2 (#37469)", 8037469},
-    {"Filler: BT56 Plate Physical Shoulders4 (#37470)", 8037470},
     {"Filler: Girdle of Ripped Space (#37471)", 8037471},
-    {"Filler: BT49 Plate Physical Bracer (#37472)", 8037472},
-    {"Filler: BT48 Plate Healer Head2 (#37473)", 8037473},
-    {"Filler: BT47 Plate Physical Boots3 (#37474)", 8037474},
     {"Filler: Benign Crusader's Plate (#37475)", 8037475},
     {"Filler: Gorge's Breastplate of Bloodrage (#37476)", 8037476},
     {"Filler: Lost Crusader Chestplate (#37477)", 8037477},
@@ -9484,9 +10616,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Dry Earth Circle (#37528)", 8037528},
     {"Filler: Shivering Healer's Ring (#37529)", 8037529},
     {"Filler: Icy Ripper Ring (#37530)", 8037530},
-    {"Filler: BT56 Thrown2  (#37534)", 8037534},
     {"Filler: Stave of the Windborn (#37535)", 8037535},
-    {"Filler: BT57 Fast Mace2 (#37536)", 8037536},
     {"Filler: Stave of the Spiritcaller (#37537)", 8037537},
     {"Filler: Giant Turtle Collar (#37541)", 8037541},
     {"Filler: Pugnacious Collar (#37543)", 8037543},
@@ -9511,13 +10641,36 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Swift Zhevra OLD (#37598)", 8037598},
     {"Filler: Armor Vellum II (#37602)", 8037602},
     {"Filler: Penny Pouch (#37606)", 8037606},
+    {"Filler: Sword of Justice (#37653)", 8037653},
+    {"Filler: Sabatons of the Ages (#37654)", 8037654},
+    {"Filler: Mantle of the Tribunal (#37655)", 8037655},
+    {"Filler: Raging Construct Bands (#37656)", 8037656},
+    {"Filler: Element 115 (#37664)", 8037664},
     {"Filler: Vengeful Nether Drake (#37676)", 8037676},
+    {"Filler: Pendant of the Nathrezim (#37689)", 8037689},
+    {"Filler: Pauldrons of Destiny (#37690)", 8037690},
+    {"Filler: Mantle of Deceit (#37691)", 8037691},
+    {"Filler: Pierce's Pistol (#37692)", 8037692},
+    {"Filler: Greed (#37693)", 8037693},
+    {"Filler: Band of Guile (#37694)", 8037694},
+    {"Filler: Legguards of Nature's Power (#37695)", 8037695},
+    {"Filler: Plague-Infected Bracers (#37696)", 8037696},
+    {"Filler: Crystallized Air (#37700)", 8037700},
+    {"Filler: Crystallized Earth (#37701)", 8037701},
+    {"Filler: Crystallized Fire (#37702)", 8037702},
+    {"Filler: Crystallized Shadow (#37703)", 8037703},
+    {"Filler: Crystallized Life (#37704)", 8037704},
+    {"Filler: Crystallized Water (#37705)", 8037705},
     {"Filler: Stick (#37708)", 8037708},
     {"Filler: Swift Zhevra (#37719)", 8037719},
     {"Filler: Fresh Brewfest Hops (#37750)", 8037750},
     {"Filler: Brewfest Kodo (#37827)", 8037827},
     {"Filler: Great Brewfest Kodo (#37828)", 8037828},
     {"Filler: Brewfest Prize Token (#37829)", 8037829},
+    {"Filler: Prison Manifest (#37889)", 8037889},
+    {"Filler: Chain Gang Legguards (#37890)", 8037890},
+    {"Filler: Cast Iron Shackles (#37891)", 8037891},
+    {"Filler: Deadnettle (#37921)", 8037921},
     {"Filler: Noble's Elementium Signet (#37934)", 8037934},
     {"Filler: Fisherman's Earwarmer (#37936)", 8037936},
     {"Filler: Alystros's Plume Cinch (#37937)", 8037937},
@@ -9535,7 +10688,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Highseas Wristwraps (#37950)", 8037950},
     {"Filler: Wastewind Garments (#37953)", 8037953},
     {"Filler: Wastewind Cinch (#37954)", 8037954},
-    {"Filler: DB26 Healer Cloak (#37955)", 8037955},
     {"Filler: Frontrunner's Blessed Handwraps (#37956)", 8037956},
     {"Filler: Wastewind Bracers (#37957)", 8037957},
     {"Filler: Wastewind Headcover (#37958)", 8037958},
@@ -9547,12 +10699,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Spiderwarder Braces (#37964)", 8037964},
     {"Filler: Wyrmward Cover (#37965)", 8037965},
     {"Filler: Bracers of Nature's Fury (#37966)", 8037966},
-    {"Filler: DB42 Spell Ring4 (#37967)", 8037967},
     {"Filler: Robe of Calcified Tears (#37968)", 8037968},
     {"Filler: Chaos Mender Cloak (#37969)", 8037969},
     {"Filler: Feathers of the Dragon Wastes (#37970)", 8037970},
     {"Filler: Sash of the Nibbling Plague (#37971)", 8037971},
-    {"Filler: DB54 Healer Neck2 (#37976)", 8037976},
     {"Filler: Moa'ki Thresherhide Tunic (#37980)", 8037980},
     {"Filler: Ancient Dreamer's Leggings (#37981)", 8037981},
     {"Filler: Gleaming Tuskring (#37982)", 8037982},
@@ -9613,7 +10763,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wyrmchaser's Waistguard (#38049)", 8038049},
     {"Filler: Soul-Trader Beacon (#38050)", 8038050},
     {"Filler: Star's Rest Treads (#38051)", 8038051},
-    {"Filler: DB42 Leather Healer Shoulder (#38052)", 8038052},
     {"Filler: Wyrmfire Links (#38053)", 8038053},
     {"Filler: Paingiver Wristguards (#38054)", 8038054},
     {"Filler: Ridgehunter Gauntlets (#38055)", 8038055},
@@ -9671,7 +10820,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mace of the Fallen Raven Priest (#38135)", 8038135},
     {"Filler: Endurance of the Spell Warder (#38137)", 8038137},
     {"Filler: Keldonus's Missing Spellshard (#38138)", 8038138},
-    {"Filler: DB50 Spell Staff4 (#38140)", 8038140},
     {"Filler: Coldwind Scratching Pole (#38141)", 8038141},
     {"Filler: Infused Dragonbone Splinter (#38142)", 8038142},
     {"Filler: Composite Harpyspine Staff (#38143)", 8038143},
@@ -9712,7 +10860,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mounted Boneshredder (#38197)", 8038197},
     {"Filler: Joint-Severing Quickblade (#38198)", 8038198},
     {"Filler: Twig of Happy Reminders (#38202)", 8038202},
-    {"Filler: DB38 Spell Wand2 (#38204)", 8038204},
     {"Filler: Wand of Blinding Light (#38206)", 8038206},
     {"Filler: Wand of Purifying Fire (#38207)", 8038207},
     {"Filler: Valiance Longbow (#38208)", 8038208},
@@ -9741,10 +10888,33 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Tabard of Fury (#38313)", 8038313},
     {"Filler: Tabard of the Defender (#38314)", 8038314},
     {"Filler: Darkmoon Robe (#38318)", 8038318},
+    {"Filler: Dire Brew (#38320)", 8038320},
+    {"Filler: Ancient Ectoplasm (#38335)", 8038335},
+    {"Filler: Crystallized Hogsnot (#38336)", 8038336},
+    {"Filler: Speckled Guano (#38337)", 8038337},
+    {"Filler: Knotroot (#38338)", 8038338},
+    {"Filler: Withered Batwing (#38339)", 8038339},
+    {"Filler: Amberseed (#38340)", 8038340},
+    {"Filler: Pickled Eagle Egg (#38341)", 8038341},
+    {"Filler: Trollbane (#38342)", 8038342},
+    {"Filler: Prismatic Mojo (#38343)", 8038343},
+    {"Filler: Shrunken Dragon's Claw (#38344)", 8038344},
+    {"Filler: Frozen Spider Ichor (#38345)", 8038345},
+    {"Filler: Chilled Serpent Mucus (#38346)", 8038346},
     {"Filler: Mammoth Mining Bag (#38347)", 8038347},
     {"Filler: Winterfin \"Depth Charge\" (#38350)", 8038350},
     {"Filler: Murliver Oil (#38351)", 8038351},
+    {"Filler: Wasp's Wings (#38369)", 8038369},
+    {"Filler: Raptor Claw (#38370)", 8038370},
+    {"Filler: Crushed Basilisk Crystals (#38379)", 8038379},
+    {"Filler: Seasoned Slider Cider (#38381)", 8038381},
     {"Filler: Valonforth's Folly (#38383)", 8038383},
+    {"Filler: Pulverized Gargoyle Teeth (#38384)", 8038384},
+    {"Filler: Muddy Mire Maggot (#38386)", 8038386},
+    {"Filler: Spiky Spider Egg (#38393)", 8038393},
+    {"Filler: Hairy Herring Head (#38396)", 8038396},
+    {"Filler: Putrid Pirate Perspiration (#38397)", 8038397},
+    {"Filler: Icecrown Bottled Water (#38398)", 8038398},
     {"Filler: Trapper's Traveling Pack (#38399)", 8038399},
     {"Filler: Arctic Chestpiece (#38400)", 8038400},
     {"Filler: Arctic Leggings (#38401)", 8038401},
@@ -9967,6 +11137,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mace of Helotry (#39142)", 8039142},
     {"Filler: Writhing Mace (#39143)", 8039143},
     {"Filler: Twisted Hooligan Whacker (#39144)", 8039144},
+    {"Filler: Manual: Heavy Frostweave Bandage (#39152)", 8039152},
+    {"Filler: Severed Flipper (#39222)", 8039222},
     {"Filler: Frosty's Collar (#39286)", 8039286},
     {"Filler: Scrap-Hide Spaulders (#39323)", 8039323},
     {"Filler: Noth's Special Brew (#39327)", 8039327},
@@ -10000,6 +11172,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Egg-Warming Boots (#39383)", 8039383},
     {"Filler: Helm of the Ancient Horn (#39385)", 8039385},
     {"Filler: Stinger-Proof Chestguard (#39387)", 8039387},
+    {"Filler: Claymore of Ancient Power (#39393)", 8039393},
+    {"Filler: Charmed Cierge (#39394)", 8039394},
+    {"Filler: Thane's Tainted Greathelm (#39395)", 8039395},
+    {"Filler: Gown of Blaumeux (#39396)", 8039396},
+    {"Filler: Pauldrons of Havoc (#39397)", 8039397},
     {"Filler: Static-Dispersing Shoulderpads (#39400)", 8039400},
     {"Filler: Binding of the Ancient Keeper (#39402)", 8039402},
     {"Filler: Splattered Zombie Wristguards (#39406)", 8039406},
@@ -10029,7 +11206,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Pauldrons of Resolution (#39446)", 8039446},
     {"Filler: Helm of Brutal Slaughter (#39448)", 8039448},
     {"Filler: Wristguards of Titanic Vengeance (#39449)", 8039449},
-    {"Filler: Bug-Smashing Pauldrons (#39450)", 8039450},
     {"Filler: Pauldrons of the Silent Mist (#39451)", 8039451},
     {"Filler: Roaming Wristguards (#39452)", 8039452},
     {"Filler: Rhino-Tail Girdle (#39453)", 8039453},
@@ -10062,6 +11238,9 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wolvar Shortbow (#39522)", 8039522},
     {"Filler: Tyrael's Hilt (#39656)", 8039656},
     {"Filler: Elixir of Mighty Agility (#39666)", 8039666},
+    {"Filler: Abomination Guts (#39668)", 8039668},
+    {"Filler: Ghoul Drool (#39669)", 8039669},
+    {"Filler: Blight Crystal (#39670)", 8039670},
     {"Filler: Resurgent Healing Potion (#39671)", 8039671},
     {"Filler: Drape of the Offered Branch (#39672)", 8039672},
     {"Filler: Lightning Beetle's Cape (#39673)", 8039673},
@@ -10246,6 +11425,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Accurate Huge Citrine (#39966)", 8039966},
     {"Filler: Resolute Huge Citrine (#39967)", 8039967},
     {"Filler: Timeless Dark Jade (#39968)", 8039968},
+    {"Filler: Fire Seed (#39969)", 8039969},
+    {"Filler: Fire Leaf (#39970)", 8039970},
     {"Filler: Jagged Dark Jade (#39974)", 8039974},
     {"Filler: Vivid Dark Jade (#39975)", 8039975},
     {"Filler: Enduring Dark Jade (#39976)", 8039976},
@@ -10464,9 +11645,16 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Grizzleberry Juice (#40357)", 8040357},
     {"Filler: Raw Tallhorn Chunk (#40358)", 8040358},
     {"Filler: Fresh Eagle Meat (#40359)", 8040359},
+    {"Filler: Mirror-Like Seashell (#40391)", 8040391},
+    {"Filler: Cracked Diamond (#40392)", 8040392},
+    {"Filler: Green Sparkly (#40393)", 8040393},
     {"Filler: Mixture of Pure Mojo (#40404)", 8040404},
+    {"Filler: Chestguard of the Lost Conqueror (#40610)", 8040610},
+    {"Filler: Chestguard of the Lost Protector (#40611)", 8040611},
+    {"Filler: Chestguard of the Lost Vanquisher (#40612)", 8040612},
     {"Filler: Tabard of the Achiever (#40643)", 8040643},
     {"Filler: Reeking Pet Carrier (#40653)", 8040653},
+    {"Filler: Note from the Grand Admiral (#40666)", 8040666},
     {"Filler: Cobalt Triangle Shield (#40668)", 8040668},
     {"Filler: Emblem of Heroism (#40752)", 8040752},
     {"Filler: Emblem of Valor (#40753)", 8040753},
@@ -10630,6 +11818,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Wristguard of Healing Fingers (#41761)", 8041761},
     {"Filler: Freedom-Path Treads (#41762)", 8041762},
     {"Filler: Leggings of the Canny Chief (#41763)", 8041763},
+    {"Filler: Design: Bracing Earthsiege Diamond (#41798)", 8041798},
     {"Filler: Small Velvet Bag (#41888)", 8041888},
     {"Filler: Cobalt Bracers (#41974)", 8041974},
     {"Filler: Cobalt Gauntlets (#41975)", 8041975},
@@ -10687,6 +11876,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Crusader's Waterskin (#42777)", 8042777},
     {"Filler: Crusader's Rations (#42778)", 8042778},
     {"Filler: Steaming Chicken Soup (#42779)", 8042779},
+    {"Filler: Relic of Ulduar (#42780)", 8042780},
     {"Filler: Mammoth Sinew Cinch (#42785)", 8042785},
     {"Filler: Daschal's Serrated Blade (#42786)", 8042786},
     {"Filler: Ironwool Bindings (#42787)", 8042787},
@@ -10798,8 +11988,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Critter Bites (#43004)", 8043004},
     {"Filler: Spiced Mammoth Treats (#43005)", 8043005},
     {"Filler: Fish Feast (#43015)", 8043015},
+    {"Filler: Drakuru's Last Wish (#43059)", 8043059},
+    {"Filler: Royal Crest of Lordaeron (#43085)", 8043085},
     {"Filler: Fresh Apple Juice (#43086)", 8043086},
     {"Filler: Crisp Dalaran Apple (#43087)", 8043087},
+    {"Filler: Frozen Orb (#43102)", 8043102},
     {"Filler: Armor Vellum III (#43145)", 8043145},
     {"Filler: Weapon Vellum III (#43146)", 8043146},
     {"Filler: Tabard of the Argent Crusade (#43154)", 8043154},
@@ -10807,6 +12000,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Tabard of the Wyrmrest Accord (#43156)", 8043156},
     {"Filler: Tabard of the Kirin Tor (#43157)", 8043157},
     {"Filler: Hyldnir Runeweaver's Garb (#43204)", 8043204},
+    {"Filler: Stone Keeper's Shard (#43228)", 8043228},
     {"Filler: Star's Sorrow (#43236)", 8043236},
     {"Filler: Crystal Citrine Necklace (#43244)", 8043244},
     {"Filler: Crystal Chalcedony Amulet (#43245)", 8043245},
@@ -10846,6 +12040,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Big Blizzard Bear (#43599)", 8043599},
     {"Filler: Brunnhildar Harpoon (#43600)", 8043600},
     {"Filler: Brunnhildar Great Axe (#43601)", 8043601},
+    {"Filler: Ley Line Tuner (#43668)", 8043668},
     {"Filler: Half Full Bottle of Prison Moonshine (#43695)", 8043695},
     {"Filler: Half Empty Bottle of Prison Moonshine (#43696)", 8043696},
     {"Filler: Giant Sewer Rat (#43698)", 8043698},
@@ -10871,6 +12066,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Demolisher's Grips (#43847)", 8043847},
     {"Filler: Bracers of Icy Resolve (#43848)", 8043848},
     {"Filler: Chain of the Sovereign (#43849)", 8043849},
+    {"Filler: Fur Clothing Scraps (#43851)", 8043851},
+    {"Filler: Thick Fur Clothing Scraps (#43852)", 8043852},
     {"Filler: Adepts Wristwraps (#43855)", 8043855},
     {"Filler: Sigrid's Mittens (#43856)", 8043856},
     {"Filler: Duke Lankral's Velvet Slippers (#43857)", 8043857},
@@ -10884,6 +12081,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Frail Bone Wand (#43873)", 8043873},
     {"Filler: Lady Nightswood's Engagement Ring (#43874)", 8043874},
     {"Filler: Axe of the Cunning (#43875)", 8043875},
+    {"Filler: A Guide to Northern Cloth Scavenging (#43876)", 8043876},
     {"Filler: Blood-forged Circle (#43877)", 8043877},
     {"Filler: Mantle of Unholy Power (#43878)", 8043878},
     {"Filler: Gryphon Rider's Bracers (#43879)", 8043879},
@@ -10999,6 +12197,8 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Mekgineer's Chopper (#44413)", 8044413},
     {"Filler: Dark Frostscale Chestpiece (#44428)", 8044428},
     {"Filler: Pack of Endless Pockets (#44446)", 8044446},
+    {"Filler: Crude Eating Utensils (#44464)", 8044464},
+    {"Filler: Water Soaked Letter (#44468)", 8044468},
     {"Filler: Flying Carpet (#44554)", 8044554},
     {"Filler: Swift Mooncloth Carpet (#44555)", 8044555},
     {"Filler: Swift Spellfire Carpet (#44556)", 8044556},
@@ -11046,7 +12246,10 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Reins of the Green Proto-Drake (#44707)", 8044707},
     {"Filler: Proto-Drake Whelp (#44721)", 8044721},
     {"Filler: Aged Yolk (#44722)", 8044722},
+    {"Filler: Everfrost Chip (#44724)", 8044724},
+    {"Filler: Everfrost Chip (#44725)", 8044725},
     {"Filler: Endless Rejuvenation Potion (#44728)", 8044728},
+    {"Filler: Everfrost Powder (#44729)", 8044729},
     {"Filler: Bouquet of Ebon Roses (#44731)", 8044731},
     {"Filler: Draenic Silk Robes (#44737)", 8044737},
     {"Filler: Kirin Tor Familiar (#44738)", 8044738},
@@ -11080,20 +12283,44 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Worg Tartare (#44953)", 8044953},
     {"Filler: Alarming Clockbot (NOT IN USE) (#44972)", 8044972},
     {"Filler: Strand Crawler (#44983)", 8044983},
+    {"Filler: Champion's Seal (#44990)", 8044990},
     {"Filler: Jillian's Tonic of Endless Rage (#45006)", 8045006},
     {"Filler: Jillian's Tonic of Pure Mojo (#45007)", 8045007},
     {"Filler: Jillian's Tonic of Stoneblood (#45008)", 8045008},
     {"Filler: Jillian's Tonic of the Frost Wyrm (#45009)", 8045009},
+    {"Filler: Fragment of Val'anyr (#45038)", 8045038},
     {"Filler: Gruffscale Leggings (#45052)", 8045052},
     {"Filler: Prismatic Black Diamond (#45054)", 8045054},
     {"Filler: Egg Basket (#45067)", 8045067},
     {"Filler: Brightly Colored Egg (#45072)", 8045072},
     {"Filler: Spring Flowers (#45073)", 8045073},
+    {"Filler: Runed Orb (#45087)", 8045087},
     {"Filler: Basic Fishing Pole (#45120)", 8045120},
     {"Filler: Murkimus' Little Spear (#45180)", 8045180},
     {"Filler: Jillian's Genius Juice (#45276)", 8045276},
     {"Filler: Jillian's Savior Sauce (#45277)", 8045277},
     {"Filler: Jillian's Gourmet Fish Feast (#45279)", 8045279},
+    {"Filler: Petrified Ivy Sprig (#45294)", 8045294},
+    {"Filler: Staff of Endless Winter (#45457)", 8045457},
+    {"Filler: Frigid Strength of Hodir (#45459)", 8045459},
+    {"Filler: Bindings of Winter Gale (#45460)", 8045460},
+    {"Filler: Drape of Icy Intent (#45461)", 8045461},
+    {"Filler: Gloves of the Frozen Glade (#45462)", 8045462},
+    {"Filler: Wisdom's Hold (#45470)", 8045470},
+    {"Filler: Fate's Clutch (#45471)", 8045471},
+    {"Filler: Warhelm of the Champion (#45472)", 8045472},
+    {"Filler: Embrace of the Gladiator (#45473)", 8045473},
+    {"Filler: Pauldrons of the Combatant (#45474)", 8045474},
+    {"Filler: Bladetwister (#45484)", 8045484},
+    {"Filler: Bronze Pendant of the Vanir (#45485)", 8045485},
+    {"Filler: Drape of the Sullen Goddess (#45486)", 8045486},
+    {"Filler: Handguards of Revitalization (#45487)", 8045487},
+    {"Filler: Leggings of the Enslaved Idol (#45488)", 8045488},
+    {"Filler: Delirium's Touch (#45494)", 8045494},
+    {"Filler: Conductive Seal (#45495)", 8045495},
+    {"Filler: Titanskin Cloak (#45496)", 8045496},
+    {"Filler: Crown of Luminescence (#45497)", 8045497},
+    {"Filler: Skyforge Crossbow (#45570)", 8045570},
     {"Filler: Stormwind Tabard (#45574)", 8045574},
     {"Filler: Ironforge Tabard (#45577)", 8045577},
     {"Filler: Gnomeregan Tabard (#45578)", 8045578},
@@ -11104,9 +12331,13 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Undercity Tabard (#45583)", 8045583},
     {"Filler: Thunder Bluff Tabard (#45584)", 8045584},
     {"Filler: Silvermoon City Tabard (#45585)", 8045585},
+    {"Filler: Constellus (#45612)", 8045612},
+    {"Filler: Dreambinder (#45613)", 8045613},
+    {"Filler: Starshard Edge (#45620)", 8045620},
     {"Filler: Elixir of Minor Accuracy (#45621)", 8045621},
     {"Filler: Emblem of Conquest (#45624)", 8045624},
     {"Filler: Shadoweave Belt (#45629)", 8045629},
+    {"Filler: Armbands of Bedlam (#45663)", 8045663},
     {"Filler: Silvermoon Doublet (#45664)", 8045664},
     {"Filler: Ironforge Doublet (#45666)", 8045666},
     {"Filler: Stormwind Doublet (#45667)", 8045667},
@@ -11125,25 +12356,48 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Diamond-tipped Cane (#45861)", 8045861},
     {"Filler: Bold Stormjewel (#45862)", 8045862},
     {"Filler: Sack of Ulduar Spoils (#45875)", 8045875},
+    {"Filler: Shiver (#45876)", 8045876},
+    {"Filler: The Boreal Guard (#45877)", 8045877},
     {"Filler: Large Sack of Ulduar Spoils (#45878)", 8045878},
     {"Filler: Delicate Stormjewel (#45879)", 8045879},
     {"Filler: Solid Stormjewel (#45880)", 8045880},
     {"Filler: Sparkling Stormjewel (#45881)", 8045881},
     {"Filler: Brilliant Stormjewel (#45882)", 8045882},
     {"Filler: Runed Stormjewel (#45883)", 8045883},
+    {"Filler: Icecore Staff (#45886)", 8045886},
+    {"Filler: Ice Layered Barrier (#45887)", 8045887},
+    {"Filler: Bitter Cold Armguards (#45888)", 8045888},
     {"Filler: Homemade Fish Fry (#45901)", 8045901},
+    {"Filler: Gauntlets of the Thunder God (#45928)", 8045928},
+    {"Filler: Sif's Remembrance (#45929)", 8045929},
+    {"Filler: Combatant's Bootblade (#45930)", 8045930},
+    {"Filler: Mjolnir Runestone (#45931)", 8045931},
     {"Filler: Black Jelly (#45932)", 8045932},
+    {"Filler: Pendant of the Shallow Grave (#45933)", 8045933},
     {"Filler: XS-001 Constructor Bot (#45942)", 8045942},
+    {"Filler: Gloves of Whispering Winds (#45943)", 8045943},
+    {"Filler: Seed of Budding Carnage (#45945)", 8045945},
+    {"Filler: Fire Orchid Signet (#45946)", 8045946},
+    {"Filler: Serilas, Blood Blade of Invar One-Arm (#45947)", 8045947},
+    {"Filler: Fused Alloy Legplates (#45982)", 8045982},
     {"Filler: Furious Gladiator's Tabard (#45983)", 8045983},
     {"Filler: Rigid Stormjewel (#45987)", 8045987},
+    {"Filler: Greaves of the Iron Army (#45988)", 8045988},
+    {"Filler: Tempered Mercury Greaves (#45989)", 8045989},
+    {"Filler: Fusion Blade (#45990)", 8045990},
+    {"Filler: Mimiron's Flight Goggles (#45993)", 8045993},
     {"Filler: Battered Jungle Hat (#45998)", 8045998},
     {"Filler: Bag of Fishing Treasures (#46007)", 8046007},
+    {"Filler: Reply-Code Alpha (#46052)", 8046052},
+    {"Filler: Reply-Code Alpha (#46053)", 8046053},
     {"Filler: Alliance Lance (#46069)", 8046069},
     {"Filler: Horde Lance (#46070)", 8046070},
     {"Filler: Argent Lance (#46106)", 8046106},
     {"Filler: Sea Turtle (#46109)", 8046109},
     {"Filler: Alchemist's Cache (#46110)", 8046110},
     {"Filler: Furious Gladiator's Frost Wyrm (#46171)", 8046171},
+    {"Filler: Shredded Parchment (#46368)", 8046368},
+    {"Filler: Rotted Sentimental Paintings (#46369)", 8046369},
     {"Filler: Flask of the Frost Wyrm (#46376)", 8046376},
     {"Filler: Flask of Endless Rage (#46377)", 8046377},
     {"Filler: Flask of Pure Mojo (#46378)", 8046378},
@@ -11184,8 +12438,46 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Bountiful Feast (#46887)", 8046887},
     {"Filler: Murkimus' Tiny Spear (#46892)", 8046892},
     {"Filler: Totem of the Earthen Ring (#46978)", 8046978},
+    {"Filler: Belt of Fierce Competition (#47170)", 8047170},
+    {"Filler: Legguards of Abandoned Fealty (#47171)", 8047171},
+    {"Filler: Helm of the Bested Gallant (#47172)", 8047172},
+    {"Filler: Bindings of the Wicked (#47173)", 8047173},
+    {"Filler: Binding of the Tranquil Glade (#47174)", 8047174},
+    {"Filler: Scale Boots of the Outlander (#47175)", 8047175},
+    {"Filler: Gauntlets of the Stouthearted Crusader (#47197)", 8047197},
+    {"Filler: Greaves of the Grand Paladin (#47199)", 8047199},
+    {"Filler: Signet of Purity (#47200)", 8047200},
+    {"Filler: Boots of Heartfelt Repentance (#47201)", 8047201},
+    {"Filler: Leggings of Brazen Trespass (#47202)", 8047202},
+    {"Filler: Mantle of Gnarled Overgrowth (#47210)", 8047210},
+    {"Filler: Wristguards of Ceaseless Regret (#47211)", 8047211},
+    {"Filler: Mercy's Hold (#47212)", 8047212},
+    {"Filler: Banner of Victory (#47214)", 8047214},
+    {"Filler: Gaze of the Somber Keeper (#47217)", 8047217},
+    {"Filler: The Confessor's Binding (#47218)", 8047218},
+    {"Filler: Brilliant Hailstone Amulet (#47219)", 8047219},
     {"Filler: Emblem of Triumph (#47241)", 8047241},
+    {"Filler: Trophy of the Crusade (#47242)", 8047242},
+    {"Filler: Mark of the Relentless (#47243)", 8047243},
+    {"Filler: Chestguard of the Ravenous Fiend (#47244)", 8047244},
+    {"Filler: Pauldrons of Concealed Loathing (#47245)", 8047245},
+    {"Filler: Treads of Dismal Fortune (#47248)", 8047248},
+    {"Filler: Leggings of the Snowy Bramble (#47249)", 8047249},
+    {"Filler: Pauldrons of the Deafening Gale (#47250)", 8047250},
+    {"Filler: Edge of Ruin (#47493)", 8047493},
     {"Filler: Flask of the North (#47499)", 8047499},
+    {"Filler: Kurisu's Indecision (#47501)", 8047501},
+    {"Filler: Majestic Silversmith Shoulderplates (#47502)", 8047502},
+    {"Filler: Legplates of the Argent Armistice (#47503)", 8047503},
+    {"Filler: Barkhide Treads (#47504)", 8047504},
+    {"Filler: Aledar's Battlestar (#47508)", 8047508},
+    {"Filler: Mariel's Sorrow (#47509)", 8047509},
+    {"Filler: Trueheart Girdle (#47510)", 8047510},
+    {"Filler: Plated Greaves of Providence (#47511)", 8047511},
+    {"Filler: Sinner's Confession (#47512)", 8047512},
+    {"Filler: Regal Aurous Shoulderplates (#47514)", 8047514},
+    {"Filler: Marrowstrike (#47522)", 8047522},
+    {"Filler: Crusader Orb (#47556)", 8047556},
     {"Filler: Relentless Gladiator's Frost Wyrm (#47840)", 8047840},
     {"Filler: Darting Hatchling (#48112)", 8048112},
     {"Filler: Leaping Hatchling (#48118)", 8048118},
@@ -11234,6 +12526,7 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: \"Wizardry\" Cologne (#49860)", 8049860},
     {"Filler: \"STALWART\" Cologne (#49861)", 8049861},
     {"Filler: Crown Chemical Co. Supplies (#49867)", 8049867},
+    {"Filler: Primordial Saronite (#49908)", 8049908},
     {"Filler: Box of Chocolates (#49909)", 8049909},
     {"Filler: Perky Pug (#49912)", 8049912},
     {"Filler: Snivel's Ledger (#49915)", 8049915},
@@ -11290,6 +12583,11 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Heart-Shaped Box (#54537)", 8054537},
     {"Filler: Darkspear Shroud (#54617)", 8054617},
     {"Filler: Frosty Flying Carpet (#54797)", 8054797},
+    {"Filler: Icebound Cloak (#54801)", 8054801},
+    {"Filler: The Frost Lord's War Cloak (#54802)", 8054802},
+    {"Filler: The Frost Lord's Battle Shroud (#54803)", 8054803},
+    {"Filler: Shroud of Winter's Chill (#54804)", 8054804},
+    {"Filler: Cloak of the Frigid Winds (#54805)", 8054805},
     {"Filler: Celestial Dragon (#54810)", 8054810},
     {"Filler: Celestial Steed (#54811)", 8054811},
     {"Filler: Lil' XT (#54847)", 8054847},
@@ -11357,22 +12655,28 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8000714, 714 }, // "Filler: Dirty Leather Gloves (#714)"
     { 8000718, 718 }, // "Filler: Scalemail Gloves (#718)"
     { 8000719, 719 }, // "Filler: Rabbit Handler Gloves (#719)"
+    { 8000720, 720 }, // "Filler: Brawler Gloves (#720)"
     { 8000724, 724 }, // "Filler: Goretusk Liver Pie (#724)"
     { 8000727, 727 }, // "Filler: Notched Shortsword (#727)"
     { 8000733, 733 }, // "Filler: Westfall Stew (#733)"
     { 8000744, 744 }, // "Filler: Thunderbrew's Boot Flask (#744)"
     { 8000753, 753 }, // "Filler: Dragonmaw Shortsword (#753)"
+    { 8000754, 754 }, // "Filler: Shortsword of Vengeance (#754)"
     { 8000756, 756 }, // "Filler: Tunnel Pick (#756)"
     { 8000763, 763 }, // "Filler: Ice-covered Bracers (#763)"
+    { 8000765, 765 }, // "Filler: Silverleaf (#765)"
     { 8000766, 766 }, // "Filler: Flanged Mace (#766)"
     { 8000767, 767 }, // "Filler: Long Bo Staff (#767)"
     { 8000768, 768 }, // "Filler: Lumberjack Axe (#768)"
     { 8000774, 774 }, // "Filler: Malachite (#774)"
     { 8000778, 778 }, // "Filler: Kobold Excavation Pick (#778)"
     { 8000781, 781 }, // "Filler: Stone Gnoll Hammer (#781)"
+    { 8000783, 783 }, // "Filler: Light Hide (#783)"
+    { 8000785, 785 }, // "Filler: Mageroyal (#785)"
     { 8000787, 787 }, // "Filler: Slitherskin Mackerel (#787)"
     { 8000789, 789 }, // "Filler: Stout Battlehammer (#789)"
     { 8000790, 790 }, // "Filler: Forester's Axe (#790)"
+    { 8000791, 791 }, // "Filler: Gnarled Ash Staff (#791)"
     { 8000792, 792 }, // "Filler: Knitted Sandals (#792)"
     { 8000793, 793 }, // "Filler: Knitted Gloves (#793)"
     { 8000794, 794 }, // "Filler: Knitted Pants (#794)"
@@ -11416,10 +12720,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8000864, 864 }, // "Filler: Knightly Longsword (#864)"
     { 8000865, 865 }, // "Filler: Leaden Mace (#865)"
     { 8000866, 866 }, // "Filler: Monk's Staff (#866)"
+    { 8000869, 869 }, // "Filler: Dazzling Longsword (#869)"
+    { 8000873, 873 }, // "Filler: Staff of Jordan (#873)"
     { 8000876, 876 }, // "Filler: Worn Wooden Buckler (#876)"
     { 8000880, 880 }, // "Filler: Staff of Horrors (#880)"
     { 8000885, 885 }, // "Filler: Black Metal Axe (#885)"
     { 8000886, 886 }, // "Filler: Black Metal Shortsword (#886)"
+    { 8000890, 890 }, // "Filler: Twisted Chanter's Staff (#890)"
     { 8000892, 892 }, // "Filler: Gnoll Casting Gloves (#892)"
     { 8000897, 897 }, // "Filler: Madwolf Bracers (#897)"
     { 8000899, 899 }, // "Filler: Venom Web Fang (#899)"
@@ -11438,6 +12745,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8000929, 929 }, // "Filler: Healing Potion (#929)"
     { 8000932, 932 }, // "Filler: Fel Steed Saddlebags (#932)"
     { 8000933, 933 }, // "Filler: Large Rucksack (#933)"
+    { 8000934, 934 }, // "Filler: Stalvan's Reaper (#934)"
+    { 8000936, 936 }, // "Filler: Midnight Mace (#936)"
+    { 8000937, 937 }, // "Filler: Black Duskwood Staff (#937)"
     { 8000945, 945 }, // "Filler: Shadow Sword (#945)"
     { 8000948, 948 }, // "Filler: Nature Sword (#948)"
     { 8000954, 954 }, // "Filler: Scroll of Strength (#954)"
@@ -11459,6 +12769,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001114, 1114 }, // "Filler: Conjured Rye (#1114)"
     { 8001116, 1116 }, // "Filler: Ring of Pure Silver (#1116)"
     { 8001119, 1119 }, // "Filler: Bottled Spirits (#1119)"
+    { 8001121, 1121 }, // "Filler: Feet of the Lynx (#1121)"
     { 8001131, 1131 }, // "Filler: Totem of Infliction (#1131)"
     { 8001154, 1154 }, // "Filler: Belt of the People's Militia (#1154)"
     { 8001158, 1158 }, // "Filler: Solid Metal Club (#1158)"
@@ -11485,6 +12796,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001200, 1200 }, // "Filler: Large Wooden Shield (#1200)"
     { 8001201, 1201 }, // "Filler: Dull Heater Shield (#1201)"
     { 8001202, 1202 }, // "Filler: Wall Shield (#1202)"
+    { 8001203, 1203 }, // "Filler: Aegis of Stormwind (#1203)"
+    { 8001204, 1204 }, // "Filler: The Green Tower (#1204)"
     { 8001205, 1205 }, // "Filler: Melon Juice (#1205)"
     { 8001206, 1206 }, // "Filler: Moss Agate (#1206)"
     { 8001207, 1207 }, // "Filler: Murphstar (#1207)"
@@ -11498,6 +12811,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001219, 1219 }, // "Filler: Redridge Machete (#1219)"
     { 8001220, 1220 }, // "Filler: Lupine Axe (#1220)"
     { 8001264, 1264 }, // "Filler: Headbasher (#1264)"
+    { 8001265, 1265 }, // "Filler: Scorpion Sting (#1265)"
     { 8001270, 1270 }, // "Filler: Finely Woven Cloak (#1270)"
     { 8001273, 1273 }, // "Filler: Forest Chain (#1273)"
     { 8001275, 1275 }, // "Filler: Deputy Chain Coat (#1275)"
@@ -11522,6 +12836,18 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001355, 1355 }, // "Filler: Buckskin Cape (#1355)"
     { 8001359, 1359 }, // "Filler: Lion-stamped Gloves (#1359)"
     { 8001360, 1360 }, // "Filler: Stormwind Chain Gloves (#1360)"
+    { 8001364, 1364 }, // "Filler: Ragged Leather Vest (#1364)"
+    { 8001366, 1366 }, // "Filler: Ragged Leather Pants (#1366)"
+    { 8001367, 1367 }, // "Filler: Ragged Leather Boots (#1367)"
+    { 8001368, 1368 }, // "Filler: Ragged Leather Gloves (#1368)"
+    { 8001369, 1369 }, // "Filler: Ragged Leather Belt (#1369)"
+    { 8001370, 1370 }, // "Filler: Ragged Leather Bracers (#1370)"
+    { 8001372, 1372 }, // "Filler: Ragged Cloak (#1372)"
+    { 8001374, 1374 }, // "Filler: Frayed Shoes (#1374)"
+    { 8001376, 1376 }, // "Filler: Frayed Cloak (#1376)"
+    { 8001377, 1377 }, // "Filler: Frayed Gloves (#1377)"
+    { 8001378, 1378 }, // "Filler: Frayed Pants (#1378)"
+    { 8001380, 1380 }, // "Filler: Frayed Robe (#1380)"
     { 8001382, 1382 }, // "Filler: Rock Mace (#1382)"
     { 8001383, 1383 }, // "Filler: Stone Tomahawk (#1383)"
     { 8001384, 1384 }, // "Filler: Dull Blade (#1384)"
@@ -11535,6 +12861,25 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001404, 1404 }, // "Filler: Tidal Charm (#1404)"
     { 8001405, 1405 }, // "Filler: Foamspittle Staff (#1405)"
     { 8001406, 1406 }, // "Filler: Pearl-encrusted Spear (#1406)"
+    { 8001411, 1411 }, // "Filler: Withered Staff (#1411)"
+    { 8001412, 1412 }, // "Filler: Crude Bastard Sword (#1412)"
+    { 8001413, 1413 }, // "Filler: Feeble Sword (#1413)"
+    { 8001414, 1414 }, // "Filler: Cracked Sledge (#1414)"
+    { 8001415, 1415 }, // "Filler: Carpenter's Mallet (#1415)"
+    { 8001416, 1416 }, // "Filler: Rusty Hatchet (#1416)"
+    { 8001417, 1417 }, // "Filler: Beaten Battle Axe (#1417)"
+    { 8001418, 1418 }, // "Filler: Worn Leather Belt (#1418)"
+    { 8001419, 1419 }, // "Filler: Worn Leather Boots (#1419)"
+    { 8001420, 1420 }, // "Filler: Worn Leather Bracers (#1420)"
+    { 8001421, 1421 }, // "Filler: Worn Hide Cloak (#1421)"
+    { 8001422, 1422 }, // "Filler: Worn Leather Gloves (#1422)"
+    { 8001423, 1423 }, // "Filler: Worn Leather Pants (#1423)"
+    { 8001425, 1425 }, // "Filler: Worn Leather Vest (#1425)"
+    { 8001427, 1427 }, // "Filler: Patchwork Shoes (#1427)"
+    { 8001429, 1429 }, // "Filler: Patchwork Cloak (#1429)"
+    { 8001430, 1430 }, // "Filler: Patchwork Gloves (#1430)"
+    { 8001431, 1431 }, // "Filler: Patchwork Pants (#1431)"
+    { 8001433, 1433 }, // "Filler: Patchwork Armor (#1433)"
     { 8001436, 1436 }, // "Filler: Frontier Britches (#1436)"
     { 8001438, 1438 }, // "Filler: Warrior's Shield (#1438)"
     { 8001440, 1440 }, // "Filler: Gnoll Skull Basher (#1440)"
@@ -11560,6 +12905,25 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001480, 1480 }, // "Filler: Fist of the People's Militia (#1480)"
     { 8001487, 1487 }, // "Filler: Conjured Pumpernickel (#1487)"
     { 8001490, 1490 }, // "Filler: Guardian Talisman (#1490)"
+    { 8001495, 1495 }, // "Filler: Calico Shoes (#1495)"
+    { 8001497, 1497 }, // "Filler: Calico Cloak (#1497)"
+    { 8001498, 1498 }, // "Filler: Calico Gloves (#1498)"
+    { 8001499, 1499 }, // "Filler: Calico Pants (#1499)"
+    { 8001501, 1501 }, // "Filler: Calico Tunic (#1501)"
+    { 8001502, 1502 }, // "Filler: Warped Leather Belt (#1502)"
+    { 8001503, 1503 }, // "Filler: Warped Leather Boots (#1503)"
+    { 8001504, 1504 }, // "Filler: Warped Leather Bracers (#1504)"
+    { 8001505, 1505 }, // "Filler: Warped Cloak (#1505)"
+    { 8001506, 1506 }, // "Filler: Warped Leather Gloves (#1506)"
+    { 8001507, 1507 }, // "Filler: Warped Leather Pants (#1507)"
+    { 8001509, 1509 }, // "Filler: Warped Leather Vest (#1509)"
+    { 8001510, 1510 }, // "Filler: Heavy Hammer (#1510)"
+    { 8001511, 1511 }, // "Filler: Commoner's Sword (#1511)"
+    { 8001512, 1512 }, // "Filler: Crude Battle Axe (#1512)"
+    { 8001513, 1513 }, // "Filler: Old Greatsword (#1513)"
+    { 8001514, 1514 }, // "Filler: Rusty Warhammer (#1514)"
+    { 8001515, 1515 }, // "Filler: Rough Wooden Staff (#1515)"
+    { 8001516, 1516 }, // "Filler: Worn Hatchet (#1516)"
     { 8001521, 1521 }, // "Filler: Lumbering Ogre Axe (#1521)"
     { 8001522, 1522 }, // "Filler: Headhunting Spear (#1522)"
     { 8001523, 1523 }, // "Filler: Huge Stone Club (#1523)"
@@ -11572,6 +12936,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001561, 1561 }, // "Filler: Harvester's Robe (#1561)"
     { 8001566, 1566 }, // "Filler: Edge of the People's Militia (#1566)"
     { 8001604, 1604 }, // "Filler: Chromatic Sword (#1604)"
+    { 8001607, 1607 }, // "Filler: Soulkeeper (#1607)"
     { 8001608, 1608 }, // "Filler: Skullcrusher Mace (#1608)"
     { 8001613, 1613 }, // "Filler: Spiritchaser Staff (#1613)"
     { 8001623, 1623 }, // "Filler: Raptor Skin Pouch (#1623)"
@@ -11593,8 +12958,112 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001710, 1710 }, // "Filler: Greater Healing Potion (#1710)"
     { 8001711, 1711 }, // "Filler: Scroll of Stamina II (#1711)"
     { 8001712, 1712 }, // "Filler: Scroll of Spirit II (#1712)"
+    { 8001713, 1713 }, // "Filler: Ankh of Life (#1713)"
+    { 8001714, 1714 }, // "Filler: Necklace of Calisea (#1714)"
+    { 8001715, 1715 }, // "Filler: Polished Jazeraint Armor (#1715)"
+    { 8001716, 1716 }, // "Filler: Robe of the Magi (#1716)"
+    { 8001717, 1717 }, // "Filler: Double Link Tunic (#1717)"
+    { 8001718, 1718 }, // "Filler: Basilisk Hide Pants (#1718)"
+    { 8001720, 1720 }, // "Filler: Tanglewood Staff (#1720)"
+    { 8001721, 1721 }, // "Filler: Viking Warhammer (#1721)"
+    { 8001722, 1722 }, // "Filler: Thornstone Sledgehammer (#1722)"
     { 8001725, 1725 }, // "Filler: Large Knapsack (#1725)"
+    { 8001726, 1726 }, // "Filler: Poison-tipped Bone Spear (#1726)"
     { 8001729, 1729 }, // "Filler: Gunnysack of the Night Watch (#1729)"
+    { 8001730, 1730 }, // "Filler: Worn Mail Belt (#1730)"
+    { 8001731, 1731 }, // "Filler: Worn Mail Boots (#1731)"
+    { 8001732, 1732 }, // "Filler: Worn Mail Bracers (#1732)"
+    { 8001733, 1733 }, // "Filler: Worn Cloak (#1733)"
+    { 8001734, 1734 }, // "Filler: Worn Mail Gloves (#1734)"
+    { 8001735, 1735 }, // "Filler: Worn Mail Pants (#1735)"
+    { 8001737, 1737 }, // "Filler: Worn Mail Vest (#1737)"
+    { 8001738, 1738 }, // "Filler: Laced Mail Belt (#1738)"
+    { 8001739, 1739 }, // "Filler: Laced Mail Boots (#1739)"
+    { 8001740, 1740 }, // "Filler: Laced Mail Bracers (#1740)"
+    { 8001741, 1741 }, // "Filler: Laced Cloak (#1741)"
+    { 8001742, 1742 }, // "Filler: Laced Mail Gloves (#1742)"
+    { 8001743, 1743 }, // "Filler: Laced Mail Pants (#1743)"
+    { 8001744, 1744 }, // "Filler: Laced Mail Shoulderpads (#1744)"
+    { 8001745, 1745 }, // "Filler: Laced Mail Vest (#1745)"
+    { 8001746, 1746 }, // "Filler: Linked Chain Belt (#1746)"
+    { 8001747, 1747 }, // "Filler: Linked Chain Boots (#1747)"
+    { 8001748, 1748 }, // "Filler: Linked Chain Bracers (#1748)"
+    { 8001749, 1749 }, // "Filler: Linked Chain Cloak (#1749)"
+    { 8001750, 1750 }, // "Filler: Linked Chain Gloves (#1750)"
+    { 8001751, 1751 }, // "Filler: Linked Chain Pants (#1751)"
+    { 8001752, 1752 }, // "Filler: Linked Chain Shoulderpads (#1752)"
+    { 8001753, 1753 }, // "Filler: Linked Chain Vest (#1753)"
+    { 8001754, 1754 }, // "Filler: Reinforced Chain Belt (#1754)"
+    { 8001755, 1755 }, // "Filler: Reinforced Chain Boots (#1755)"
+    { 8001756, 1756 }, // "Filler: Reinforced Chain Bracers (#1756)"
+    { 8001757, 1757 }, // "Filler: Reinforced Chain Cloak (#1757)"
+    { 8001758, 1758 }, // "Filler: Reinforced Chain Gloves (#1758)"
+    { 8001759, 1759 }, // "Filler: Reinforced Chain Pants (#1759)"
+    { 8001760, 1760 }, // "Filler: Reinforced Chain Shoulderpads (#1760)"
+    { 8001761, 1761 }, // "Filler: Reinforced Chain Vest (#1761)"
+    { 8001764, 1764 }, // "Filler: Canvas Shoes (#1764)"
+    { 8001766, 1766 }, // "Filler: Canvas Cloak (#1766)"
+    { 8001767, 1767 }, // "Filler: Canvas Gloves (#1767)"
+    { 8001768, 1768 }, // "Filler: Canvas Pants (#1768)"
+    { 8001769, 1769 }, // "Filler: Canvas Shoulderpads (#1769)"
+    { 8001770, 1770 }, // "Filler: Canvas Vest (#1770)"
+    { 8001772, 1772 }, // "Filler: Brocade Shoes (#1772)"
+    { 8001774, 1774 }, // "Filler: Brocade Cloak (#1774)"
+    { 8001775, 1775 }, // "Filler: Brocade Gloves (#1775)"
+    { 8001776, 1776 }, // "Filler: Brocade Pants (#1776)"
+    { 8001777, 1777 }, // "Filler: Brocade Shoulderpads (#1777)"
+    { 8001778, 1778 }, // "Filler: Brocade Vest (#1778)"
+    { 8001780, 1780 }, // "Filler: Cross-stitched Sandals (#1780)"
+    { 8001782, 1782 }, // "Filler: Cross-stitched Cloak (#1782)"
+    { 8001783, 1783 }, // "Filler: Cross-stitched Gloves (#1783)"
+    { 8001784, 1784 }, // "Filler: Cross-stitched Pants (#1784)"
+    { 8001785, 1785 }, // "Filler: Cross-stitched Shoulderpads (#1785)"
+    { 8001786, 1786 }, // "Filler: Cross-stitched Vest (#1786)"
+    { 8001787, 1787 }, // "Filler: Patched Leather Belt (#1787)"
+    { 8001788, 1788 }, // "Filler: Patched Leather Boots (#1788)"
+    { 8001789, 1789 }, // "Filler: Patched Leather Bracers (#1789)"
+    { 8001790, 1790 }, // "Filler: Patched Cloak (#1790)"
+    { 8001791, 1791 }, // "Filler: Patched Leather Gloves (#1791)"
+    { 8001792, 1792 }, // "Filler: Patched Leather Pants (#1792)"
+    { 8001793, 1793 }, // "Filler: Patched Leather Shoulderpads (#1793)"
+    { 8001794, 1794 }, // "Filler: Patched Leather Jerkin (#1794)"
+    { 8001795, 1795 }, // "Filler: Rawhide Belt (#1795)"
+    { 8001796, 1796 }, // "Filler: Rawhide Boots (#1796)"
+    { 8001797, 1797 }, // "Filler: Rawhide Bracers (#1797)"
+    { 8001798, 1798 }, // "Filler: Rawhide Cloak (#1798)"
+    { 8001799, 1799 }, // "Filler: Rawhide Gloves (#1799)"
+    { 8001800, 1800 }, // "Filler: Rawhide Pants (#1800)"
+    { 8001801, 1801 }, // "Filler: Rawhide Shoulderpads (#1801)"
+    { 8001802, 1802 }, // "Filler: Rawhide Tunic (#1802)"
+    { 8001803, 1803 }, // "Filler: Tough Leather Belt (#1803)"
+    { 8001804, 1804 }, // "Filler: Tough Leather Boots (#1804)"
+    { 8001805, 1805 }, // "Filler: Tough Leather Bracers (#1805)"
+    { 8001806, 1806 }, // "Filler: Tough Cloak (#1806)"
+    { 8001807, 1807 }, // "Filler: Tough Leather Gloves (#1807)"
+    { 8001808, 1808 }, // "Filler: Tough Leather Pants (#1808)"
+    { 8001809, 1809 }, // "Filler: Tough Leather Shoulderpads (#1809)"
+    { 8001810, 1810 }, // "Filler: Tough Leather Armor (#1810)"
+    { 8001811, 1811 }, // "Filler: Blunt Claymore (#1811)"
+    { 8001812, 1812 }, // "Filler: Short-handled Battle Axe (#1812)"
+    { 8001813, 1813 }, // "Filler: Chipped Quarterstaff (#1813)"
+    { 8001814, 1814 }, // "Filler: Battered Mallet (#1814)"
+    { 8001815, 1815 }, // "Filler: Ornamental Mace (#1815)"
+    { 8001816, 1816 }, // "Filler: Unbalanced Axe (#1816)"
+    { 8001817, 1817 }, // "Filler: Stock Shortsword (#1817)"
+    { 8001818, 1818 }, // "Filler: Standard Claymore (#1818)"
+    { 8001819, 1819 }, // "Filler: Gouging Pick (#1819)"
+    { 8001820, 1820 }, // "Filler: Wooden Maul (#1820)"
+    { 8001821, 1821 }, // "Filler: Warped Blade (#1821)"
+    { 8001822, 1822 }, // "Filler: Cedar Walking Stick (#1822)"
+    { 8001823, 1823 }, // "Filler: Bludgeoning Cudgel (#1823)"
+    { 8001824, 1824 }, // "Filler: Shiny War Axe (#1824)"
+    { 8001825, 1825 }, // "Filler: Bulky Bludgeon (#1825)"
+    { 8001826, 1826 }, // "Filler: Rock Maul (#1826)"
+    { 8001827, 1827 }, // "Filler: Meat Cleaver (#1827)"
+    { 8001828, 1828 }, // "Filler: Stone War Axe (#1828)"
+    { 8001829, 1829 }, // "Filler: Short Cutlass (#1829)"
+    { 8001830, 1830 }, // "Filler: Long Bastard Sword (#1830)"
+    { 8001831, 1831 }, // "Filler: Oaken War Staff (#1831)"
     { 8001832, 1832 }, // "Filler: Lucky Trousers (#1832)"
     { 8001835, 1835 }, // "Filler: Dirty Leather Belt (#1835)"
     { 8001836, 1836 }, // "Filler: Dirty Leather Bracers (#1836)"
@@ -11629,7 +13098,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001958, 1958 }, // "Filler: Petrified Shinbone (#1958)"
     { 8001959, 1959 }, // "Filler: Cold Iron Pick (#1959)"
     { 8001965, 1965 }, // "Filler: White Wolf Gloves (#1965)"
+    { 8001973, 1973 }, // "Filler: Orb of Deception (#1973)"
     { 8001977, 1977 }, // "Filler: 20-slot Bag (#1977)"
+    { 8001980, 1980 }, // "Filler: Underworld Band (#1980)"
     { 8001986, 1986 }, // "Filler: Gutrender (#1986)"
     { 8001988, 1988 }, // "Filler: Chief Brigadier Gauntlets (#1988)"
     { 8001990, 1990 }, // "Filler: Ballast Maul (#1990)"
@@ -11640,6 +13111,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8001997, 1997 }, // "Filler: Pressed Felt Robe (#1997)"
     { 8001998, 1998 }, // "Filler: Bloodscalp Channeling Staff (#1998)"
     { 8002000, 2000 }, // "Filler: Archeus (#2000)"
+    { 8002011, 2011 }, // "Filler: Twisted Sabre (#2011)"
     { 8002013, 2013 }, // "Filler: Cryptbone Staff (#2013)"
     { 8002014, 2014 }, // "Filler: Black Metal Greatsword (#2014)"
     { 8002015, 2015 }, // "Filler: Black Metal War Axe (#2015)"
@@ -11668,6 +13140,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002055, 2055 }, // "Filler: Small Wooden Hammer (#2055)"
     { 8002057, 2057 }, // "Filler: Pitted Defias Shortsword (#2057)"
     { 8002058, 2058 }, // "Filler: Kazon's Maul (#2058)"
+    { 8002059, 2059 }, // "Filler: Sentry Cloak (#2059)"
     { 8002064, 2064 }, // "Filler: Trogg Club (#2064)"
     { 8002065, 2065 }, // "Filler: Rockjaw Blade (#2065)"
     { 8002066, 2066 }, // "Filler: Skull Hatchet (#2066)"
@@ -11688,6 +13161,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002088, 2088 }, // "Filler: Long Crawler Limb (#2088)"
     { 8002089, 2089 }, // "Filler: Scrimshaw Dagger (#2089)"
     { 8002092, 2092 }, // "Filler: Worn Dagger (#2092)"
+    { 8002098, 2098 }, // "Filler: Double-barreled Shotgun (#2098)"
     { 8002105, 2105 }, // "Filler: Thug Shirt (#2105)"
     { 8002108, 2108 }, // "Filler: Frostmane Leather Vest (#2108)"
     { 8002109, 2109 }, // "Filler: Frostmane Chain Vest (#2109)"
@@ -11713,6 +13187,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002134, 2134 }, // "Filler: Hand Axe (#2134)"
     { 8002136, 2136 }, // "Filler: Conjured Purified Water (#2136)"
     { 8002137, 2137 }, // "Filler: Whittling Knife (#2137)"
+    { 8002138, 2138 }, // "Filler: Sharpened Letter Opener (#2138)"
     { 8002139, 2139 }, // "Filler: Dirk (#2139)"
     { 8002140, 2140 }, // "Filler: Carving Knife (#2140)"
     { 8002141, 2141 }, // "Filler: Cuirboulli Vest (#2141)"
@@ -11731,6 +13206,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002158, 2158 }, // "Filler: Padded Gloves (#2158)"
     { 8002159, 2159 }, // "Filler: Padded Pants (#2159)"
     { 8002160, 2160 }, // "Filler: Padded Armor (#2160)"
+    { 8002164, 2164 }, // "Filler: Gut Ripper (#2164)"
     { 8002165, 2165 }, // "Filler: Old Blanchy's Blanket (#2165)"
     { 8002166, 2166 }, // "Filler: Foreman's Leggings (#2166)"
     { 8002167, 2167 }, // "Filler: Foreman's Gloves (#2167)"
@@ -11739,13 +13215,26 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002173, 2173 }, // "Filler: Old Leather Belt (#2173)"
     { 8002175, 2175 }, // "Filler: Shadowhide Battle Axe (#2175)"
     { 8002186, 2186 }, // "Filler: Outfitter Belt (#2186)"
+    { 8002194, 2194 }, // "Filler: Diamond Hammer (#2194)"
     { 8002195, 2195 }, // "Filler: Anvilmar Knife (#2195)"
     { 8002203, 2203 }, // "Filler: Brashclaw's Chopper (#2203)"
     { 8002204, 2204 }, // "Filler: Brashclaw's Skewer (#2204)"
     { 8002207, 2207 }, // "Filler: Jambiya (#2207)"
     { 8002208, 2208 }, // "Filler: Poniard (#2208)"
     { 8002209, 2209 }, // "Filler: Kris (#2209)"
+    { 8002210, 2210 }, // "Filler: Battered Buckler (#2210)"
+    { 8002211, 2211 }, // "Filler: Bent Large Shield (#2211)"
+    { 8002212, 2212 }, // "Filler: Cracked Buckler (#2212)"
+    { 8002213, 2213 }, // "Filler: Worn Large Shield (#2213)"
+    { 8002214, 2214 }, // "Filler: Wooden Buckler (#2214)"
+    { 8002215, 2215 }, // "Filler: Wooden Shield (#2215)"
+    { 8002216, 2216 }, // "Filler: Simple Buckler (#2216)"
+    { 8002217, 2217 }, // "Filler: Rectangular Shield (#2217)"
     { 8002218, 2218 }, // "Filler: Craftsman's Dagger (#2218)"
+    { 8002219, 2219 }, // "Filler: Small Round Shield (#2219)"
+    { 8002220, 2220 }, // "Filler: Box Shield (#2220)"
+    { 8002221, 2221 }, // "Filler: Targe Shield (#2221)"
+    { 8002222, 2222 }, // "Filler: Tower Shield (#2222)"
     { 8002224, 2224 }, // "Filler: Militia Dagger (#2224)"
     { 8002225, 2225 }, // "Filler: Sharp Kitchen Knife (#2225)"
     { 8002226, 2226 }, // "Filler: Ogremage Staff (#2226)"
@@ -11756,12 +13245,14 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002233, 2233 }, // "Filler: Shadow Weaver Leggings (#2233)"
     { 8002234, 2234 }, // "Filler: Nightwalker Armor (#2234)"
     { 8002235, 2235 }, // "Filler: Brackclaw (#2235)"
+    { 8002236, 2236 }, // "Filler: Blackfang (#2236)"
     { 8002237, 2237 }, // "Filler: Patched Pants (#2237)"
     { 8002238, 2238 }, // "Filler: Urchin's Pants (#2238)"
     { 8002240, 2240 }, // "Filler: Rugged Cape (#2240)"
     { 8002241, 2241 }, // "Filler: Desperado Cape (#2241)"
     { 8002249, 2249 }, // "Filler: Militia Buckler (#2249)"
     { 8002254, 2254 }, // "Filler: Icepane Warhammer (#2254)"
+    { 8002256, 2256 }, // "Filler: Skeletal Club (#2256)"
     { 8002257, 2257 }, // "Filler: Frostmane Staff (#2257)"
     { 8002258, 2258 }, // "Filler: Frostmane Shortsword (#2258)"
     { 8002259, 2259 }, // "Filler: Frostmane Club (#2259)"
@@ -11773,6 +13264,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002268, 2268 }, // "Filler: Stonesplinter Blade (#2268)"
     { 8002273, 2273 }, // "Filler: Guerrilla Armor (#2273)"
     { 8002274, 2274 }, // "Filler: Sapper's Gloves (#2274)"
+    { 8002276, 2276 }, // "Filler: Swampwalker Boots (#2276)"
+    { 8002277, 2277 }, // "Filler: Necromancer Leggings (#2277)"
+    { 8002278, 2278 }, // "Filler: Forest Tracker Epaulets (#2278)"
     { 8002281, 2281 }, // "Filler: Rodentia Flint Axe (#2281)"
     { 8002282, 2282 }, // "Filler: Rodentia Shortsword (#2282)"
     { 8002283, 2283 }, // "Filler: Rat Cloth Belt (#2283)"
@@ -11781,6 +13275,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002288, 2288 }, // "Filler: Conjured Fresh Water (#2288)"
     { 8002289, 2289 }, // "Filler: Scroll of Strength II (#2289)"
     { 8002290, 2290 }, // "Filler: Scroll of Intellect II (#2290)"
+    { 8002299, 2299 }, // "Filler: Burning War Axe (#2299)"
     { 8002300, 2300 }, // "Filler: Embossed Leather Vest (#2300)"
     { 8002302, 2302 }, // "Filler: Handstitched Leather Boots (#2302)"
     { 8002303, 2303 }, // "Filler: Handstitched Leather Pants (#2303)"
@@ -11793,6 +13288,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002315, 2315 }, // "Filler: Dark Leather Boots (#2315)"
     { 8002316, 2316 }, // "Filler: Dark Leather Cloak (#2316)"
     { 8002317, 2317 }, // "Filler: Dark Leather Tunic (#2317)"
+    { 8002318, 2318 }, // "Filler: Light Leather (#2318)"
+    { 8002319, 2319 }, // "Filler: Medium Leather (#2319)"
     { 8002326, 2326 }, // "Filler: Ivy-weave Bracers (#2326)"
     { 8002327, 2327 }, // "Filler: Sturdy Leather Bracers (#2327)"
     { 8002361, 2361 }, // "Filler: Battleworn Hammer (#2361)"
@@ -11832,6 +13329,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002401, 2401 }, // "Filler: Light Chain Boots (#2401)"
     { 8002402, 2402 }, // "Filler: Light Chain Bracers (#2402)"
     { 8002403, 2403 }, // "Filler: Light Chain Gloves (#2403)"
+    { 8002406, 2406 }, // "Filler: Pattern: Fine Leather Boots (#2406)"
+    { 8002407, 2407 }, // "Filler: Pattern: White Leather Jerkin (#2407)"
+    { 8002408, 2408 }, // "Filler: Pattern: Fine Leather Gloves (#2408)"
+    { 8002409, 2409 }, // "Filler: Pattern: Dark Leather Tunic (#2409)"
     { 8002410, 2410 }, // "Filler: Smoky Torch (#2410)"
     { 8002417, 2417 }, // "Filler: Augmented Chain Vest (#2417)"
     { 8002418, 2418 }, // "Filler: Augmented Chain Leggings (#2418)"
@@ -11859,8 +13360,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002444, 2444 }, // "Filler: Ornate Buckler (#2444)"
     { 8002445, 2445 }, // "Filler: Large Metal Shield (#2445)"
     { 8002446, 2446 }, // "Filler: Kite Shield (#2446)"
+    { 8002447, 2447 }, // "Filler: Peacebloom (#2447)"
     { 8002448, 2448 }, // "Filler: Heavy Pavise (#2448)"
+    { 8002449, 2449 }, // "Filler: Earthroot (#2449)"
+    { 8002450, 2450 }, // "Filler: Briarthorn (#2450)"
     { 8002451, 2451 }, // "Filler: Crested Heater Shield (#2451)"
+    { 8002452, 2452 }, // "Filler: Swiftthistle (#2452)"
+    { 8002453, 2453 }, // "Filler: Bruiseweed (#2453)"
     { 8002454, 2454 }, // "Filler: Elixir of Lion's Strength (#2454)"
     { 8002455, 2455 }, // "Filler: Minor Mana Potion (#2455)"
     { 8002456, 2456 }, // "Filler: Minor Rejuvenation Potion (#2456)"
@@ -11932,7 +13438,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002545, 2545 }, // "Filler: Malleable Chain Leggings (#2545)"
     { 8002546, 2546 }, // "Filler: Royal Frostmane Girdle (#2546)"
     { 8002547, 2547 }, // "Filler: Boar Handler Gloves (#2547)"
+    { 8002553, 2553 }, // "Filler: Recipe: Elixir of Minor Agility (#2553)"
+    { 8002555, 2555 }, // "Filler: Recipe: Swiftness Potion (#2555)"
     { 8002562, 2562 }, // "Filler: Bouquet of Scarlet Begonias (#2562)"
+    { 8002564, 2564 }, // "Filler: Elven Spirit Claws (#2564)"
+    { 8002565, 2565 }, // "Filler: Rod of Molten Fire (#2565)"
     { 8002566, 2566 }, // "Filler: Sacrificial Robes (#2566)"
     { 8002568, 2568 }, // "Filler: Brown Linen Vest (#2568)"
     { 8002569, 2569 }, // "Filler: Linen Boots (#2569)"
@@ -11951,10 +13461,14 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002585, 2585 }, // "Filler: Gray Woolen Robe (#2585)"
     { 8002586, 2586 }, // "Filler: Gamemaster's Robe (#2586)"
     { 8002587, 2587 }, // "Filler: Gray Woolen Shirt (#2587)"
+    { 8002589, 2589 }, // "Filler: Linen Cloth (#2589)"
+    { 8002592, 2592 }, // "Filler: Wool Cloth (#2592)"
     { 8002593, 2593 }, // "Filler: Flask of Port (#2593)"
     { 8002594, 2594 }, // "Filler: Flagon of Mead (#2594)"
     { 8002595, 2595 }, // "Filler: Jug of Bourbon (#2595)"
     { 8002596, 2596 }, // "Filler: Skin of Dwarven Stout (#2596)"
+    { 8002598, 2598 }, // "Filler: Pattern: Red Linen Robe (#2598)"
+    { 8002601, 2601 }, // "Filler: Pattern: Gray Woolen Robe (#2601)"
     { 8002612, 2612 }, // "Filler: Plain Robe (#2612)"
     { 8002613, 2613 }, // "Filler: Double-stitched Robes (#2613)"
     { 8002614, 2614 }, // "Filler: Robe of Apprenticeship (#2614)"
@@ -11969,8 +13483,23 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002624, 2624 }, // "Filler: Thinking Cap (#2624)"
     { 8002632, 2632 }, // "Filler: Curved Dagger (#2632)"
     { 8002633, 2633 }, // "Filler: Jungle Remedy (#2633)"
+    { 8002635, 2635 }, // "Filler: Loose Chain Belt (#2635)"
+    { 8002642, 2642 }, // "Filler: Loose Chain Boots (#2642)"
+    { 8002643, 2643 }, // "Filler: Loose Chain Bracers (#2643)"
+    { 8002644, 2644 }, // "Filler: Loose Chain Cloak (#2644)"
+    { 8002645, 2645 }, // "Filler: Loose Chain Gloves (#2645)"
+    { 8002646, 2646 }, // "Filler: Loose Chain Pants (#2646)"
+    { 8002648, 2648 }, // "Filler: Loose Chain Vest (#2648)"
+    { 8002649, 2649 }, // "Filler: Flimsy Chain Belt (#2649)"
+    { 8002650, 2650 }, // "Filler: Flimsy Chain Boots (#2650)"
+    { 8002651, 2651 }, // "Filler: Flimsy Chain Bracers (#2651)"
+    { 8002652, 2652 }, // "Filler: Flimsy Chain Cloak (#2652)"
+    { 8002653, 2653 }, // "Filler: Flimsy Chain Gloves (#2653)"
+    { 8002654, 2654 }, // "Filler: Flimsy Chain Pants (#2654)"
+    { 8002656, 2656 }, // "Filler: Flimsy Chain Vest (#2656)"
     { 8002657, 2657 }, // "Filler: Red Leather Bag (#2657)"
     { 8002664, 2664 }, // "Filler: Spinner Fang (#2664)"
+    { 8002672, 2672 }, // "Filler: Stringy Wolf Meat (#2672)"
     { 8002679, 2679 }, // "Filler: Charred Wolf Meat (#2679)"
     { 8002680, 2680 }, // "Filler: Spiced Wolf Meat (#2680)"
     { 8002681, 2681 }, // "Filler: Roasted Boar Meat (#2681)"
@@ -11983,11 +13512,34 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002690, 2690 }, // "Filler: Latched Belt (#2690)"
     { 8002691, 2691 }, // "Filler: Outfitter Boots (#2691)"
     { 8002694, 2694 }, // "Filler: Settler's Leggings (#2694)"
+    { 8002721, 2721 }, // "Filler: Holy Shroud (#2721)"
     { 8002723, 2723 }, // "Filler: Bottle of Pinot Noir (#2723)"
     { 8002754, 2754 }, // "Filler: Tarnished Bastard Sword (#2754)"
+    { 8002763, 2763 }, // "Filler: Fisherman Knife (#2763)"
+    { 8002764, 2764 }, // "Filler: Small Dagger (#2764)"
+    { 8002765, 2765 }, // "Filler: Hunting Knife (#2765)"
+    { 8002766, 2766 }, // "Filler: Deft Stiletto (#2766)"
+    { 8002770, 2770 }, // "Filler: Copper Ore (#2770)"
+    { 8002771, 2771 }, // "Filler: Tin Ore (#2771)"
+    { 8002772, 2772 }, // "Filler: Iron Ore (#2772)"
+    { 8002773, 2773 }, // "Filler: Cracked Shortbow (#2773)"
+    { 8002774, 2774 }, // "Filler: Rust-covered Blunderbuss (#2774)"
+    { 8002775, 2775 }, // "Filler: Silver Ore (#2775)"
+    { 8002776, 2776 }, // "Filler: Gold Ore (#2776)"
+    { 8002777, 2777 }, // "Filler: Feeble Shortbow (#2777)"
+    { 8002778, 2778 }, // "Filler: Cheap Blunderbuss (#2778)"
+    { 8002780, 2780 }, // "Filler: Light Hunting Bow (#2780)"
+    { 8002781, 2781 }, // "Filler: Dirty Blunderbuss (#2781)"
+    { 8002782, 2782 }, // "Filler: Mishandled Recurve Bow (#2782)"
+    { 8002783, 2783 }, // "Filler: Shoddy Blunderbuss (#2783)"
+    { 8002785, 2785 }, // "Filler: Stiff Recurve Bow (#2785)"
+    { 8002786, 2786 }, // "Filler: Oiled Blunderbuss (#2786)"
     { 8002787, 2787 }, // "Filler: Trogg Dagger (#2787)"
+    { 8002800, 2800 }, // "Filler: Black Velvet Robes (#2800)"
+    { 8002802, 2802 }, // "Filler: Blazing Emblem (#2802)"
     { 8002805, 2805 }, // "Filler: Yeti Fur Cloak (#2805)"
     { 8002808, 2808 }, // "Filler: Torch of Holy Flame (#2808)"
+    { 8002815, 2815 }, // "Filler: Curve-bladed Ripper (#2815)"
     { 8002817, 2817 }, // "Filler: Soft Leather Tunic (#2817)"
     { 8002818, 2818 }, // "Filler: Stretched Leather Trousers (#2818)"
     { 8002819, 2819 }, // "Filler: Cross Dagger (#2819)"
@@ -11995,6 +13547,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002821, 2821 }, // "Filler: Mo'grosh Masher (#2821)"
     { 8002822, 2822 }, // "Filler: Mo'grosh Toothpick (#2822)"
     { 8002823, 2823 }, // "Filler: Mo'grosh Can Opener (#2823)"
+    { 8002825, 2825 }, // "Filler: Bow of Searing Arrows (#2825)"
+    { 8002835, 2835 }, // "Filler: Rough Stone (#2835)"
+    { 8002836, 2836 }, // "Filler: Coarse Stone (#2836)"
+    { 8002838, 2838 }, // "Filler: Heavy Stone (#2838)"
+    { 8002842, 2842 }, // "Filler: Silver Bar (#2842)"
     { 8002844, 2844 }, // "Filler: Copper Mace (#2844)"
     { 8002845, 2845 }, // "Filler: Copper Axe (#2845)"
     { 8002847, 2847 }, // "Filler: Copper Shortsword (#2847)"
@@ -12012,6 +13569,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002867, 2867 }, // "Filler: Rough Bronze Bracers (#2867)"
     { 8002868, 2868 }, // "Filler: Patterned Bronze Bracers (#2868)"
     { 8002869, 2869 }, // "Filler: Silvered Bronze Breastplate (#2869)"
+    { 8002877, 2877 }, // "Filler: Combatant Claymore (#2877)"
+    { 8002878, 2878 }, // "Filler: Bearded Boneaxe (#2878)"
+    { 8002879, 2879 }, // "Filler: Antipodean Rod (#2879)"
+    { 8002881, 2881 }, // "Filler: Plans: Runed Copper Breastplate (#2881)"
+    { 8002882, 2882 }, // "Filler: Plans: Silvered Bronze Shoulders (#2882)"
+    { 8002883, 2883 }, // "Filler: Plans: Deadly Bronze Poniard (#2883)"
     { 8002888, 2888 }, // "Filler: Beer Basted Boar Ribs (#2888)"
     { 8002894, 2894 }, // "Filler: Rhapsody Malt (#2894)"
     { 8002895, 2895 }, // "Filler: Creeping Pain (#2895)"
@@ -12028,6 +13591,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002907, 2907 }, // "Filler: Dwarven Tree Chopper (#2907)"
     { 8002908, 2908 }, // "Filler: Thornblade (#2908)"
     { 8002910, 2910 }, // "Filler: Gold Militia Boots (#2910)"
+    { 8002911, 2911 }, // "Filler: Keller's Girdle (#2911)"
+    { 8002912, 2912 }, // "Filler: Claw of the Shadowmancer (#2912)"
     { 8002913, 2913 }, // "Filler: Silk Mantle of Gamn (#2913)"
     { 8002916, 2916 }, // "Filler: Gold Lion Shield (#2916)"
     { 8002917, 2917 }, // "Filler: Tranquil Ring (#2917)"
@@ -12037,10 +13602,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002922, 2922 }, // "Filler: Spirit Relic (#2922)"
     { 8002923, 2923 }, // "Filler: Relic of Righteousness (#2923)"
     { 8002927, 2927 }, // "Filler: Creeping Torment (#2927)"
+    { 8002934, 2934 }, // "Filler: Ruined Leather Scraps (#2934)"
     { 8002943, 2943 }, // "Filler: Eye of Paleth (#2943)"
     { 8002944, 2944 }, // "Filler: Cursed Eye of Paleth (#2944)"
     { 8002949, 2949 }, // "Filler: Mariner Boots (#2949)"
     { 8002950, 2950 }, // "Filler: Icicle Rod (#2950)"
+    { 8002951, 2951 }, // "Filler: Ring of the Underwood (#2951)"
     { 8002953, 2953 }, // "Filler: Watch Master's Cloak (#2953)"
     { 8002954, 2954 }, // "Filler: Night Watch Pantaloons (#2954)"
     { 8002955, 2955 }, // "Filler: First Mate Hat (#2955)"
@@ -12080,6 +13647,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8002990, 2990 }, // "Filler: Burnished Leggings (#2990)"
     { 8002991, 2991 }, // "Filler: Burnished Boots (#2991)"
     { 8002992, 2992 }, // "Filler: Burnished Gloves (#2992)"
+    { 8002996, 2996 }, // "Filler: Bolt of Linen Cloth (#2996)"
+    { 8002997, 2997 }, // "Filler: Bolt of Woolen Cloth (#2997)"
     { 8003000, 3000 }, // "Filler: Brood Mother Carapace (#3000)"
     { 8003002, 3002 }, // "Filler: Relic Horn of Justice (#3002)"
     { 8003003, 3003 }, // "Filler: Relic of the Eye (#3003)"
@@ -12092,6 +13661,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003013, 3013 }, // "Filler: Scroll of Protection (#3013)"
     { 8003018, 3018 }, // "Filler: Hide of Lupos (#3018)"
     { 8003019, 3019 }, // "Filler: Noble's Robe (#3019)"
+    { 8003020, 3020 }, // "Filler: Enduring Cap (#3020)"
+    { 8003021, 3021 }, // "Filler: Ranger Bow (#3021)"
     { 8003022, 3022 }, // "Filler: Bluegill Breeches (#3022)"
     { 8003023, 3023 }, // "Filler: Large Bore Blunderbuss (#3023)"
     { 8003024, 3024 }, // "Filler: BKP 2700 \"Enforcer\" (#3024)"
@@ -12134,7 +13705,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003158, 3158 }, // "Filler: Burnt Hide Bracers (#3158)"
     { 8003160, 3160 }, // "Filler: Ironplate Buckler (#3160)"
     { 8003161, 3161 }, // "Filler: Robe of the Keeper (#3161)"
+    { 8003164, 3164 }, // "Filler: Discolored Worg Heart (#3164)"
     { 8003166, 3166 }, // "Filler: Ironheart Chain (#3166)"
+    { 8003181, 3181 }, // "Filler: Partially Digested Meat (#3181)"
     { 8003184, 3184 }, // "Filler: Hook Dagger (#3184)"
     { 8003185, 3185 }, // "Filler: Acrobatic Staff (#3185)"
     { 8003186, 3186 }, // "Filler: Viking Sword (#3186)"
@@ -12152,6 +13725,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003200, 3200 }, // "Filler: Burnt Leather Bracers (#3200)"
     { 8003201, 3201 }, // "Filler: Barbarian War Axe (#3201)"
     { 8003202, 3202 }, // "Filler: Forest Leather Bracers (#3202)"
+    { 8003203, 3203 }, // "Filler: Dense Triangle Mace (#3203)"
     { 8003204, 3204 }, // "Filler: Deepwood Bracers (#3204)"
     { 8003205, 3205 }, // "Filler: Inscribed Leather Bracers (#3205)"
     { 8003206, 3206 }, // "Filler: Cavalier Two-hander (#3206)"
@@ -12207,6 +13781,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003294, 3294 }, // "Filler: Deadman Club (#3294)"
     { 8003295, 3295 }, // "Filler: Deadman Blade (#3295)"
     { 8003296, 3296 }, // "Filler: Deadman Dagger (#3296)"
+    { 8003299, 3299 }, // "Filler: Fractured Canine (#3299)"
+    { 8003300, 3300 }, // "Filler: Rabbit's Foot (#3300)"
     { 8003302, 3302 }, // "Filler: Brackwater Boots (#3302)"
     { 8003303, 3303 }, // "Filler: Brackwater Bracers (#3303)"
     { 8003304, 3304 }, // "Filler: Brackwater Gauntlets (#3304)"
@@ -12237,13 +13813,31 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003334, 3334 }, // "Filler: Farmer's Shovel (#3334)"
     { 8003335, 3335 }, // "Filler: Farmer's Broom (#3335)"
     { 8003336, 3336 }, // "Filler: Flesh Piercer (#3336)"
+    { 8003340, 3340 }, // "Filler: Incendicite Ore (#3340)"
     { 8003341, 3341 }, // "Filler: Gauntlets of Ogre Strength (#3341)"
     { 8003342, 3342 }, // "Filler: Captain Sanders' Shirt (#3342)"
     { 8003343, 3343 }, // "Filler: Captain Sanders' Booty Bag (#3343)"
     { 8003344, 3344 }, // "Filler: Captain Sanders' Sash (#3344)"
     { 8003345, 3345 }, // "Filler: Silk Wizard Hat (#3345)"
     { 8003352, 3352 }, // "Filler: Ooze-covered Bag (#3352)"
+    { 8003355, 3355 }, // "Filler: Wild Steelbloom (#3355)"
+    { 8003356, 3356 }, // "Filler: Kingsblood (#3356)"
+    { 8003357, 3357 }, // "Filler: Liferoot (#3357)"
+    { 8003358, 3358 }, // "Filler: Khadgar's Whisker (#3358)"
     { 8003360, 3360 }, // "Filler: Stitches' Femur (#3360)"
+    { 8003363, 3363 }, // "Filler: Frayed Belt (#3363)"
+    { 8003365, 3365 }, // "Filler: Frayed Bracers (#3365)"
+    { 8003369, 3369 }, // "Filler: Grave Moss (#3369)"
+    { 8003370, 3370 }, // "Filler: Patchwork Belt (#3370)"
+    { 8003373, 3373 }, // "Filler: Patchwork Bracers (#3373)"
+    { 8003374, 3374 }, // "Filler: Calico Belt (#3374)"
+    { 8003375, 3375 }, // "Filler: Calico Bracers (#3375)"
+    { 8003376, 3376 }, // "Filler: Canvas Belt (#3376)"
+    { 8003377, 3377 }, // "Filler: Canvas Bracers (#3377)"
+    { 8003378, 3378 }, // "Filler: Brocade Belt (#3378)"
+    { 8003379, 3379 }, // "Filler: Brocade Bracers (#3379)"
+    { 8003380, 3380 }, // "Filler: Cross-stitched Belt (#3380)"
+    { 8003381, 3381 }, // "Filler: Cross-stitched Bracers (#3381)"
     { 8003382, 3382 }, // "Filler: Weak Troll's Blood Elixir (#3382)"
     { 8003383, 3383 }, // "Filler: Elixir of Wisdom (#3383)"
     { 8003384, 3384 }, // "Filler: Minor Magic Resistance Potion (#3384)"
@@ -12255,6 +13849,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003390, 3390 }, // "Filler: Elixir of Lesser Agility (#3390)"
     { 8003391, 3391 }, // "Filler: Elixir of Ogre's Strength (#3391)"
     { 8003392, 3392 }, // "Filler: Ringed Helm (#3392)"
+    { 8003393, 3393 }, // "Filler: Recipe: Minor Magic Resistance Potion (#3393)"
+    { 8003394, 3394 }, // "Filler: Recipe: Potion of Curing (#3394)"
+    { 8003395, 3395 }, // "Filler: Recipe: Limited Invulnerability Potion (#3395)"
+    { 8003396, 3396 }, // "Filler: Recipe: Elixir of Lesser Agility (#3396)"
     { 8003400, 3400 }, // "Filler: Lucine Longsword (#3400)"
     { 8003419, 3419 }, // "Filler: Red Rose (#3419)"
     { 8003420, 3420 }, // "Filler: Black Rose (#3420)"
@@ -12340,6 +13938,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003570, 3570 }, // "Filler: Bonegrinding Pestle (#3570)"
     { 8003571, 3571 }, // "Filler: Trogg Beater (#3571)"
     { 8003572, 3572 }, // "Filler: Daryl's Shortsword (#3572)"
+    { 8003577, 3577 }, // "Filler: Gold Bar (#3577)"
     { 8003578, 3578 }, // "Filler: Harvester's Pants (#3578)"
     { 8003581, 3581 }, // "Filler: Serrated Knife (#3581)"
     { 8003582, 3582 }, // "Filler: Acidproof Cloak (#3582)"
@@ -12364,6 +13963,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003603, 3603 }, // "Filler: Knitted Bracers (#3603)"
     { 8003606, 3606 }, // "Filler: Woven Belt (#3606)"
     { 8003607, 3607 }, // "Filler: Woven Bracers (#3607)"
+    { 8003608, 3608 }, // "Filler: Plans: Mighty Iron Hammer (#3608)"
+    { 8003609, 3609 }, // "Filler: Plans: Copper Chain Vest (#3609)"
+    { 8003610, 3610 }, // "Filler: Plans: Gemmed Copper Gauntlets (#3610)"
+    { 8003611, 3611 }, // "Filler: Plans: Green Iron Boots (#3611)"
+    { 8003612, 3612 }, // "Filler: Plans: Green Iron Gauntlets (#3612)"
     { 8003641, 3641 }, // "Filler: Journeyman's Bracers (#3641)"
     { 8003642, 3642 }, // "Filler: Ancestral Bracers (#3642)"
     { 8003643, 3643 }, // "Filler: Spellbinder Bracers (#3643)"
@@ -12385,7 +13989,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003664, 3664 }, // "Filler: Crocolisk Gumbo (#3664)"
     { 8003665, 3665 }, // "Filler: Curiously Tasty Omelet (#3665)"
     { 8003666, 3666 }, // "Filler: Gooey Spider Cake (#3666)"
+    { 8003671, 3671 }, // "Filler: Lifeless Skull (#3671)"
     { 8003703, 3703 }, // "Filler: Southshore Stout (#3703)"
+    { 8003706, 3706 }, // "Filler: Ensorcelled Parchment (#3706)"
     { 8003719, 3719 }, // "Filler: Hillman's Cloak (#3719)"
     { 8003726, 3726 }, // "Filler: Big Bear Steak (#3726)"
     { 8003727, 3727 }, // "Filler: Hot Lion Chops (#3727)"
@@ -12415,19 +14021,65 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003763, 3763 }, // "Filler: Lunar Buckler (#3763)"
     { 8003764, 3764 }, // "Filler: Mantis Boots (#3764)"
     { 8003765, 3765 }, // "Filler: Brigand's Pauldrons (#3765)"
+    { 8003766, 3766 }, // "Filler: Gryphon Feather Quill (#3766)"
+    { 8003767, 3767 }, // "Filler: Fine Parchment (#3767)"
+    { 8003769, 3769 }, // "Filler: Broken Wand (#3769)"
     { 8003770, 3770 }, // "Filler: Mutton Chop (#3770)"
     { 8003771, 3771 }, // "Filler: Wild Hog Shank (#3771)"
     { 8003772, 3772 }, // "Filler: Conjured Spring Water (#3772)"
+    { 8003778, 3778 }, // "Filler: Taut Compound Bow (#3778)"
+    { 8003779, 3779 }, // "Filler: Hefty War Axe (#3779)"
+    { 8003780, 3780 }, // "Filler: Long-barreled Musket (#3780)"
+    { 8003781, 3781 }, // "Filler: Broad Claymore (#3781)"
+    { 8003782, 3782 }, // "Filler: Large War Club (#3782)"
+    { 8003783, 3783 }, // "Filler: Light Scimitar (#3783)"
+    { 8003784, 3784 }, // "Filler: Metal Stave (#3784)"
+    { 8003785, 3785 }, // "Filler: Keen Axe (#3785)"
+    { 8003786, 3786 }, // "Filler: Shiny Dirk (#3786)"
+    { 8003787, 3787 }, // "Filler: Stone Club (#3787)"
     { 8003788, 3788 }, // "Filler: Soul Crystal Relic (#3788)"
     { 8003789, 3789 }, // "Filler: Relic Stone of Piety (#3789)"
     { 8003790, 3790 }, // "Filler: Consecrated Relic Parchment (#3790)"
     { 8003791, 3791 }, // "Filler: Relic of the Light (#3791)"
+    { 8003792, 3792 }, // "Filler: Interlaced Belt (#3792)"
+    { 8003793, 3793 }, // "Filler: Interlaced Boots (#3793)"
+    { 8003794, 3794 }, // "Filler: Interlaced Bracers (#3794)"
+    { 8003795, 3795 }, // "Filler: Interlaced Cloak (#3795)"
+    { 8003796, 3796 }, // "Filler: Interlaced Gloves (#3796)"
+    { 8003797, 3797 }, // "Filler: Interlaced Pants (#3797)"
+    { 8003798, 3798 }, // "Filler: Interlaced Shoulderpads (#3798)"
+    { 8003799, 3799 }, // "Filler: Interlaced Vest (#3799)"
+    { 8003800, 3800 }, // "Filler: Hardened Leather Belt (#3800)"
+    { 8003801, 3801 }, // "Filler: Hardened Leather Boots (#3801)"
+    { 8003802, 3802 }, // "Filler: Hardened Leather Bracers (#3802)"
+    { 8003803, 3803 }, // "Filler: Hardened Cloak (#3803)"
+    { 8003804, 3804 }, // "Filler: Hardened Leather Gloves (#3804)"
+    { 8003805, 3805 }, // "Filler: Hardened Leather Pants (#3805)"
+    { 8003806, 3806 }, // "Filler: Hardened Leather Shoulderpads (#3806)"
+    { 8003807, 3807 }, // "Filler: Hardened Leather Tunic (#3807)"
+    { 8003808, 3808 }, // "Filler: Double Mail Belt (#3808)"
+    { 8003809, 3809 }, // "Filler: Double Mail Boots (#3809)"
+    { 8003810, 3810 }, // "Filler: Double Mail Bracers (#3810)"
+    { 8003811, 3811 }, // "Filler: Double-stitched Cloak (#3811)"
+    { 8003812, 3812 }, // "Filler: Double Mail Gloves (#3812)"
+    { 8003813, 3813 }, // "Filler: Double Mail Pants (#3813)"
+    { 8003814, 3814 }, // "Filler: Double Mail Shoulderpads (#3814)"
+    { 8003815, 3815 }, // "Filler: Double Mail Vest (#3815)"
+    { 8003816, 3816 }, // "Filler: Reflective Heater (#3816)"
+    { 8003817, 3817 }, // "Filler: Reinforced Buckler (#3817)"
+    { 8003818, 3818 }, // "Filler: Fadeleaf (#3818)"
+    { 8003819, 3819 }, // "Filler: Wintersbite (#3819)"
+    { 8003820, 3820 }, // "Filler: Stranglekelp (#3820)"
+    { 8003821, 3821 }, // "Filler: Goldthorn (#3821)"
     { 8003822, 3822 }, // "Filler: Runic Darkblade (#3822)"
     { 8003823, 3823 }, // "Filler: Lesser Invisibility Potion (#3823)"
     { 8003825, 3825 }, // "Filler: Elixir of Fortitude (#3825)"
     { 8003826, 3826 }, // "Filler: Major Troll's Blood Elixir (#3826)"
     { 8003827, 3827 }, // "Filler: Mana Potion (#3827)"
     { 8003828, 3828 }, // "Filler: Elixir of Detect Lesser Invisibility (#3828)"
+    { 8003830, 3830 }, // "Filler: Recipe: Elixir of Fortitude (#3830)"
+    { 8003831, 3831 }, // "Filler: Recipe: Major Troll's Blood Elixir (#3831)"
+    { 8003832, 3832 }, // "Filler: Recipe: Elixir of Detect Lesser Invisibility (#3832)"
     { 8003833, 3833 }, // "Filler: Adept's Cloak (#3833)"
     { 8003834, 3834 }, // "Filler: Sturdy Cloth Trousers (#3834)"
     { 8003835, 3835 }, // "Filler: Green Iron Bracers (#3835)"
@@ -12449,7 +14101,17 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003854, 3854 }, // "Filler: Frost Tiger Blade (#3854)"
     { 8003855, 3855 }, // "Filler: Massive Iron Axe (#3855)"
     { 8003856, 3856 }, // "Filler: Shadow Crescent Axe (#3856)"
+    { 8003858, 3858 }, // "Filler: Mithril Ore (#3858)"
     { 8003864, 3864 }, // "Filler: Citrine (#3864)"
+    { 8003866, 3866 }, // "Filler: Plans: Jade Serpentblade (#3866)"
+    { 8003867, 3867 }, // "Filler: Plans: Golden Iron Destroyer (#3867)"
+    { 8003868, 3868 }, // "Filler: Plans: Frost Tiger Blade (#3868)"
+    { 8003869, 3869 }, // "Filler: Plans: Shadow Crescent Axe (#3869)"
+    { 8003870, 3870 }, // "Filler: Plans: Green Iron Shoulders (#3870)"
+    { 8003871, 3871 }, // "Filler: Plans: Golden Scale Shoulders (#3871)"
+    { 8003872, 3872 }, // "Filler: Plans: Golden Scale Leggings (#3872)"
+    { 8003873, 3873 }, // "Filler: Plans: Golden Scale Cuirass (#3873)"
+    { 8003874, 3874 }, // "Filler: Plans: Polished Steel Boots (#3874)"
     { 8003889, 3889 }, // "Filler: Russet Hat (#3889)"
     { 8003890, 3890 }, // "Filler: Studded Hat (#3890)"
     { 8003891, 3891 }, // "Filler: Augmented Chain Helm (#3891)"
@@ -12461,7 +14123,69 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8003927, 3927 }, // "Filler: Fine Aged Cheddar (#3927)"
     { 8003928, 3928 }, // "Filler: Superior Healing Potion (#3928)"
     { 8003935, 3935 }, // "Filler: Smotts' Cutlass (#3935)"
+    { 8003936, 3936 }, // "Filler: Crochet Belt (#3936)"
+    { 8003937, 3937 }, // "Filler: Crochet Boots (#3937)"
+    { 8003938, 3938 }, // "Filler: Crochet Bracers (#3938)"
+    { 8003939, 3939 }, // "Filler: Crochet Cloak (#3939)"
+    { 8003940, 3940 }, // "Filler: Crochet Gloves (#3940)"
+    { 8003941, 3941 }, // "Filler: Crochet Pants (#3941)"
+    { 8003942, 3942 }, // "Filler: Crochet Shoulderpads (#3942)"
+    { 8003943, 3943 }, // "Filler: Crochet Vest (#3943)"
+    { 8003944, 3944 }, // "Filler: Twill Belt (#3944)"
+    { 8003945, 3945 }, // "Filler: Twill Boots (#3945)"
+    { 8003946, 3946 }, // "Filler: Twill Bracers (#3946)"
+    { 8003947, 3947 }, // "Filler: Twill Cloak (#3947)"
+    { 8003948, 3948 }, // "Filler: Twill Gloves (#3948)"
+    { 8003949, 3949 }, // "Filler: Twill Pants (#3949)"
+    { 8003950, 3950 }, // "Filler: Twill Shoulderpads (#3950)"
+    { 8003951, 3951 }, // "Filler: Twill Vest (#3951)"
+    { 8003961, 3961 }, // "Filler: Thick Leather Belt (#3961)"
+    { 8003962, 3962 }, // "Filler: Thick Leather Boots (#3962)"
+    { 8003963, 3963 }, // "Filler: Thick Leather Bracers (#3963)"
+    { 8003964, 3964 }, // "Filler: Thick Cloak (#3964)"
+    { 8003965, 3965 }, // "Filler: Thick Leather Gloves (#3965)"
+    { 8003966, 3966 }, // "Filler: Thick Leather Pants (#3966)"
+    { 8003967, 3967 }, // "Filler: Thick Leather Shoulderpads (#3967)"
+    { 8003968, 3968 }, // "Filler: Thick Leather Tunic (#3968)"
+    { 8003969, 3969 }, // "Filler: Smooth Leather Belt (#3969)"
+    { 8003970, 3970 }, // "Filler: Smooth Leather Boots (#3970)"
+    { 8003971, 3971 }, // "Filler: Smooth Leather Bracers (#3971)"
+    { 8003972, 3972 }, // "Filler: Smooth Cloak (#3972)"
+    { 8003973, 3973 }, // "Filler: Smooth Leather Gloves (#3973)"
+    { 8003974, 3974 }, // "Filler: Smooth Leather Pants (#3974)"
+    { 8003975, 3975 }, // "Filler: Smooth Leather Shoulderpads (#3975)"
+    { 8003976, 3976 }, // "Filler: Smooth Leather Armor (#3976)"
     { 8003985, 3985 }, // "Filler: Monogrammed Sash (#3985)"
+    { 8003986, 3986 }, // "Filler: Protective Pavise (#3986)"
+    { 8003987, 3987 }, // "Filler: Deflecting Tower (#3987)"
+    { 8003989, 3989 }, // "Filler: Blocking Targe (#3989)"
+    { 8003990, 3990 }, // "Filler: Crested Buckler (#3990)"
+    { 8003992, 3992 }, // "Filler: Laminated Scale Belt (#3992)"
+    { 8003993, 3993 }, // "Filler: Laminated Scale Boots (#3993)"
+    { 8003994, 3994 }, // "Filler: Laminated Scale Bracers (#3994)"
+    { 8003995, 3995 }, // "Filler: Laminated Scale Cloak (#3995)"
+    { 8003996, 3996 }, // "Filler: Laminated Scale Gloves (#3996)"
+    { 8003997, 3997 }, // "Filler: Laminated Scale Pants (#3997)"
+    { 8003998, 3998 }, // "Filler: Laminated Scale Shoulderpads (#3998)"
+    { 8003999, 3999 }, // "Filler: Laminated Scale Armor (#3999)"
+    { 8004000, 4000 }, // "Filler: Overlinked Chain Belt (#4000)"
+    { 8004001, 4001 }, // "Filler: Overlinked Chain Boots (#4001)"
+    { 8004002, 4002 }, // "Filler: Overlinked Chain Bracers (#4002)"
+    { 8004003, 4003 }, // "Filler: Overlinked Chain Cloak (#4003)"
+    { 8004004, 4004 }, // "Filler: Overlinked Chain Gloves (#4004)"
+    { 8004005, 4005 }, // "Filler: Overlinked Chain Pants (#4005)"
+    { 8004006, 4006 }, // "Filler: Overlinked Chain Shoulderpads (#4006)"
+    { 8004007, 4007 }, // "Filler: Overlinked Chain Armor (#4007)"
+    { 8004017, 4017 }, // "Filler: Sharp Shortsword (#4017)"
+    { 8004018, 4018 }, // "Filler: Whetted Claymore (#4018)"
+    { 8004019, 4019 }, // "Filler: Heavy Flint Axe (#4019)"
+    { 8004020, 4020 }, // "Filler: Splintering Battle Axe (#4020)"
+    { 8004021, 4021 }, // "Filler: Blunting Mace (#4021)"
+    { 8004022, 4022 }, // "Filler: Crushing Maul (#4022)"
+    { 8004023, 4023 }, // "Filler: Fine Pointed Dagger (#4023)"
+    { 8004024, 4024 }, // "Filler: Heavy War Staff (#4024)"
+    { 8004025, 4025 }, // "Filler: Balanced Long Bow (#4025)"
+    { 8004026, 4026 }, // "Filler: Sentinel Musket (#4026)"
     { 8004030, 4030 }, // "Filler: Holy Relic Water (#4030)"
     { 8004031, 4031 }, // "Filler: Hallowed Relic Charm (#4031)"
     { 8004032, 4032 }, // "Filler: Radiant Relic Hammer (#4032)"
@@ -12486,6 +14210,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004052, 4052 }, // "Filler: Insignia Cap (#4052)"
     { 8004054, 4054 }, // "Filler: Insignia Leggings (#4054)"
     { 8004055, 4055 }, // "Filler: Insignia Boots (#4055)"
+    { 8004056, 4056 }, // "Filler: Cortello's Riddle (#4056)"
     { 8004057, 4057 }, // "Filler: Insignia Chestguard (#4057)"
     { 8004058, 4058 }, // "Filler: Glyphed Breastplate (#4058)"
     { 8004059, 4059 }, // "Filler: Glyphed Bracers (#4059)"
@@ -12517,6 +14242,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004087, 4087 }, // "Filler: Trueshot Bow (#4087)"
     { 8004088, 4088 }, // "Filler: Dreadblade (#4088)"
     { 8004089, 4089 }, // "Filler: Ricochet Blunderbuss (#4089)"
+    { 8004090, 4090 }, // "Filler: Mug O' Hurt (#4090)"
+    { 8004091, 4091 }, // "Filler: Widowmaker (#4091)"
+    { 8004098, 4098 }, // "Filler: Carefully Folded Note (#4098)"
+    { 8004100, 4100 }, // "Filler: Crumpled Note (#4100)"
+    { 8004101, 4101 }, // "Filler: Ripped Note (#4101)"
+    { 8004102, 4102 }, // "Filler: Torn Note (#4102)"
     { 8004107, 4107 }, // "Filler: Tiger Hunter Gloves (#4107)"
     { 8004108, 4108 }, // "Filler: Panther Hunter Leggings (#4108)"
     { 8004109, 4109 }, // "Filler: Excelsior Boots (#4109)"
@@ -12553,6 +14284,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004191, 4191 }, // "Filler: Feathered Leggings (#4191)"
     { 8004194, 4194 }, // "Filler: Feathered Bracers (#4194)"
     { 8004195, 4195 }, // "Filler: Feathered Boots (#4195)"
+    { 8004232, 4232 }, // "Filler: Medium Hide (#4232)"
+    { 8004234, 4234 }, // "Filler: Heavy Leather (#4234)"
+    { 8004235, 4235 }, // "Filler: Heavy Hide (#4235)"
     { 8004237, 4237 }, // "Filler: Handstitched Leather Belt (#4237)"
     { 8004238, 4238 }, // "Filler: Linen Bag (#4238)"
     { 8004239, 4239 }, // "Filler: Embossed Leather Gloves (#4239)"
@@ -12579,9 +14313,22 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004261, 4261 }, // "Filler: Solliden's Trousers (#4261)"
     { 8004263, 4263 }, // "Filler: Standard Issue Shield (#4263)"
     { 8004264, 4264 }, // "Filler: Barbaric Belt (#4264)"
+    { 8004278, 4278 }, // "Filler: Lesser Bloodstone Ore (#4278)"
     { 8004290, 4290 }, // "Filler: Dust Bowl (#4290)"
+    { 8004292, 4292 }, // "Filler: Pattern: Green Woolen Bag (#4292)"
+    { 8004293, 4293 }, // "Filler: Pattern: Hillman's Leather Vest (#4293)"
+    { 8004294, 4294 }, // "Filler: Pattern: Hillman's Belt (#4294)"
+    { 8004296, 4296 }, // "Filler: Pattern: Dark Leather Shoulders (#4296)"
+    { 8004297, 4297 }, // "Filler: Pattern: Barbaric Gloves (#4297)"
+    { 8004298, 4298 }, // "Filler: Pattern: Guardian Belt (#4298)"
+    { 8004299, 4299 }, // "Filler: Pattern: Guardian Armor (#4299)"
+    { 8004300, 4300 }, // "Filler: Pattern: Guardian Leather Bracers (#4300)"
+    { 8004301, 4301 }, // "Filler: Pattern: Barbaric Belt (#4301)"
     { 8004302, 4302 }, // "Filler: Small Green Dagger (#4302)"
     { 8004303, 4303 }, // "Filler: Cranial Thumper (#4303)"
+    { 8004304, 4304 }, // "Filler: Thick Leather (#4304)"
+    { 8004305, 4305 }, // "Filler: Bolt of Silk Cloth (#4305)"
+    { 8004306, 4306 }, // "Filler: Silk Cloth (#4306)"
     { 8004307, 4307 }, // "Filler: Heavy Linen Gloves (#4307)"
     { 8004308, 4308 }, // "Filler: Green Linen Bracers (#4308)"
     { 8004309, 4309 }, // "Filler: Handstitched Linen Britches (#4309)"
@@ -12610,21 +14357,50 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004334, 4334 }, // "Filler: Formal White Shirt (#4334)"
     { 8004335, 4335 }, // "Filler: Rich Purple Silk Shirt (#4335)"
     { 8004336, 4336 }, // "Filler: Black Swashbuckler's Shirt (#4336)"
+    { 8004338, 4338 }, // "Filler: Mageweave Cloth (#4338)"
+    { 8004339, 4339 }, // "Filler: Bolt of Mageweave (#4339)"
     { 8004343, 4343 }, // "Filler: Brown Linen Pants (#4343)"
     { 8004344, 4344 }, // "Filler: Brown Linen Shirt (#4344)"
+    { 8004345, 4345 }, // "Filler: Pattern: Red Woolen Boots (#4345)"
+    { 8004346, 4346 }, // "Filler: Pattern: Heavy Woolen Cloak (#4346)"
+    { 8004347, 4347 }, // "Filler: Pattern: Reinforced Woolen Shoulders (#4347)"
+    { 8004348, 4348 }, // "Filler: Pattern: Phoenix Gloves (#4348)"
+    { 8004349, 4349 }, // "Filler: Pattern: Phoenix Pants (#4349)"
+    { 8004350, 4350 }, // "Filler: Pattern: Spider Silk Slippers (#4350)"
+    { 8004351, 4351 }, // "Filler: Pattern: Shadow Hood (#4351)"
+    { 8004352, 4352 }, // "Filler: Pattern: Boots of the Enchanter (#4352)"
+    { 8004353, 4353 }, // "Filler: Pattern: Spider Belt (#4353)"
+    { 8004354, 4354 }, // "Filler: Pattern: Rich Purple Silk Shirt (#4354)"
+    { 8004359, 4359 }, // "Filler: Handful of Copper Bolts (#4359)"
+    { 8004361, 4361 }, // "Filler: Copper Tube (#4361)"
     { 8004362, 4362 }, // "Filler: Rough Boomstick (#4362)"
+    { 8004363, 4363 }, // "Filler: Copper Modulator (#4363)"
+    { 8004364, 4364 }, // "Filler: Coarse Blasting Powder (#4364)"
     { 8004368, 4368 }, // "Filler: Flying Tiger Goggles (#4368)"
     { 8004369, 4369 }, // "Filler: Deadly Blunderbuss (#4369)"
+    { 8004371, 4371 }, // "Filler: Bronze Tube (#4371)"
     { 8004372, 4372 }, // "Filler: Lovingly Crafted Boomstick (#4372)"
     { 8004373, 4373 }, // "Filler: Shadow Goggles (#4373)"
+    { 8004377, 4377 }, // "Filler: Heavy Blasting Powder (#4377)"
     { 8004379, 4379 }, // "Filler: Silver-plated Shotgun (#4379)"
     { 8004381, 4381 }, // "Filler: Minor Recombobulator (#4381)"
+    { 8004382, 4382 }, // "Filler: Bronze Framework (#4382)"
     { 8004383, 4383 }, // "Filler: Moonsight Rifle (#4383)"
     { 8004385, 4385 }, // "Filler: Green Tinted Goggles (#4385)"
     { 8004393, 4393 }, // "Filler: Craftsman's Monocle (#4393)"
     { 8004396, 4396 }, // "Filler: Mechanical Dragonling (#4396)"
     { 8004397, 4397 }, // "Filler: Gnomish Cloaking Device (#4397)"
     { 8004401, 4401 }, // "Filler: Mechanical Squirrel Box (#4401)"
+    { 8004405, 4405 }, // "Filler: Crude Scope (#4405)"
+    { 8004406, 4406 }, // "Filler: Standard Scope (#4406)"
+    { 8004408, 4408 }, // "Filler: Schematic: Mechanical Squirrel Box (#4408)"
+    { 8004409, 4409 }, // "Filler: Schematic: Small Seaforium Charge (#4409)"
+    { 8004410, 4410 }, // "Filler: Schematic: Shadow Goggles (#4410)"
+    { 8004412, 4412 }, // "Filler: Schematic: Moonsight Rifle (#4412)"
+    { 8004414, 4414 }, // "Filler: Schematic: Portable Bronze Mortar (#4414)"
+    { 8004415, 4415 }, // "Filler: Schematic: Craftsman's Monocle (#4415)"
+    { 8004416, 4416 }, // "Filler: Schematic: Goblin Land Mine (#4416)"
+    { 8004417, 4417 }, // "Filler: Schematic: Large Seaforium Charge (#4417)"
     { 8004419, 4419 }, // "Filler: Scroll of Intellect III (#4419)"
     { 8004421, 4421 }, // "Filler: Scroll of Protection III (#4421)"
     { 8004422, 4422 }, // "Filler: Scroll of Stamina III (#4422)"
@@ -12632,6 +14408,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004425, 4425 }, // "Filler: Scroll of Agility III (#4425)"
     { 8004426, 4426 }, // "Filler: Scroll of Strength III (#4426)"
     { 8004430, 4430 }, // "Filler: Ethereal Talisman (#4430)"
+    { 8004433, 4433 }, // "Filler: Waterlogged Envelope (#4433)"
     { 8004434, 4434 }, // "Filler: Scarecrow Trousers (#4434)"
     { 8004436, 4436 }, // "Filler: Jewel-encrusted Sash (#4436)"
     { 8004437, 4437 }, // "Filler: Channeler's Staff (#4437)"
@@ -12707,12 +14484,17 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004606, 4606 }, // "Filler: Spongy Morel (#4606)"
     { 8004607, 4607 }, // "Filler: Delicious Cave Mold (#4607)"
     { 8004608, 4608 }, // "Filler: Raw Black Truffle (#4608)"
+    { 8004611, 4611 }, // "Filler: Blue Pearl (#4611)"
     { 8004614, 4614 }, // "Filler: Pendant of Myzrael (#4614)"
     { 8004616, 4616 }, // "Filler: Ryedol's Lucky Pick (#4616)"
     { 8004623, 4623 }, // "Filler: Lesser Stoneshield Potion (#4623)"
+    { 8004625, 4625 }, // "Filler: Firebloom (#4625)"
+    { 8004636, 4636 }, // "Filler: Strong Iron Lockbox (#4636)"
+    { 8004637, 4637 }, // "Filler: Steel Lockbox (#4637)"
     { 8004643, 4643 }, // "Filler: Grimsteel Cape (#4643)"
     { 8004652, 4652 }, // "Filler: Salbac Shield (#4652)"
     { 8004653, 4653 }, // "Filler: Ironheel Boots (#4653)"
+    { 8004655, 4655 }, // "Filler: Giant Clam Meat (#4655)"
     { 8004656, 4656 }, // "Filler: Small Pumpkin (#4656)"
     { 8004658, 4658 }, // "Filler: Warrior's Cloak (#4658)"
     { 8004659, 4659 }, // "Filler: Warrior's Girdle (#4659)"
@@ -12743,6 +14525,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004693, 4693 }, // "Filler: Ceremonial Leather Belt (#4693)"
     { 8004694, 4694 }, // "Filler: Burnished Pauldrons (#4694)"
     { 8004695, 4695 }, // "Filler: Burnished Cloak (#4695)"
+    { 8004696, 4696 }, // "Filler: Lapidis Tankard of Tidesippe (#4696)"
     { 8004697, 4697 }, // "Filler: Burnished Girdle (#4697)"
     { 8004698, 4698 }, // "Filler: Seer's Mantle (#4698)"
     { 8004699, 4699 }, // "Filler: Seer's Belt (#4699)"
@@ -12833,8 +14616,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004837, 4837 }, // "Filler: Strength of Will (#4837)"
     { 8004838, 4838 }, // "Filler: Orb of Power (#4838)"
     { 8004840, 4840 }, // "Filler: Long Bayonet (#4840)"
+    { 8004843, 4843 }, // "Filler: Amethyst Runestone (#4843)"
+    { 8004844, 4844 }, // "Filler: Opal Runestone (#4844)"
+    { 8004845, 4845 }, // "Filler: Diamond Runestone (#4845)"
     { 8004854, 4854 }, // "Filler: Demon Scarred Cloak (#4854)"
     { 8004861, 4861 }, // "Filler: Sleek Feathered Tunic (#4861)"
+    { 8004881, 4881 }, // "Filler: Aged Envelope (#4881)"
     { 8004906, 4906 }, // "Filler: Rainwalker Boots (#4906)"
     { 8004907, 4907 }, // "Filler: Woodland Tunic (#4907)"
     { 8004908, 4908 }, // "Filler: Nomadic Bracers (#4908)"
@@ -12853,6 +14640,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8004923, 4923 }, // "Filler: Primitive Hatchet (#4923)"
     { 8004924, 4924 }, // "Filler: Primitive Club (#4924)"
     { 8004925, 4925 }, // "Filler: Primitive Hand Blade (#4925)"
+    { 8004926, 4926 }, // "Filler: Chen's Empty Keg (#4926)"
     { 8004928, 4928 }, // "Filler: Sandrunner Wristguards (#4928)"
     { 8004929, 4929 }, // "Filler: Light Scorpid Armor (#4929)"
     { 8004930, 4930 }, // "Filler: Handmade Leather Bag (#4930)"
@@ -12923,6 +14711,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005066, 5066 }, // "Filler: Fissure Plant (#5066)"
     { 8005069, 5069 }, // "Filler: Fire Wand (#5069)"
     { 8005071, 5071 }, // "Filler: Shadow Wand (#5071)"
+    { 8005075, 5075 }, // "Filler: Blood Shard (#5075)"
     { 8005079, 5079 }, // "Filler: Cold Basilisk Eye (#5079)"
     { 8005081, 5081 }, // "Filler: Kodo Hide Bag (#5081)"
     { 8005092, 5092 }, // "Filler: Charred Razormane Wand (#5092)"
@@ -12972,7 +14761,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005253, 5253 }, // "Filler: Goblin Igniter (#5253)"
     { 8005255, 5255 }, // "Filler: Quilboar Tomahawk (#5255)"
     { 8005256, 5256 }, // "Filler: Kovork's Rattle (#5256)"
+    { 8005263, 5263 }, // "Filler: Pocket Lint (#5263)"
     { 8005265, 5265 }, // "Filler: Watered-down Beer (#5265)"
+    { 8005266, 5266 }, // "Filler: Eye of Adaegus (#5266)"
     { 8005274, 5274 }, // "Filler: Rose Mantle (#5274)"
     { 8005275, 5275 }, // "Filler: Binding Girdle (#5275)"
     { 8005279, 5279 }, // "Filler: Harpy Skinner (#5279)"
@@ -12999,6 +14790,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005326, 5326 }, // "Filler: Flaring Baton (#5326)"
     { 8005327, 5327 }, // "Filler: Greasy Tinker's Pants (#5327)"
     { 8005328, 5328 }, // "Filler: Cinched Belt (#5328)"
+    { 8005329, 5329 }, // "Filler: Cat Figurine (#5329)"
     { 8005335, 5335 }, // "Filler: A Sack of Coins (#5335)"
     { 8005337, 5337 }, // "Filler: Wayfaring Gloves (#5337)"
     { 8005340, 5340 }, // "Filler: Cauldron Stirrer (#5340)"
@@ -13015,11 +14807,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005355, 5355 }, // "Filler: Beastmaster's Girdle (#5355)"
     { 8005356, 5356 }, // "Filler: Branding Rod (#5356)"
     { 8005357, 5357 }, // "Filler: Ward of the Vale (#5357)"
+    { 8005369, 5369 }, // "Filler: Gnawed Bone (#5369)"
     { 8005387, 5387 }, // "Filler: Enchanted Moonstalker Cloak (#5387)"
     { 8005392, 5392 }, // "Filler: Thistlewood Dagger (#5392)"
     { 8005393, 5393 }, // "Filler: Thistlewood Staff (#5393)"
     { 8005394, 5394 }, // "Filler: Archery Training Gloves (#5394)"
     { 8005395, 5395 }, // "Filler: Woodland Shield (#5395)"
+    { 8005397, 5397 }, // "Filler: Defias Gunpowder (#5397)"
     { 8005398, 5398 }, // "Filler: Canopy Leggings (#5398)"
     { 8005399, 5399 }, // "Filler: Tracking Boots (#5399)"
     { 8005405, 5405 }, // "Filler: Draped Cloak (#5405)"
@@ -13040,6 +14834,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005495, 5495 }, // "Filler: Black Supe (#5495)"
     { 8005498, 5498 }, // "Filler: Small Lustrous Pearl (#5498)"
     { 8005500, 5500 }, // "Filler: Iridescent Pearl (#5500)"
+    { 8005503, 5503 }, // "Filler: Clam Meat (#5503)"
+    { 8005504, 5504 }, // "Filler: Tangy Clam Meat (#5504)"
     { 8005514, 5514 }, // "Filler: Mana Agate (#5514)"
     { 8005517, 5517 }, // "Filler: Tiny Bronze Key (#5517)"
     { 8005518, 5518 }, // "Filler: Tiny Iron Key (#5518)"
@@ -13049,6 +14845,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005540, 5540 }, // "Filler: Pearl-handled Dagger (#5540)"
     { 8005541, 5541 }, // "Filler: Iridescent Hammer (#5541)"
     { 8005542, 5542 }, // "Filler: Pearl-clasped Cloak (#5542)"
+    { 8005543, 5543 }, // "Filler: Plans: Iridescent Hammer (#5543)"
     { 8005565, 5565 }, // "Filler: Infernal Stone (#5565)"
     { 8005571, 5571 }, // "Filler: Small Black Pouch (#5571)"
     { 8005572, 5572 }, // "Filler: Small Green Pouch (#5572)"
@@ -13056,6 +14853,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005574, 5574 }, // "Filler: White Leather Bag (#5574)"
     { 8005575, 5575 }, // "Filler: Large Green Sack (#5575)"
     { 8005576, 5576 }, // "Filler: Large Brown Sack (#5576)"
+    { 8005578, 5578 }, // "Filler: Plans: Silvered Bronze Breastplate (#5578)"
     { 8005579, 5579 }, // "Filler: Militia Warhammer (#5579)"
     { 8005580, 5580 }, // "Filler: Militia Hammer (#5580)"
     { 8005581, 5581 }, // "Filler: Smooth Walking Staff (#5581)"
@@ -13068,6 +14866,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005593, 5593 }, // "Filler: Crag Buckler (#5593)"
     { 8005595, 5595 }, // "Filler: Thicket Hammer (#5595)"
     { 8005596, 5596 }, // "Filler: Ashwood Bow (#5596)"
+    { 8005601, 5601 }, // "Filler: Hatched Egg Sac (#5601)"
+    { 8005602, 5602 }, // "Filler: Sticky Spider Webbing (#5602)"
     { 8005603, 5603 }, // "Filler: Wizbang's Gunnysack (#5603)"
     { 8005604, 5604 }, // "Filler: Elven Wand (#5604)"
     { 8005605, 5605 }, // "Filler: Pruning Knife (#5605)"
@@ -13092,9 +14892,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005632, 5632 }, // "Filler: Cowardly Flight Potion (#5632)"
     { 8005633, 5633 }, // "Filler: Great Rage Potion (#5633)"
     { 8005634, 5634 }, // "Filler: Free Action Potion (#5634)"
+    { 8005635, 5635 }, // "Filler: Sharp Claw (#5635)"
     { 8005654, 5654 }, // "Filler: Instant Toxin (#5654)"
     { 8005738, 5738 }, // "Filler: Covert Ops Pack (#5738)"
     { 8005739, 5739 }, // "Filler: Barbaric Harness (#5739)"
+    { 8005740, 5740 }, // "Filler: Red Fireworks Rocket (#5740)"
     { 8005742, 5742 }, // "Filler: Gemstone Dagger (#5742)"
     { 8005743, 5743 }, // "Filler: Prismstone Ring (#5743)"
     { 8005744, 5744 }, // "Filler: Pale Skinner (#5744)"
@@ -13115,6 +14917,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005766, 5766 }, // "Filler: Lesser Wizard's Robe (#5766)"
     { 8005767, 5767 }, // "Filler: Violet Robes (#5767)"
     { 8005770, 5770 }, // "Filler: Robes of Arcana (#5770)"
+    { 8005774, 5774 }, // "Filler: Pattern: Green Silk Pack (#5774)"
     { 8005776, 5776 }, // "Filler: Elder's Cane (#5776)"
     { 8005777, 5777 }, // "Filler: Brave's Axe (#5777)"
     { 8005778, 5778 }, // "Filler: Primitive Walking Stick (#5778)"
@@ -13123,6 +14926,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005781, 5781 }, // "Filler: Murloc Scale Breastplate (#5781)"
     { 8005782, 5782 }, // "Filler: Thick Murloc Armor (#5782)"
     { 8005783, 5783 }, // "Filler: Murloc Scale Bracers (#5783)"
+    { 8005791, 5791 }, // "Filler: Henrig Lonebrow's Journal (#5791)"
     { 8005812, 5812 }, // "Filler: Robes of Antiquity (#5812)"
     { 8005813, 5813 }, // "Filler: Emil's Brand (#5813)"
     { 8005814, 5814 }, // "Filler: Snapbrook Armor (#5814)"
@@ -13133,6 +14937,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005820, 5820 }, // "Filler: Faerie Mantle (#5820)"
     { 8005821, 5821 }, // "Filler: Darkstalker Boots (#5821)"
     { 8005822, 5822 }, // "Filler: Hedgeseed Gauntlets (#5822)"
+    { 8005833, 5833 }, // "Filler: Indurium Ore (#5833)"
     { 8005936, 5936 }, // "Filler: Animal Skin Belt (#5936)"
     { 8005939, 5939 }, // "Filler: Sewing Gloves (#5939)"
     { 8005940, 5940 }, // "Filler: Bone Buckler (#5940)"
@@ -13151,12 +14956,17 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8005968, 5968 }, // "Filler: Rugged Boots (#5968)"
     { 8005969, 5969 }, // "Filler: Regent's Cloak (#5969)"
     { 8005971, 5971 }, // "Filler: Feathered Cape (#5971)"
+    { 8005972, 5972 }, // "Filler: Pattern: Fine Leather Pants (#5972)"
+    { 8005974, 5974 }, // "Filler: Pattern: Guardian Cloak (#5974)"
     { 8005975, 5975 }, // "Filler: Ruffian Belt (#5975)"
     { 8005976, 5976 }, // "Filler: Guild Tabard (#5976)"
     { 8005996, 5996 }, // "Filler: Elixir of Water Breathing (#5996)"
     { 8005997, 5997 }, // "Filler: Elixir of Minor Defense (#5997)"
+    { 8006037, 6037 }, // "Filler: Truesilver Bar (#6037)"
     { 8006038, 6038 }, // "Filler: Giant Clam Scorcho (#6038)"
     { 8006040, 6040 }, // "Filler: Golden Scale Bracers (#6040)"
+    { 8006044, 6044 }, // "Filler: Plans: Iron Shield Spike (#6044)"
+    { 8006045, 6045 }, // "Filler: Plans: Iron Counterweight (#6045)"
     { 8006048, 6048 }, // "Filler: Shadow Protection Potion (#6048)"
     { 8006049, 6049 }, // "Filler: Fire Protection Potion (#6049)"
     { 8006050, 6050 }, // "Filler: Frost Protection Potion (#6050)"
@@ -13192,6 +15002,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006148, 6148 }, // "Filler: Web-covered Boots (#6148)"
     { 8006149, 6149 }, // "Filler: Greater Mana Potion (#6149)"
     { 8006171, 6171 }, // "Filler: Wolf Handler Gloves (#6171)"
+    { 8006172, 6172 }, // "Filler: Lost Supplies (#6172)"
     { 8006173, 6173 }, // "Filler: Snow Boots (#6173)"
     { 8006176, 6176 }, // "Filler: Dwarven Kite Shield (#6176)"
     { 8006177, 6177 }, // "Filler: Ironwrought Bracers (#6177)"
@@ -13216,6 +15027,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006204, 6204 }, // "Filler: Tribal Worg Helm (#6204)"
     { 8006205, 6205 }, // "Filler: Burrowing Shovel (#6205)"
     { 8006206, 6206 }, // "Filler: Rock Chipper (#6206)"
+    { 8006211, 6211 }, // "Filler: Recipe: Elixir of Ogre's Strength (#6211)"
     { 8006214, 6214 }, // "Filler: Heavy Copper Maul (#6214)"
     { 8006215, 6215 }, // "Filler: Balanced Fighting Stick (#6215)"
     { 8006219, 6219 }, // "Filler: Arclight Spanner (#6219)"
@@ -13226,7 +15038,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006241, 6241 }, // "Filler: White Linen Robe (#6241)"
     { 8006242, 6242 }, // "Filler: Blue Linen Robe (#6242)"
     { 8006243, 6243 }, // "Filler: Green Woolen Robe (#6243)"
-    { 8006255, 6255 }, // "Filler: Fishing Pole (JEFFTEST) (#6255)"
     { 8006256, 6256 }, // "Filler: Fishing Pole (#6256)"
     { 8006263, 6263 }, // "Filler: Blue Overalls (#6263)"
     { 8006264, 6264 }, // "Filler: Greater Adept's Robe (#6264)"
@@ -13235,6 +15046,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006267, 6267 }, // "Filler: Disciple's Pants (#6267)"
     { 8006268, 6268 }, // "Filler: Pioneer Tunic (#6268)"
     { 8006269, 6269 }, // "Filler: Pioneer Trousers (#6269)"
+    { 8006271, 6271 }, // "Filler: Pattern: Red Linen Vest (#6271)"
     { 8006282, 6282 }, // "Filler: Sacred Burial Trousers (#6282)"
     { 8006290, 6290 }, // "Filler: Brilliant Smallfish (#6290)"
     { 8006299, 6299 }, // "Filler: Sickly Looking Fish (#6299)"
@@ -13245,6 +15057,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006335, 6335 }, // "Filler: Grizzled Boots (#6335)"
     { 8006336, 6336 }, // "Filler: Infantry Tunic (#6336)"
     { 8006337, 6337 }, // "Filler: Infantry Leggings (#6337)"
+    { 8006342, 6342 }, // "Filler: Formula: Enchant Chest - Minor Mana (#6342)"
+    { 8006344, 6344 }, // "Filler: Formula: Enchant Bracer - Minor Spirit (#6344)"
+    { 8006347, 6347 }, // "Filler: Formula: Enchant Bracer - Minor Strength (#6347)"
+    { 8006348, 6348 }, // "Filler: Formula: Enchant Weapon - Minor Beastslayer (#6348)"
     { 8006350, 6350 }, // "Filler: Rough Bronze Boots (#6350)"
     { 8006353, 6353 }, // "Filler: Small Chest (#6353)"
     { 8006356, 6356 }, // "Filler: Battered Chest (#6356)"
@@ -13254,6 +15070,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006367, 6367 }, // "Filler: Big Iron Fishing Pole (#6367)"
     { 8006372, 6372 }, // "Filler: Swim Speed Potion (#6372)"
     { 8006373, 6373 }, // "Filler: Elixir of Firepower (#6373)"
+    { 8006375, 6375 }, // "Filler: Formula: Enchant Bracer - Lesser Spirit (#6375)"
     { 8006378, 6378 }, // "Filler: Seer's Cape (#6378)"
     { 8006379, 6379 }, // "Filler: Inscribed Leather Belt (#6379)"
     { 8006380, 6380 }, // "Filler: Inscribed Buckler (#6380)"
@@ -13266,6 +15083,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006387, 6387 }, // "Filler: Glimmering Mail Bracers (#6387)"
     { 8006388, 6388 }, // "Filler: Glimmering Mail Pauldrons (#6388)"
     { 8006389, 6389 }, // "Filler: Glimmering Mail Coif (#6389)"
+    { 8006390, 6390 }, // "Filler: Pattern: Stylish Blue Shirt (#6390)"
+    { 8006391, 6391 }, // "Filler: Pattern: Stylish Green Shirt (#6391)"
     { 8006393, 6393 }, // "Filler: Silver-thread Gloves (#6393)"
     { 8006394, 6394 }, // "Filler: Silver-thread Boots (#6394)"
     { 8006395, 6395 }, // "Filler: Silver-thread Amice (#6395)"
@@ -13306,6 +15125,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006432, 6432 }, // "Filler: Imperial Cloak (#6432)"
     { 8006433, 6433 }, // "Filler: Imperial Leather Helm (#6433)"
     { 8006446, 6446 }, // "Filler: Snakeskin Bag (#6446)"
+    { 8006454, 6454 }, // "Filler: Manual: Strong Anti-Venom (#6454)"
+    { 8006456, 6456 }, // "Filler: Acidic Slime (#6456)"
+    { 8006457, 6457 }, // "Filler: Rusted Engineering Parts (#6457)"
     { 8006466, 6466 }, // "Filler: Deviate Scale Cloak (#6466)"
     { 8006467, 6467 }, // "Filler: Deviate Scale Gloves (#6467)"
     { 8006477, 6477 }, // "Filler: Grassland Sash (#6477)"
@@ -13422,6 +15244,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006651, 6651 }, // "Filler: Broken Wine Bottle (#6651)"
     { 8006657, 6657 }, // "Filler: Savory Deviate Delight (#6657)"
     { 8006659, 6659 }, // "Filler: Scarab Trousers (#6659)"
+    { 8006660, 6660 }, // "Filler: Julie's Dagger (#6660)"
     { 8006662, 6662 }, // "Filler: Elixir of Giant Growth (#6662)"
     { 8006664, 6664 }, // "Filler: Voodoo Mantle (#6664)"
     { 8006665, 6665 }, // "Filler: Hexed Bracers (#6665)"
@@ -13436,7 +15259,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8006677, 6677 }, // "Filler: Spellcrafter Wand (#6677)"
     { 8006678, 6678 }, // "Filler: Band of Elven Grace (#6678)"
     { 8006709, 6709 }, // "Filler: Moonglow Vest (#6709)"
+    { 8006712, 6712 }, // "Filler: Practice Lock (#6712)"
     { 8006713, 6713 }, // "Filler: Ripped Pants (#6713)"
+    { 8006716, 6716 }, // "Filler: Schematic: EZ-Thro Dynamite (#6716)"
     { 8006719, 6719 }, // "Filler: Windborne Belt (#6719)"
     { 8006720, 6720 }, // "Filler: Spirit Hunter Headdress (#6720)"
     { 8006721, 6721 }, // "Filler: Chestplate of Kor (#6721)"
@@ -13540,6 +15365,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007063, 7063 }, // "Filler: Crimson Silk Robe (#7063)"
     { 8007064, 7064 }, // "Filler: Crimson Silk Gloves (#7064)"
     { 8007065, 7065 }, // "Filler: Green Silk Armor (#7065)"
+    { 8007076, 7076 }, // "Filler: Essence of Earth (#7076)"
+    { 8007084, 7084 }, // "Filler: Pattern: Crimson Silk Shoulders (#7084)"
+    { 8007085, 7085 }, // "Filler: Pattern: Azure Shoulders (#7085)"
+    { 8007086, 7086 }, // "Filler: Pattern: Earthen Silk Belt (#7086)"
+    { 8007090, 7090 }, // "Filler: Pattern: Green Silk Armor (#7090)"
+    { 8007091, 7091 }, // "Filler: Pattern: Truefaith Gloves (#7091)"
+    { 8007092, 7092 }, // "Filler: Pattern: Hands of Darkness (#7092)"
     { 8007094, 7094 }, // "Filler: Driftwood Branch (#7094)"
     { 8007095, 7095 }, // "Filler: Bog Boots (#7095)"
     { 8007097, 7097 }, // "Filler: Leg Meat (#7097)"
@@ -13559,6 +15391,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007129, 7129 }, // "Filler: Brutal Gauntlets (#7129)"
     { 8007130, 7130 }, // "Filler: Brutal Helm (#7130)"
     { 8007132, 7132 }, // "Filler: Brutal Legguards (#7132)"
+    { 8007146, 7146 }, // "Filler: The Scarlet Key (#7146)"
     { 8007166, 7166 }, // "Filler: Copper Dagger (#7166)"
     { 8007188, 7188 }, // "Filler: Stormwind Guard Shield (#7188)"
     { 8007189, 7189 }, // "Filler: Goblin Rocket Boots (#7189)"
@@ -13573,6 +15406,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007283, 7283 }, // "Filler: Black Whelp Cloak (#7283)"
     { 8007284, 7284 }, // "Filler: Red Whelp Gloves (#7284)"
     { 8007285, 7285 }, // "Filler: Nimble Leather Gloves (#7285)"
+    { 8007288, 7288 }, // "Filler: Pattern: Rugged Leather Pants (#7288)"
     { 8007297, 7297 }, // "Filler: Morbent's Bane (#7297)"
     { 8007298, 7298 }, // "Filler: Blade of Cunning (#7298)"
     { 8007326, 7326 }, // "Filler: Thun'grim's Axe (#7326)"
@@ -13603,6 +15437,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007357, 7357 }, // "Filler: Elder's Hat (#7357)"
     { 8007358, 7358 }, // "Filler: Pilferer's Gloves (#7358)"
     { 8007359, 7359 }, // "Filler: Heavy Earthen Gloves (#7359)"
+    { 8007360, 7360 }, // "Filler: Pattern: Dark Leather Gloves (#7360)"
+    { 8007363, 7363 }, // "Filler: Pattern: Pilferer's Gloves (#7363)"
+    { 8007364, 7364 }, // "Filler: Pattern: Heavy Earthen Gloves (#7364)"
     { 8007366, 7366 }, // "Filler: Elder's Gloves (#7366)"
     { 8007367, 7367 }, // "Filler: Elder's Mantle (#7367)"
     { 8007368, 7368 }, // "Filler: Elder's Pants (#7368)"
@@ -13657,6 +15494,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007446, 7446 }, // "Filler: Sentinel Cloak (#7446)"
     { 8007447, 7447 }, // "Filler: Sentinel Bracers (#7447)"
     { 8007448, 7448 }, // "Filler: Sentinel Girdle (#7448)"
+    { 8007449, 7449 }, // "Filler: Pattern: Dusky Leather Leggings (#7449)"
+    { 8007450, 7450 }, // "Filler: Pattern: Green Whelp Armor (#7450)"
+    { 8007452, 7452 }, // "Filler: Pattern: Dusky Boots (#7452)"
+    { 8007453, 7453 }, // "Filler: Pattern: Swift Boots (#7453)"
     { 8007454, 7454 }, // "Filler: Knight's Breastplate (#7454)"
     { 8007455, 7455 }, // "Filler: Knight's Legguards (#7455)"
     { 8007456, 7456 }, // "Filler: Knight's Headguard (#7456)"
@@ -13757,8 +15598,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007610, 7610 }, // "Filler: Aurora Sphere (#7610)"
     { 8007611, 7611 }, // "Filler: Mistscape Stave (#7611)"
     { 8007676, 7676 }, // "Filler: Thistle Tea (#7676)"
+    { 8007734, 7734 }, // "Filler: Six Demon Bag (#7734)"
     { 8007738, 7738 }, // "Filler: Evergreen Gloves (#7738)"
     { 8007739, 7739 }, // "Filler: Timberland Cape (#7739)"
+    { 8007740, 7740 }, // "Filler: Gni'kiv Medallion (#7740)"
     { 8007746, 7746 }, // "Filler: Explorers' League Commendation (#7746)"
     { 8007747, 7747 }, // "Filler: Vile Protector (#7747)"
     { 8007748, 7748 }, // "Filler: Forcestone Buckler (#7748)"
@@ -13771,6 +15614,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007809, 7809 }, // "Filler: Easter Dress (#7809)"
     { 8007909, 7909 }, // "Filler: Aquamarine (#7909)"
     { 8007910, 7910 }, // "Filler: Star Ruby (#7910)"
+    { 8007911, 7911 }, // "Filler: Truesilver Ore (#7911)"
+    { 8007912, 7912 }, // "Filler: Solid Stone (#7912)"
     { 8007913, 7913 }, // "Filler: Barbaric Iron Shoulders (#7913)"
     { 8007914, 7914 }, // "Filler: Barbaric Iron Breastplate (#7914)"
     { 8007915, 7915 }, // "Filler: Barbaric Iron Helm (#7915)"
@@ -13813,13 +15658,30 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8007958, 7958 }, // "Filler: Bronze Battle Axe (#7958)"
     { 8007963, 7963 }, // "Filler: Steel Breastplate (#7963)"
     { 8007971, 7971 }, // "Filler: Black Pearl (#7971)"
+    { 8007975, 7975 }, // "Filler: Plans: Heavy Mithril Pants (#7975)"
+    { 8007976, 7976 }, // "Filler: Plans: Mithril Shield Spike (#7976)"
+    { 8007989, 7989 }, // "Filler: Plans: Mithril Spurs (#7989)"
+    { 8007990, 7990 }, // "Filler: Plans: Heavy Mithril Helm (#7990)"
+    { 8007991, 7991 }, // "Filler: Plans: Mithril Scale Shoulders (#7991)"
+    { 8007992, 7992 }, // "Filler: Plans: Blue Glittering Axe (#7992)"
+    { 8007993, 7993 }, // "Filler: Plans: Dazzling Mithril Rapier (#7993)"
     { 8007996, 7996 }, // "Filler: Worn Fishing Hat (#7996)"
+    { 8008006, 8006 }, // "Filler: The Ziggler (#8006)"
+    { 8008028, 8028 }, // "Filler: Plans: Runed Mithril Hammer (#8028)"
+    { 8008029, 8029 }, // "Filler: Plans: Wicked Mithril Blade (#8029)"
     { 8008071, 8071 }, // "Filler: Sizzle Stick (#8071)"
     { 8008075, 8075 }, // "Filler: Conjured Sourdough (#8075)"
     { 8008076, 8076 }, // "Filler: Conjured Sweet Roll (#8076)"
     { 8008077, 8077 }, // "Filler: Conjured Mineral Water (#8077)"
     { 8008078, 8078 }, // "Filler: Conjured Sparkling Water (#8078)"
     { 8008079, 8079 }, // "Filler: Conjured Crystal Water (#8079)"
+    { 8008080, 8080 }, // "Filler: Light Plate Chestpiece (#8080)"
+    { 8008081, 8081 }, // "Filler: Light Plate Belt (#8081)"
+    { 8008082, 8082 }, // "Filler: Light Plate Boots (#8082)"
+    { 8008083, 8083 }, // "Filler: Light Plate Bracers (#8083)"
+    { 8008084, 8084 }, // "Filler: Light Plate Gloves (#8084)"
+    { 8008085, 8085 }, // "Filler: Light Plate Pants (#8085)"
+    { 8008086, 8086 }, // "Filler: Light Plate Shoulderpads (#8086)"
     { 8008088, 8088 }, // "Filler: Platemail Belt (#8088)"
     { 8008089, 8089 }, // "Filler: Platemail Boots (#8089)"
     { 8008090, 8090 }, // "Filler: Platemail Bracers (#8090)"
@@ -13865,8 +15727,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8008142, 8142 }, // "Filler: Chromite Barbute (#8142)"
     { 8008143, 8143 }, // "Filler: Chromite Legplates (#8143)"
     { 8008144, 8144 }, // "Filler: Chromite Pauldrons (#8144)"
+    { 8008146, 8146 }, // "Filler: Wicked Claw (#8146)"
     { 8008147, 8147 }, // "Filler: Tiny Copper Key (#8147)"
     { 8008148, 8148 }, // "Filler: Tiny Silver Key (#8148)"
+    { 8008151, 8151 }, // "Filler: Flask of Mojo (#8151)"
+    { 8008153, 8153 }, // "Filler: Wildvine (#8153)"
     { 8008156, 8156 }, // "Filler: Jouster's Wristguards (#8156)"
     { 8008157, 8157 }, // "Filler: Jouster's Chestplate (#8157)"
     { 8008158, 8158 }, // "Filler: Jouster's Gauntlets (#8158)"
@@ -13875,6 +15740,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8008161, 8161 }, // "Filler: Jouster's Visor (#8161)"
     { 8008162, 8162 }, // "Filler: Jouster's Legplates (#8162)"
     { 8008163, 8163 }, // "Filler: Jouster's Pauldrons (#8163)"
+    { 8008169, 8169 }, // "Filler: Thick Hide (#8169)"
     { 8008175, 8175 }, // "Filler: Nightscape Tunic (#8175)"
     { 8008176, 8176 }, // "Filler: Nightscape Headband (#8176)"
     { 8008177, 8177 }, // "Filler: Practice Sword (#8177)"
@@ -13890,6 +15756,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8008187, 8187 }, // "Filler: Turtle Scale Gloves (#8187)"
     { 8008188, 8188 }, // "Filler: Explosive Shotgun (#8188)"
     { 8008189, 8189 }, // "Filler: Turtle Scale Breastplate (#8189)"
+    { 8008190, 8190 }, // "Filler: Hanzo Sword (#8190)"
     { 8008191, 8191 }, // "Filler: Turtle Scale Helm (#8191)"
     { 8008192, 8192 }, // "Filler: Nightscape Shoulders (#8192)"
     { 8008193, 8193 }, // "Filler: Nightscape Pants (#8193)"
@@ -13996,6 +15863,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8008320, 8320 }, // "Filler: Alabaster Shield (#8320)"
     { 8008350, 8350 }, // "Filler: The 1 Ring (#8350)"
     { 8008364, 8364 }, // "Filler: Mithril Head Trout (#8364)"
+    { 8008385, 8385 }, // "Filler: Pattern: Turtle Scale Gloves (#8385)"
+    { 8008386, 8386 }, // "Filler: Pattern: Big Voodoo Robe (#8386)"
+    { 8008387, 8387 }, // "Filler: Pattern: Big Voodoo Mask (#8387)"
+    { 8008389, 8389 }, // "Filler: Pattern: Big Voodoo Pants (#8389)"
+    { 8008390, 8390 }, // "Filler: Pattern: Big Voodoo Cloak (#8390)"
     { 8008484, 8484 }, // "Filler: Gadgetzan Water Co. Care Package (#8484)"
     { 8008502, 8502 }, // "Filler: Bronze Lotterybox (#8502)"
     { 8008503, 8503 }, // "Filler: Heavy Bronze Lotterybox (#8503)"
@@ -14005,12 +15877,29 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8008507, 8507 }, // "Filler: Heavy Mithril Lotterybox (#8507)"
     { 8008529, 8529 }, // "Filler: Noggenfogger Elixir (#8529)"
     { 8008543, 8543 }, // "Filler: Underwater Mushroom Cap (#8543)"
+    { 8008564, 8564 }, // "Filler: Hippogryph Egg (#8564)"
     { 8008586, 8586 }, // "Filler: Whistle of the Mottled Red Raptor (#8586)"
     { 8008624, 8624 }, // "Filler: Red Sparkler (#8624)"
     { 8008625, 8625 }, // "Filler: White Sparkler (#8625)"
     { 8008626, 8626 }, // "Filler: Blue Sparkler (#8626)"
+    { 8008746, 8746 }, // "Filler: Interlaced Cowl (#8746)"
+    { 8008747, 8747 }, // "Filler: Hardened Leather Helm (#8747)"
+    { 8008748, 8748 }, // "Filler: Double Mail Coif (#8748)"
+    { 8008749, 8749 }, // "Filler: Crochet Hat (#8749)"
+    { 8008750, 8750 }, // "Filler: Thick Leather Hat (#8750)"
+    { 8008751, 8751 }, // "Filler: Overlinked Coif (#8751)"
+    { 8008752, 8752 }, // "Filler: Laminated Scale Circlet (#8752)"
+    { 8008753, 8753 }, // "Filler: Smooth Leather Helmet (#8753)"
+    { 8008754, 8754 }, // "Filler: Twill Cover (#8754)"
+    { 8008755, 8755 }, // "Filler: Light Plate Helmet (#8755)"
     { 8008766, 8766 }, // "Filler: Morning Glory Dew (#8766)"
     { 8008827, 8827 }, // "Filler: Elixir of Water Walking (#8827)"
+    { 8008831, 8831 }, // "Filler: Purple Lotus (#8831)"
+    { 8008836, 8836 }, // "Filler: Arthas' Tears (#8836)"
+    { 8008838, 8838 }, // "Filler: Sungrass (#8838)"
+    { 8008839, 8839 }, // "Filler: Blindweed (#8839)"
+    { 8008845, 8845 }, // "Filler: Ghost Mushroom (#8845)"
+    { 8008846, 8846 }, // "Filler: Gromsblood (#8846)"
     { 8008932, 8932 }, // "Filler: Alterac Swiss (#8932)"
     { 8008948, 8948 }, // "Filler: Dried King Bolete (#8948)"
     { 8008949, 8949 }, // "Filler: Elixir of Agility (#8949)"
@@ -14033,8 +15922,14 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8009206, 9206 }, // "Filler: Elixir of Giants (#9206)"
     { 8009224, 9224 }, // "Filler: Elixir of Demonslaying (#9224)"
     { 8009233, 9233 }, // "Filler: Elixir of Detect Demon (#9233)"
+    { 8009242, 9242 }, // "Filler: Ancient Tablet (#9242)"
     { 8009243, 9243 }, // "Filler: Shriveled Heart (#9243)"
+    { 8009255, 9255 }, // "Filler: Lahassa Essence (#9255)"
+    { 8009256, 9256 }, // "Filler: Imbel Essence (#9256)"
+    { 8009257, 9257 }, // "Filler: Samha Essence (#9257)"
+    { 8009258, 9258 }, // "Filler: Byltan Essence (#9258)"
     { 8009260, 9260 }, // "Filler: Volatile Rum (#9260)"
+    { 8009262, 9262 }, // "Filler: Black Vitriol (#9262)"
     { 8009264, 9264 }, // "Filler: Elixir of Shadow Power (#9264)"
     { 8009276, 9276 }, // "Filler: Pirate's Footlocker (#9276)"
     { 8009285, 9285 }, // "Filler: Field Plate Vambraces (#9285)"
@@ -14045,12 +15940,34 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8009290, 9290 }, // "Filler: Field Plate Helmet (#9290)"
     { 8009291, 9291 }, // "Filler: Field Plate Leggings (#9291)"
     { 8009292, 9292 }, // "Filler: Field Plate Pauldrons (#9292)"
+    { 8009293, 9293 }, // "Filler: Recipe: Magic Resistance Potion (#9293)"
+    { 8009295, 9295 }, // "Filler: Recipe: Invisibility Potion (#9295)"
+    { 8009297, 9297 }, // "Filler: Recipe: Elixir of Dream Vision (#9297)"
+    { 8009298, 9298 }, // "Filler: Recipe: Elixir of Giants (#9298)"
+    { 8009332, 9332 }, // "Filler: Crusted Bandages (#9332)"
+    { 8009333, 9333 }, // "Filler: Tarnished Silver Necklace (#9333)"
+    { 8009334, 9334 }, // "Filler: Cracked Pottery (#9334)"
+    { 8009335, 9335 }, // "Filler: Broken Obsidian Club (#9335)"
+    { 8009336, 9336 }, // "Filler: Gold-capped Troll Tusk (#9336)"
+    { 8009355, 9355 }, // "Filler: Hoop Earring (#9355)"
+    { 8009356, 9356 }, // "Filler: A Wooden Leg (#9356)"
+    { 8009357, 9357 }, // "Filler: A Parrot Skeleton (#9357)"
+    { 8009358, 9358 }, // "Filler: A Head Rag (#9358)"
+    { 8009359, 9359 }, // "Filler: Wirt's Third Leg (#9359)"
     { 8009360, 9360 }, // "Filler: Cuergo's Gold (#9360)"
     { 8009361, 9361 }, // "Filler: Cuergo's Gold with Worm (#9361)"
     { 8009362, 9362 }, // "Filler: Brilliant Gold Ring (#9362)"
     { 8009363, 9363 }, // "Filler: Sparklematic-Wrapped Box (#9363)"
     { 8009366, 9366 }, // "Filler: Golden Scale Gauntlets (#9366)"
+    { 8009370, 9370 }, // "Filler: Gordunni Scroll (#9370)"
     { 8009382, 9382 }, // "Filler: Tromping Miner's Boots (#9382)"
+    { 8009385, 9385 }, // "Filler: Archaic Defender (#9385)"
+    { 8009395, 9395 }, // "Filler: Gloves of Old (#9395)"
+    { 8009402, 9402 }, // "Filler: Earthborn Kilt (#9402)"
+    { 8009405, 9405 }, // "Filler: Girdle of Golem Strength (#9405)"
+    { 8009433, 9433 }, // "Filler: Forgotten Wraps (#9433)"
+    { 8009434, 9434 }, // "Filler: Elemental Raiment (#9434)"
+    { 8009435, 9435 }, // "Filler: Reticulated Bone Gauntlets (#9435)"
     { 8009444, 9444 }, // "Filler: Techbot CPU Shell (#9444)"
     { 8009451, 9451 }, // "Filler: Bubbling Water (#9451)"
     { 8009489, 9489 }, // "Filler: Gyromatic Icemaker (#9489)"
@@ -14064,9 +15981,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8009521, 9521 }, // "Filler: Skullsplitter (#9521)"
     { 8009522, 9522 }, // "Filler: Energized Stone Circle (#9522)"
     { 8009527, 9527 }, // "Filler: Spellshifter Rod (#9527)"
-    { 8009529, 9529 }, // "Filler: Internal Warrior Equipment Kit L25 (#9529)"
     { 8009531, 9531 }, // "Filler: Gemshale Pauldrons (#9531)"
-    { 8009532, 9532 }, // "Filler: Internal Warrior Equipment Kit L30 (#9532)"
     { 8009535, 9535 }, // "Filler: Fire-welded Bracers (#9535)"
     { 8009536, 9536 }, // "Filler: Fairywing Mantle (#9536)"
     { 8009537, 9537 }, // "Filler: Neatly Wrapped Box (#9537)"
@@ -14130,6 +16045,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8009704, 9704 }, // "Filler: Rustler Gloves (#9704)"
     { 8009705, 9705 }, // "Filler: Tharg's Shoelace (#9705)"
     { 8009706, 9706 }, // "Filler: Tharg's Disk (#9706)"
+    { 8009719, 9719 }, // "Filler: Broken Blade of Heroes (#9719)"
     { 8009742, 9742 }, // "Filler: Simple Cord (#9742)"
     { 8009743, 9743 }, // "Filler: Simple Shoes (#9743)"
     { 8009744, 9744 }, // "Filler: Simple Bands (#9744)"
@@ -14635,12 +16551,19 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8010289, 10289 }, // "Filler: Durable Hat (#10289)"
     { 8010298, 10298 }, // "Filler: Gnomeregan Band (#10298)"
     { 8010299, 10299 }, // "Filler: Gnomeregan Amulet (#10299)"
+    { 8010300, 10300 }, // "Filler: Pattern: Red Mageweave Vest (#10300)"
+    { 8010301, 10301 }, // "Filler: Pattern: White Bandit Mask (#10301)"
+    { 8010302, 10302 }, // "Filler: Pattern: Red Mageweave Pants (#10302)"
     { 8010305, 10305 }, // "Filler: Scroll of Protection IV (#10305)"
     { 8010306, 10306 }, // "Filler: Scroll of Spirit IV (#10306)"
     { 8010307, 10307 }, // "Filler: Scroll of Stamina IV (#10307)"
     { 8010308, 10308 }, // "Filler: Scroll of Intellect IV (#10308)"
     { 8010309, 10309 }, // "Filler: Scroll of Agility IV (#10309)"
     { 8010310, 10310 }, // "Filler: Scroll of Strength IV (#10310)"
+    { 8010312, 10312 }, // "Filler: Pattern: Red Mageweave Gloves (#10312)"
+    { 8010315, 10315 }, // "Filler: Pattern: Red Mageweave Shoulders (#10315)"
+    { 8010316, 10316 }, // "Filler: Pattern: Colorful Kilt (#10316)"
+    { 8010320, 10320 }, // "Filler: Pattern: Red Mageweave Headband (#10320)"
     { 8010329, 10329 }, // "Filler: Scarlet Belt (#10329)"
     { 8010331, 10331 }, // "Filler: Scarlet Gauntlets (#10331)"
     { 8010333, 10333 }, // "Filler: Scarlet Wristguards (#10333)"
@@ -14687,6 +16610,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8010409, 10409 }, // "Filler: Banded Boots (#10409)"
     { 8010421, 10421 }, // "Filler: Rough Copper Vest (#10421)"
     { 8010423, 10423 }, // "Filler: Silvered Bronze Leggings (#10423)"
+    { 8010424, 10424 }, // "Filler: Plans: Silvered Bronze Leggings (#10424)"
     { 8010455, 10455 }, // "Filler: Chained Essence of Eranikus (#10455)"
     { 8010456, 10456 }, // "Filler: A Bulging Coin Purse (#10456)"
     { 8010461, 10461 }, // "Filler: Shadowy Bracers (#10461)"
@@ -14719,6 +16643,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8010588, 10588 }, // "Filler: Goblin Rocket Helmet (#10588)"
     { 8010592, 10592 }, // "Filler: Catseye Elixir (#10592)"
     { 8010595, 10595 }, // "Filler: Kum'sha's Junk (#10595)"
+    { 8010601, 10601 }, // "Filler: Schematic: Bright-Eye Goggles (#10601)"
+    { 8010603, 10603 }, // "Filler: Schematic: Catseye Ultra Goggles (#10603)"
+    { 8010604, 10604 }, // "Filler: Schematic: Mithril Heavy-bore Rifle (#10604)"
+    { 8010605, 10605 }, // "Filler: Schematic: Spellpower Goggles Xtreme (#10605)"
+    { 8010606, 10606 }, // "Filler: Schematic: Parachute Cloak (#10606)"
+    { 8010608, 10608 }, // "Filler: Schematic: Sniper Scope (#10608)"
+    { 8010620, 10620 }, // "Filler: Thorium Ore (#10620)"
     { 8010635, 10635 }, // "Filler: Painted Chain Leggings (#10635)"
     { 8010636, 10636 }, // "Filler: Nomadic Gloves (#10636)"
     { 8010637, 10637 }, // "Filler: Brewer's Gloves (#10637)"
@@ -14776,14 +16707,29 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8010826, 10826 }, // "Filler: Staff of Lore (#10826)"
     { 8010827, 10827 }, // "Filler: Surveyor's Tunic (#10827)"
     { 8010834, 10834 }, // "Filler: Felhound Tracker Kit (#10834)"
+    { 8010839, 10839 }, // "Filler: Crystallized Note (#10839)"
+    { 8010840, 10840 }, // "Filler: Crystallized Note (#10840)"
     { 8010841, 10841 }, // "Filler: Goldthorn Tea (#10841)"
     { 8010919, 10919 }, // "Filler: Apothecary Gloves (#10919)"
     { 8010959, 10959 }, // "Filler: Demon Hide Sack (#10959)"
+    { 8011018, 11018 }, // "Filler: Un'Goro Soil (#11018)"
+    { 8011038, 11038 }, // "Filler: Formula: Enchant 2H Weapon - Lesser Spirit (#11038)"
+    { 8011039, 11039 }, // "Filler: Formula: Enchant Cloak - Minor Agility (#11039)"
+    { 8011081, 11081 }, // "Filler: Formula: Enchant Shield - Lesser Protection (#11081)"
+    { 8011098, 11098 }, // "Filler: Formula: Enchant Cloak - Lesser Shadow Resistance (#11098)"
     { 8011109, 11109 }, // "Filler: Special Chicken Feed (#11109)"
     { 8011110, 11110 }, // "Filler: Chicken Egg (#11110)"
     { 8011120, 11120 }, // "Filler: Belgrom's Hammer (#11120)"
     { 8011122, 11122 }, // "Filler: Carrot on a Stick (#11122)"
+    { 8011164, 11164 }, // "Filler: Formula: Enchant Weapon - Lesser Beastslayer (#11164)"
+    { 8011165, 11165 }, // "Filler: Formula: Enchant Weapon - Lesser Elemental Slayer (#11165)"
+    { 8011167, 11167 }, // "Filler: Formula: Enchant Boots - Lesser Spirit (#11167)"
+    { 8011168, 11168 }, // "Filler: Formula: Enchant Shield - Lesser Block (#11168)"
+    { 8011184, 11184 }, // "Filler: Blue Power Crystal (#11184)"
+    { 8011185, 11185 }, // "Filler: Green Power Crystal (#11185)"
+    { 8011186, 11186 }, // "Filler: Red Power Crystal (#11186)"
     { 8011187, 11187 }, // "Filler: Stemleaf Bracers (#11187)"
+    { 8011188, 11188 }, // "Filler: Yellow Power Crystal (#11188)"
     { 8011189, 11189 }, // "Filler: Woodland Robes (#11189)"
     { 8011190, 11190 }, // "Filler: Viny Gloves (#11190)"
     { 8011191, 11191 }, // "Filler: Farmer's Boots (#11191)"
@@ -14795,20 +16741,30 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8011199, 11199 }, // "Filler: Engineer's Shield 1 (#11199)"
     { 8011200, 11200 }, // "Filler: Engineer's Shield 2 (#11200)"
     { 8011201, 11201 }, // "Filler: Engineer's Shield 3 (#11201)"
+    { 8011202, 11202 }, // "Filler: Formula: Enchant Shield - Stamina (#11202)"
+    { 8011204, 11204 }, // "Filler: Formula: Enchant Bracer - Greater Spirit (#11204)"
+    { 8011208, 11208 }, // "Filler: Formula: Enchant Weapon - Demonslaying (#11208)"
+    { 8011224, 11224 }, // "Filler: Formula: Enchant Shield - Frost Resistance (#11224)"
+    { 8011225, 11225 }, // "Filler: Formula: Enchant Bracer - Greater Stamina (#11225)"
+    { 8011226, 11226 }, // "Filler: Formula: Enchant Gloves - Riding Skill (#11226)"
     { 8011229, 11229 }, // "Filler: Brightscale Girdle (#11229)"
     { 8011265, 11265 }, // "Filler: Cragwood Maul (#11265)"
     { 8011287, 11287 }, // "Filler: Lesser Magic Wand (#11287)"
     { 8011288, 11288 }, // "Filler: Greater Magic Wand (#11288)"
     { 8011289, 11289 }, // "Filler: Lesser Mystic Wand (#11289)"
     { 8011290, 11290 }, // "Filler: Greater Mystic Wand (#11290)"
+    { 8011302, 11302 }, // "Filler: Uther's Strength (#11302)"
     { 8011303, 11303 }, // "Filler: Fine Shortbow (#11303)"
     { 8011304, 11304 }, // "Filler: Fine Longbow (#11304)"
     { 8011305, 11305 }, // "Filler: Dense Shortbow (#11305)"
     { 8011306, 11306 }, // "Filler: Sturdy Recurve (#11306)"
     { 8011307, 11307 }, // "Filler: Massive Longbow (#11307)"
     { 8011308, 11308 }, // "Filler: Sylvan Shortbow (#11308)"
+    { 8011315, 11315 }, // "Filler: Bloodpetal Sprout (#11315)"
     { 8011324, 11324 }, // "Filler: Explorer's Knapsack (#11324)"
+    { 8011325, 11325 }, // "Filler: Dark Iron Ale Mug (#11325)"
     { 8011364, 11364 }, // "Filler: Tabard of Stormwind (#11364)"
+    { 8011370, 11370 }, // "Filler: Dark Iron Ore (#11370)"
     { 8011382, 11382 }, // "Filler: Blood of the Mountain (#11382)"
     { 8011415, 11415 }, // "Filler: Mixed Berries (#11415)"
     { 8011422, 11422 }, // "Filler: Goblin Engineer's Renewal Gift (#11422)"
@@ -14819,12 +16775,20 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8011475, 11475 }, // "Filler: Wine-stained Cloak (#11475)"
     { 8011502, 11502 }, // "Filler: Loreskin Shoulders (#11502)"
     { 8011508, 11508 }, // "Filler: Gamemaster's Slippers (#11508)"
+    { 8011513, 11513 }, // "Filler: Tainted Vitriol (#11513)"
+    { 8011514, 11514 }, // "Filler: Fel Creep (#11514)"
     { 8011522, 11522 }, // "Filler: Silver Totem of Aquementas (#11522)"
     { 8011568, 11568 }, // "Filler: Torwa's Pouch (#11568)"
     { 8011584, 11584 }, // "Filler: Cactus Apple Surprise (#11584)"
     { 8011605, 11605 }, // "Filler: Dark Iron Shoulders (#11605)"
     { 8011606, 11606 }, // "Filler: Dark Iron Mail (#11606)"
+    { 8011614, 11614 }, // "Filler: Plans: Dark Iron Mail (#11614)"
+    { 8011615, 11615 }, // "Filler: Plans: Dark Iron Shoulders (#11615)"
     { 8011742, 11742 }, // "Filler: Wayfarer's Knapsack (#11742)"
+    { 8011751, 11751 }, // "Filler: Burning Essence (#11751)"
+    { 8011752, 11752 }, // "Filler: Black Blood of the Tormented (#11752)"
+    { 8011753, 11753 }, // "Filler: Eye of Kajal (#11753)"
+    { 8011754, 11754 }, // "Filler: Black Diamond (#11754)"
     { 8011825, 11825 }, // "Filler: Pet Bombling (#11825)"
     { 8011826, 11826 }, // "Filler: Lil' Smoky (#11826)"
     { 8011840, 11840 }, // "Filler: Master Builder's Shirt (#11840)"
@@ -14885,6 +16849,14 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8011936, 11936 }, // "Filler: Relic Hunter Belt (#11936)"
     { 8011937, 11937 }, // "Filler: Fat Sack of Coins (#11937)"
     { 8011938, 11938 }, // "Filler: Sack of Gems (#11938)"
+    { 8011939, 11939 }, // "Filler: Shiny Bracelet (#11939)"
+    { 8011940, 11940 }, // "Filler: Sparkly Necklace (#11940)"
+    { 8011941, 11941 }, // "Filler: False Documents (#11941)"
+    { 8011942, 11942 }, // "Filler: Legal Documents (#11942)"
+    { 8011943, 11943 }, // "Filler: Deed to Thandol Span (#11943)"
+    { 8011944, 11944 }, // "Filler: Dark Iron Baby Booties (#11944)"
+    { 8011945, 11945 }, // "Filler: Dark Iron Ring (#11945)"
+    { 8011946, 11946 }, // "Filler: Fire Opal Necklace (#11946)"
     { 8011951, 11951 }, // "Filler: Whipper Root Tuber (#11951)"
     { 8011955, 11955 }, // "Filler: Bag of Empty Ooze Containers (#11955)"
     { 8011963, 11963 }, // "Filler: Penance Spaulders (#11963)"
@@ -15046,6 +17018,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8012361, 12361 }, // "Filler: Blue Sapphire (#12361)"
     { 8012363, 12363 }, // "Filler: Arcane Crystal (#12363)"
     { 8012364, 12364 }, // "Filler: Huge Emerald (#12364)"
+    { 8012365, 12365 }, // "Filler: Dense Stone (#12365)"
     { 8012405, 12405 }, // "Filler: Thorium Armor (#12405)"
     { 8012406, 12406 }, // "Filler: Thorium Belt (#12406)"
     { 8012408, 12408 }, // "Filler: Thorium Bracers (#12408)"
@@ -15072,6 +17045,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8012448, 12448 }, // "Filler: Light Hunting Rifle (#12448)"
     { 8012449, 12449 }, // "Filler: Primitive Bow (#12449)"
     { 8012522, 12522 }, // "Filler: Bingles' Flying Gloves (#12522)"
+    { 8012533, 12533 }, // "Filler: Roughshod Pike (#12533)"
     { 8012610, 12610 }, // "Filler: Runic Plate Shoulders (#12610)"
     { 8012611, 12611 }, // "Filler: Runic Plate Boots (#12611)"
     { 8012612, 12612 }, // "Filler: Runic Plate Helm (#12612)"
@@ -15080,6 +17054,23 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8012615, 12615 }, // "Filler: Savage Mail Tunic (#12615)"
     { 8012616, 12616 }, // "Filler: Savage Mail Boots (#12616)"
     { 8012617, 12617 }, // "Filler: Savage Mail Shoulders (#12617)"
+    { 8012682, 12682 }, // "Filler: Plans: Thorium Armor (#12682)"
+    { 8012683, 12683 }, // "Filler: Plans: Thorium Belt (#12683)"
+    { 8012684, 12684 }, // "Filler: Plans: Thorium Bracers (#12684)"
+    { 8012685, 12685 }, // "Filler: Plans: Radiant Belt (#12685)"
+    { 8012689, 12689 }, // "Filler: Plans: Radiant Breastplate (#12689)"
+    { 8012691, 12691 }, // "Filler: Plans: Wildthorn Mail (#12691)"
+    { 8012692, 12692 }, // "Filler: Plans: Thorium Shield Spike (#12692)"
+    { 8012693, 12693 }, // "Filler: Plans: Thorium Boots (#12693)"
+    { 8012694, 12694 }, // "Filler: Plans: Thorium Helm (#12694)"
+    { 8012695, 12695 }, // "Filler: Plans: Radiant Gloves (#12695)"
+    { 8012697, 12697 }, // "Filler: Plans: Radiant Boots (#12697)"
+    { 8012702, 12702 }, // "Filler: Plans: Radiant Circlet (#12702)"
+    { 8012703, 12703 }, // "Filler: Plans: Storm Gauntlets (#12703)"
+    { 8012704, 12704 }, // "Filler: Plans: Thorium Leggings (#12704)"
+    { 8012711, 12711 }, // "Filler: Plans: Whitesoul Helm (#12711)"
+    { 8012713, 12713 }, // "Filler: Plans: Radiant Leggings (#12713)"
+    { 8012736, 12736 }, // "Filler: Frostwhisper's Embalming Fluid (#12736)"
     { 8012763, 12763 }, // "Filler: Un'Goro Etherfruit (#12763)"
     { 8012764, 12764 }, // "Filler: Thorium Greatsword (#12764)"
     { 8012772, 12772 }, // "Filler: Inlaid Thorium Hammer (#12772)"
@@ -15090,12 +17081,157 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8012799, 12799 }, // "Filler: Large Opal (#12799)"
     { 8012800, 12800 }, // "Filler: Azerothian Diamond (#12800)"
     { 8012805, 12805 }, // "Filler: Orb of Fire (#12805)"
+    { 8012812, 12812 }, // "Filler: Unfired Plate Gauntlets (#12812)"
     { 8012820, 12820 }, // "Filler: Winterfall Firewater (#12820)"
+    { 8012827, 12827 }, // "Filler: Plans: Serenity (#12827)"
+    { 8012830, 12830 }, // "Filler: Plans: Corruption (#12830)"
+    { 8012845, 12845 }, // "Filler: Medallion of Faith (#12845)"
     { 8012846, 12846 }, // "Filler: Argent Dawn Commission (#12846)"
     { 8012866, 12866 }, // "Filler: Jade Bracers (#12866)"
     { 8012904, 12904 }, // "Filler: Shawn's Super Special Swami Hat (#12904)"
+    { 8012924, 12924 }, // "Filler: Ritual Candle (#12924)"
+    { 8012938, 12938 }, // "Filler: Blood of Heroes (#12938)"
+    { 8012973, 12973 }, // "Filler: Scarlet Cannonball (#12973)"
+    { 8012974, 12974 }, // "Filler: The Black Knight (#12974)"
+    { 8012979, 12979 }, // "Filler: Firebane Cloak (#12979)"
+    { 8012982, 12982 }, // "Filler: Silver-linked Footguards (#12982)"
+    { 8012983, 12983 }, // "Filler: Rakzur Club (#12983)"
+    { 8012984, 12984 }, // "Filler: Skycaller (#12984)"
+    { 8012985, 12985 }, // "Filler: Ring of Defense (#12985)"
+    { 8012987, 12987 }, // "Filler: Darkweave Breeches (#12987)"
+    { 8012988, 12988 }, // "Filler: Starsight Tunic (#12988)"
+    { 8012989, 12989 }, // "Filler: Gargoyle's Bite (#12989)"
+    { 8012990, 12990 }, // "Filler: Razor's Edge (#12990)"
+    { 8012992, 12992 }, // "Filler: Searing Blade (#12992)"
+    { 8012994, 12994 }, // "Filler: Thorbia's Gauntlets (#12994)"
+    { 8012996, 12996 }, // "Filler: Band of Purification (#12996)"
+    { 8012997, 12997 }, // "Filler: Redbeard Crest (#12997)"
+    { 8012998, 12998 }, // "Filler: Magician's Mantle (#12998)"
+    { 8012999, 12999 }, // "Filler: Drakewing Bands (#12999)"
+    { 8013002, 13002 }, // "Filler: Lady Alizabeth's Pendant (#13002)"
+    { 8013003, 13003 }, // "Filler: Lord Alexander's Battle Axe (#13003)"
+    { 8013004, 13004 }, // "Filler: Torch of Austen (#13004)"
+    { 8013005, 13005 }, // "Filler: Amy's Blanket (#13005)"
+    { 8013007, 13007 }, // "Filler: Mageflame Cloak (#13007)"
+    { 8013008, 13008 }, // "Filler: Dalewind Trousers (#13008)"
+    { 8013009, 13009 }, // "Filler: Cow King's Hide (#13009)"
+    { 8013010, 13010 }, // "Filler: Dreamsinger Legguards (#13010)"
+    { 8013011, 13011 }, // "Filler: Silver-lined Belt (#13011)"
+    { 8013012, 13012 }, // "Filler: Yorgen Bracers (#13012)"
+    { 8013013, 13013 }, // "Filler: Elder Wizard's Mantle (#13013)"
+    { 8013014, 13014 }, // "Filler: Axe of Rin'ji (#13014)"
+    { 8013016, 13016 }, // "Filler: Killmaim (#13016)"
+    { 8013017, 13017 }, // "Filler: Hellslayer Battle Axe (#13017)"
+    { 8013018, 13018 }, // "Filler: Executioner's Cleaver (#13018)"
+    { 8013019, 13019 }, // "Filler: Harpyclaw Short Bow (#13019)"
+    { 8013020, 13020 }, // "Filler: Skystriker Bow (#13020)"
+    { 8013021, 13021 }, // "Filler: Needle Threader (#13021)"
+    { 8013022, 13022 }, // "Filler: Gryphonwing Long Bow (#13022)"
+    { 8013024, 13024 }, // "Filler: Beazel's Basher (#13024)"
+    { 8013025, 13025 }, // "Filler: Deadwood Sledge (#13025)"
+    { 8013026, 13026 }, // "Filler: Heaven's Light (#13026)"
+    { 8013027, 13027 }, // "Filler: Bonesnapper (#13027)"
+    { 8013029, 13029 }, // "Filler: Umbral Crystal (#13029)"
+    { 8013030, 13030 }, // "Filler: Basilisk Bone (#13030)"
+    { 8013031, 13031 }, // "Filler: Orb of Mistmantle (#13031)"
+    { 8013032, 13032 }, // "Filler: Sword of Corruption (#13032)"
+    { 8013033, 13033 }, // "Filler: Zealot Blade (#13033)"
+    { 8013034, 13034 }, // "Filler: Speedsteel Rapier (#13034)"
+    { 8013035, 13035 }, // "Filler: Serpent Slicer (#13035)"
+    { 8013036, 13036 }, // "Filler: Assassination Blade (#13036)"
+    { 8013037, 13037 }, // "Filler: Crystalpine Stinger (#13037)"
+    { 8013038, 13038 }, // "Filler: Swiftwind (#13038)"
+    { 8013039, 13039 }, // "Filler: Skull Splitting Crossbow (#13039)"
+    { 8013040, 13040 }, // "Filler: Heartseeking Crossbow (#13040)"
+    { 8013041, 13041 }, // "Filler: Guardian Blade (#13041)"
+    { 8013042, 13042 }, // "Filler: Sword of the Magistrate (#13042)"
+    { 8013043, 13043 }, // "Filler: Blade of the Titans (#13043)"
+    { 8013044, 13044 }, // "Filler: Demonslayer (#13044)"
+    { 8013045, 13045 }, // "Filler: Viscous Hammer (#13045)"
+    { 8013046, 13046 }, // "Filler: Blanchard's Stout (#13046)"
+    { 8013047, 13047 }, // "Filler: Twig of the World Tree (#13047)"
+    { 8013048, 13048 }, // "Filler: Looming Gavel (#13048)"
+    { 8013049, 13049 }, // "Filler: Deanship Claymore (#13049)"
+    { 8013051, 13051 }, // "Filler: Witchfury (#13051)"
+    { 8013052, 13052 }, // "Filler: Warmonger (#13052)"
+    { 8013053, 13053 }, // "Filler: Doombringer (#13053)"
+    { 8013054, 13054 }, // "Filler: Grim Reaper (#13054)"
+    { 8013055, 13055 }, // "Filler: Bonechewer (#13055)"
+    { 8013056, 13056 }, // "Filler: Frenzied Striker (#13056)"
+    { 8013057, 13057 }, // "Filler: Bloodpike (#13057)"
+    { 8013058, 13058 }, // "Filler: Khoo's Point (#13058)"
+    { 8013059, 13059 }, // "Filler: Stoneraven (#13059)"
+    { 8013060, 13060 }, // "Filler: The Needler (#13060)"
+    { 8013062, 13062 }, // "Filler: Thunderwood (#13062)"
+    { 8013063, 13063 }, // "Filler: Starfaller (#13063)"
+    { 8013064, 13064 }, // "Filler: Jaina's Firestarter (#13064)"
+    { 8013065, 13065 }, // "Filler: Wand of Allistarj (#13065)"
+    { 8013066, 13066 }, // "Filler: Wyrmslayer Spaulders (#13066)"
+    { 8013067, 13067 }, // "Filler: Hydralick Armor (#13067)"
+    { 8013068, 13068 }, // "Filler: Obsidian Greaves (#13068)"
+    { 8013070, 13070 }, // "Filler: Sapphiron's Scale Boots (#13070)"
+    { 8013071, 13071 }, // "Filler: Plated Fist of Hakoo (#13071)"
+    { 8013072, 13072 }, // "Filler: Stonegrip Gauntlets (#13072)"
+    { 8013073, 13073 }, // "Filler: Mugthol's Helm (#13073)"
+    { 8013074, 13074 }, // "Filler: Golem Shard Leggings (#13074)"
+    { 8013076, 13076 }, // "Filler: Giantslayer Bracers (#13076)"
+    { 8013077, 13077 }, // "Filler: Girdle of Uther (#13077)"
+    { 8013079, 13079 }, // "Filler: Shield of Thorsen (#13079)"
+    { 8013081, 13081 }, // "Filler: Skullance Shield (#13081)"
+    { 8013082, 13082 }, // "Filler: Mountainside Buckler (#13082)"
+    { 8013084, 13084 }, // "Filler: Kaleidoscope Chain (#13084)"
+    { 8013085, 13085 }, // "Filler: Horizon Choker (#13085)"
+    { 8013087, 13087 }, // "Filler: River Pride Choker (#13087)"
+    { 8013088, 13088 }, // "Filler: Gazlowe's Charm (#13088)"
+    { 8013089, 13089 }, // "Filler: Skibi's Pendant (#13089)"
+    { 8013091, 13091 }, // "Filler: Medallion of Grand Marshal Morris (#13091)"
+    { 8013093, 13093 }, // "Filler: Blush Ember Ring (#13093)"
+    { 8013094, 13094 }, // "Filler: The Queen's Jewel (#13094)"
+    { 8013095, 13095 }, // "Filler: Assault Band (#13095)"
+    { 8013096, 13096 }, // "Filler: Band of the Hierophant (#13096)"
+    { 8013097, 13097 }, // "Filler: Thunderbrow Ring (#13097)"
+    { 8013099, 13099 }, // "Filler: Moccasins of the White Hare (#13099)"
+    { 8013100, 13100 }, // "Filler: Furen's Boots (#13100)"
+    { 8013101, 13101 }, // "Filler: Wolfrunner Shoes (#13101)"
+    { 8013102, 13102 }, // "Filler: Cassandra's Grace (#13102)"
+    { 8013103, 13103 }, // "Filler: Pads of the Venom Spider (#13103)"
+    { 8013105, 13105 }, // "Filler: Sutarn's Ring (#13105)"
+    { 8013106, 13106 }, // "Filler: Glowing Magical Bracelets (#13106)"
+    { 8013108, 13108 }, // "Filler: Tigerstrike Mantle (#13108)"
+    { 8013109, 13109 }, // "Filler: Blackflame Cape (#13109)"
+    { 8013110, 13110 }, // "Filler: Wolffear Harness (#13110)"
+    { 8013111, 13111 }, // "Filler: Sandals of the Insurgent (#13111)"
+    { 8013112, 13112 }, // "Filler: Winged Helm (#13112)"
+    { 8013114, 13114 }, // "Filler: Troll's Bane Leggings (#13114)"
+    { 8013115, 13115 }, // "Filler: Sheepshear Mantle (#13115)"
+    { 8013117, 13117 }, // "Filler: Ogron's Sash (#13117)"
+    { 8013118, 13118 }, // "Filler: Serpentine Sash (#13118)"
+    { 8013119, 13119 }, // "Filler: Enchanted Kodo Bracers (#13119)"
+    { 8013120, 13120 }, // "Filler: Deepfury Bracers (#13120)"
+    { 8013121, 13121 }, // "Filler: Wing of the Whelpling (#13121)"
+    { 8013122, 13122 }, // "Filler: Dark Phantom Cape (#13122)"
+    { 8013124, 13124 }, // "Filler: Ravasaur Scale Boots (#13124)"
+    { 8013125, 13125 }, // "Filler: Elven Chain Boots (#13125)"
+    { 8013126, 13126 }, // "Filler: Battlecaller Gauntlets (#13126)"
+    { 8013127, 13127 }, // "Filler: Frostreaver Crown (#13127)"
+    { 8013128, 13128 }, // "Filler: High Bergg Helm (#13128)"
+    { 8013129, 13129 }, // "Filler: Firemane Leggings (#13129)"
+    { 8013130, 13130 }, // "Filler: Windrunner Legguards (#13130)"
+    { 8013131, 13131 }, // "Filler: Sparkleshell Mantle (#13131)"
+    { 8013132, 13132 }, // "Filler: Skeletal Shoulders (#13132)"
+    { 8013134, 13134 }, // "Filler: Belt of the Gladiator (#13134)"
+    { 8013135, 13135 }, // "Filler: Lordly Armguards (#13135)"
+    { 8013136, 13136 }, // "Filler: Lil Timmy's Peashooter (#13136)"
+    { 8013137, 13137 }, // "Filler: Ironweaver (#13137)"
+    { 8013138, 13138 }, // "Filler: The Silencer (#13138)"
+    { 8013139, 13139 }, // "Filler: Guttbuster (#13139)"
+    { 8013144, 13144 }, // "Filler: Serenity Belt (#13144)"
+    { 8013145, 13145 }, // "Filler: Enormous Ogre Belt (#13145)"
+    { 8013146, 13146 }, // "Filler: Shell Launcher Shotgun (#13146)"
     { 8013171, 13171 }, // "Filler: Smokey's Lighter (#13171)"
     { 8013175, 13175 }, // "Filler: Voone's Twitchbow (#13175)"
+    { 8013180, 13180 }, // "Filler: Stratholme Holy Water (#13180)"
+    { 8013199, 13199 }, // "Filler: Crushridge Bindings (#13199)"
     { 8013216, 13216 }, // "Filler: Crown of the Penitent (#13216)"
     { 8013217, 13217 }, // "Filler: Band of the Penitent (#13217)"
     { 8013247, 13247 }, // "Filler: Quartermaster Zigris' Footlocker (#13247)"
@@ -15108,6 +17244,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8013328, 13328 }, // "Filler: Black Ram (#13328)"
     { 8013329, 13329 }, // "Filler: Frost Ram (#13329)"
     { 8013330, 13330 }, // "Filler: Dereks Radish Bag (#13330)"
+    { 8013362, 13362 }, // "Filler: Letter from the Front (#13362)"
+    { 8013363, 13363 }, // "Filler: Municipal Proclamation (#13363)"
+    { 8013364, 13364 }, // "Filler: Fras Siabi's Advertisement (#13364)"
+    { 8013365, 13365 }, // "Filler: Town Meeting Notice (#13365)"
+    { 8013366, 13366 }, // "Filler: Ingenious Toy (#13366)"
+    { 8013367, 13367 }, // "Filler: Wrapped Gift (#13367)"
     { 8013371, 13371 }, // "Filler: Father Flame (#13371)"
     { 8013442, 13442 }, // "Filler: Mighty Rage Potion (#13442)"
     { 8013443, 13443 }, // "Filler: Superior Mana Potion (#13443)"
@@ -15126,14 +17268,28 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8013460, 13460 }, // "Filler: Greater Holy Protection Potion (#13460)"
     { 8013461, 13461 }, // "Filler: Greater Arcane Protection Potion (#13461)"
     { 8013462, 13462 }, // "Filler: Purification Potion (#13462)"
+    { 8013463, 13463 }, // "Filler: Dreamfoil (#13463)"
+    { 8013464, 13464 }, // "Filler: Golden Sansam (#13464)"
+    { 8013465, 13465 }, // "Filler: Mountain Silversage (#13465)"
+    { 8013466, 13466 }, // "Filler: Plaguebloom (#13466)"
+    { 8013467, 13467 }, // "Filler: Icecap (#13467)"
+    { 8013468, 13468 }, // "Filler: Black Lotus (#13468)"
     { 8013473, 13473 }, // "Filler: Felstone Good Luck Charm (#13473)"
     { 8013474, 13474 }, // "Filler: Farmer Dalson's Shotgun (#13474)"
     { 8013475, 13475 }, // "Filler: Dalson Family Wedding Ring (#13475)"
+    { 8013486, 13486 }, // "Filler: Recipe: Transmute Undeath to Water (#13486)"
+    { 8013487, 13487 }, // "Filler: Recipe: Transmute Water to Undeath (#13487)"
+    { 8013488, 13488 }, // "Filler: Recipe: Transmute Life to Earth (#13488)"
+    { 8013489, 13489 }, // "Filler: Recipe: Transmute Earth to Life (#13489)"
+    { 8013490, 13490 }, // "Filler: Recipe: Greater Stoneshield Potion (#13490)"
+    { 8013492, 13492 }, // "Filler: Recipe: Purification Potion (#13492)"
+    { 8013493, 13493 }, // "Filler: Recipe: Greater Arcane Elixir (#13493)"
     { 8013506, 13506 }, // "Filler: Potion of Petrification (#13506)"
     { 8013510, 13510 }, // "Filler: Flask of the Titans (#13510)"
     { 8013511, 13511 }, // "Filler: Flask of Distilled Wisdom (#13511)"
     { 8013512, 13512 }, // "Filler: Flask of Supreme Power (#13512)"
     { 8013513, 13513 }, // "Filler: Flask of Chromatic Resistance (#13513)"
+    { 8013518, 13518 }, // "Filler: Recipe: Potion of Petrification (#13518)"
     { 8013525, 13525 }, // "Filler: Darkbind Fingers (#13525)"
     { 8013526, 13526 }, // "Filler: Flamescarred Girdle (#13526)"
     { 8013527, 13527 }, // "Filler: Lavawalker Greaves (#13527)"
@@ -15147,12 +17303,23 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8013538, 13538 }, // "Filler: Windshrieker Pauldrons (#13538)"
     { 8013539, 13539 }, // "Filler: Banshee's Touch (#13539)"
     { 8013544, 13544 }, // "Filler: Spectral Essence (#13544)"
+    { 8013545, 13545 }, // "Filler: Shellfish (#13545)"
     { 8013546, 13546 }, // "Filler: Bloodbelly Fish (#13546)"
     { 8013724, 13724 }, // "Filler: Enriched Manna Biscuit (#13724)"
     { 8013755, 13755 }, // "Filler: Winter Squid (#13755)"
     { 8013810, 13810 }, // "Filler: Blessed Sunfruit (#13810)"
     { 8013811, 13811 }, // "Filler: Necklace of the Dawn (#13811)"
     { 8013812, 13812 }, // "Filler: Ring of the Dawn (#13812)"
+    { 8013816, 13816 }, // "Filler: Fine Longsword (#13816)"
+    { 8013817, 13817 }, // "Filler: Tapered Greatsword (#13817)"
+    { 8013818, 13818 }, // "Filler: Jagged Axe (#13818)"
+    { 8013819, 13819 }, // "Filler: Balanced War Axe (#13819)"
+    { 8013820, 13820 }, // "Filler: Clout Mace (#13820)"
+    { 8013821, 13821 }, // "Filler: Bulky Maul (#13821)"
+    { 8013822, 13822 }, // "Filler: Spiked Dagger (#13822)"
+    { 8013823, 13823 }, // "Filler: Stout War Staff (#13823)"
+    { 8013824, 13824 }, // "Filler: Recurve Long Bow (#13824)"
+    { 8013825, 13825 }, // "Filler: Primed Musket (#13825)"
     { 8013851, 13851 }, // "Filler: Hot Wolf Ribs (#13851)"
     { 8013856, 13856 }, // "Filler: Runecloth Belt (#13856)"
     { 8013857, 13857 }, // "Filler: Runecloth Tunic (#13857)"
@@ -15190,6 +17357,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8014044, 14044 }, // "Filler: Cindercloth Cloak (#14044)"
     { 8014045, 14045 }, // "Filler: Cindercloth Pants (#14045)"
     { 8014046, 14046 }, // "Filler: Runecloth Bag (#14046)"
+    { 8014047, 14047 }, // "Filler: Runecloth (#14047)"
+    { 8014048, 14048 }, // "Filler: Bolt of Runecloth (#14048)"
     { 8014083, 14083 }, // "Filler: Tyrande's Staff (#14083)"
     { 8014086, 14086 }, // "Filler: Beaded Sandals (#14086)"
     { 8014087, 14087 }, // "Filler: Beaded Cuffs (#14087)"
@@ -15519,6 +17688,26 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8014463, 14463 }, // "Filler: Elunarian Spaulders (#14463)"
     { 8014464, 14464 }, // "Filler: Elunarian Silk Robes (#14464)"
     { 8014465, 14465 }, // "Filler: Elunarian Belt (#14465)"
+    { 8014466, 14466 }, // "Filler: Pattern: Frostweave Tunic (#14466)"
+    { 8014467, 14467 }, // "Filler: Pattern: Frostweave Robe (#14467)"
+    { 8014470, 14470 }, // "Filler: Pattern: Runecloth Tunic (#14470)"
+    { 8014474, 14474 }, // "Filler: Pattern: Frostweave Gloves (#14474)"
+    { 8014478, 14478 }, // "Filler: Pattern: Brightcloth Robe (#14478)"
+    { 8014479, 14479 }, // "Filler: Pattern: Brightcloth Gloves (#14479)"
+    { 8014484, 14484 }, // "Filler: Pattern: Brightcloth Cloak (#14484)"
+    { 8014489, 14489 }, // "Filler: Pattern: Frostweave Pants (#14489)"
+    { 8014491, 14491 }, // "Filler: Pattern: Runecloth Pants (#14491)"
+    { 8014492, 14492 }, // "Filler: Pattern: Felcloth Boots (#14492)"
+    { 8014494, 14494 }, // "Filler: Pattern: Brightcloth Pants (#14494)"
+    { 8014496, 14496 }, // "Filler: Pattern: Felcloth Hood (#14496)"
+    { 8014497, 14497 }, // "Filler: Pattern: Mooncloth Leggings (#14497)"
+    { 8014498, 14498 }, // "Filler: Pattern: Runecloth Headband (#14498)"
+    { 8014499, 14499 }, // "Filler: Pattern: Mooncloth Bag (#14499)"
+    { 8014501, 14501 }, // "Filler: Pattern: Mooncloth Vest (#14501)"
+    { 8014504, 14504 }, // "Filler: Pattern: Runecloth Shoulders (#14504)"
+    { 8014506, 14506 }, // "Filler: Pattern: Felcloth Robe (#14506)"
+    { 8014507, 14507 }, // "Filler: Pattern: Mooncloth Shoulders (#14507)"
+    { 8014508, 14508 }, // "Filler: Pattern: Felcloth Shoulders (#14508)"
     { 8014559, 14559 }, // "Filler: Prospector's Sash (#14559)"
     { 8014560, 14560 }, // "Filler: Prospector's Boots (#14560)"
     { 8014561, 14561 }, // "Filler: Prospector's Cuffs (#14561)"
@@ -16424,6 +18613,15 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8015707, 15707 }, // "Filler: Brantwood Sash (#15707)"
     { 8015708, 15708 }, // "Filler: Blight Leather Gloves (#15708)"
     { 8015709, 15709 }, // "Filler: Gearforge Girdle (#15709)"
+    { 8015731, 15731 }, // "Filler: Pattern: Runic Leather Gauntlets (#15731)"
+    { 8015737, 15737 }, // "Filler: Pattern: Chimeric Boots (#15737)"
+    { 8015742, 15742 }, // "Filler: Pattern: Warbear Harness (#15742)"
+    { 8015743, 15743 }, // "Filler: Pattern: Heavy Scorpid Belt (#15743)"
+    { 8015745, 15745 }, // "Filler: Pattern: Runic Leather Belt (#15745)"
+    { 8015746, 15746 }, // "Filler: Pattern: Chimeric Leggings (#15746)"
+    { 8015755, 15755 }, // "Filler: Pattern: Chimeric Vest (#15755)"
+    { 8015757, 15757 }, // "Filler: Pattern: Wicked Leather Pants (#15757)"
+    { 8015765, 15765 }, // "Filler: Pattern: Runic Leather Pants (#15765)"
     { 8015782, 15782 }, // "Filler: Beaststalker Blade (#15782)"
     { 8015783, 15783 }, // "Filler: Beasthunter Dagger (#15783)"
     { 8015784, 15784 }, // "Filler: Crystal Breeze Mantle (#15784)"
@@ -16432,9 +18630,12 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8015789, 15789 }, // "Filler: Deep River Cloak (#15789)"
     { 8015791, 15791 }, // "Filler: Turquoise Sash (#15791)"
     { 8015792, 15792 }, // "Filler: Plow Wood Spaulders (#15792)"
+    { 8015793, 15793 }, // "Filler: A Chewed Bone (#15793)"
+    { 8015794, 15794 }, // "Filler: Ripped Ogre Loincloth (#15794)"
     { 8015795, 15795 }, // "Filler: Emerald Mist Gauntlets (#15795)"
     { 8015796, 15796 }, // "Filler: Seaspray Bracers (#15796)"
     { 8015797, 15797 }, // "Filler: Shining Armplates (#15797)"
+    { 8015798, 15798 }, // "Filler: Chipped Ogre Teeth (#15798)"
     { 8015804, 15804 }, // "Filler: Cerise Drape (#15804)"
     { 8015807, 15807 }, // "Filler: Light Crossbow (#15807)"
     { 8015808, 15808 }, // "Filler: Fine Light Crossbow (#15808)"
@@ -16546,6 +18747,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8016036, 16036 }, // "Filler: PVP Cloth Robe Horde (#16036)"
     { 8016037, 16037 }, // "Filler: PVP Cloth Legs Horde (#16037)"
     { 8016038, 16038 }, // "Filler: PVP Cloth Shoulder Horde (#16038)"
+    { 8016043, 16043 }, // "Filler: Schematic: Thorium Rifle (#16043)"
+    { 8016044, 16044 }, // "Filler: Schematic: Lifelike Mechanical Toad (#16044)"
+    { 8016051, 16051 }, // "Filler: Schematic: Thorium Shells (#16051)"
+    { 8016055, 16055 }, // "Filler: Schematic: Arcane Bomb (#16055)"
     { 8016057, 16057 }, // "Filler: Explorer's Knapsack (#16057)"
     { 8016059, 16059 }, // "Filler: Common Brown Shirt (#16059)"
     { 8016060, 16060 }, // "Filler: Common White Shirt (#16060)"
@@ -16555,6 +18760,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8016169, 16169 }, // "Filler: Wild Ricecake (#16169)"
     { 8016170, 16170 }, // "Filler: Steamed Mandu (#16170)"
     { 8016171, 16171 }, // "Filler: Shinsollo (#16171)"
+    { 8016215, 16215 }, // "Filler: Formula: Enchant Boots - Greater Stamina (#16215)"
+    { 8016218, 16218 }, // "Filler: Formula: Enchant Bracer - Superior Spirit (#16218)"
+    { 8016220, 16220 }, // "Filler: Formula: Enchant Boots - Spirit (#16220)"
+    { 8016245, 16245 }, // "Filler: Formula: Enchant Boots - Greater Agility (#16245)"
+    { 8016251, 16251 }, // "Filler: Formula: Enchant Bracer - Superior Stamina (#16251)"
     { 8016583, 16583 }, // "Filler: Demonic Figurine (#16583)"
     { 8016604, 16604 }, // "Filler: Moon Robes of Elune (#16604)"
     { 8016605, 16605 }, // "Filler: Friar's Robes of the Light (#16605)"
@@ -16571,6 +18781,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8016739, 16739 }, // "Filler: Rugwood Mantle (#16739)"
     { 8016740, 16740 }, // "Filler: Shredder Operating Gloves (#16740)"
     { 8016741, 16741 }, // "Filler: Oilrag Handwraps (#16741)"
+    { 8016747, 16747 }, // "Filler: Broken Lock (#16747)"
+    { 8016748, 16748 }, // "Filler: Padded Lining (#16748)"
     { 8016766, 16766 }, // "Filler: Undermine Clam Chowder (#16766)"
     { 8016768, 16768 }, // "Filler: Furbolg Medicine Pouch (#16768)"
     { 8016769, 16769 }, // "Filler: Furbolg Medicine Totem (#16769)"
@@ -16640,6 +18852,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8017197, 17197 }, // "Filler: Gingerbread Cookie (#17197)"
     { 8017198, 17198 }, // "Filler: Egg Nog (#17198)"
     { 8017199, 17199 }, // "Filler: Bad Egg Nog (#17199)"
+    { 8017202, 17202 }, // "Filler: Snowball (#17202)"
     { 8017222, 17222 }, // "Filler: Spider Sausage (#17222)"
     { 8017344, 17344 }, // "Filler: Candy Cane (#17344)"
     { 8017348, 17348 }, // "Filler: Major Healing Draught (#17348)"
@@ -16695,12 +18908,15 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8018002, 18002 }, // "Filler: Forest Mushroom Cap (#18002)"
     { 8018045, 18045 }, // "Filler: Tender Wolf Steak (#18045)"
     { 8018231, 18231 }, // "Filler: Sleeveless T-Shirt (#18231)"
+    { 8018240, 18240 }, // "Filler: Ogre Tannin (#18240)"
     { 8018253, 18253 }, // "Filler: Major Rejuvenation Potion (#18253)"
     { 8018254, 18254 }, // "Filler: Runn Tum Tuber Surprise (#18254)"
     { 8018255, 18255 }, // "Filler: Runn Tum Tuber (#18255)"
+    { 8018266, 18266 }, // "Filler: Gordok Courtyard Key (#18266)"
     { 8018287, 18287 }, // "Filler: Evermurky (#18287)"
     { 8018288, 18288 }, // "Filler: Molasses Firewater (#18288)"
     { 8018294, 18294 }, // "Filler: Elixir of Greater Water Breathing (#18294)"
+    { 8018297, 18297 }, // "Filler: Thornling Seed (#18297)"
     { 8018300, 18300 }, // "Filler: Hyjal Nectar (#18300)"
     { 8018301, 18301 }, // "Filler: Lethtendris's Wand (#18301)"
     { 8018302, 18302 }, // "Filler: Band of Vigor (#18302)"
@@ -16708,6 +18924,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8018306, 18306 }, // "Filler: Gloves of Shadowy Mist (#18306)"
     { 8018307, 18307 }, // "Filler: Riptide Shoes (#18307)"
     { 8018308, 18308 }, // "Filler: Clever Hat (#18308)"
+    { 8018335, 18335 }, // "Filler: Pristine Black Diamond (#18335)"
     { 8018337, 18337 }, // "Filler: Orphic Bracers (#18337)"
     { 8018339, 18339 }, // "Filler: Eidolon Cloak (#18339)"
     { 8018343, 18343 }, // "Filler: Petrified Band (#18343)"
@@ -16719,10 +18936,25 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8018351, 18351 }, // "Filler: Magically Sealed Bracers (#18351)"
     { 8018352, 18352 }, // "Filler: Petrified Bark Shield (#18352)"
     { 8018353, 18353 }, // "Filler: Stoneflower Staff (#18353)"
+    { 8018356, 18356 }, // "Filler: Garona: A Study on Stealth and Treachery (#18356)"
+    { 8018357, 18357 }, // "Filler: Codex of Defense (#18357)"
+    { 8018358, 18358 }, // "Filler: The Arcanist's Cookbook (#18358)"
+    { 8018359, 18359 }, // "Filler: The Light and How to Swing It (#18359)"
+    { 8018360, 18360 }, // "Filler: Harnessing Shadows (#18360)"
+    { 8018361, 18361 }, // "Filler: The Greatest Race of Hunters (#18361)"
+    { 8018362, 18362 }, // "Filler: Holy Bologna: What the Light Won't Tell You (#18362)"
+    { 8018363, 18363 }, // "Filler: Frost Shock and You (#18363)"
+    { 8018364, 18364 }, // "Filler: The Emerald Dream (#18364)"
+    { 8018365, 18365 }, // "Filler: A Thoroughly Read Copy of \"Nat Pagle's Extreme' Anglin.\" (#18365)"
     { 8018400, 18400 }, // "Filler: Ring of Living Stone (#18400)"
     { 8018402, 18402 }, // "Filler: Glowing Crystal Ring (#18402)"
     { 8018410, 18410 }, // "Filler: Sprinter's Sword (#18410)"
     { 8018411, 18411 }, // "Filler: Spry Boots (#18411)"
+    { 8018414, 18414 }, // "Filler: Pattern: Belt of the Archmage (#18414)"
+    { 8018415, 18415 }, // "Filler: Pattern: Felcloth Gloves (#18415)"
+    { 8018416, 18416 }, // "Filler: Pattern: Inferno Gloves (#18416)"
+    { 8018417, 18417 }, // "Filler: Pattern: Mooncloth Gloves (#18417)"
+    { 8018418, 18418 }, // "Filler: Pattern: Cloak of Warding (#18418)"
     { 8018425, 18425 }, // "Filler: Kreeg's Mug (#18425)"
     { 8018450, 18450 }, // "Filler: Robe of Combustion (#18450)"
     { 8018451, 18451 }, // "Filler: Hyena Hide Belt (#18451)"
@@ -16740,6 +18972,24 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8018480, 18480 }, // "Filler: Scarab Plate Helm (#18480)"
     { 8018481, 18481 }, // "Filler: Skullcracking Mace (#18481)"
     { 8018482, 18482 }, // "Filler: Ogre Toothpick Shooter (#18482)"
+    { 8018495, 18495 }, // "Filler: Redoubt Cloak (#18495)"
+    { 8018499, 18499 }, // "Filler: Barrier Shield (#18499)"
+    { 8018500, 18500 }, // "Filler: Tarnished Elven Ring (#18500)"
+    { 8018501, 18501 }, // "Filler: Felvine Shard (#18501)"
+    { 8018514, 18514 }, // "Filler: Pattern: Girdle of Insight (#18514)"
+    { 8018515, 18515 }, // "Filler: Pattern: Mongoose Boots (#18515)"
+    { 8018516, 18516 }, // "Filler: Pattern: Swift Flight Bracers (#18516)"
+    { 8018517, 18517 }, // "Filler: Pattern: Chromatic Cloak (#18517)"
+    { 8018518, 18518 }, // "Filler: Pattern: Hide of the Wild (#18518)"
+    { 8018519, 18519 }, // "Filler: Pattern: Shifting Cloak (#18519)"
+    { 8018528, 18528 }, // "Filler: Cyclone Spaulders (#18528)"
+    { 8018529, 18529 }, // "Filler: Elemental Plate Girdle (#18529)"
+    { 8018530, 18530 }, // "Filler: Ogre Forged Hauberk (#18530)"
+    { 8018531, 18531 }, // "Filler: Unyielding Maul (#18531)"
+    { 8018532, 18532 }, // "Filler: Mindsurge Robe (#18532)"
+    { 8018533, 18533 }, // "Filler: Gordok Bracers of Power (#18533)"
+    { 8018534, 18534 }, // "Filler: Rod of the Ogre Magi (#18534)"
+    { 8018537, 18537 }, // "Filler: Counterattack Lodestone (#18537)"
     { 8018597, 18597 }, // "Filler: Orcish Orphan Whistle (#18597)"
     { 8018598, 18598 }, // "Filler: Human Orphan Whistle (#18598)"
     { 8018610, 18610 }, // "Filler: Keen Machete (#18610)"
@@ -16749,13 +18999,24 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8018633, 18633 }, // "Filler: Styleen's Sour Suckerpop (#18633)"
     { 8018635, 18635 }, // "Filler: Bellara's Nutterbar (#18635)"
     { 8018637, 18637 }, // "Filler: Major Recombobulator (#18637)"
+    { 8018646, 18646 }, // "Filler: The Eye of Divinity (#18646)"
+    { 8018655, 18655 }, // "Filler: Schematic: Major Recombobulator (#18655)"
     { 8018672, 18672 }, // "Filler: Elemental Ember (#18672)"
     { 8018674, 18674 }, // "Filler: Hardened Stone Band (#18674)"
     { 8018677, 18677 }, // "Filler: Zephyr Cloak (#18677)"
     { 8018679, 18679 }, // "Filler: Frigid Ring (#18679)"
+    { 8018697, 18697 }, // "Filler: Coldstone Slippers (#18697)"
+    { 8018700, 18700 }, // "Filler: Malefic Bracers (#18700)"
+    { 8018703, 18703 }, // "Filler: Ancient Petrified Leaf (#18703)"
+    { 8018706, 18706 }, // "Filler: Arena Master (#18706)"
+    { 8018709, 18709 }, // "Filler: Arena Wristguards (#18709)"
+    { 8018710, 18710 }, // "Filler: Arena Bracers (#18710)"
+    { 8018711, 18711 }, // "Filler: Arena Bands (#18711)"
+    { 8018712, 18712 }, // "Filler: Arena Vambraces (#18712)"
     { 8018768, 18768 }, // "Filler: Reins of the Swift Dawnsaber (#18768)"
     { 8018839, 18839 }, // "Filler: Combat Healing Potion (#18839)"
     { 8018841, 18841 }, // "Filler: Combat Mana Potion (#18841)"
+    { 8018950, 18950 }, // "Filler: Chambermaid Pillaclencher's Pillow (#18950)"
     { 8018951, 18951 }, // "Filler: Evonice's Landin' Pilla (#18951)"
     { 8018957, 18957 }, // "Filler: Brushwood Blade (#18957)"
     { 8018964, 18964 }, // "Filler: Turtle Egg (Loggerhead) (#18964)"
@@ -16820,14 +19081,27 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8019618, 19618 }, // "Filler: Maelstrom's Tendril (#19618)"
     { 8019696, 19696 }, // "Filler: Harvest Bread (#19696)"
     { 8019697, 19697 }, // "Filler: Bounty of the Harvest (#19697)"
+    { 8019726, 19726 }, // "Filler: Bloodvine (#19726)"
+    { 8019727, 19727 }, // "Filler: Blood Scythe (#19727)"
     { 8019774, 19774 }, // "Filler: Souldarite (#19774)"
     { 8019808, 19808 }, // "Filler: Rockhide Strongfish (#19808)"
+    { 8019813, 19813 }, // "Filler: Punctured Voodoo Doll (#19813)"
+    { 8019814, 19814 }, // "Filler: Punctured Voodoo Doll (#19814)"
+    { 8019815, 19815 }, // "Filler: Punctured Voodoo Doll (#19815)"
+    { 8019816, 19816 }, // "Filler: Punctured Voodoo Doll (#19816)"
+    { 8019817, 19817 }, // "Filler: Punctured Voodoo Doll (#19817)"
+    { 8019818, 19818 }, // "Filler: Punctured Voodoo Doll (#19818)"
+    { 8019819, 19819 }, // "Filler: Punctured Voodoo Doll (#19819)"
+    { 8019820, 19820 }, // "Filler: Punctured Voodoo Doll (#19820)"
+    { 8019821, 19821 }, // "Filler: Punctured Voodoo Doll (#19821)"
     { 8019914, 19914 }, // "Filler: Panther Hide Sack (#19914)"
     { 8019969, 19969 }, // "Filler: Nat Pagle's Extreme Anglin' Boots (#19969)"
     { 8019972, 19972 }, // "Filler: Lucky Fishing Hat (#19972)"
+    { 8019975, 19975 }, // "Filler: Zulian Mudskunk (#19975)"
     { 8019994, 19994 }, // "Filler: Harvest Fruit (#19994)"
     { 8019995, 19995 }, // "Filler: Harvest Boar (#19995)"
     { 8019996, 19996 }, // "Filler: Harvest Fish (#19996)"
+    { 8019997, 19997 }, // "Filler: Harvest Nectar (#19997)"
     { 8020002, 20002 }, // "Filler: Greater Dreamless Sleep Potion (#20002)"
     { 8020004, 20004 }, // "Filler: Mighty Troll's Blood Elixir (#20004)"
     { 8020007, 20007 }, // "Filler: Mageblood Elixir (#20007)"
@@ -16970,6 +19244,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8020961, 20961 }, // "Filler: Citrine Ring of Rapid Healing (#20961)"
     { 8020966, 20966 }, // "Filler: Jade Pendant of Blasting (#20966)"
     { 8020967, 20967 }, // "Filler: Citrine Pendant of Golden Healing (#20967)"
+    { 8020976, 20976 }, // "Filler: Design: Citrine Pendant of Golden Healing (#20976)"
     { 8020977, 20977 }, // "Filler: Recruit's Shortsword (#20977)"
     { 8020978, 20978 }, // "Filler: Apprentice's Staff (#20978)"
     { 8020979, 20979 }, // "Filler: Warder's Axe (#20979)"
@@ -16999,6 +19274,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021030, 21030 }, // "Filler: Darnassus Kimchi Pie (#21030)"
     { 8021031, 21031 }, // "Filler: Cabbage Kimchi (#21031)"
     { 8021033, 21033 }, // "Filler: Radish Kimchi (#21033)"
+    { 8021038, 21038 }, // "Filler: Hardpacked Snowball (#21038)"
     { 8021039, 21039 }, // "Filler: Narain's Turban (#21039)"
     { 8021040, 21040 }, // "Filler: Narain's Robe (#21040)"
     { 8021042, 21042 }, // "Filler: Narain's Special Kit (#21042)"
@@ -17014,6 +19290,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021156, 21156 }, // "Filler: Scarab Bag (#21156)"
     { 8021157, 21157 }, // "Filler: Festive Green Dress (#21157)"
     { 8021168, 21168 }, // "Filler: Baby Shark (#21168)"
+    { 8021174, 21174 }, // "Filler: Empty Festive Mug (#21174)"
     { 8021177, 21177 }, // "Filler: Symbol of Kings (#21177)"
     { 8021191, 21191 }, // "Filler: Carefully Wrapped Present (#21191)"
     { 8021193, 21193 }, // "Filler: D'Sak's Sack (#21193)"
@@ -17029,6 +19306,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021240, 21240 }, // "Filler: Winter Veil Candy (#21240)"
     { 8021254, 21254 }, // "Filler: Winter Veil Cookie (#21254)"
     { 8021266, 21266 }, // "Filler: Logistics Assignment (#21266)"
+    { 8021267, 21267 }, // "Filler: Toasting Goblet (#21267)"
     { 8021270, 21270 }, // "Filler: Gently Shaken Gift (#21270)"
     { 8021271, 21271 }, // "Filler: Gently Shaken Gift (#21271)"
     { 8021277, 21277 }, // "Filler: Tranquil Mechanical Yeti (#21277)"
@@ -17065,6 +19343,16 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021544, 21544 }, // "Filler: Festive Blue Pant Suit (#21544)"
     { 8021546, 21546 }, // "Filler: Elixir of Greater Firepower (#21546)"
     { 8021552, 21552 }, // "Filler: Striped Yellowtail (#21552)"
+    { 8021557, 21557 }, // "Filler: Small Red Rocket (#21557)"
+    { 8021558, 21558 }, // "Filler: Small Blue Rocket (#21558)"
+    { 8021559, 21559 }, // "Filler: Small Green Rocket (#21559)"
+    { 8021561, 21561 }, // "Filler: Small White Rocket (#21561)"
+    { 8021562, 21562 }, // "Filler: Small Yellow Rocket (#21562)"
+    { 8021589, 21589 }, // "Filler: Large Blue Rocket (#21589)"
+    { 8021590, 21590 }, // "Filler: Large Green Rocket (#21590)"
+    { 8021592, 21592 }, // "Filler: Large Red Rocket (#21592)"
+    { 8021593, 21593 }, // "Filler: Large White Rocket (#21593)"
+    { 8021595, 21595 }, // "Filler: Large Yellow Rocket (#21595)"
     { 8021640, 21640 }, // "Filler: Lunar Festival Fireworks Pack (#21640)"
     { 8021713, 21713 }, // "Filler: Elune's Candle (#21713)"
     { 8021721, 21721 }, // "Filler: Moonglow (#21721)"
@@ -17094,6 +19382,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021821, 21821 }, // "Filler: Heart Candy (#21821)"
     { 8021822, 21822 }, // "Filler: Heart Candy (#21822)"
     { 8021823, 21823 }, // "Filler: Heart Candy (#21823)"
+    { 8021840, 21840 }, // "Filler: Bolt of Netherweave (#21840)"
     { 8021841, 21841 }, // "Filler: Netherweave Bag (#21841)"
     { 8021843, 21843 }, // "Filler: Imbued Netherweave Bag (#21843)"
     { 8021849, 21849 }, // "Filler: Netherweave Bracers (#21849)"
@@ -17106,11 +19395,17 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8021858, 21858 }, // "Filler: Spellfire Bag (#21858)"
     { 8021872, 21872 }, // "Filler: Ebon Shadowbag (#21872)"
     { 8021876, 21876 }, // "Filler: Primal Mooncloth Bag (#21876)"
+    { 8021877, 21877 }, // "Filler: Netherweave Cloth (#21877)"
     { 8021929, 21929 }, // "Filler: Flame Spessarite (#21929)"
     { 8021931, 21931 }, // "Filler: Woven Copper Ring (#21931)"
     { 8021932, 21932 }, // "Filler: Heavy Copper Ring (#21932)"
     { 8021933, 21933 }, // "Filler: Thick Bronze Necklace (#21933)"
     { 8021934, 21934 }, // "Filler: Ornate Tigerseye Necklace (#21934)"
+    { 8021940, 21940 }, // "Filler: Design: Golden Hare (#21940)"
+    { 8021944, 21944 }, // "Filler: Design: Truesilver Boar (#21944)"
+    { 8021947, 21947 }, // "Filler: Design: Gem Studded Band (#21947)"
+    { 8021949, 21949 }, // "Filler: Design: Ruby Serpent (#21949)"
+    { 8021953, 21953 }, // "Filler: Design: Emerald Owl (#21953)"
     { 8022018, 22018 }, // "Filler: Conjured Glacier Water (#22018)"
     { 8022019, 22019 }, // "Filler: Conjured Croissant (#22019)"
     { 8022137, 22137 }, // "Filler: Ysida's Satchel (#22137)"
@@ -17118,6 +19413,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8022148, 22148 }, // "Filler: Wild Quillvine (#22148)"
     { 8022152, 22152 }, // "Filler: Anthion's Pouch (#22152)"
     { 8022200, 22200 }, // "Filler: Silver Shafted Arrow (#22200)"
+    { 8022202, 22202 }, // "Filler: Small Obsidian Shard (#22202)"
+    { 8022203, 22203 }, // "Filler: Large Obsidian Shard (#22203)"
+    { 8022205, 22205 }, // "Filler: Black Steel Bindings (#22205)"
     { 8022206, 22206 }, // "Filler: Bouquet of Red Roses (#22206)"
     { 8022218, 22218 }, // "Filler: Handful of Rose Petals (#22218)"
     { 8022233, 22233 }, // "Filler: Zigris' Footlocker (#22233)"
@@ -17133,6 +19431,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8022250, 22250 }, // "Filler: Herb Pouch (#22250)"
     { 8022251, 22251 }, // "Filler: Cenarion Herb Bag (#22251)"
     { 8022252, 22252 }, // "Filler: Satchel of Cenarius (#22252)"
+    { 8022254, 22254 }, // "Filler: Wand of Eternal Light (#22254)"
+    { 8022255, 22255 }, // "Filler: Magma Forged Band (#22255)"
+    { 8022256, 22256 }, // "Filler: Mana Shaping Handwraps (#22256)"
     { 8022261, 22261 }, // "Filler: Love Fool (#22261)"
     { 8022276, 22276 }, // "Filler: Lovely Red Dress (#22276)"
     { 8022277, 22277 }, // "Filler: Red Dinner Suit (#22277)"
@@ -17141,17 +19442,32 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8022280, 22280 }, // "Filler: Lovely Purple Dress (#22280)"
     { 8022281, 22281 }, // "Filler: Blue Dinner Suit (#22281)"
     { 8022282, 22282 }, // "Filler: Purple Dinner Suit (#22282)"
+    { 8022301, 22301 }, // "Filler: Ironweave Robe (#22301)"
+    { 8022305, 22305 }, // "Filler: Ironweave Mantle (#22305)"
+    { 8022317, 22317 }, // "Filler: Lefty's Brass Knuckle (#22317)"
+    { 8022318, 22318 }, // "Filler: Malgen's Long Bow (#22318)"
     { 8022320, 22320 }, // "Filler: Mux's Quality Goods (#22320)"
     { 8022324, 22324 }, // "Filler: Winter Kimchi (#22324)"
+    { 8022327, 22327 }, // "Filler: Amulet of the Redeemed (#22327)"
+    { 8022328, 22328 }, // "Filler: Legplates of Vigilance (#22328)"
+    { 8022329, 22329 }, // "Filler: Scepter of Interminable Focus (#22329)"
+    { 8022330, 22330 }, // "Filler: Shroud of Arcane Mastery (#22330)"
+    { 8022334, 22334 }, // "Filler: Band of Mending (#22334)"
     { 8022459, 22459 }, // "Filler: Void Sphere (#22459)"
     { 8022460, 22460 }, // "Filler: Prismatic Sphere (#22460)"
     { 8022568, 22568 }, // "Filler: Sealed Craftsman's Writ (#22568)"
     { 8022571, 22571 }, // "Filler: Courier's Bag (#22571)"
+    { 8022573, 22573 }, // "Filler: Mote of Earth (#22573)"
+    { 8022574, 22574 }, // "Filler: Mote of Fire (#22574)"
+    { 8022575, 22575 }, // "Filler: Mote of Life (#22575)"
+    { 8022576, 22576 }, // "Filler: Mote of Mana (#22576)"
     { 8022645, 22645 }, // "Filler: Crunchy Spider Surprise (#22645)"
     { 8022648, 22648 }, // "Filler: Hive'Ashi Dossier (#22648)"
     { 8022649, 22649 }, // "Filler: Hive'Regal Dossier (#22649)"
     { 8022650, 22650 }, // "Filler: Hive'Zora Dossier (#22650)"
     { 8022679, 22679 }, // "Filler: Supply Bag (#22679)"
+    { 8022682, 22682 }, // "Filler: Frozen Rune (#22682)"
+    { 8022710, 22710 }, // "Filler: Bloodthistle (#22710)"
     { 8022742, 22742 }, // "Filler: Bloodsail Shirt (#22742)"
     { 8022744, 22744 }, // "Filler: Bloodsail Boots (#22744)"
     { 8022745, 22745 }, // "Filler: Bloodsail Pants (#22745)"
@@ -17159,6 +19475,17 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8022782, 22782 }, // "Filler: Sin'dorei Cloak of Warding (#22782)"
     { 8022783, 22783 }, // "Filler: Sunwell Blade (#22783)"
     { 8022784, 22784 }, // "Filler: Sunwell Orb (#22784)"
+    { 8022785, 22785 }, // "Filler: Felweed (#22785)"
+    { 8022786, 22786 }, // "Filler: Dreaming Glory (#22786)"
+    { 8022787, 22787 }, // "Filler: Ragveil (#22787)"
+    { 8022788, 22788 }, // "Filler: Flame Cap (#22788)"
+    { 8022789, 22789 }, // "Filler: Terocone (#22789)"
+    { 8022790, 22790 }, // "Filler: Ancient Lichen (#22790)"
+    { 8022791, 22791 }, // "Filler: Netherbloom (#22791)"
+    { 8022792, 22792 }, // "Filler: Nightmare Vine (#22792)"
+    { 8022793, 22793 }, // "Filler: Mana Thistle (#22793)"
+    { 8022794, 22794 }, // "Filler: Fel Lotus (#22794)"
+    { 8022795, 22795 }, // "Filler: Fel Blossom (#22795)"
     { 8022823, 22823 }, // "Filler: Elixir of Camouflage (#22823)"
     { 8022824, 22824 }, // "Filler: Elixir of Major Strength (#22824)"
     { 8022825, 22825 }, // "Filler: Elixir of Healing Power (#22825)"
@@ -17311,6 +19638,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023421, 23421 }, // "Filler: Engraved Sword (#23421)"
     { 8023422, 23422 }, // "Filler: Engraved Dagger (#23422)"
     { 8023423, 23423 }, // "Filler: Mercenary Greatsword (#23423)"
+    { 8023424, 23424 }, // "Filler: Fel Iron Ore (#23424)"
+    { 8023425, 23425 }, // "Filler: Adamantite Ore (#23425)"
+    { 8023426, 23426 }, // "Filler: Khorium Ore (#23426)"
+    { 8023427, 23427 }, // "Filler: Eternium Ore (#23427)"
     { 8023429, 23429 }, // "Filler: Mercenary Clout (#23429)"
     { 8023430, 23430 }, // "Filler: Mercenary Sword (#23430)"
     { 8023431, 23431 }, // "Filler: Mercenary Stiletto (#23431)"
@@ -17325,6 +19656,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023440, 23440 }, // "Filler: Dawnstone (#23440)"
     { 8023441, 23441 }, // "Filler: Nightseye (#23441)"
     { 8023444, 23444 }, // "Filler: Goldenmist Special Brew (#23444)"
+    { 8023445, 23445 }, // "Filler: Fel Iron Bar (#23445)"
+    { 8023446, 23446 }, // "Filler: Adamantite Bar (#23446)"
+    { 8023447, 23447 }, // "Filler: Eternium Bar (#23447)"
+    { 8023449, 23449 }, // "Filler: Khorium Bar (#23449)"
     { 8023471, 23471 }, // "Filler: Rugged Trapper's Pants (#23471)"
     { 8023473, 23473 }, // "Filler: Recruit's Shirt (#23473)"
     { 8023475, 23475 }, // "Filler: Recruit's Boots (#23475)"
@@ -17336,12 +19671,14 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023489, 23489 }, // "Filler: Fel Iron Breastplate (#23489)"
     { 8023490, 23490 }, // "Filler: Fel Iron Chain Tunic (#23490)"
     { 8023491, 23491 }, // "Filler: Fel Iron Chain Gloves (#23491)"
+    { 8023492, 23492 }, // "Filler: Suntouched Special Reserve (#23492)"
     { 8023493, 23493 }, // "Filler: Fel Iron Chain Coif (#23493)"
     { 8023494, 23494 }, // "Filler: Fel Iron Chain Bracers (#23494)"
     { 8023495, 23495 }, // "Filler: Springpaw Appetizer (#23495)"
     { 8023497, 23497 }, // "Filler: Fel Iron Hatchet (#23497)"
     { 8023498, 23498 }, // "Filler: Fel Iron Hammer (#23498)"
     { 8023499, 23499 }, // "Filler: Fel Iron Greatsword (#23499)"
+    { 8023501, 23501 }, // "Filler: Bloodthistle Petal (#23501)"
     { 8023502, 23502 }, // "Filler: Adamantite Maul (#23502)"
     { 8023503, 23503 }, // "Filler: Adamantite Cleaver (#23503)"
     { 8023504, 23504 }, // "Filler: Adamantite Dagger (#23504)"
@@ -17363,6 +19700,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023774, 23774 }, // "Filler: Fel Iron Toolbox (#23774)"
     { 8023775, 23775 }, // "Filler: Titanium Toolbox (#23775)"
     { 8023792, 23792 }, // "Filler: Tree Disguise Kit (#23792)"
+    { 8023793, 23793 }, // "Filler: Heavy Knothide Leather (#23793)"
     { 8023822, 23822 }, // "Filler: Healing Potion Injector (#23822)"
     { 8023823, 23823 }, // "Filler: Mana Potion Injector (#23823)"
     { 8023844, 23844 }, // "Filler: Nolkai's Lantern (#23844)"
@@ -17372,6 +19710,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023871, 23871 }, // "Filler: Potion of Water Breathing (#23871)"
     { 8023909, 23909 }, // "Filler: Blood Elf Bandit Mask (#23909)"
     { 8023921, 23921 }, // "Filler: Bulging Sack of Silver (#23921)"
+    { 8023922, 23922 }, // "Filler: Rat Skeleton (#23922)"
     { 8023923, 23923 }, // "Filler: Amani Sacrificial Dagger (#23923)"
     { 8023924, 23924 }, // "Filler: Robes of Silvermoon (#23924)"
     { 8023931, 23931 }, // "Filler: Azure Watch Robes (#23931)"
@@ -17438,9 +19777,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8024141, 24141 }, // "Filler: Battle Worn Gauntlets (#24141)"
     { 8024142, 24142 }, // "Filler: Battle Worn Gloves (#24142)"
     { 8024144, 24144 }, // "Filler: Battle Worn Handguards (#24144)"
+    { 8024186, 24186 }, // "Filler: Copper Powder (#24186)"
     { 8024227, 24227 }, // "Filler: Soft Leather Belt (#24227)"
     { 8024241, 24241 }, // "Filler: Green Chain Belt (#24241)"
+    { 8024245, 24245 }, // "Filler: Glowcap (#24245)"
+    { 8024246, 24246 }, // "Filler: Sanguine Hibiscus (#24246)"
     { 8024270, 24270 }, // "Filler: Bag of Jewels (#24270)"
+    { 8024290, 24290 }, // "Filler: Mature Spore Sac (#24290)"
     { 8024334, 24334 }, // "Filler: Wheel of the Lost Hope (#24334)"
     { 8024336, 24336 }, // "Filler: Fireproof Satchel (#24336)"
     { 8024338, 24338 }, // "Filler: Hellfire Spineleaf (#24338)"
@@ -17459,6 +19802,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8024352, 24352 }, // "Filler: Blade of the Hand (#24352)"
     { 8024353, 24353 }, // "Filler: Crossbow of the Hand (#24353)"
     { 8024354, 24354 }, // "Filler: Staff of the Hand (#24354)"
+    { 8024401, 24401 }, // "Filler: Unidentified Plant Parts (#24401)"
     { 8024402, 24402 }, // "Filler: Package of Identified Plants (#24402)"
     { 8024423, 24423 }, // "Filler: Beaten Chain Leggings (#24423)"
     { 8024424, 24424 }, // "Filler: Rough Leather Leggings (#24424)"
@@ -18241,6 +20585,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8025335, 25335 }, // "Filler: Feral Warp-Staff (#25335)"
     { 8025336, 25336 }, // "Filler: Splintering Greatstaff (#25336)"
     { 8025337, 25337 }, // "Filler: Swarming Sting-Staff (#25337)"
+    { 8025416, 25416 }, // "Filler: Oshu'gun Crystal Fragment (#25416)"
     { 8025419, 25419 }, // "Filler: Unmarked Bag of Gems (#25419)"
     { 8025422, 25422 }, // "Filler: Bulging Sack of Gems (#25422)"
     { 8025423, 25423 }, // "Filler: Bag of Premium Gems (#25423)"
@@ -18359,6 +20704,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8025634, 25634 }, // "Filler: Oshu'gun Relic (#25634)"
     { 8025636, 25636 }, // "Filler: Talbuk Cape (#25636)"
     { 8025637, 25637 }, // "Filler: Ethereal Sash (#25637)"
+    { 8025649, 25649 }, // "Filler: Knothide Leather Scraps (#25649)"
     { 8025654, 25654 }, // "Filler: Felscale Gloves (#25654)"
     { 8025655, 25655 }, // "Filler: Felscale Boots (#25655)"
     { 8025656, 25656 }, // "Filler: Felscale Pants (#25656)"
@@ -18600,6 +20946,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8027978, 27978 }, // "Filler: Soap on a Rope (#27978)"
     { 8027979, 27979 }, // "Filler: Stone of Stupendous Springing Strides (#27979)"
     { 8027982, 27982 }, // "Filler: Charm of Potent and Powerful Passions (#27982)"
+    { 8027991, 27991 }, // "Filler: Shadow Labyrinth Key (#27991)"
     { 8027992, 27992 }, // "Filler: Infallible Tikbalang Ward (#27992)"
     { 8028026, 28026 }, // "Filler: Crazy Cenarion Cloak (#28026)"
     { 8028027, 28027 }, // "Filler: Lunatic's Choker (#28027)"
@@ -18646,6 +20993,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8028162, 28162 }, // "Filler: Tranquillien Defender's Girdle (#28162)"
     { 8028163, 28163 }, // "Filler: Maltendis's Handguards (#28163)"
     { 8028164, 28164 }, // "Filler: Tranquillien Flamberge (#28164)"
+    { 8028248, 28248 }, // "Filler: Totem of the Void (#28248)"
+    { 8028249, 28249 }, // "Filler: Capacitus' Cloak of Calibration (#28249)"
+    { 8028250, 28250 }, // "Filler: Vestia's Pauldrons of Inner Grace (#28250)"
+    { 8028251, 28251 }, // "Filler: Boots of the Glade-Keeper (#28251)"
+    { 8028252, 28252 }, // "Filler: Bloodfyre Robes of Annihilation (#28252)"
     { 8028284, 28284 }, // "Filler: Don Carlos Tequila (#28284)"
     { 8028290, 28290 }, // "Filler: Smooth Golden Draenite (#28290)"
     { 8028303, 28303 }, // "Filler: Invoker's Signet (#28303)"
@@ -18727,6 +21079,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8029400, 29400 }, // "Filler: Abyssal Shroud (#29400)"
     { 8029401, 29401 }, // "Filler: Sparkling Southshore Cider (#29401)"
     { 8029412, 29412 }, // "Filler: Jessen's Special Slop (#29412)"
+    { 8029434, 29434 }, // "Filler: Badge of Justice (#29434)"
+    { 8029443, 29443 }, // "Filler: Bloodmaul Brutebane Brew (#29443)"
     { 8029448, 29448 }, // "Filler: Mag'har Mild Cheese (#29448)"
     { 8029449, 29449 }, // "Filler: Bladespire Bagel (#29449)"
     { 8029450, 29450 }, // "Filler: Telaari Grapes (#29450)"
@@ -18736,6 +21090,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8029454, 29454 }, // "Filler: Silverwine (#29454)"
     { 8029518, 29518 }, // "Filler: Amani Scimitar (#29518)"
     { 8029540, 29540 }, // "Filler: Reinforced Mining Bag (#29540)"
+    { 8029573, 29573 }, // "Filler: Embalming Fluid (#29573)"
+    { 8029574, 29574 }, // "Filler: Mummified Parts (#29574)"
+    { 8029577, 29577 }, // "Filler: Troll Keepsake (#29577)"
     { 8029583, 29583 }, // "Filler: Sinister Scimitar (#29583)"
     { 8029584, 29584 }, // "Filler: Throat Piercers (#29584)"
     { 8029771, 29771 }, // "Filler: Kirin'Var Journeyman's Belt (#29771)"
@@ -18900,6 +21257,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8030458, 30458 }, // "Filler: Stromgarde Muenster (#30458)"
     { 8030504, 30504 }, // "Filler: Leafblade Dagger (#30504)"
     { 8030505, 30505 }, // "Filler: Ghostclaw Tunic (#30505)"
+    { 8030506, 30506 }, // "Filler: Snipe Egg (#30506)"
+    { 8030507, 30507 }, // "Filler: Lucky Rock (#30507)"
+    { 8030508, 30508 }, // "Filler: Pickled Murloc Head (#30508)"
+    { 8030509, 30509 }, // "Filler: Armor Fragment (#30509)"
     { 8030514, 30514 }, // "Filler: Nether Guards (#30514)"
     { 8030515, 30515 }, // "Filler: Junior Technician 3rd Grade Goggles (#30515)"
     { 8030516, 30516 }, // "Filler: Chief Engineer's Belt (#30516)"
@@ -19037,7 +21398,43 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8031117, 31117 }, // "Filler: Soothing Amethyst (#31117)"
     { 8031118, 31118 }, // "Filler: Pulsing Amethyst (#31118)"
     { 8031122, 31122 }, // "Filler: Overseer Disguise (#31122)"
+    { 8031125, 31125 }, // "Filler: Boots of the Decimator (#31125)"
+    { 8031126, 31126 }, // "Filler: Gloves of Ferocity (#31126)"
+    { 8031127, 31127 }, // "Filler: Hauberk of Totemic Rage (#31127)"
+    { 8031131, 31131 }, // "Filler: Sash of Silent Blades (#31131)"
+    { 8031133, 31133 }, // "Filler: Leggings of Concentrated Darkness (#31133)"
+    { 8031134, 31134 }, // "Filler: Blade of Misfortune (#31134)"
+    { 8031136, 31136 }, // "Filler: Breastplate of Blade Turning (#31136)"
+    { 8031137, 31137 }, // "Filler: Gauntlets of Purification (#31137)"
+    { 8031138, 31138 }, // "Filler: Storm Lord's Girdle (#31138)"
+    { 8031139, 31139 }, // "Filler: Fist of Reckoning (#31139)"
+    { 8031140, 31140 }, // "Filler: Cloak of Entropy (#31140)"
+    { 8031142, 31142 }, // "Filler: Blade of Trapped Knowledge (#31142)"
+    { 8031143, 31143 }, // "Filler: Shroud of Frenzy (#31143)"
+    { 8031145, 31145 }, // "Filler: Headdress of the Sleeper (#31145)"
+    { 8031147, 31147 }, // "Filler: Pendant of Cunning (#31147)"
+    { 8031148, 31148 }, // "Filler: Demon Hide Spaulders (#31148)"
+    { 8031149, 31149 }, // "Filler: Gloves of Pandemonium (#31149)"
+    { 8031150, 31150 }, // "Filler: Gloves of Piety (#31150)"
+    { 8031151, 31151 }, // "Filler: Girdle of Siege (#31151)"
+    { 8031152, 31152 }, // "Filler: Chestguard of Illumination (#31152)"
+    { 8031153, 31153 }, // "Filler: Axe of the Legion (#31153)"
     { 8031154, 31154 }, // "Filler: Bronze Torc (#31154)"
+    { 8031173, 31173 }, // "Filler: Boots of Savagery (#31173)"
+    { 8031175, 31175 }, // "Filler: Blade Dancer's Wristguards (#31175)"
+    { 8031178, 31178 }, // "Filler: Amulet of Unstable Power (#31178)"
+    { 8031180, 31180 }, // "Filler: Gauntlets of the Skullsplitter (#31180)"
+    { 8031186, 31186 }, // "Filler: Braxxis' Staff of Slumber (#31186)"
+    { 8031187, 31187 }, // "Filler: Boots of the Pathfinder (#31187)"
+    { 8031190, 31190 }, // "Filler: The Dreamer's Shoulderpads (#31190)"
+    { 8031193, 31193 }, // "Filler: Blade of Unquenched Thirst (#31193)"
+    { 8031200, 31200 }, // "Filler: Shield of the Wayward Footman (#31200)"
+    { 8031204, 31204 }, // "Filler: The Gunblade (#31204)"
+    { 8031222, 31222 }, // "Filler: Headdress of Inner Rage (#31222)"
+    { 8031226, 31226 }, // "Filler: Leggings of the Sly (#31226)"
+    { 8031230, 31230 }, // "Filler: Abyss Walker's Boots (#31230)"
+    { 8031234, 31234 }, // "Filler: Crystalblade of the Draenei (#31234)"
+    { 8031240, 31240 }, // "Filler: Scales of the Beast (#31240)"
     { 8031256, 31256 }, // "Filler: Silvermoon Armor (#31256)"
     { 8031263, 31263 }, // "Filler: Silvermoon Tunic (#31263)"
     { 8031264, 31264 }, // "Filler: Silvermoon Robes (#31264)"
@@ -19045,7 +21442,26 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8031268, 31268 }, // "Filler: Abomination Cleaver (#31268)"
     { 8031269, 31269 }, // "Filler: Ghoul Hammer (#31269)"
     { 8031270, 31270 }, // "Filler: Banshee Rod (#31270)"
+    { 8031275, 31275 }, // "Filler: Necklace of Trophies (#31275)"
     { 8031279, 31279 }, // "Filler: Enchanted Illidari Tabard (#31279)"
+    { 8031280, 31280 }, // "Filler: Thundercaller's Gauntlets (#31280)"
+    { 8031287, 31287 }, // "Filler: Draenei Honor Guard Shield (#31287)"
+    { 8031288, 31288 }, // "Filler: The Master's Treads (#31288)"
+    { 8031289, 31289 }, // "Filler: Staff of Divine Infusion (#31289)"
+    { 8031290, 31290 }, // "Filler: Band of Dominion (#31290)"
+    { 8031291, 31291 }, // "Filler: Crystalforged War Axe (#31291)"
+    { 8031292, 31292 }, // "Filler: Crystal Pulse Shield (#31292)"
+    { 8031293, 31293 }, // "Filler: Girdle of Gale Force (#31293)"
+    { 8031294, 31294 }, // "Filler: Pauldrons of Surging Mana (#31294)"
+    { 8031295, 31295 }, // "Filler: Chestguard of the Dark Stalker (#31295)"
+    { 8031297, 31297 }, // "Filler: Robe of the Crimson Order (#31297)"
+    { 8031298, 31298 }, // "Filler: Legguards of the Shattered Hand (#31298)"
+    { 8031299, 31299 }, // "Filler: The Oathkeeper (#31299)"
+    { 8031303, 31303 }, // "Filler: Valanos' Longbow (#31303)"
+    { 8031304, 31304 }, // "Filler: The Essence Focuser (#31304)"
+    { 8031305, 31305 }, // "Filler: Ced's Carver (#31305)"
+    { 8031306, 31306 }, // "Filler: Leggings of the Sacred Crest (#31306)"
+    { 8031308, 31308 }, // "Filler: The Bringer of Death (#31308)"
     { 8031312, 31312 }, // "Filler: Sinister Area 52 Boots (#31312)"
     { 8031313, 31313 }, // "Filler: Nether-Rocket Gloves (#31313)"
     { 8031314, 31314 }, // "Filler: Rocket-Chief Pauldrons (#31314)"
@@ -19114,6 +21530,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8031486, 31486 }, // "Filler: Bear-Strength Harness (#31486)"
     { 8031487, 31487 }, // "Filler: Wild Horned Helm (#31487)"
     { 8031488, 31488 }, // "Filler: Boots of the Ancient-Killer (#31488)"
+    { 8031495, 31495 }, // "Filler: Grishnath Orb (#31495)"
     { 8031508, 31508 }, // "Filler: Coven Britches (#31508)"
     { 8031509, 31509 }, // "Filler: Wyrmcultist's Hood (#31509)"
     { 8031510, 31510 }, // "Filler: Hewing Gloves (#31510)"
@@ -19294,8 +21711,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8032453, 32453 }, // "Filler: Star's Tears (#32453)"
     { 8032455, 32455 }, // "Filler: Star's Lament (#32455)"
     { 8032462, 32462 }, // "Filler: Morthis' Materials (#32462)"
+    { 8032464, 32464 }, // "Filler: Nethercite Ore (#32464)"
     { 8032465, 32465 }, // "Filler: Fortune Coin (#32465)"
+    { 8032468, 32468 }, // "Filler: Netherdust Pollen (#32468)"
     { 8032498, 32498 }, // "Filler: Fortune Coin (#32498)"
+    { 8032506, 32506 }, // "Filler: Netherwing Egg (#32506)"
+    { 8032563, 32563 }, // "Filler: Grilled Picnic Treat (#32563)"
+    { 8032569, 32569 }, // "Filler: Apexis Shard (#32569)"
     { 8032588, 32588 }, // "Filler: Banana Charm (#32588)"
     { 8032596, 32596 }, // "Filler: Unstable Flask of the Elder (#32596)"
     { 8032597, 32597 }, // "Filler: Unstable Flask of the Soldier (#32597)"
@@ -19390,6 +21812,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8033052, 33052 }, // "Filler: Fisherman's Feast (#33052)"
     { 8033053, 33053 }, // "Filler: Hot Buttered Trout (#33053)"
     { 8033079, 33079 }, // "Filler: Murloc Costume (#33079)"
+    { 8033083, 33083 }, // "Filler: Orcish Grog (#33083)"
     { 8033092, 33092 }, // "Filler: Healing Potion Injector (#33092)"
     { 8033093, 33093 }, // "Filler: Mana Potion Injector (#33093)"
     { 8033096, 33096 }, // "Filler: Complimentary Brewfest Sampler (#33096)"
@@ -19470,6 +21893,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8033460, 33460 }, // "Filler: Scroll of Spirit VI (#33460)"
     { 8033461, 33461 }, // "Filler: Scroll of Stamina VI (#33461)"
     { 8033462, 33462 }, // "Filler: Scroll of Strength VI (#33462)"
+    { 8033470, 33470 }, // "Filler: Frostweave Cloth (#33470)"
     { 8033782, 33782 }, // "Filler: Steady Talasite (#33782)"
     { 8033791, 33791 }, // "Filler: Heavy Copper Longsword (#33791)"
     { 8033809, 33809 }, // "Filler: Amani War Bear (#33809)"
@@ -19481,14 +21905,20 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8033862, 33862 }, // "Filler: Brewfest Regalia (#33862)"
     { 8033863, 33863 }, // "Filler: Brewfest Dress (#33863)"
     { 8033864, 33864 }, // "Filler: Brown Brewfest Hat (#33864)"
+    { 8033865, 33865 }, // "Filler: Amani Hex Stick (#33865)"
     { 8033866, 33866 }, // "Filler: Stormchops (#33866)"
     { 8033867, 33867 }, // "Filler: Broiled Bloodfin (#33867)"
     { 8033868, 33868 }, // "Filler: Brewfest Boots (#33868)"
     { 8033872, 33872 }, // "Filler: Spicy Hot Talbuk (#33872)"
     { 8033874, 33874 }, // "Filler: Kibler's Bits (#33874)"
     { 8033924, 33924 }, // "Filler: Delicious Chocolate Cake (#33924)"
+    { 8033930, 33930 }, // "Filler: Amani Charm of the Bloodletter (#33930)"
+    { 8033931, 33931 }, // "Filler: Amani Charm of Mighty Mojo (#33931)"
+    { 8033932, 33932 }, // "Filler: Amani Charm of the Witch Doctor (#33932)"
+    { 8033933, 33933 }, // "Filler: Amani Charm of the Raging Defender (#33933)"
     { 8033934, 33934 }, // "Filler: Crystal Healing Potion (#33934)"
     { 8033935, 33935 }, // "Filler: Crystal Mana Potion (#33935)"
+    { 8033956, 33956 }, // "Filler: Harkor's Home Brew (#33956)"
     { 8033966, 33966 }, // "Filler: Brewfest Slippers (#33966)"
     { 8033967, 33967 }, // "Filler: Green Brewfest Hat (#33967)"
     { 8033968, 33968 }, // "Filler: Blue Brewfest Hat (#33968)"
@@ -19538,6 +21968,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8034518, 34518 }, // "Filler: Golden Pig Coin (#34518)"
     { 8034519, 34519 }, // "Filler: Silver Pig Coin (#34519)"
     { 8034537, 34537 }, // "Filler: Bloodberry Elixir (#34537)"
+    { 8034597, 34597 }, // "Filler: Winterfin Clam (#34597)"
     { 8034627, 34627 }, // "Filler: Heavy Tonk Armor (#34627)"
     { 8034648, 34648 }, // "Filler: Acherus Knight's Greaves (#34648)"
     { 8034649, 34649 }, // "Filler: Acherus Knight's Gauntlets (#34649)"
@@ -19577,6 +22008,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8034767, 34767 }, // "Filler: Firecracker Salmon (#34767)"
     { 8034768, 34768 }, // "Filler: Spicy Blue Nettlefish (#34768)"
     { 8034769, 34769 }, // "Filler: Imperial Manta Steak (#34769)"
+    { 8034777, 34777 }, // "Filler: Ith'rix's Hardened Carapace (#34777)"
     { 8034780, 34780 }, // "Filler: Naaru Ration (#34780)"
     { 8034826, 34826 }, // "Filler: Gold Wedding Band (#34826)"
     { 8034827, 34827 }, // "Filler: Noble's Monocle (#34827)"
@@ -19590,6 +22022,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8034859, 34859 }, // "Filler: Razor Sharp Fillet Knife (#34859)"
     { 8034863, 34863 }, // "Filler: Bag of Fishing Treasures (#34863)"
     { 8034871, 34871 }, // "Filler: Crafty's Sack (#34871)"
+    { 8034907, 34907 }, // "Filler: Shattered Gem Fragments (#34907)"
     { 8035221, 35221 }, // "Filler: Tabard of the Shattered Sun (#35221)"
     { 8035225, 35225 }, // "Filler: X-51 Nether-Rocket (#35225)"
     { 8035226, 35226 }, // "Filler: X-51 Nether-Rocket X-TREME (#35226)"
@@ -19604,15 +22037,23 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8035487, 35487 }, // "Filler: Bright Crimson Spinel (#35487)"
     { 8035488, 35488 }, // "Filler: Runed Crimson Spinel (#35488)"
     { 8035489, 35489 }, // "Filler: Teardrop Crimson Spinel (#35489)"
+    { 8035498, 35498 }, // "Filler: Formula: Enchant Weapon - Deathfrost (#35498)"
     { 8035501, 35501 }, // "Filler: Eternal Earthstorm Diamond (#35501)"
     { 8035503, 35503 }, // "Filler: Ember Skyfire Diamond (#35503)"
     { 8035516, 35516 }, // "Filler: Sun Touched Satchel (#35516)"
+    { 8035557, 35557 }, // "Filler: Huge Snowball (#35557)"
     { 8035563, 35563 }, // "Filler: Charred Bear Kabobs (#35563)"
     { 8035565, 35565 }, // "Filler: Juicy Bear Burger (#35565)"
+    { 8035624, 35624 }, // "Filler: Eternal Earth (#35624)"
+    { 8035627, 35627 }, // "Filler: Eternal Shadow (#35627)"
+    { 8035675, 35675 }, // "Filler: Linked Armor of the Sphere (#35675)"
+    { 8035676, 35676 }, // "Filler: Constellation Leggings (#35676)"
+    { 8035677, 35677 }, // "Filler: Cosmos Vestments (#35677)"
     { 8035707, 35707 }, // "Filler: Regal Nightseye (#35707)"
     { 8035716, 35716 }, // "Filler: Shattrath Flask of Pure Death (#35716)"
     { 8035717, 35717 }, // "Filler: Shattrath Flask of Blinding Light (#35717)"
     { 8035720, 35720 }, // "Filler: Lord of Frost's Private Label (#35720)"
+    { 8035723, 35723 }, // "Filler: Shards of Ahune (#35723)"
     { 8035758, 35758 }, // "Filler: Steady Seaspray Emerald (#35758)"
     { 8035759, 35759 }, // "Filler: Forceful Seaspray Emerald (#35759)"
     { 8035760, 35760 }, // "Filler: Reckless Pyrestone (#35760)"
@@ -20528,6 +22969,16 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8036888, 36888 }, // "Filler: Marshwalker Legguards (#36888)"
     { 8036896, 36896 }, // "Filler: Demonic Spellstone (#36896)"
     { 8036897, 36897 }, // "Filler: Fel Spellstone (#36897)"
+    { 8036901, 36901 }, // "Filler: Goldclover (#36901)"
+    { 8036903, 36903 }, // "Filler: Adder's Tongue (#36903)"
+    { 8036904, 36904 }, // "Filler: Tiger Lily (#36904)"
+    { 8036905, 36905 }, // "Filler: Lichbloom (#36905)"
+    { 8036906, 36906 }, // "Filler: Icethorn (#36906)"
+    { 8036907, 36907 }, // "Filler: Talandra's Rose (#36907)"
+    { 8036908, 36908 }, // "Filler: Frost Lotus (#36908)"
+    { 8036909, 36909 }, // "Filler: Cobalt Ore (#36909)"
+    { 8036910, 36910 }, // "Filler: Titanium Ore (#36910)"
+    { 8036912, 36912 }, // "Filler: Saronite Ore (#36912)"
     { 8036917, 36917 }, // "Filler: Bloodstone (#36917)"
     { 8036918, 36918 }, // "Filler: Scarlet Ruby (#36918)"
     { 8036919, 36919 }, // "Filler: Cardinal Ruby (#36919)"
@@ -20637,29 +23088,18 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037275, 37275 }, // "Filler: Mantle of Congealed Anger (#37275)"
     { 8037276, 37276 }, // "Filler: Gorge's Loungewear (#37276)"
     { 8037277, 37277 }, // "Filler: Ermine Ruff Cloak (#37277)"
-    { 8037278, 37278 }, // "Filler: BT47 Cloth Healer Belt2 (#37278)"
-    { 8037279, 37279 }, // "Filler: BT48 Cloth Spell Bracer3 (#37279)"
     { 8037280, 37280 }, // "Filler: Flame Hardened Waistband (#37280)"
-    { 8037281, 37281 }, // "Filler: BT52 Cloth Healer Chest2 (#37281)"
     { 8037282, 37282 }, // "Filler: Cavernous Gauntlets (#37282)"
     { 8037283, 37283 }, // "Filler: Wandering Healer's Kilt (#37283)"
-    { 8037284, 37284 }, // "Filler: BT55 Cloth Spell Boots4 (#37284)"
-    { 8037285, 37285 }, // "Filler: BT56 Cloth Spell Legs4 (#37285)"
-    { 8037286, 37286 }, // "Filler: BT57 Cloth Healer Glove2 (#37286)"
-    { 8037295, 37295 }, // "Filler: HF28 Cloth Spell Head4 (#37295)"
-    { 8037296, 37296 }, // "Filler: BT59 Cloth Spell Gloves4  (#37296)"
+    { 8037291, 37291 }, // "Filler: Ancient Dragon Spirit Cape (#37291)"
+    { 8037292, 37292 }, // "Filler: Ley-Guardian's Legguards (#37292)"
+    { 8037293, 37293 }, // "Filler: Mask of the Watcher (#37293)"
+    { 8037294, 37294 }, // "Filler: Crown of Unbridled Magic (#37294)"
     { 8037297, 37297 }, // "Filler: Gold Medallion (#37297)"
     { 8037298, 37298 }, // "Filler: Competitor's Souvenir (#37298)"
-    { 8037315, 37315 }, // "Filler: BT59 Leather Physical Boots4 (#37315)"
-    { 8037316, 37316 }, // "Filler: HF28 Leather Physical Legs4  (#37316)"
-    { 8037317, 37317 }, // "Filler: BT56 Leather Healer Boots2 (#37317)"
-    { 8037318, 37318 }, // "Filler: BT55 Leather Physical Gloves4 (#37318)"
     { 8037319, 37319 }, // "Filler: Grips of the Windswept Plains (#37319)"
     { 8037320, 37320 }, // "Filler: Spaulders of Echoing Truth (#37320)"
-    { 8037321, 37321 }, // "Filler: BT52 Leather Healer Legs2 (#37321)"
     { 8037322, 37322 }, // "Filler: Flame Hardened Wristbindings (#37322)"
-    { 8037323, 37323 }, // "Filler: BT48 Leather Physical Belt3 (#37323)"
-    { 8037324, 37324 }, // "Filler: BT47 Leather Physical Gloves3 (#37324)"
     { 8037325, 37325 }, // "Filler: Warsong Scout Spaulders (#37325)"
     { 8037351, 37351 }, // "Filler: Reinforced Caribou-Hide Leggings (#37351)"
     { 8037352, 37352 }, // "Filler: Regenerative Hide Harness (#37352)"
@@ -20668,6 +23108,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037355, 37355 }, // "Filler: Reinforced Caribou-Hide Chestguard (#37355)"
     { 8037356, 37356 }, // "Filler: Rhinohide Wristwraps (#37356)"
     { 8037357, 37357 }, // "Filler: Shivering Healer's Cloak (#37357)"
+    { 8037360, 37360 }, // "Filler: Staff of Draconic Combat (#37360)"
+    { 8037361, 37361 }, // "Filler: Cuffs of Winged Levitation (#37361)"
+    { 8037362, 37362 }, // "Filler: Leggings of Protective Auras (#37362)"
+    { 8037363, 37363 }, // "Filler: Gauntlets of Dragon Wrath (#37363)"
     { 8037375, 37375 }, // "Filler: Rhinohide Gloves (#37375)"
     { 8037378, 37378 }, // "Filler: Sealskin Bindings (#37378)"
     { 8037380, 37380 }, // "Filler: Whalehunter Leggings (#37380)"
@@ -20717,27 +23161,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037444, 37444 }, // "Filler: Wavekeeper's Helm (#37444)"
     { 8037446, 37446 }, // "Filler: Tank Commander's Treads (#37446)"
     { 8037447, 37447 }, // "Filler: Reinforced Mendicant's Cowl (#37447)"
-    { 8037448, 37448 }, // "Filler: BT47 Mail Physical Legs3  (#37448)"
     { 8037449, 37449 }, // "Filler: Breath of Murloc (#37449)"
-    { 8037450, 37450 }, // "Filler: BT48 Mail Healer Chest3  (#37450)"
-    { 8037451, 37451 }, // "Filler: BT49 Mail Physical Belt3 (#37451)"
     { 8037452, 37452 }, // "Filler: Fatty Bluefin (#37452)"
-    { 8037453, 37453 }, // "Filler: BT59 Mail Physical Belt4 (#37453)"
-    { 8037454, 37454 }, // "Filler: HF28 Mail Physical Chest4 (#37454)"
-    { 8037455, 37455 }, // "Filler: BT56 Mail Healer Gloves2 (#37455)"
     { 8037456, 37456 }, // "Filler: Cauterizing Chain Leggings (#37456)"
-    { 8037457, 37457 }, // "Filler: BT55 Mail Physical Legs4 (#37457)"
     { 8037458, 37458 }, // "Filler: Wristguards of Rocky Horror (#37458)"
     { 8037462, 37462 }, // "Filler: Sea King's Crown (#37462)"
     { 8037463, 37463 }, // "Filler: Winterfin Patch of Honor (#37463)"
-    { 8037466, 37466 }, // "Filler: BT59 Plate Physical Chest4 (#37466)"
-    { 8037468, 37468 }, // "Filler: HF28 Plate Physical Boots4 (#37468)"
-    { 8037469, 37469 }, // "Filler: BT57 Plate Healer Bracer2 (#37469)"
-    { 8037470, 37470 }, // "Filler: BT56 Plate Physical Shoulders4 (#37470)"
     { 8037471, 37471 }, // "Filler: Girdle of Ripped Space (#37471)"
-    { 8037472, 37472 }, // "Filler: BT49 Plate Physical Bracer (#37472)"
-    { 8037473, 37473 }, // "Filler: BT48 Plate Healer Head2 (#37473)"
-    { 8037474, 37474 }, // "Filler: BT47 Plate Physical Boots3 (#37474)"
     { 8037475, 37475 }, // "Filler: Benign Crusader's Plate (#37475)"
     { 8037476, 37476 }, // "Filler: Gorge's Breastplate of Bloodrage (#37476)"
     { 8037477, 37477 }, // "Filler: Lost Crusader Chestplate (#37477)"
@@ -20778,9 +23208,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037528, 37528 }, // "Filler: Dry Earth Circle (#37528)"
     { 8037529, 37529 }, // "Filler: Shivering Healer's Ring (#37529)"
     { 8037530, 37530 }, // "Filler: Icy Ripper Ring (#37530)"
-    { 8037534, 37534 }, // "Filler: BT56 Thrown2  (#37534)"
     { 8037535, 37535 }, // "Filler: Stave of the Windborn (#37535)"
-    { 8037536, 37536 }, // "Filler: BT57 Fast Mace2 (#37536)"
     { 8037537, 37537 }, // "Filler: Stave of the Spiritcaller (#37537)"
     { 8037541, 37541 }, // "Filler: Giant Turtle Collar (#37541)"
     { 8037543, 37543 }, // "Filler: Pugnacious Collar (#37543)"
@@ -20805,13 +23233,36 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037598, 37598 }, // "Filler: Swift Zhevra OLD (#37598)"
     { 8037602, 37602 }, // "Filler: Armor Vellum II (#37602)"
     { 8037606, 37606 }, // "Filler: Penny Pouch (#37606)"
+    { 8037653, 37653 }, // "Filler: Sword of Justice (#37653)"
+    { 8037654, 37654 }, // "Filler: Sabatons of the Ages (#37654)"
+    { 8037655, 37655 }, // "Filler: Mantle of the Tribunal (#37655)"
+    { 8037656, 37656 }, // "Filler: Raging Construct Bands (#37656)"
+    { 8037664, 37664 }, // "Filler: Element 115 (#37664)"
     { 8037676, 37676 }, // "Filler: Vengeful Nether Drake (#37676)"
+    { 8037689, 37689 }, // "Filler: Pendant of the Nathrezim (#37689)"
+    { 8037690, 37690 }, // "Filler: Pauldrons of Destiny (#37690)"
+    { 8037691, 37691 }, // "Filler: Mantle of Deceit (#37691)"
+    { 8037692, 37692 }, // "Filler: Pierce's Pistol (#37692)"
+    { 8037693, 37693 }, // "Filler: Greed (#37693)"
+    { 8037694, 37694 }, // "Filler: Band of Guile (#37694)"
+    { 8037695, 37695 }, // "Filler: Legguards of Nature's Power (#37695)"
+    { 8037696, 37696 }, // "Filler: Plague-Infected Bracers (#37696)"
+    { 8037700, 37700 }, // "Filler: Crystallized Air (#37700)"
+    { 8037701, 37701 }, // "Filler: Crystallized Earth (#37701)"
+    { 8037702, 37702 }, // "Filler: Crystallized Fire (#37702)"
+    { 8037703, 37703 }, // "Filler: Crystallized Shadow (#37703)"
+    { 8037704, 37704 }, // "Filler: Crystallized Life (#37704)"
+    { 8037705, 37705 }, // "Filler: Crystallized Water (#37705)"
     { 8037708, 37708 }, // "Filler: Stick (#37708)"
     { 8037719, 37719 }, // "Filler: Swift Zhevra (#37719)"
     { 8037750, 37750 }, // "Filler: Fresh Brewfest Hops (#37750)"
     { 8037827, 37827 }, // "Filler: Brewfest Kodo (#37827)"
     { 8037828, 37828 }, // "Filler: Great Brewfest Kodo (#37828)"
     { 8037829, 37829 }, // "Filler: Brewfest Prize Token (#37829)"
+    { 8037889, 37889 }, // "Filler: Prison Manifest (#37889)"
+    { 8037890, 37890 }, // "Filler: Chain Gang Legguards (#37890)"
+    { 8037891, 37891 }, // "Filler: Cast Iron Shackles (#37891)"
+    { 8037921, 37921 }, // "Filler: Deadnettle (#37921)"
     { 8037934, 37934 }, // "Filler: Noble's Elementium Signet (#37934)"
     { 8037936, 37936 }, // "Filler: Fisherman's Earwarmer (#37936)"
     { 8037937, 37937 }, // "Filler: Alystros's Plume Cinch (#37937)"
@@ -20829,7 +23280,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037950, 37950 }, // "Filler: Highseas Wristwraps (#37950)"
     { 8037953, 37953 }, // "Filler: Wastewind Garments (#37953)"
     { 8037954, 37954 }, // "Filler: Wastewind Cinch (#37954)"
-    { 8037955, 37955 }, // "Filler: DB26 Healer Cloak (#37955)"
     { 8037956, 37956 }, // "Filler: Frontrunner's Blessed Handwraps (#37956)"
     { 8037957, 37957 }, // "Filler: Wastewind Bracers (#37957)"
     { 8037958, 37958 }, // "Filler: Wastewind Headcover (#37958)"
@@ -20841,12 +23291,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8037964, 37964 }, // "Filler: Spiderwarder Braces (#37964)"
     { 8037965, 37965 }, // "Filler: Wyrmward Cover (#37965)"
     { 8037966, 37966 }, // "Filler: Bracers of Nature's Fury (#37966)"
-    { 8037967, 37967 }, // "Filler: DB42 Spell Ring4 (#37967)"
     { 8037968, 37968 }, // "Filler: Robe of Calcified Tears (#37968)"
     { 8037969, 37969 }, // "Filler: Chaos Mender Cloak (#37969)"
     { 8037970, 37970 }, // "Filler: Feathers of the Dragon Wastes (#37970)"
     { 8037971, 37971 }, // "Filler: Sash of the Nibbling Plague (#37971)"
-    { 8037976, 37976 }, // "Filler: DB54 Healer Neck2 (#37976)"
     { 8037980, 37980 }, // "Filler: Moa'ki Thresherhide Tunic (#37980)"
     { 8037981, 37981 }, // "Filler: Ancient Dreamer's Leggings (#37981)"
     { 8037982, 37982 }, // "Filler: Gleaming Tuskring (#37982)"
@@ -20907,7 +23355,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8038049, 38049 }, // "Filler: Wyrmchaser's Waistguard (#38049)"
     { 8038050, 38050 }, // "Filler: Soul-Trader Beacon (#38050)"
     { 8038051, 38051 }, // "Filler: Star's Rest Treads (#38051)"
-    { 8038052, 38052 }, // "Filler: DB42 Leather Healer Shoulder (#38052)"
     { 8038053, 38053 }, // "Filler: Wyrmfire Links (#38053)"
     { 8038054, 38054 }, // "Filler: Paingiver Wristguards (#38054)"
     { 8038055, 38055 }, // "Filler: Ridgehunter Gauntlets (#38055)"
@@ -20965,7 +23412,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8038135, 38135 }, // "Filler: Mace of the Fallen Raven Priest (#38135)"
     { 8038137, 38137 }, // "Filler: Endurance of the Spell Warder (#38137)"
     { 8038138, 38138 }, // "Filler: Keldonus's Missing Spellshard (#38138)"
-    { 8038140, 38140 }, // "Filler: DB50 Spell Staff4 (#38140)"
     { 8038141, 38141 }, // "Filler: Coldwind Scratching Pole (#38141)"
     { 8038142, 38142 }, // "Filler: Infused Dragonbone Splinter (#38142)"
     { 8038143, 38143 }, // "Filler: Composite Harpyspine Staff (#38143)"
@@ -21006,7 +23452,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8038197, 38197 }, // "Filler: Mounted Boneshredder (#38197)"
     { 8038198, 38198 }, // "Filler: Joint-Severing Quickblade (#38198)"
     { 8038202, 38202 }, // "Filler: Twig of Happy Reminders (#38202)"
-    { 8038204, 38204 }, // "Filler: DB38 Spell Wand2 (#38204)"
     { 8038206, 38206 }, // "Filler: Wand of Blinding Light (#38206)"
     { 8038207, 38207 }, // "Filler: Wand of Purifying Fire (#38207)"
     { 8038208, 38208 }, // "Filler: Valiance Longbow (#38208)"
@@ -21035,10 +23480,33 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8038313, 38313 }, // "Filler: Tabard of Fury (#38313)"
     { 8038314, 38314 }, // "Filler: Tabard of the Defender (#38314)"
     { 8038318, 38318 }, // "Filler: Darkmoon Robe (#38318)"
+    { 8038320, 38320 }, // "Filler: Dire Brew (#38320)"
+    { 8038335, 38335 }, // "Filler: Ancient Ectoplasm (#38335)"
+    { 8038336, 38336 }, // "Filler: Crystallized Hogsnot (#38336)"
+    { 8038337, 38337 }, // "Filler: Speckled Guano (#38337)"
+    { 8038338, 38338 }, // "Filler: Knotroot (#38338)"
+    { 8038339, 38339 }, // "Filler: Withered Batwing (#38339)"
+    { 8038340, 38340 }, // "Filler: Amberseed (#38340)"
+    { 8038341, 38341 }, // "Filler: Pickled Eagle Egg (#38341)"
+    { 8038342, 38342 }, // "Filler: Trollbane (#38342)"
+    { 8038343, 38343 }, // "Filler: Prismatic Mojo (#38343)"
+    { 8038344, 38344 }, // "Filler: Shrunken Dragon's Claw (#38344)"
+    { 8038345, 38345 }, // "Filler: Frozen Spider Ichor (#38345)"
+    { 8038346, 38346 }, // "Filler: Chilled Serpent Mucus (#38346)"
     { 8038347, 38347 }, // "Filler: Mammoth Mining Bag (#38347)"
     { 8038350, 38350 }, // "Filler: Winterfin \"Depth Charge\" (#38350)"
     { 8038351, 38351 }, // "Filler: Murliver Oil (#38351)"
+    { 8038369, 38369 }, // "Filler: Wasp's Wings (#38369)"
+    { 8038370, 38370 }, // "Filler: Raptor Claw (#38370)"
+    { 8038379, 38379 }, // "Filler: Crushed Basilisk Crystals (#38379)"
+    { 8038381, 38381 }, // "Filler: Seasoned Slider Cider (#38381)"
     { 8038383, 38383 }, // "Filler: Valonforth's Folly (#38383)"
+    { 8038384, 38384 }, // "Filler: Pulverized Gargoyle Teeth (#38384)"
+    { 8038386, 38386 }, // "Filler: Muddy Mire Maggot (#38386)"
+    { 8038393, 38393 }, // "Filler: Spiky Spider Egg (#38393)"
+    { 8038396, 38396 }, // "Filler: Hairy Herring Head (#38396)"
+    { 8038397, 38397 }, // "Filler: Putrid Pirate Perspiration (#38397)"
+    { 8038398, 38398 }, // "Filler: Icecrown Bottled Water (#38398)"
     { 8038399, 38399 }, // "Filler: Trapper's Traveling Pack (#38399)"
     { 8038400, 38400 }, // "Filler: Arctic Chestpiece (#38400)"
     { 8038401, 38401 }, // "Filler: Arctic Leggings (#38401)"
@@ -21261,6 +23729,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8039142, 39142 }, // "Filler: Mace of Helotry (#39142)"
     { 8039143, 39143 }, // "Filler: Writhing Mace (#39143)"
     { 8039144, 39144 }, // "Filler: Twisted Hooligan Whacker (#39144)"
+    { 8039152, 39152 }, // "Filler: Manual: Heavy Frostweave Bandage (#39152)"
+    { 8039222, 39222 }, // "Filler: Severed Flipper (#39222)"
     { 8039286, 39286 }, // "Filler: Frosty's Collar (#39286)"
     { 8039323, 39323 }, // "Filler: Scrap-Hide Spaulders (#39323)"
     { 8039327, 39327 }, // "Filler: Noth's Special Brew (#39327)"
@@ -21294,6 +23764,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8039383, 39383 }, // "Filler: Egg-Warming Boots (#39383)"
     { 8039385, 39385 }, // "Filler: Helm of the Ancient Horn (#39385)"
     { 8039387, 39387 }, // "Filler: Stinger-Proof Chestguard (#39387)"
+    { 8039393, 39393 }, // "Filler: Claymore of Ancient Power (#39393)"
+    { 8039394, 39394 }, // "Filler: Charmed Cierge (#39394)"
+    { 8039395, 39395 }, // "Filler: Thane's Tainted Greathelm (#39395)"
+    { 8039396, 39396 }, // "Filler: Gown of Blaumeux (#39396)"
+    { 8039397, 39397 }, // "Filler: Pauldrons of Havoc (#39397)"
     { 8039400, 39400 }, // "Filler: Static-Dispersing Shoulderpads (#39400)"
     { 8039402, 39402 }, // "Filler: Binding of the Ancient Keeper (#39402)"
     { 8039406, 39406 }, // "Filler: Splattered Zombie Wristguards (#39406)"
@@ -21323,7 +23798,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8039446, 39446 }, // "Filler: Pauldrons of Resolution (#39446)"
     { 8039448, 39448 }, // "Filler: Helm of Brutal Slaughter (#39448)"
     { 8039449, 39449 }, // "Filler: Wristguards of Titanic Vengeance (#39449)"
-    { 8039450, 39450 }, // "Filler: Bug-Smashing Pauldrons (#39450)"
     { 8039451, 39451 }, // "Filler: Pauldrons of the Silent Mist (#39451)"
     { 8039452, 39452 }, // "Filler: Roaming Wristguards (#39452)"
     { 8039453, 39453 }, // "Filler: Rhino-Tail Girdle (#39453)"
@@ -21356,6 +23830,9 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8039522, 39522 }, // "Filler: Wolvar Shortbow (#39522)"
     { 8039656, 39656 }, // "Filler: Tyrael's Hilt (#39656)"
     { 8039666, 39666 }, // "Filler: Elixir of Mighty Agility (#39666)"
+    { 8039668, 39668 }, // "Filler: Abomination Guts (#39668)"
+    { 8039669, 39669 }, // "Filler: Ghoul Drool (#39669)"
+    { 8039670, 39670 }, // "Filler: Blight Crystal (#39670)"
     { 8039671, 39671 }, // "Filler: Resurgent Healing Potion (#39671)"
     { 8039672, 39672 }, // "Filler: Drape of the Offered Branch (#39672)"
     { 8039673, 39673 }, // "Filler: Lightning Beetle's Cape (#39673)"
@@ -21540,6 +24017,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8039966, 39966 }, // "Filler: Accurate Huge Citrine (#39966)"
     { 8039967, 39967 }, // "Filler: Resolute Huge Citrine (#39967)"
     { 8039968, 39968 }, // "Filler: Timeless Dark Jade (#39968)"
+    { 8039969, 39969 }, // "Filler: Fire Seed (#39969)"
+    { 8039970, 39970 }, // "Filler: Fire Leaf (#39970)"
     { 8039974, 39974 }, // "Filler: Jagged Dark Jade (#39974)"
     { 8039975, 39975 }, // "Filler: Vivid Dark Jade (#39975)"
     { 8039976, 39976 }, // "Filler: Enduring Dark Jade (#39976)"
@@ -21758,9 +24237,16 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8040357, 40357 }, // "Filler: Grizzleberry Juice (#40357)"
     { 8040358, 40358 }, // "Filler: Raw Tallhorn Chunk (#40358)"
     { 8040359, 40359 }, // "Filler: Fresh Eagle Meat (#40359)"
+    { 8040391, 40391 }, // "Filler: Mirror-Like Seashell (#40391)"
+    { 8040392, 40392 }, // "Filler: Cracked Diamond (#40392)"
+    { 8040393, 40393 }, // "Filler: Green Sparkly (#40393)"
     { 8040404, 40404 }, // "Filler: Mixture of Pure Mojo (#40404)"
+    { 8040610, 40610 }, // "Filler: Chestguard of the Lost Conqueror (#40610)"
+    { 8040611, 40611 }, // "Filler: Chestguard of the Lost Protector (#40611)"
+    { 8040612, 40612 }, // "Filler: Chestguard of the Lost Vanquisher (#40612)"
     { 8040643, 40643 }, // "Filler: Tabard of the Achiever (#40643)"
     { 8040653, 40653 }, // "Filler: Reeking Pet Carrier (#40653)"
+    { 8040666, 40666 }, // "Filler: Note from the Grand Admiral (#40666)"
     { 8040668, 40668 }, // "Filler: Cobalt Triangle Shield (#40668)"
     { 8040752, 40752 }, // "Filler: Emblem of Heroism (#40752)"
     { 8040753, 40753 }, // "Filler: Emblem of Valor (#40753)"
@@ -21924,6 +24410,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8041761, 41761 }, // "Filler: Wristguard of Healing Fingers (#41761)"
     { 8041762, 41762 }, // "Filler: Freedom-Path Treads (#41762)"
     { 8041763, 41763 }, // "Filler: Leggings of the Canny Chief (#41763)"
+    { 8041798, 41798 }, // "Filler: Design: Bracing Earthsiege Diamond (#41798)"
     { 8041888, 41888 }, // "Filler: Small Velvet Bag (#41888)"
     { 8041974, 41974 }, // "Filler: Cobalt Bracers (#41974)"
     { 8041975, 41975 }, // "Filler: Cobalt Gauntlets (#41975)"
@@ -21981,6 +24468,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8042777, 42777 }, // "Filler: Crusader's Waterskin (#42777)"
     { 8042778, 42778 }, // "Filler: Crusader's Rations (#42778)"
     { 8042779, 42779 }, // "Filler: Steaming Chicken Soup (#42779)"
+    { 8042780, 42780 }, // "Filler: Relic of Ulduar (#42780)"
     { 8042785, 42785 }, // "Filler: Mammoth Sinew Cinch (#42785)"
     { 8042786, 42786 }, // "Filler: Daschal's Serrated Blade (#42786)"
     { 8042787, 42787 }, // "Filler: Ironwool Bindings (#42787)"
@@ -22092,8 +24580,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8043004, 43004 }, // "Filler: Critter Bites (#43004)"
     { 8043005, 43005 }, // "Filler: Spiced Mammoth Treats (#43005)"
     { 8043015, 43015 }, // "Filler: Fish Feast (#43015)"
+    { 8043059, 43059 }, // "Filler: Drakuru's Last Wish (#43059)"
+    { 8043085, 43085 }, // "Filler: Royal Crest of Lordaeron (#43085)"
     { 8043086, 43086 }, // "Filler: Fresh Apple Juice (#43086)"
     { 8043087, 43087 }, // "Filler: Crisp Dalaran Apple (#43087)"
+    { 8043102, 43102 }, // "Filler: Frozen Orb (#43102)"
     { 8043145, 43145 }, // "Filler: Armor Vellum III (#43145)"
     { 8043146, 43146 }, // "Filler: Weapon Vellum III (#43146)"
     { 8043154, 43154 }, // "Filler: Tabard of the Argent Crusade (#43154)"
@@ -22101,6 +24592,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8043156, 43156 }, // "Filler: Tabard of the Wyrmrest Accord (#43156)"
     { 8043157, 43157 }, // "Filler: Tabard of the Kirin Tor (#43157)"
     { 8043204, 43204 }, // "Filler: Hyldnir Runeweaver's Garb (#43204)"
+    { 8043228, 43228 }, // "Filler: Stone Keeper's Shard (#43228)"
     { 8043236, 43236 }, // "Filler: Star's Sorrow (#43236)"
     { 8043244, 43244 }, // "Filler: Crystal Citrine Necklace (#43244)"
     { 8043245, 43245 }, // "Filler: Crystal Chalcedony Amulet (#43245)"
@@ -22140,6 +24632,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8043599, 43599 }, // "Filler: Big Blizzard Bear (#43599)"
     { 8043600, 43600 }, // "Filler: Brunnhildar Harpoon (#43600)"
     { 8043601, 43601 }, // "Filler: Brunnhildar Great Axe (#43601)"
+    { 8043668, 43668 }, // "Filler: Ley Line Tuner (#43668)"
     { 8043695, 43695 }, // "Filler: Half Full Bottle of Prison Moonshine (#43695)"
     { 8043696, 43696 }, // "Filler: Half Empty Bottle of Prison Moonshine (#43696)"
     { 8043698, 43698 }, // "Filler: Giant Sewer Rat (#43698)"
@@ -22165,6 +24658,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8043847, 43847 }, // "Filler: Demolisher's Grips (#43847)"
     { 8043848, 43848 }, // "Filler: Bracers of Icy Resolve (#43848)"
     { 8043849, 43849 }, // "Filler: Chain of the Sovereign (#43849)"
+    { 8043851, 43851 }, // "Filler: Fur Clothing Scraps (#43851)"
+    { 8043852, 43852 }, // "Filler: Thick Fur Clothing Scraps (#43852)"
     { 8043855, 43855 }, // "Filler: Adepts Wristwraps (#43855)"
     { 8043856, 43856 }, // "Filler: Sigrid's Mittens (#43856)"
     { 8043857, 43857 }, // "Filler: Duke Lankral's Velvet Slippers (#43857)"
@@ -22178,6 +24673,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8043873, 43873 }, // "Filler: Frail Bone Wand (#43873)"
     { 8043874, 43874 }, // "Filler: Lady Nightswood's Engagement Ring (#43874)"
     { 8043875, 43875 }, // "Filler: Axe of the Cunning (#43875)"
+    { 8043876, 43876 }, // "Filler: A Guide to Northern Cloth Scavenging (#43876)"
     { 8043877, 43877 }, // "Filler: Blood-forged Circle (#43877)"
     { 8043878, 43878 }, // "Filler: Mantle of Unholy Power (#43878)"
     { 8043879, 43879 }, // "Filler: Gryphon Rider's Bracers (#43879)"
@@ -22293,6 +24789,8 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8044413, 44413 }, // "Filler: Mekgineer's Chopper (#44413)"
     { 8044428, 44428 }, // "Filler: Dark Frostscale Chestpiece (#44428)"
     { 8044446, 44446 }, // "Filler: Pack of Endless Pockets (#44446)"
+    { 8044464, 44464 }, // "Filler: Crude Eating Utensils (#44464)"
+    { 8044468, 44468 }, // "Filler: Water Soaked Letter (#44468)"
     { 8044554, 44554 }, // "Filler: Flying Carpet (#44554)"
     { 8044555, 44555 }, // "Filler: Swift Mooncloth Carpet (#44555)"
     { 8044556, 44556 }, // "Filler: Swift Spellfire Carpet (#44556)"
@@ -22340,7 +24838,10 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8044707, 44707 }, // "Filler: Reins of the Green Proto-Drake (#44707)"
     { 8044721, 44721 }, // "Filler: Proto-Drake Whelp (#44721)"
     { 8044722, 44722 }, // "Filler: Aged Yolk (#44722)"
+    { 8044724, 44724 }, // "Filler: Everfrost Chip (#44724)"
+    { 8044725, 44725 }, // "Filler: Everfrost Chip (#44725)"
     { 8044728, 44728 }, // "Filler: Endless Rejuvenation Potion (#44728)"
+    { 8044729, 44729 }, // "Filler: Everfrost Powder (#44729)"
     { 8044731, 44731 }, // "Filler: Bouquet of Ebon Roses (#44731)"
     { 8044737, 44737 }, // "Filler: Draenic Silk Robes (#44737)"
     { 8044738, 44738 }, // "Filler: Kirin Tor Familiar (#44738)"
@@ -22374,20 +24875,44 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8044953, 44953 }, // "Filler: Worg Tartare (#44953)"
     { 8044972, 44972 }, // "Filler: Alarming Clockbot (NOT IN USE) (#44972)"
     { 8044983, 44983 }, // "Filler: Strand Crawler (#44983)"
+    { 8044990, 44990 }, // "Filler: Champion's Seal (#44990)"
     { 8045006, 45006 }, // "Filler: Jillian's Tonic of Endless Rage (#45006)"
     { 8045007, 45007 }, // "Filler: Jillian's Tonic of Pure Mojo (#45007)"
     { 8045008, 45008 }, // "Filler: Jillian's Tonic of Stoneblood (#45008)"
     { 8045009, 45009 }, // "Filler: Jillian's Tonic of the Frost Wyrm (#45009)"
+    { 8045038, 45038 }, // "Filler: Fragment of Val'anyr (#45038)"
     { 8045052, 45052 }, // "Filler: Gruffscale Leggings (#45052)"
     { 8045054, 45054 }, // "Filler: Prismatic Black Diamond (#45054)"
     { 8045067, 45067 }, // "Filler: Egg Basket (#45067)"
     { 8045072, 45072 }, // "Filler: Brightly Colored Egg (#45072)"
     { 8045073, 45073 }, // "Filler: Spring Flowers (#45073)"
+    { 8045087, 45087 }, // "Filler: Runed Orb (#45087)"
     { 8045120, 45120 }, // "Filler: Basic Fishing Pole (#45120)"
     { 8045180, 45180 }, // "Filler: Murkimus' Little Spear (#45180)"
     { 8045276, 45276 }, // "Filler: Jillian's Genius Juice (#45276)"
     { 8045277, 45277 }, // "Filler: Jillian's Savior Sauce (#45277)"
     { 8045279, 45279 }, // "Filler: Jillian's Gourmet Fish Feast (#45279)"
+    { 8045294, 45294 }, // "Filler: Petrified Ivy Sprig (#45294)"
+    { 8045457, 45457 }, // "Filler: Staff of Endless Winter (#45457)"
+    { 8045459, 45459 }, // "Filler: Frigid Strength of Hodir (#45459)"
+    { 8045460, 45460 }, // "Filler: Bindings of Winter Gale (#45460)"
+    { 8045461, 45461 }, // "Filler: Drape of Icy Intent (#45461)"
+    { 8045462, 45462 }, // "Filler: Gloves of the Frozen Glade (#45462)"
+    { 8045470, 45470 }, // "Filler: Wisdom's Hold (#45470)"
+    { 8045471, 45471 }, // "Filler: Fate's Clutch (#45471)"
+    { 8045472, 45472 }, // "Filler: Warhelm of the Champion (#45472)"
+    { 8045473, 45473 }, // "Filler: Embrace of the Gladiator (#45473)"
+    { 8045474, 45474 }, // "Filler: Pauldrons of the Combatant (#45474)"
+    { 8045484, 45484 }, // "Filler: Bladetwister (#45484)"
+    { 8045485, 45485 }, // "Filler: Bronze Pendant of the Vanir (#45485)"
+    { 8045486, 45486 }, // "Filler: Drape of the Sullen Goddess (#45486)"
+    { 8045487, 45487 }, // "Filler: Handguards of Revitalization (#45487)"
+    { 8045488, 45488 }, // "Filler: Leggings of the Enslaved Idol (#45488)"
+    { 8045494, 45494 }, // "Filler: Delirium's Touch (#45494)"
+    { 8045495, 45495 }, // "Filler: Conductive Seal (#45495)"
+    { 8045496, 45496 }, // "Filler: Titanskin Cloak (#45496)"
+    { 8045497, 45497 }, // "Filler: Crown of Luminescence (#45497)"
+    { 8045570, 45570 }, // "Filler: Skyforge Crossbow (#45570)"
     { 8045574, 45574 }, // "Filler: Stormwind Tabard (#45574)"
     { 8045577, 45577 }, // "Filler: Ironforge Tabard (#45577)"
     { 8045578, 45578 }, // "Filler: Gnomeregan Tabard (#45578)"
@@ -22398,9 +24923,13 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8045583, 45583 }, // "Filler: Undercity Tabard (#45583)"
     { 8045584, 45584 }, // "Filler: Thunder Bluff Tabard (#45584)"
     { 8045585, 45585 }, // "Filler: Silvermoon City Tabard (#45585)"
+    { 8045612, 45612 }, // "Filler: Constellus (#45612)"
+    { 8045613, 45613 }, // "Filler: Dreambinder (#45613)"
+    { 8045620, 45620 }, // "Filler: Starshard Edge (#45620)"
     { 8045621, 45621 }, // "Filler: Elixir of Minor Accuracy (#45621)"
     { 8045624, 45624 }, // "Filler: Emblem of Conquest (#45624)"
     { 8045629, 45629 }, // "Filler: Shadoweave Belt (#45629)"
+    { 8045663, 45663 }, // "Filler: Armbands of Bedlam (#45663)"
     { 8045664, 45664 }, // "Filler: Silvermoon Doublet (#45664)"
     { 8045666, 45666 }, // "Filler: Ironforge Doublet (#45666)"
     { 8045667, 45667 }, // "Filler: Stormwind Doublet (#45667)"
@@ -22419,25 +24948,48 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8045861, 45861 }, // "Filler: Diamond-tipped Cane (#45861)"
     { 8045862, 45862 }, // "Filler: Bold Stormjewel (#45862)"
     { 8045875, 45875 }, // "Filler: Sack of Ulduar Spoils (#45875)"
+    { 8045876, 45876 }, // "Filler: Shiver (#45876)"
+    { 8045877, 45877 }, // "Filler: The Boreal Guard (#45877)"
     { 8045878, 45878 }, // "Filler: Large Sack of Ulduar Spoils (#45878)"
     { 8045879, 45879 }, // "Filler: Delicate Stormjewel (#45879)"
     { 8045880, 45880 }, // "Filler: Solid Stormjewel (#45880)"
     { 8045881, 45881 }, // "Filler: Sparkling Stormjewel (#45881)"
     { 8045882, 45882 }, // "Filler: Brilliant Stormjewel (#45882)"
     { 8045883, 45883 }, // "Filler: Runed Stormjewel (#45883)"
+    { 8045886, 45886 }, // "Filler: Icecore Staff (#45886)"
+    { 8045887, 45887 }, // "Filler: Ice Layered Barrier (#45887)"
+    { 8045888, 45888 }, // "Filler: Bitter Cold Armguards (#45888)"
     { 8045901, 45901 }, // "Filler: Homemade Fish Fry (#45901)"
+    { 8045928, 45928 }, // "Filler: Gauntlets of the Thunder God (#45928)"
+    { 8045929, 45929 }, // "Filler: Sif's Remembrance (#45929)"
+    { 8045930, 45930 }, // "Filler: Combatant's Bootblade (#45930)"
+    { 8045931, 45931 }, // "Filler: Mjolnir Runestone (#45931)"
     { 8045932, 45932 }, // "Filler: Black Jelly (#45932)"
+    { 8045933, 45933 }, // "Filler: Pendant of the Shallow Grave (#45933)"
     { 8045942, 45942 }, // "Filler: XS-001 Constructor Bot (#45942)"
+    { 8045943, 45943 }, // "Filler: Gloves of Whispering Winds (#45943)"
+    { 8045945, 45945 }, // "Filler: Seed of Budding Carnage (#45945)"
+    { 8045946, 45946 }, // "Filler: Fire Orchid Signet (#45946)"
+    { 8045947, 45947 }, // "Filler: Serilas, Blood Blade of Invar One-Arm (#45947)"
+    { 8045982, 45982 }, // "Filler: Fused Alloy Legplates (#45982)"
     { 8045983, 45983 }, // "Filler: Furious Gladiator's Tabard (#45983)"
     { 8045987, 45987 }, // "Filler: Rigid Stormjewel (#45987)"
+    { 8045988, 45988 }, // "Filler: Greaves of the Iron Army (#45988)"
+    { 8045989, 45989 }, // "Filler: Tempered Mercury Greaves (#45989)"
+    { 8045990, 45990 }, // "Filler: Fusion Blade (#45990)"
+    { 8045993, 45993 }, // "Filler: Mimiron's Flight Goggles (#45993)"
     { 8045998, 45998 }, // "Filler: Battered Jungle Hat (#45998)"
     { 8046007, 46007 }, // "Filler: Bag of Fishing Treasures (#46007)"
+    { 8046052, 46052 }, // "Filler: Reply-Code Alpha (#46052)"
+    { 8046053, 46053 }, // "Filler: Reply-Code Alpha (#46053)"
     { 8046069, 46069 }, // "Filler: Alliance Lance (#46069)"
     { 8046070, 46070 }, // "Filler: Horde Lance (#46070)"
     { 8046106, 46106 }, // "Filler: Argent Lance (#46106)"
     { 8046109, 46109 }, // "Filler: Sea Turtle (#46109)"
     { 8046110, 46110 }, // "Filler: Alchemist's Cache (#46110)"
     { 8046171, 46171 }, // "Filler: Furious Gladiator's Frost Wyrm (#46171)"
+    { 8046368, 46368 }, // "Filler: Shredded Parchment (#46368)"
+    { 8046369, 46369 }, // "Filler: Rotted Sentimental Paintings (#46369)"
     { 8046376, 46376 }, // "Filler: Flask of the Frost Wyrm (#46376)"
     { 8046377, 46377 }, // "Filler: Flask of Endless Rage (#46377)"
     { 8046378, 46378 }, // "Filler: Flask of Pure Mojo (#46378)"
@@ -22478,8 +25030,46 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8046887, 46887 }, // "Filler: Bountiful Feast (#46887)"
     { 8046892, 46892 }, // "Filler: Murkimus' Tiny Spear (#46892)"
     { 8046978, 46978 }, // "Filler: Totem of the Earthen Ring (#46978)"
+    { 8047170, 47170 }, // "Filler: Belt of Fierce Competition (#47170)"
+    { 8047171, 47171 }, // "Filler: Legguards of Abandoned Fealty (#47171)"
+    { 8047172, 47172 }, // "Filler: Helm of the Bested Gallant (#47172)"
+    { 8047173, 47173 }, // "Filler: Bindings of the Wicked (#47173)"
+    { 8047174, 47174 }, // "Filler: Binding of the Tranquil Glade (#47174)"
+    { 8047175, 47175 }, // "Filler: Scale Boots of the Outlander (#47175)"
+    { 8047197, 47197 }, // "Filler: Gauntlets of the Stouthearted Crusader (#47197)"
+    { 8047199, 47199 }, // "Filler: Greaves of the Grand Paladin (#47199)"
+    { 8047200, 47200 }, // "Filler: Signet of Purity (#47200)"
+    { 8047201, 47201 }, // "Filler: Boots of Heartfelt Repentance (#47201)"
+    { 8047202, 47202 }, // "Filler: Leggings of Brazen Trespass (#47202)"
+    { 8047210, 47210 }, // "Filler: Mantle of Gnarled Overgrowth (#47210)"
+    { 8047211, 47211 }, // "Filler: Wristguards of Ceaseless Regret (#47211)"
+    { 8047212, 47212 }, // "Filler: Mercy's Hold (#47212)"
+    { 8047214, 47214 }, // "Filler: Banner of Victory (#47214)"
+    { 8047217, 47217 }, // "Filler: Gaze of the Somber Keeper (#47217)"
+    { 8047218, 47218 }, // "Filler: The Confessor's Binding (#47218)"
+    { 8047219, 47219 }, // "Filler: Brilliant Hailstone Amulet (#47219)"
     { 8047241, 47241 }, // "Filler: Emblem of Triumph (#47241)"
+    { 8047242, 47242 }, // "Filler: Trophy of the Crusade (#47242)"
+    { 8047243, 47243 }, // "Filler: Mark of the Relentless (#47243)"
+    { 8047244, 47244 }, // "Filler: Chestguard of the Ravenous Fiend (#47244)"
+    { 8047245, 47245 }, // "Filler: Pauldrons of Concealed Loathing (#47245)"
+    { 8047248, 47248 }, // "Filler: Treads of Dismal Fortune (#47248)"
+    { 8047249, 47249 }, // "Filler: Leggings of the Snowy Bramble (#47249)"
+    { 8047250, 47250 }, // "Filler: Pauldrons of the Deafening Gale (#47250)"
+    { 8047493, 47493 }, // "Filler: Edge of Ruin (#47493)"
     { 8047499, 47499 }, // "Filler: Flask of the North (#47499)"
+    { 8047501, 47501 }, // "Filler: Kurisu's Indecision (#47501)"
+    { 8047502, 47502 }, // "Filler: Majestic Silversmith Shoulderplates (#47502)"
+    { 8047503, 47503 }, // "Filler: Legplates of the Argent Armistice (#47503)"
+    { 8047504, 47504 }, // "Filler: Barkhide Treads (#47504)"
+    { 8047508, 47508 }, // "Filler: Aledar's Battlestar (#47508)"
+    { 8047509, 47509 }, // "Filler: Mariel's Sorrow (#47509)"
+    { 8047510, 47510 }, // "Filler: Trueheart Girdle (#47510)"
+    { 8047511, 47511 }, // "Filler: Plated Greaves of Providence (#47511)"
+    { 8047512, 47512 }, // "Filler: Sinner's Confession (#47512)"
+    { 8047514, 47514 }, // "Filler: Regal Aurous Shoulderplates (#47514)"
+    { 8047522, 47522 }, // "Filler: Marrowstrike (#47522)"
+    { 8047556, 47556 }, // "Filler: Crusader Orb (#47556)"
     { 8047840, 47840 }, // "Filler: Relentless Gladiator's Frost Wyrm (#47840)"
     { 8048112, 48112 }, // "Filler: Darting Hatchling (#48112)"
     { 8048118, 48118 }, // "Filler: Leaping Hatchling (#48118)"
@@ -22528,6 +25118,7 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8049860, 49860 }, // "Filler: \"Wizardry\" Cologne (#49860)"
     { 8049861, 49861 }, // "Filler: \"STALWART\" Cologne (#49861)"
     { 8049867, 49867 }, // "Filler: Crown Chemical Co. Supplies (#49867)"
+    { 8049908, 49908 }, // "Filler: Primordial Saronite (#49908)"
     { 8049909, 49909 }, // "Filler: Box of Chocolates (#49909)"
     { 8049912, 49912 }, // "Filler: Perky Pug (#49912)"
     { 8049915, 49915 }, // "Filler: Snivel's Ledger (#49915)"
@@ -22584,6 +25175,11 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8054537, 54537 }, // "Filler: Heart-Shaped Box (#54537)"
     { 8054617, 54617 }, // "Filler: Darkspear Shroud (#54617)"
     { 8054797, 54797 }, // "Filler: Frosty Flying Carpet (#54797)"
+    { 8054801, 54801 }, // "Filler: Icebound Cloak (#54801)"
+    { 8054802, 54802 }, // "Filler: The Frost Lord's War Cloak (#54802)"
+    { 8054803, 54803 }, // "Filler: The Frost Lord's Battle Shroud (#54803)"
+    { 8054804, 54804 }, // "Filler: Shroud of Winter's Chill (#54804)"
+    { 8054805, 54805 }, // "Filler: Cloak of the Frigid Winds (#54805)"
     { 8054810, 54810 }, // "Filler: Celestial Dragon (#54810)"
     { 8054811, 54811 }, // "Filler: Celestial Steed (#54811)"
     { 8054847, 54847 }, // "Filler: Lil' XT (#54847)"
