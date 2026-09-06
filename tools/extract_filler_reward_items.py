@@ -200,28 +200,49 @@ def _query_category(category: str, sql: str, rules: dict) -> list[dict]:
 def extract() -> dict:
     rules = load_exclusion_rules()
 
+    # M4.11.5.0.3: container_loot's own WHERE clause (real gameobject loot
+    # tables) is orthogonal to every other category's class/subclass-based
+    # WHERE clause, unlike the original 12 (mutually exclusive by
+    # class/subclass, confirmed live -- no cross-category overlap existed
+    # before this category). A real item's own entry can legitimately be
+    # BOTH, e.g. "equipment" (class IN (2,4)) real armor that also happens
+    # to drop from a chest -- generate_content.py's item_id uniqueness
+    # validation (item_id is entry-derived) would otherwise reject the
+    # resulting duplicate row. seen_entries keeps first-claimed-wins across
+    # every source below (container_loot processed last in _CATEGORY_QUERIES
+    # dict order, so it only ever contributes entries no other category
+    # already claimed) -- same "already claimed elsewhere, skip" discipline
+    # _extract_mount_or_pet_category already uses against Collections' own
+    # claimed spell_ids.
+    seen_entries: set[int] = set()
     all_rows: list[dict] = []
     for category, sql in _CATEGORY_QUERIES.items():
         # gear_enhancement_vellum/gear_enhancement_gem are two queries
         # feeding ONE player-facing category ("gear_enhancement") -- both
         # tagged identically below.
         real_category = "gear_enhancement" if category.startswith("gear_enhancement") else category
-        rows = _query_category(real_category, sql, rules)
-        all_rows.extend(rows)
+        for row in _query_category(real_category, sql, rules):
+            if row["entry"] in seen_entries:
+                continue
+            seen_entries.add(row["entry"])
+            all_rows.append(row)
 
     for entry, name in _TOY_ENTRIES.items():
-        if is_denylisted(name, rules):
+        if is_denylisted(name, rules) or entry in seen_entries:
             continue
+        seen_entries.add(entry)
         all_rows.append({"entry": entry, "name": name, "category": "toy"})
 
     for row in _extract_mount_or_pet_category(subclass=5, category="mount"):
-        if is_denylisted(row["name"], rules):
+        if is_denylisted(row["name"], rules) or row["entry"] in seen_entries:
             continue
+        seen_entries.add(row["entry"])
         all_rows.append(row)
 
     for row in _extract_mount_or_pet_category(subclass=2, category="pet"):
-        if is_denylisted(row["name"], rules):
+        if is_denylisted(row["name"], rules) or row["entry"] in seen_entries:
             continue
+        seen_entries.add(row["entry"])
         all_rows.append(row)
 
     all_rows.sort(key=lambda r: r["entry"])

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from extract_filler_reward_items import extract, _query_category, _CATEGORY_QUERIES, _GAMEOBJECT_TYPE_CHEST
+from extract_filler_reward_items import extract, _query_category, _CATEGORY_QUERIES, _GAMEOBJECT_TYPE_CHEST, _ITEM_ID_BASE
 
 
 class TestQueryCategory(unittest.TestCase):
@@ -70,6 +70,45 @@ class TestExtractElevenSimpleCategories(unittest.TestCase):
         from extract_filler_reward_items import _TOY_ENTRIES
         self.assertEqual(len(_TOY_ENTRIES), 6)
         self.assertEqual(_TOY_ENTRIES[33079], "Murloc Costume")
+
+
+class TestCrossCategoryDeduplication(unittest.TestCase):
+    @patch("extract_filler_reward_items._extract_mount_or_pet_category")
+    @patch("extract_filler_reward_items.load_exclusion_rules")
+    @patch("extract_filler_reward_items.run_query")
+    def test_container_loot_does_not_reintroduce_an_entry_already_claimed_by_an_earlier_category(
+        self, mock_run_query, mock_load_rules, mock_extract_mount_or_pet
+    ) -> None:
+        # Real bug found during M4.11.5.0.3 regeneration: container_loot's
+        # own WHERE clause is orthogonal to every other category's
+        # class/subclass-based WHERE clause (unlike the original 12, which
+        # are mutually exclusive by construction) -- a real item entry can
+        # legitimately be BOTH "equipment" and chest loot, which duplicated
+        # generate_content.py's item_id (entry-derived), failing its
+        # uniqueness validation. This is a regression test for the fix.
+        mock_extract_mount_or_pet.return_value = []
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_run_query.side_effect = [
+            [("40752", "Emblem of Heroism")],  # badge_currency
+            [],  # consumable
+            [],  # bag
+            [],  # gear_enhancement (vellum)
+            [],  # gear_enhancement (gem)
+            [("38", "Recruit's Shirt")],       # equipment
+            [],  # openable
+            [],  # seasonal
+            [],  # tabard
+            [],  # reagent
+            [("38", "Recruit's Shirt"), ("2589", "Linen Cloth")],  # container_loot
+        ]
+        result = extract()
+        entries = [item["item_id"] - _ITEM_ID_BASE for item in result["items"]]
+        self.assertEqual(len(entries), len(set(entries)), "duplicate item_id across categories")
+        categories_by_entry = {
+            item["item_id"] - _ITEM_ID_BASE: item["tags"]["category"][0] for item in result["items"]
+        }
+        self.assertEqual(categories_by_entry[38], "equipment")  # first-claimed-wins
+        self.assertEqual(categories_by_entry[2589], "container_loot")
 
 
 class TestContainerLootQuery(unittest.TestCase):
