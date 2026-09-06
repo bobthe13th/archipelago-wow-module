@@ -4,6 +4,8 @@
 # future extraction runs -- add a pattern here, don't special-case it in an
 # extraction script.
 name_denylist:
+  - '(?i)\btest\b'
+  - '(?i)\bqa\b'
   - '(?i)\bdeprecated\b'
   - '(?i)\bunused\b'
   - '(?i)\bnot used\b'
