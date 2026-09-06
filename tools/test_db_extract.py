@@ -281,6 +281,69 @@ class TestParseSpellNames(unittest.TestCase):
         self.assertEqual(result[2543], "Westfall Stew")
 
 
+class TestParseSpellCreatedItemIds(unittest.TestCase):
+    def _write_fake_dbc(self, tmpdir: str, records: list[tuple[int, int, int, int]]) -> pathlib.Path:
+        """records: list of (spell_id, effect_item_type_0, effect_item_type_1,
+        effect_item_type_2) -- writes a minimal real WDBC file with exactly
+        234 int32 fields per record (matching SpellEntry's real field_count,
+        same as TestParseSpellNames), fields 107-109 populated
+        (EffectItemType[0-2], DBCStructure.h:1709: `// 107-109
+        m_effectItemType`), no string block needed."""
+        field_count = 234
+        record_size = field_count * 4
+        path = pathlib.Path(tmpdir) / "Spell.dbc"
+        with open(path, "wb") as f:
+            f.write(b"WDBC")
+            f.write(struct.pack("<4I", len(records), field_count, record_size, 1))
+            for spell_id, e0, e1, e2 in records:
+                fields = [0] * field_count
+                fields[0] = spell_id
+                fields[107] = e0
+                fields[108] = e1
+                fields[109] = e2
+                f.write(struct.pack("<" + "i" * field_count, *fields))
+            f.write(b"\x00")
+        return path
+
+    def test_collects_distinct_created_item_ids_across_all_three_effect_slots(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_fake_dbc(tmp, [
+                (100, 500, 0, 0),
+                (200, 0, 501, 0),
+                (300, 0, 0, 502),
+                (400, 500, 501, 0),  # 500/501 already seen -- still a set, not a multiset
+            ])
+            result = db_extract.parse_spell_created_item_ids(path)
+        self.assertEqual(result, frozenset({500, 501, 502}))
+
+    def test_zero_and_negative_effect_values_are_not_real_items(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            # 0 = "this effect slot creates no item" (the overwhelming
+            # majority of real rows); -1 never occurs in this field in
+            # practice, but is defensively excluded the same way every
+            # other >0-guarded id field in this project is.
+            path = self._write_fake_dbc(tmp, [(100, 0, -1, 0)])
+            result = db_extract.parse_spell_created_item_ids(path)
+        self.assertEqual(result, frozenset())
+
+    def test_rejects_non_wdbc_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "not_a_dbc.dbc"
+            path.write_bytes(b"NOTWDBC!")
+            with self.assertRaises(ValueError):
+                db_extract.parse_spell_created_item_ids(path)
+
+    def test_real_spell_dbc_finds_known_crafted_item(self) -> None:
+        # Real-file integration check against this checkout's actual
+        # Spell.dbc -- verified live this session: spell 3452's own
+        # EffectItemType[0] field creates item 3827, and the total real
+        # distinct-item count across all three effect slots is 4,303
+        # (verified live, M4.11.5.1 design research).
+        result = db_extract.parse_spell_created_item_ids()
+        self.assertEqual(len(result), 4303)
+        self.assertIn(3827, result)
+
+
 class TestParseAchievements(unittest.TestCase):
     def _write_fake_achievement_dbc(self, tmpdir: str, records: list[tuple[int, str, int, int]]) -> pathlib.Path:
         """records: list of (id, name, category_id, flags) -- writes a

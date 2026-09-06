@@ -722,6 +722,32 @@ def parse_spell_names(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> dict[int, str
     return result
 
 
+_SPELL_ITEM_EFFECT_FIELD_INDICES = (107, 108, 109)  # EffectItemType[0-2], DBCStructure.h:1709 "// 107-109 m_effectItemType"
+
+
+def parse_spell_created_item_ids(dbc_path: pathlib.Path = _SPELL_DBC_PATH) -> frozenset[int]:
+    """Parse Spell.dbc's real EffectItemType[0-2] fields (a spell effect
+    that creates a specific item -- the mechanism behind every
+    profession-crafted item, e.g. blacksmithing/alchemy/enchanting
+    results) into the set of every distinct real item entry any spell in
+    this game can create. Closes a real gap the DB-table-only acquisition
+    check (M4.11.5.1's other new helper, compute_acquired_item_ids) can't
+    see at all: a crafted item is never referenced by npc_vendor,
+    quest_template, any *_loot_template table, or achievement_reward --
+    its only real acquisition route is the crafting spell itself. Uses
+    the same WDBC-with-string-block layout and real field_count=234 this
+    project's own parse_spell_names already established for Spell.dbc."""
+    field_count, records, _string_block = _read_wdbc(dbc_path)
+    item_ids: set[int] = set()
+    for raw in records:
+        fields = struct.unpack("<" + "i" * field_count, raw)
+        for idx in _SPELL_ITEM_EFFECT_FIELD_INDICES:
+            value = fields[idx]
+            if value > 0:
+                item_ids.add(value)
+    return frozenset(item_ids)
+
+
 _FILLER_BUFF_SPELL_ID_FIELD = 0
 _FILLER_BUFF_DISPEL_FIELD = 2
 _FILLER_BUFF_ATTRIBUTES_FIELD = 4       # Attributes (Attr0) -- SharedDefines.h SPELL_ATTR0_*
