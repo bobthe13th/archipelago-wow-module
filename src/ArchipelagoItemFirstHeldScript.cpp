@@ -1,14 +1,17 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoItemFirstHeldScript.cpp
 //
 // M4.10.6 (design spec Sec5): OnPlayerStoreNewItem(Player*, Item*, uint32
-// count) fires from the single real call site Player::StoreNewItem
-// (PlayerStorage.cpp:2606,2613, hook fired at :2656) -- confirmed live
-// during this milestone's planning to cover loot, quest rewards, vendor
-// purchases, GM grants, and crafting reagent-refund credit. It does NOT
-// fire for mail retrieval (MailHandler.cpp uses the separate
-// Player::StoreItem path for an already-existing Item* object) or trade
-// (same reasoning) -- a real, accepted gap, not an oversight (see this
-// milestone's plan header). Modeled directly on
+// count) originally fired from only one real call site, Player::StoreNewItem
+// -- confirmed live during that milestone's planning to cover loot, quest
+// rewards, vendor purchases, GM grants, and crafting reagent-refund credit,
+// but NOT mail retrieval or trade (both bypass StoreNewItem entirely).
+// M4.11.5.0.7 moved the underlying core-engine call down into the shared
+// Player::StoreItem (PlayerStorage.cpp), the one function every one of
+// those paths funnels through (StoreNewItem itself, Player::
+// MoveItemToInventory's mail-attachment-retrieval and trade-acceptance
+// callers, and MailHandler.cpp's direct StoreItem call for mailed text-item
+// attachments) -- this hook now observes all of them, with no change to
+// this file itself beyond this comment. Modeled directly on
 // ArchipelagoLearnSpellScript.cpp's combined-map-lookup-then-
 // SendLocationChecks shape -- no destroy-on-interaction, no DB rewrite,
 // since this hook only OBSERVES an acquisition that already happened
