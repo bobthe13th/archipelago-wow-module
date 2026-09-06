@@ -4,8 +4,6 @@
 # future extraction runs -- add a pattern here, don't special-case it in an
 # extraction script.
 name_denylist:
-  - '(?i)\btest\b'
-  - '(?i)\bqa\b'
   - '(?i)\bdeprecated\b'
   - '(?i)\bunused\b'
   - '(?i)\bnot used\b'
@@ -272,3 +270,18 @@ name_denylist:
   # the fully generic sweep) is both safe and precise (Itemsanity final
   # whole-branch review fix I5, M4.10.6).
   - '(?i)^(?:BT|HF|DB)\d+ '
+  # "QA" glued directly onto the next word with no space, e.g. "QAEnchant
+  # Gloves +20 Shadow Damage" (item 22031, the exact row a live tester
+  # received as a real reward), "QAEnchhelp Cloak +7 Fire Resistance" --
+  # the existing \bqa\b word-boundary pattern above doesn't catch these
+  # (no boundary between "QA" and the following capital letter), the same
+  # "glued marker prefix" shape as ^OLD[A-Z]/^zz(?:old|deprecated)/
+  # ^Obsolete[A-Z] above. Anchored to the two confirmed real glue targets
+  # ("Ench"/"Test") rather than a bare ^QA[A-Z] sweep -- a bare
+  # case-insensitive ^QA[A-Z] would also match the real creatures
+  # "Qannik"/"Qatiichii" (case-insensitive character classes match
+  # lowercase too). Verified live: exactly 78 real item_template rows
+  # match ^QA(Ench|Test), 0 creature_template rows do -- every real "QA
+  # Test Dummy ..."/"QA Arena Master: ..." creature name has a space after
+  # "QA", which this glued pattern never matches (M4.11.5.1).
+  - '(?i)^QA(Ench|Test)'

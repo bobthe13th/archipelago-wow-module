@@ -33,6 +33,25 @@ class TestExclusionRules(unittest.TestCase):
         self.assertTrue(is_denylisted("Recipe: Test Only Do Not Use", rules))
         self.assertTrue(is_denylisted("QA Deprecated Widget", rules))
 
+    def test_qa_glued_prefix_is_denylisted(self) -> None:
+        # Real live tester bug: "QAEnchant Gloves +20 Shadow Damage" (item
+        # 22031) was delivered as a live reward -- the existing \bqa\b
+        # word-boundary pattern never matches "QAEnchant"/"QATest" (no
+        # boundary between "QA" and the glued next word), the same
+        # "glued marker prefix" bug class as ^OLD[A-Z]/^zz(?:old|deprecated)/
+        # ^Obsolete[A-Z] above. Verified live against the real DB: exactly
+        # 78 item_template rows match, 0 creature_template rows do (real
+        # creature names like "Qannik"/"Qatiichii" and "QA Test Dummy ..."
+        # all have a space after "QA", which this glued pattern never
+        # matches).
+        rules = load_exclusion_rules(DEFAULT_RULES_PATH)
+        self.assertTrue(is_denylisted("QAEnchant Gloves +20 Shadow Damage", rules))
+        self.assertTrue(is_denylisted("QAEnchhelp Cloak +7 Fire Resistance", rules))
+        self.assertTrue(is_denylisted("QATest Something", rules))
+        self.assertFalse(is_denylisted("Qannik", rules))
+        self.assertFalse(is_denylisted("Qatiichii", rules))
+        self.assertFalse(is_denylisted("QA Test Dummy 80 Normal", rules))
+
 
 class TestDatabaseQueries(unittest.TestCase):
     @patch("db_extract.subprocess.run")
