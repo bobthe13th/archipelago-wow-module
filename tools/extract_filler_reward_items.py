@@ -38,6 +38,12 @@ _ITEM_ID_BASE = 8_000_000
 # entry < 4000000 explicitly. See this plan's Global Constraints.
 _TEST_POLLUTION_FILTER = "entry < 4000000"
 
+# SharedDefines.h: GAMEOBJECT_TYPE_CHEST. Matches extract_containersanity.py's
+# and extract_gathersanity.py's own copies of this same constant (each file
+# keeps its own, same discipline as ArchipelagoLootSlotScript.cpp's
+# FILLER_CONSUMABLE_ENTRY -- not a shared/exported symbol across tools/).
+_GAMEOBJECT_TYPE_CHEST = 3
+
 # Real, verified-live queries (see this plan's own research for exact
 # counts at the time of writing -- re-run for real counts, these are not
 # hardcoded anywhere in the extraction logic itself).
@@ -91,6 +97,15 @@ _CATEGORY_QUERIES = {
         SELECT entry, name FROM item_template
         WHERE class = 15 AND subclass = 1 AND {_TEST_POLLUTION_FILTER}
         ORDER BY entry
+    """,
+    "container_loot": f"""
+        SELECT DISTINCT glt.Item, it.name FROM gameobject_template gt
+        JOIN gameobject_loot_template glt ON glt.Entry = gt.Data1
+        JOIN item_template it ON it.entry = glt.Item
+        WHERE gt.type = {_GAMEOBJECT_TYPE_CHEST}
+          AND glt.QuestRequired = 0 AND glt.Reference = 0
+          AND glt.Item > 0 AND glt.{_TEST_POLLUTION_FILTER.replace("entry", "Item")}
+        ORDER BY glt.Item
     """,
 }
 
