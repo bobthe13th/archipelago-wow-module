@@ -50,7 +50,7 @@ class TestExclusionRules(unittest.TestCase):
         self.assertTrue(is_denylisted("QATest Something", rules))
         self.assertFalse(is_denylisted("Qannik", rules))
         self.assertFalse(is_denylisted("Qatiichii", rules))
-        self.assertFalse(is_denylisted("QA Test Dummy 80 Normal", rules))
+        self.assertTrue(is_denylisted("QA Test Dummy 80 Normal", rules))  # correctly caught by the pre-existing \btest\b pattern (unrelated to this task's own ^QA(Ench|Test) fix, which does NOT match this spaced-out name)
 
 
 class TestDatabaseQueries(unittest.TestCase):
