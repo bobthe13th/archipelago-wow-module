@@ -268,8 +268,12 @@ namespace Archipelago::Delivery
                 size_t count = std::min<size_t>(MAX_MAIL_ITEMS, queue.items.size() - offset);
                 std::vector<QueuedItem> chunk(queue.items.begin() + offset, queue.items.begin() + offset + count);
 
-                MailDraft draft("Archipelago", BuildBatchedMailBody(chunk));
-                bool anyItemAdded = false;
+                // Create/save every item first, tracking only the ones that actually
+                // succeeded -- the mail body (built below, from successItems) must never
+                // describe an item that isn't actually attached to the mail it's sent
+                // with, so BuildBatchedMailBody can't run until this loop is done.
+                std::vector<Item*> createdItems;
+                std::vector<QueuedItem> successItems;
                 for (QueuedItem const& queuedItem : chunk)
                 {
                     Item* item = Item::CreateItem(queuedItem.wowItemEntry, 1);
@@ -279,11 +283,15 @@ namespace Archipelago::Delivery
                         continue;
                     }
                     item->SaveToDB(trans);
-                    draft.AddItem(item);
-                    anyItemAdded = true;
+                    createdItems.push_back(item);
+                    successItems.push_back(queuedItem);
                 }
-                if (!anyItemAdded)
+                if (createdItems.empty())
                     continue;
+
+                MailDraft draft("Archipelago", BuildBatchedMailBody(successItems));
+                for (Item* item : createdItems)
+                    draft.AddItem(item);
 
                 MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches GiveOrMailItem's own precedent below */);
                 draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);

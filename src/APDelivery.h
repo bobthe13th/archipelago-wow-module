@@ -2,6 +2,7 @@
 #pragma once
 
 #include "DatabaseEnv.h"
+#include "ObjectGuid.h"
 
 #include <cstdint>
 #include <map>
