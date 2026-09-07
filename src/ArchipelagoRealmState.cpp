@@ -58,6 +58,16 @@ void ArchipelagoRealmState::Load()
         } while (result->NextRow());
     }
 
+    _slotTotals.clear();
+    if (QueryResult result = CharacterDatabase.Query("SELECT slot_id, total_count FROM archipelago_slot_totals"))
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            _slotTotals[fields[0].Get<int64_t>()] = fields[1].Get<uint64_t>();
+        } while (result->NextRow());
+    }
+
     _recordedBossKills.clear();
     if (QueryResult result = CharacterDatabase.Query("SELECT instance_key, boss_entry FROM archipelago_boss_kills"))
     {
@@ -153,6 +163,39 @@ void ArchipelagoRealmState::RecordLocationCheckSent(uint64_t locationId)
         CharacterDatabase.Execute("INSERT IGNORE INTO archipelago_checks (location_id) VALUES ({})", locationId);
         LOG_INFO("module.archipelago_wow", "Archipelago: location check {} recorded durably", locationId);
     }
+}
+
+void ArchipelagoRealmState::RecordSlotItemSend(int64_t sourceSlot)
+{
+    uint64_t newTotal = ++_slotTotals[sourceSlot];
+    CharacterDatabase.Execute(
+        "INSERT INTO archipelago_slot_totals (slot_id, total_count) VALUES ({}, 1) "
+        "ON DUPLICATE KEY UPDATE total_count = total_count + 1",
+        sourceSlot);
+    LOG_DEBUG("module.archipelago_wow", "Archipelago: slot {} check total now {}", sourceSlot, newTotal);
+}
+
+void ArchipelagoRealmState::RecordLocationCheckAttribution(uint64_t locationId, uint32_t playerGuidLow)
+{
+    CharacterDatabase.Execute(
+        "INSERT IGNORE INTO archipelago_check_attribution (location_id, player_guid) VALUES ({}, {})",
+        locationId, playerGuidLow);
+}
+
+std::vector<std::pair<uint32_t, uint64_t>> ArchipelagoRealmState::GetCheckCountsByPlayer() const
+{
+    std::vector<std::pair<uint32_t, uint64_t>> result;
+    if (QueryResult queryResult = CharacterDatabase.Query(
+            "SELECT player_guid, COUNT(*) AS check_count FROM archipelago_check_attribution "
+            "GROUP BY player_guid ORDER BY check_count DESC"))
+    {
+        do
+        {
+            Field* fields = queryResult->Fetch();
+            result.emplace_back(fields[0].Get<uint32_t>(), fields[1].Get<uint64_t>());
+        } while (queryResult->NextRow());
+    }
+    return result;
 }
 
 void ArchipelagoRealmState::SetGoalComplete()

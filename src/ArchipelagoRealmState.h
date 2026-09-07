@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -53,6 +54,39 @@ public:
     bool HasSentLocationCheck(uint64_t locationId) const;
     void RecordLocationCheckSent(uint64_t locationId);
     std::unordered_set<uint64_t> const& GetSentLocationChecks() const { return _sentLocationChecks; }
+
+    // M4.11.5.6: per-slot running check-found totals, passively built from
+    // real "ItemSend" PrintJSON broadcasts this client already receives
+    // (Archipelago::ParseItemSendEvents, APProtocol.h) -- fed from
+    // ArchipelagoWorldScript::OnUpdate's own PrintJSON-draining code (Task
+    // 3), never a new AP-server query. Not deduplicated by any real event
+    // id (the real protocol carries none for ItemSend) -- every observed
+    // broadcast increments its own source slot's own total by 1, matching
+    // "one real check found" per broadcast, the real protocol's own
+    // guarantee (confirmed live, Archipelago/docs/network protocol.md: one
+    // ItemSend broadcast per real location check found, multiworld-wide).
+    void RecordSlotItemSend(int64_t sourceSlot);
+    std::map<int64_t, uint64_t> const& GetSlotTotals() const { return _slotTotals; }
+
+    // M4.11.5.6: which real WoW character (by low GUID) triggered each of
+    // this realm's own sent checks -- called alongside (never instead of)
+    // RecordLocationCheckSent above, at every one of this module's own real
+    // SendLocationChecks call sites that has a real, live acting Player* in
+    // scope (see the M4.11.5.6 plan's own Task 4 for the full real call-site
+    // enumeration and the one deliberate exception, ArchipelagoWorldScript's
+    // startup filler-location bootstrap, which has none). Idempotent per
+    // locationId (INSERT IGNORE, same shape as RecordLocationCheckSent's own
+    // dedup) -- a location whose check somehow gets re-sent (e.g. after
+    // ResendAllChecksAndGoal) keeps its FIRST real attribution, never
+    // overwritten by a later resend.
+    void RecordLocationCheckAttribution(uint64_t locationId, uint32_t playerGuidLow);
+    // Real per-WoW-player totals for this realm's own slot, resolved live
+    // (not cached) at call time via a direct query -- see
+    // ArchipelagoCommandScript.cpp's own .ap leaderboard handler (Task 5),
+    // the only real consumer. Returns player_guid -> real check count,
+    // ordered by count descending (highest first), matching a real
+    // leaderboard's own natural display order.
+    std::vector<std::pair<uint32_t, uint64_t>> GetCheckCountsByPlayer() const;
 
     bool IsGoalComplete() const { return _goalComplete; }
     void SetGoalComplete();
@@ -323,6 +357,7 @@ private:
     std::unordered_set<std::string> _unlockedInstances;
     std::unordered_map<std::string, uint32_t> _flagTiers;
     std::unordered_set<uint64_t> _sentLocationChecks;
+    std::map<int64_t, uint64_t> _slotTotals;
     std::unordered_map<std::string, bool> _gateFamiliesEnabled;
     std::string _catchUpPolicy = "Nothing";
     uint32_t _catchUpPercentPerLevel = 10;
