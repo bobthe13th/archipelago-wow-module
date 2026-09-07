@@ -6,6 +6,8 @@
 #include "AllLocationNames.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
+#include "CharacterCache.h"
 
 using namespace Acore::ChatCommands;
 
@@ -24,6 +26,7 @@ public:
         static ChatCommandTable apCommandTable =
         {
             { "status",  HandleApStatusCommand,  SEC_PLAYER,     Console::No },
+            { "leaderboard", HandleApLeaderboardCommand, SEC_PLAYER, Console::No },
             { "missing", HandleApMissingCommand, SEC_PLAYER,     Console::No },
             { "hint",    HandleApHintCommand,    SEC_PLAYER,     Console::No },
             { "port",    HandleApPortCommand,    SEC_GAMEMASTER, Console::No },
@@ -57,6 +60,50 @@ public:
             default:
                 handler->PSendSysMessage("Archipelago: not connected.");
                 break;
+        }
+        return true;
+    }
+
+    // Design spec Sec4 (M4.11.5.6): two real breakdowns. Per-slot totals are
+    // passively observed from real "ItemSend" broadcasts this client already
+    // receives (Task 1/3) -- multiworld-wide, by real numeric slot id (no
+    // name resolution available, see this plan's own Global Constraints).
+    // Per-WoW-player totals are scoped to this realm's own slot only,
+    // resolved from real check-attribution records (Task 2/4) to real
+    // character names via sCharacterCache. Both breakdowns are additive,
+    // durable counters -- neither is retroactive for history that predates
+    // this milestone (spec's own Non-Goals).
+    static bool HandleApLeaderboardCommand(ChatHandler* handler, const char* /*args*/)
+    {
+        auto const& slotTotals = sArchipelagoRealmState->GetSlotTotals();
+        if (slotTotals.empty())
+        {
+            handler->PSendSysMessage("Archipelago: no cross-slot check activity observed yet "
+                "(this realm only sees ItemSend broadcasts while connected -- checks found "
+                "while this realm was offline are never recorded, and no new checks have been "
+                "observed since this realm was last restarted).");
+        }
+        else
+        {
+            handler->PSendSysMessage("Archipelago: per-slot checks found (observed while connected, real slot ids):");
+            for (auto const& [slotId, total] : slotTotals)
+                handler->PSendSysMessage("  - slot {}: {}", slotId, total);
+        }
+
+        std::vector<std::pair<uint32_t, uint64_t>> byPlayer = sArchipelagoRealmState->GetCheckCountsByPlayer();
+        if (byPlayer.empty())
+        {
+            handler->PSendSysMessage("Archipelago: no per-character check activity recorded yet for this realm's own slot.");
+            return true;
+        }
+
+        handler->PSendSysMessage("Archipelago: checks found by WoW character (this realm's own slot):");
+        for (auto const& [playerGuidLow, count] : byPlayer)
+        {
+            std::string name;
+            if (!sCharacterCache->GetCharacterNameByGuid(ObjectGuid(HighGuid::Player, playerGuidLow), name))
+                name = "(unknown character)";
+            handler->PSendSysMessage("  - {}: {}", name, count);
         }
         return true;
     }
