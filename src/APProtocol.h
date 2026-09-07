@@ -241,4 +241,35 @@ namespace Archipelago
     // -- those ids are surfaced as-is, not resolved to names. Returns an empty
     // vector (never throws) on malformed JSON.
     std::vector<std::string> ParsePrintJSONText(std::string const& raw);
+
+    // One real "ItemSend" PrintJSON event (a player received an item, per the
+    // real Archipelago network protocol's own PrintJsonType enum) -- the
+    // structured fields this project's own ParsePrintJSONText already
+    // discards in favor of flattened display text (M4.11.5.6). sourceSlot is
+    // the real slot id that FOUND the check (item.player, per the protocol's
+    // own NetworkItem shape); destinationSlot is the real slot id the item
+    // was SENT TO (the message's own top-level "receiving" field) -- these
+    // are genuinely different slots whenever one player's world places an
+    // item in another player's world, the normal case in a real multiworld.
+    struct ItemSendEvent
+    {
+        int64_t sourceSlot = 0;
+        int64_t destinationSlot = 0;
+    };
+
+    // Scans every element of a (possibly batched) frame and collects one
+    // ItemSendEvent per real "PrintJSON" command whose own "type" field is
+    // exactly "ItemSend" -- every other PrintJSON type (Chat, Hint, Join,
+    // ...) is skipped, along with any PrintJSON message missing "type",
+    // "item", or "receiving" entirely (most real PrintJSON traffic has none
+    // of these fields at all). Returns an empty vector (never throws) on
+    // malformed JSON or a message missing the fields this function needs,
+    // matching every other Parse* function's "don't crash the connection
+    // state machine on a shape it doesn't recognize" discipline. This is a
+    // genuinely different parse path from ParsePrintJSONText above (which
+    // extracts flattened display TEXT for every PrintJSON type
+    // unconditionally) -- the two are called independently, from the same
+    // raw frame, for two different real consumers (chat display vs. the
+    // check-leaderboard command's per-slot totals, M4.11.5.6).
+    std::vector<ItemSendEvent> ParseItemSendEvents(std::string const& raw);
 }

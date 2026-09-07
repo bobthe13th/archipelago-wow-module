@@ -495,4 +495,34 @@ namespace Archipelago
         }
         return result;
     }
+
+    std::vector<ItemSendEvent> ParseItemSendEvents(std::string const& raw)
+    {
+        std::vector<ItemSendEvent> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "PrintJSON")
+                continue;
+            if (!element.contains("type") || !element["type"].is_string() ||
+                element["type"].get<std::string>() != "ItemSend")
+                continue;
+            if (!element.contains("item") || !element["item"].is_object() ||
+                !element.contains("receiving") || !element["receiving"].is_number_integer())
+                continue;
+            json const& item = element["item"];
+            if (!item.contains("player") || !item["player"].is_number_integer())
+                continue;
+
+            ItemSendEvent event;
+            event.sourceSlot = item["player"].get<int64_t>();
+            event.destinationSlot = element["receiving"].get<int64_t>();
+            result.push_back(event);
+        }
+        return result;
+    }
 }

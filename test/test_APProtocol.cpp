@@ -528,3 +528,71 @@ TEST_CASE("ParsePrintJSONText skips a data part with no text field rather than t
     REQUIRE(ParsePrintJSONText(raw).size() == 1);
     CHECK(ParsePrintJSONText(raw)[0] == "ab");
 }
+
+TEST_CASE("ParseItemSendEvents extracts source slot from a real ItemSend message")
+{
+    std::string raw = R"json([{
+        "cmd": "PrintJSON",
+        "type": "ItemSend",
+        "receiving": 2,
+        "item": {"item": 111, "location": 222, "player": 5, "flags": 0},
+        "data": [{"text": "Player5 sent Sword to Player2"}]
+    }])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 1);
+    CHECK(events[0].sourceSlot == 5);
+    CHECK(events[0].destinationSlot == 2);
+}
+
+TEST_CASE("ParseItemSendEvents returns one entry per ItemSend message in a batched frame")
+{
+    std::string raw = R"json([
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 1, "item": {"item": 10, "location": 20, "player": 3, "flags": 0}, "data": []},
+        {"cmd": "PrintJSON", "type": "Chat", "data": [{"text": "hello"}]},
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 4, "item": {"item": 30, "location": 40, "player": 1, "flags": 0}, "data": []}
+    ])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 2);
+    CHECK(events[0].sourceSlot == 3);
+    CHECK(events[0].destinationSlot == 1);
+    CHECK(events[1].sourceSlot == 1);
+    CHECK(events[1].destinationSlot == 4);
+}
+
+TEST_CASE("ParseItemSendEvents ignores a PrintJSON message whose type is not ItemSend")
+{
+    std::string raw = R"json([{"cmd": "PrintJSON", "type": "Hint", "data": [{"text": "hint text"}]}])json";
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents ignores a PrintJSON message with no type field at all")
+{
+    // Real, common case: most PrintJSON messages (Chat, ServerChat, ...) never
+    // carry a "type" at all -- this must not throw or misparse, only skip.
+    std::string raw = R"json([{"cmd": "PrintJSON", "data": [{"text": "plain chat"}]}])json";
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents skips a malformed ItemSend message rather than throwing")
+{
+    std::string raw = R"json([{"cmd": "PrintJSON", "type": "ItemSend", "receiving": 1, "data": []}])json";
+    // Missing "item" entirely -- no source slot to extract, must be skipped, not crash.
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents returns empty on malformed JSON")
+{
+    CHECK(ParseItemSendEvents("not json").empty());
+}
+
+TEST_CASE("ParseItemSendEvents ignores a non-PrintJSON command in the same frame")
+{
+    std::string raw = R"json([
+        {"cmd": "ReceivedItems", "index": 0, "items": [{"item": 1, "location": 1, "player": 1, "flags": 0}]},
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 9, "item": {"item": 1, "location": 1, "player": 8, "flags": 0}, "data": []}
+    ])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 1);
+    CHECK(events[0].sourceSlot == 8);
+    CHECK(events[0].destinationSlot == 9);
+}
