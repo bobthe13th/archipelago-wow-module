@@ -67,7 +67,7 @@ public:
     // Entropius phase -- see core_loop.yaml's own header comment for why
     // those specific entries were chosen) are all handled correctly by this
     // "recorded at least once, order doesn't matter" model.
-    void OnPlayerCreatureKill(Player* /*killer*/, Creature* killed) override
+    void OnPlayerCreatureKill(Player* killer, Creature* killed) override
     {
         uint32_t entry = killed->GetEntry();
 
@@ -92,7 +92,10 @@ public:
                 sArchipelagoRealmState->SetFlagTier(sentFlagKey, 1);
                 auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
                 if (locIt != Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.end())
+                {
                     sArchipelagoMgr->SendLocationChecks({ locIt->second });
+                    sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+                }
                 return;
             }
             // entry matched no all_bosses-tracked roster -- fall through to
@@ -107,7 +110,10 @@ public:
 
             auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
             if (locIt != Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.end())
+            {
                 sArchipelagoMgr->SendLocationChecks({ locIt->second });
+                sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+            }
             return;
         }
 
@@ -121,7 +127,10 @@ public:
         // safe (the AP server silently ignores an unrecognized location id).
         auto rareIt = Archipelago::Rares::CreatureEntryToLocationId.find(entry);
         if (rareIt != Archipelago::Rares::CreatureEntryToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ rareIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(rareIt->second), killer->GetGUID().GetCounter());
+        }
 
         // M4.10.3 (Enemysanity): one location per real mob SPECIES,
         // released on every kill of that species -- sent unconditionally,
@@ -146,7 +155,10 @@ public:
         // Archipelago::.
         auto enemysanityIt = ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.find(entry);
         if (enemysanityIt != ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ enemysanityIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(enemysanityIt->second), killer->GetGUID().GetCounter());
+        }
 
         // M4.11.1 (Golden Boar Statues): 20 curated Barrens rares, one
         // location per creature entry -- sent unconditionally on a matching
@@ -156,7 +168,10 @@ public:
         // location table).
         auto goldenBoarStatueIt = Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.find(entry);
         if (goldenBoarStatueIt != Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ goldenBoarStatueIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(goldenBoarStatueIt->second), killer->GetGUID().GetCounter());
+        }
     }
 };
 

@@ -17,17 +17,21 @@
 #include "ScriptMgr.h"
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoCollectionScript : public PlayerScript
 {
 public:
     ArchipelagoCollectionScript() : PlayerScript("ArchipelagoCollectionScript", { PLAYERHOOK_ON_LEARN_SPELL }) { }
 
-    void OnPlayerLearnSpell(Player* /*player*/, uint32 spellID) override
+    void OnPlayerLearnSpell(Player* player, uint32 spellID) override
     {
         auto it = Archipelago::Collections::SpellIdToLocationId.find(spellID);
         if (it != Archipelago::Collections::SpellIdToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

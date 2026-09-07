@@ -6,6 +6,7 @@
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
+#include "ArchipelagoRealmState.h"
 
 // M4.8.0: the standalone `quests` family's ArchipelagoQuestScript
 // (PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST, keyed off a curated
@@ -49,6 +50,7 @@ public:
         // in this content family and out of scope for a repeat-behavior
         // option per the design spec's §8) -- always send-and-destroy.
         sArchipelagoMgr->SendLocationChecks({ locationId });
+        sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
         player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
     }
 };
@@ -72,7 +74,7 @@ public:
     ArchipelagoQuestChoiceSiblingScript()
         : PlayerScript("ArchipelagoQuestChoiceSiblingScript", { PLAYERHOOK_ON_PLAYER_COMPLETE_QUEST }) { }
 
-    void OnPlayerCompleteQuest(Player* /*player*/, Quest const* quest) override
+    void OnPlayerCompleteQuest(Player* player, Quest const* quest) override
     {
         if (quest == nullptr)
             return;
@@ -80,6 +82,8 @@ public:
         if (it == ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_CHOICE_LOCATION_IDS.end())
             return;
         sArchipelagoMgr->SendLocationChecks(it->second);
+        for (int64_t locationId : it->second)
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
     }
 };
 

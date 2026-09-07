@@ -23,13 +23,14 @@
 #include "SharedDefines.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoREPSANITYContent.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoRepsanityScript : public PlayerScript
 {
 public:
     ArchipelagoRepsanityScript() : PlayerScript("ArchipelagoRepsanityScript", { PLAYERHOOK_ON_REPUTATION_RANK_CHANGE }) { }
 
-    void OnPlayerReputationRankChange(Player* /*player*/, uint32 factionID, ReputationRank newRank,
+    void OnPlayerReputationRankChange(Player* player, uint32 factionID, ReputationRank newRank,
         ReputationRank oldRank, bool /*increased*/) override
     {
         // A single reputation-changing event can cross more than one rank at
@@ -46,6 +47,8 @@ public:
         }
         if (!checks.empty())
             sArchipelagoMgr->SendLocationChecks(checks);
+        for (int64_t locationId : checks)
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
     }
 };
 

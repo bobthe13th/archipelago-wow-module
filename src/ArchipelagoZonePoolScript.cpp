@@ -18,6 +18,7 @@
 // pool, keyed by a "<zone_key>|<profession>|<tier>" composite instead of
 // Containersanity's bare zone_key.
 #include "GameObject.h"
+#include "Player.h"
 #include "ScriptMgr.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -46,7 +47,8 @@ namespace
     // resolves to (see OnGameObjectLootStateChanged below).
     bool CreditZonePool(
         std::map<std::string, std::vector<int64_t>> const& candidatesByZone,
-        std::string const& zoneKey)
+        std::string const& zoneKey,
+        Player* player)
     {
         auto it = candidatesByZone.find(zoneKey);
         if (it == candidatesByZone.end())
@@ -57,6 +59,7 @@ namespace
             if (!sArchipelagoRealmState->HasSentLocationCheck(static_cast<uint64_t>(locationId)))
             {
                 sArchipelagoMgr->SendLocationChecks({ locationId });
+                sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
                 return true;
             }
         }
@@ -80,6 +83,7 @@ public:
         // this file's own "a player opened this object" premise true.
         if (!unit || !unit->IsPlayer())
             return;
+        Player* player = unit->ToPlayer();
         if (!sArchipelagoRealmState->IsEnabled())
             return;
 
@@ -91,7 +95,7 @@ public:
         {
             for (std::string const& zoneKey : containerIt->second)
             {
-                if (CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey))
+                if (CreditZonePool(ArchipelagoCONTAINERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, zoneKey, player))
                     return;
             }
         }
@@ -118,7 +122,7 @@ public:
         for (std::string const& zoneKey : nodeZonesIt->second)
         {
             std::string compositeKey = zoneKey + "|" + tierIt->second;
-            if (CreditZonePool(ArchipelagoGATHERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, compositeKey))
+            if (CreditZonePool(ArchipelagoGATHERSANITYContent::ZONE_POOL_CREDIT_CANDIDATES, compositeKey, player))
                 return;
         }
     }

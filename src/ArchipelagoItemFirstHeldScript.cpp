@@ -20,17 +20,21 @@
 #include "ScriptMgr.h"
 #include "ArchipelagoITEMSANITYContent.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoItemFirstHeldScript : public PlayerScript
 {
 public:
     ArchipelagoItemFirstHeldScript() : PlayerScript("ArchipelagoItemFirstHeldScript", { PLAYERHOOK_ON_STORE_NEW_ITEM }) { }
 
-    void OnPlayerStoreNewItem(Player* /*player*/, Item* item, uint32 /*count*/) override
+    void OnPlayerStoreNewItem(Player* player, Item* item, uint32 /*count*/) override
     {
         auto it = ArchipelagoITEMSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.find(item->GetEntry());
         if (it != ArchipelagoITEMSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

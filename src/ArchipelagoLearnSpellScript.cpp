@@ -21,6 +21,7 @@
 #include "ArchipelagoRecipesContentTable.h"
 #include "ArchipelagoTrainerSpellsContentTable.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 namespace
 {
@@ -42,11 +43,14 @@ class ArchipelagoLearnSpellScript : public PlayerScript
 public:
     ArchipelagoLearnSpellScript() : PlayerScript("ArchipelagoLearnSpellScript", { PLAYERHOOK_ON_LEARN_SPELL }) { }
 
-    void OnPlayerLearnSpell(Player* /*player*/, uint32 spellID) override
+    void OnPlayerLearnSpell(Player* player, uint32 spellID) override
     {
         auto it = CombinedSpellIdToLocationId.find(spellID);
         if (it != CombinedSpellIdToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

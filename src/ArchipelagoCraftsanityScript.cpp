@@ -13,20 +13,24 @@
 #include "ScriptMgr.h"
 #include "ArchipelagoCRAFTSANITYContent.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoCraftsanityScript : public PlayerScript
 {
 public:
     ArchipelagoCraftsanityScript() : PlayerScript("ArchipelagoCraftsanityScript", { PLAYERHOOK_ON_CREATE_ITEM }) { }
 
-    void OnPlayerCreateItem(Player* /*player*/, Item* item, uint32 /*count*/) override
+    void OnPlayerCreateItem(Player* player, Item* item, uint32 /*count*/) override
     {
         if (!item)
             return;
 
         auto it = ArchipelagoCRAFTSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.find(item->GetEntry());
         if (it != ArchipelagoCRAFTSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

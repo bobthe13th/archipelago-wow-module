@@ -46,6 +46,8 @@ public:
         }
         if (!checks.empty())
             sArchipelagoMgr->SendLocationChecks(checks);
+        for (int64_t locationId : checks)
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
 
         // Sprint's own completion check stays here, unchanged from M2.1 --
         // it's genuinely per-player (THIS player's own level crossing 60),

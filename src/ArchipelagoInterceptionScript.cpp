@@ -187,6 +187,7 @@ public:
         if (!LocationAlreadyChecked(locationId))
         {
             sArchipelagoMgr->SendLocationChecks({ locationId });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
             return;
         }
 

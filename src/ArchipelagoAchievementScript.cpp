@@ -20,17 +20,21 @@
 #include "DBCStructure.h"
 #include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoAchievementScript : public PlayerScript
 {
 public:
     ArchipelagoAchievementScript() : PlayerScript("ArchipelagoAchievementScript", { PLAYERHOOK_ON_ACHI_COMPLETE }) { }
 
-    void OnPlayerAchievementComplete(Player* /*player*/, AchievementEntry const* achievement) override
+    void OnPlayerAchievementComplete(Player* player, AchievementEntry const* achievement) override
     {
         auto it = Archipelago::Achievements::AchievementIdToLocationId.find(achievement->ID);
         if (it != Archipelago::Achievements::AchievementIdToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 
