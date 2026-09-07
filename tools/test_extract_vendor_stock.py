@@ -2,7 +2,9 @@ import unittest
 from unittest.mock import patch
 
 import extract_vendor_stock
-from extract_vendor_stock import build_row, extract, _load_vendor_expansions, _load_vendor_area_tags
+from extract_vendor_stock import (
+    build_row, extract, _load_vendor_expansions, _load_vendor_area_tags, _load_vendor_types,
+)
 
 
 class TestBuildRow(unittest.TestCase):
@@ -58,6 +60,23 @@ class TestBuildRow(unittest.TestCase):
             result["tags"],
             {"expansion": ["vanilla"], "area": ["orgrimmar", "shattrath_city", "stormwind_city"]},
         )
+
+    def test_row_with_utility_flags_gets_vendor_type_tag(self) -> None:
+        row = ("100", "Innkeeper Bob", "6948", "1", "0", "Hearthstone")
+        result = build_row(row, row_index=0, expansion="vanilla", vendor_types=frozenset({"innkeeper"}))
+        self.assertEqual(result["tags"]["vendor_type"], ["innkeeper"])
+
+    def test_row_with_no_utility_flags_omits_vendor_type_tag(self) -> None:
+        row = ("100", "Ordinary Vendor", "6948", "1", "0", "Hearthstone")
+        result = build_row(row, row_index=0, expansion="vanilla", vendor_types=frozenset())
+        self.assertNotIn("vendor_type", result["tags"])
+
+    def test_vendor_type_defaults_to_empty_when_not_passed(self) -> None:
+        # Same "callers that don't care don't need to pass it" convention
+        # area_tags's own default already establishes on this function.
+        row = ("100", "Ordinary Vendor", "6948", "1", "0", "Hearthstone")
+        result = build_row(row, row_index=0, expansion="vanilla")
+        self.assertNotIn("vendor_type", result["tags"])
 
     def test_two_rows_with_same_npc_and_item_name_get_distinct_names(self) -> None:
         row_a = ("100", "Alana Moonstrike", "51149", "0", "0", "Sanctified Lasherweave Cover")
@@ -131,17 +150,55 @@ class TestLoadVendorAreaTags(unittest.TestCase):
         mock_resolve.assert_not_called()
 
 
+class TestLoadVendorTypes(unittest.TestCase):
+    @patch("extract_vendor_stock.run_query")
+    def test_maps_entry_to_real_flag_derived_categories(self, mock_run_query) -> None:
+        # Real flag bit values verified live against UnitDefines.h:
+        # UNIT_NPC_FLAG_INNKEEPER=0x00010000, UNIT_NPC_FLAG_VENDOR_AMMO=0x00000100,
+        # UNIT_NPC_FLAG_VENDOR_FOOD=0x00000200, UNIT_NPC_FLAG_VENDOR_POISON=0x00000400,
+        # UNIT_NPC_FLAG_VENDOR_REAGENT=0x00000800.
+        mock_run_query.return_value = [
+            ("100", str(0x00010000)),                          # pure innkeeper
+            ("200", str(0x00000100 | 0x00000200)),             # general_goods + food
+            ("300", "0"),                                       # no utility flags at all
+        ]
+        result = _load_vendor_types()
+        self.assertEqual(result, {
+            100: frozenset({"innkeeper"}),
+            200: frozenset({"general_goods", "food"}),
+            300: frozenset(),
+        })
+
+    @patch("extract_vendor_stock.run_query")
+    def test_query_joins_on_npc_vendor_entry_never_npc_vendor_item(self, mock_run_query) -> None:
+        # Regression guard for this plan's own Global Constraints: this query
+        # must key on npc_vendor.entry (never rewritten by this module's own
+        # live vendor-slot interception mechanism) and must never reference
+        # npc_vendor.item or join item_template at all -- a query that did
+        # would read this checkout's currently-corrupted live item column.
+        mock_run_query.return_value = []
+        _load_vendor_types()
+        query = mock_run_query.call_args[0][0]
+        self.assertIn("npc_vendor", query)
+        self.assertIn("entry", query)
+        self.assertNotIn("nv.item", query)
+        self.assertNotIn("item_template", query)
+
+
 class TestExtractDenylist(unittest.TestCase):
+    @patch("extract_vendor_stock._load_vendor_types")
     @patch("extract_vendor_stock._load_vendor_area_tags")
     @patch("extract_vendor_stock._load_vendor_expansions")
     @patch("extract_vendor_stock.load_exclusion_rules")
     @patch("extract_vendor_stock.run_query")
     def test_denylist_is_applied_to_item_name_not_npc_name(
-        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags,
+        mock_load_vendor_types,
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": [r"(?i)\btest\b"]}
         mock_load_expansions.return_value = {}
         mock_load_area_tags.return_value = {}
+        mock_load_vendor_types.return_value = {}
         mock_run_query.return_value = [
             ("1", "Test Vendor Bob", "500", "0", "0", "Ordinary Sword"),
             ("2", "Ordinary Vendor", "501", "0", "0", "Test Sword"),
@@ -153,16 +210,19 @@ class TestExtractDenylist(unittest.TestCase):
         self.assertEqual(len(result["items"]), 1)
         self.assertIn("Test Vendor Bob", result["locations"][0]["name"])
 
+    @patch("extract_vendor_stock._load_vendor_types")
     @patch("extract_vendor_stock._load_vendor_area_tags")
     @patch("extract_vendor_stock._load_vendor_expansions")
     @patch("extract_vendor_stock.load_exclusion_rules")
     @patch("extract_vendor_stock.run_query")
     def test_locations_carry_the_resolved_expansion_tag(
-        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags,
+        mock_load_vendor_types,
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {1: "wotlk"}
         mock_load_area_tags.return_value = {}
+        mock_load_vendor_types.return_value = {}
         mock_run_query.return_value = [
             ("1", "Some Vendor", "500", "0", "0", "Some Item"),
         ]
@@ -171,16 +231,19 @@ class TestExtractDenylist(unittest.TestCase):
 
         self.assertEqual(result["locations"][0]["tags"], {"expansion": ["wotlk"]})
 
+    @patch("extract_vendor_stock._load_vendor_types")
     @patch("extract_vendor_stock._load_vendor_area_tags")
     @patch("extract_vendor_stock._load_vendor_expansions")
     @patch("extract_vendor_stock.load_exclusion_rules")
     @patch("extract_vendor_stock.run_query")
     def test_missing_expansion_entry_defaults_to_vanilla(
-        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags,
+        mock_load_vendor_types,
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {}
         mock_load_area_tags.return_value = {}
+        mock_load_vendor_types.return_value = {}
         mock_run_query.return_value = [
             ("1", "Some Vendor", "500", "0", "0", "Some Item"),
         ]
@@ -189,16 +252,19 @@ class TestExtractDenylist(unittest.TestCase):
 
         self.assertEqual(result["locations"][0]["tags"], {"expansion": ["vanilla"]})
 
+    @patch("extract_vendor_stock._load_vendor_types")
     @patch("extract_vendor_stock._load_vendor_area_tags")
     @patch("extract_vendor_stock._load_vendor_expansions")
     @patch("extract_vendor_stock.load_exclusion_rules")
     @patch("extract_vendor_stock.run_query")
     def test_locations_carry_a_resolved_area_tag_when_present(
-        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags,
+        mock_load_vendor_types,
     ) -> None:
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {1: "vanilla"}
         mock_load_area_tags.return_value = {1: frozenset({"elwynn_forest"})}
+        mock_load_vendor_types.return_value = {}
         mock_run_query.return_value = [
             ("1", "Some Vendor", "500", "0", "0", "Some Item"),
         ]
@@ -209,12 +275,14 @@ class TestExtractDenylist(unittest.TestCase):
             result["locations"][0]["tags"], {"expansion": ["vanilla"], "area": ["elwynn_forest"]}
         )
 
+    @patch("extract_vendor_stock._load_vendor_types")
     @patch("extract_vendor_stock._load_vendor_area_tags")
     @patch("extract_vendor_stock._load_vendor_expansions")
     @patch("extract_vendor_stock.load_exclusion_rules")
     @patch("extract_vendor_stock.run_query")
     def test_area_key_omitted_not_empty_list_when_unresolved(
-        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags
+        self, mock_run_query, mock_load_rules, mock_load_expansions, mock_load_area_tags,
+        mock_load_vendor_types,
     ) -> None:
         # Same "never zero tags" invariant generate_content.py's
         # _validate_tags_rows enforces for every export_tags family
@@ -222,6 +290,7 @@ class TestExtractDenylist(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": []}
         mock_load_expansions.return_value = {1: "vanilla"}
         mock_load_area_tags.return_value = {}
+        mock_load_vendor_types.return_value = {}
         mock_run_query.return_value = [
             ("1", "Some Vendor", "500", "0", "0", "Some Item"),
         ]

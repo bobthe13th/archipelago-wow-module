@@ -74,8 +74,53 @@ def _load_vendor_area_tags(
     }
 
 
+# Real UnitDefines.h flag bits (src/server/game/Entities/Unit/UnitDefines.h:330-338),
+# verified live against this checkout's real header -- confirmed real per-category
+# row counts (live, this checkout): innkeeper 1,388 / general_goods 2,823 / food 3,700
+# / poison 2,127 / reagent 3,246 (M4.11.5.5).
+_VENDOR_TYPE_FLAGS: list[tuple[int, str]] = [
+    (0x00010000, "innkeeper"),
+    (0x00000100, "general_goods"),
+    (0x00000200, "food"),
+    (0x00000400, "poison"),
+    (0x00000800, "reagent"),
+]
+
+
+def _load_vendor_types() -> dict[int, frozenset[str]]:
+    """npc_vendor.entry -> the set of real "boring utility vendor" subtype
+    tags this vendor's own creature_template.npcflag carries (M4.11.5.5).
+    Deliberately keyed on npc_vendor.entry alone, joined only to
+    creature_template -- NEVER through npc_vendor.item/item_template, same
+    entry-only pattern _load_vendor_expansions/_load_vendor_area_tags above
+    already establish, and for the same real reason: this module's own live
+    vendor-slot interception mechanism (APItemDisplay.cpp) rewrites
+    npc_vendor.item at runtime once a slot's AP check is intercepted, but
+    never touches npc_vendor.entry -- a query keyed on entry alone is safe
+    against a played-on realm where item is no longer trustworthy (verified
+    live this checkout: of 37,753 real npc_vendor rows, only 3 still have a
+    real item<4,000,000 value). A vendor with none of these five flags maps
+    to an empty frozenset (an "untagged for this dimension" row, the normal
+    case) -- see build_row's own docstring for why an empty set must not
+    become an empty tags["vendor_type"] list."""
+    rows = run_query("""
+        SELECT nv.entry, ct.npcflag
+        FROM npc_vendor nv
+        JOIN creature_template ct ON nv.entry = ct.entry
+        GROUP BY nv.entry, ct.npcflag
+    """)
+    result: dict[int, frozenset[str]] = {}
+    for entry_str, npcflag_str in rows:
+        npcflag = int(npcflag_str)
+        result[int(entry_str)] = frozenset(
+            label for bit, label in _VENDOR_TYPE_FLAGS if npcflag & bit
+        )
+    return result
+
+
 def build_row(
     row: tuple[str, ...], row_index: int, expansion: str, area_tags: frozenset[str] = frozenset(),
+    vendor_types: frozenset[str] = frozenset(),
 ) -> dict:
     """Map one raw npc_vendor/item_template/creature_template result row
     (entry, npc_name, item, slot, ExtendedCost, item_name) plus its stable
@@ -93,7 +138,12 @@ def build_row(
     fails on an empty list for any dimension present in an export_tags
     family's tags block (vendor_stock is export_tags=True), the same
     "never zero tags" convention extract_enemysanity.py's own tags["area"]
-    omission already established (M4.11.3.2 Task 3)."""
+    omission already established (M4.11.3.2 Task 3).
+
+    vendor_types (M4.11.5.5) follows the exact same "omit when empty" convention as
+    area_tags immediately above -- tags["vendor_type"] is present only when this
+    row's own vendor NPC has at least one of the five real utility-vendor flag
+    bits set (see _load_vendor_types), never as an empty list."""
     entry, npc_name, item, slot, extended_cost, item_name = row
 
     entry_int = int(entry)
@@ -103,6 +153,8 @@ def build_row(
     tags = {"expansion": [expansion]}
     if area_tags:
         tags["area"] = sorted(area_tags)
+    if vendor_types:
+        tags["vendor_type"] = sorted(vendor_types)
 
     return {
         "location_name": f"Vendor: {npc_name} - {item_name} (#{row_index})",
@@ -134,6 +186,7 @@ def extract() -> dict:
     vendor_area_tags = _load_vendor_area_tags(
         world_map_areas, area_zone_ids, area_names, map_instance_types, map_names,
     )
+    vendor_types_by_entry = _load_vendor_types()
     rows = run_query("""
         SELECT v.entry, c.name AS npc_name, v.item, v.slot, v.ExtendedCost, i.name AS item_name
         FROM npc_vendor v
@@ -147,7 +200,8 @@ def extract() -> dict:
         entry_int = int(row[0])
         expansion = vendor_expansions.get(entry_int, "vanilla")
         area_tags = vendor_area_tags.get(entry_int, frozenset())
-        built = build_row(row, row_index, expansion, area_tags)
+        vendor_types = vendor_types_by_entry.get(entry_int, frozenset())
+        built = build_row(row, row_index, expansion, area_tags, vendor_types)
         if is_denylisted(built["_item_name_for_denylist"], rules):
             continue
 
