@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APDelivery.cpp
 #include "APDelivery.h"
 
+#include <algorithm>
 #include <array>
 
 #include "AuctionHouseMgr.h"
@@ -109,40 +110,16 @@ namespace
         LOG_INFO("module.archipelago_wow", "Archipelago: listed WoW item entry {} on the neutral Auction House (auction #{}, buyout {} copper)", wowItemEntry, auction->Id, buyout);
     }
 
-    // Shared by MailToDeliveryCharacter and MailToAllAccounts: constructs one
-    // Item of wowItemEntry and mails it to lowGuid via the standard
-    // "Archipelago" subject / "An item from your multiworld has arrived."
-    // body, same Postmaster sender (34337) both policies already used
-    // identically. Returns false (and logs) if Item::CreateItem failed --
-    // callers decide whether that's fatal (MailToDeliveryCharacter) or
-    // skip-and-continue (MailToAllAccounts, mid-loop).
-    bool MailItemTo(uint32_t wowItemEntry, ObjectGuid::LowType lowGuid, std::string const& recipientLabel, CharacterDatabaseTransaction trans)
-    {
-        Item* item = Item::CreateItem(wowItemEntry, 1);
-        if (!item)
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {} while mailing to '{}', item is lost", wowItemEntry, recipientLabel);
-            return false;
-        }
-
-        Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
-        item->SaveToDB(trans);
-        MailDraft draft("Archipelago", "An item from your multiworld has arrived.");
-        draft.AddItem(item);
-        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
-        draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
-        return true;
-    }
-
     // M4.11.5.0.2: SingleDeliveryCharacter's recipient IS the finder in every
     // realistic single-character-slot setup this policy exists for (its own
     // doc comment: "M2/M2.1's existing, only behavior" -- one WoW character
     // is the entire multiworld slot). Handing them the item directly, right
     // now, when they're actually online to receive it removes the delayed
     // mail round-trip design spec M4.11.5.0's own live-tester complaint --
-    // with zero risk to the offline case, which still gets exactly today's
-    // mail behavior via GiveOrMailItem's own mail-fallback branch below.
-    void GrantOrMailToDeliveryCharacter(uint32_t wowItemEntry, std::string const& deliveryCharacter, CharacterDatabaseTransaction trans)
+    // with zero risk to the offline case, which now queues into batch
+    // (M4.11.5.2.0) instead of mailing immediately, exactly like
+    // AllAccountsDelivery below.
+    void GrantOrMailToDeliveryCharacter(uint32_t wowItemEntry, std::string const& deliveryCharacter, std::string const& familyLabel, Archipelago::Delivery::DeliveryBatch& batch, CharacterDatabaseTransaction trans)
     {
         ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
         if (receiverGuid.IsEmpty())
@@ -157,7 +134,7 @@ namespace
             return;
         }
 
-        MailItemTo(wowItemEntry, receiverGuid.GetCounter(), deliveryCharacter, trans);
+        batch.Queue(receiverGuid.GetCounter(), deliveryCharacter, wowItemEntry, familyLabel);
     }
 
     // M4.7.1.3: the real "every player receives everything" policy. One
@@ -171,12 +148,13 @@ namespace
     // AT THE MOMENT this specific delivery runs, exactly like every other
     // delivery policy above -- an account created afterward relies
     // entirely on CatchUpPolicy (APCatchUp.h/.cpp) to backfill what it
-    // missed. No volume cap: every delivered item is mailed to every
-    // eligible account, with no classification filtering and no batching
-    // -- a deliberate choice (M4.7.1.3 design resolution), not an
-    // oversight; a long campaign can mail thousands of items to every
-    // account.
-    void MailToAllAccounts(uint32_t wowItemEntry, CharacterDatabaseTransaction trans)
+    // missed. No volume cap: every delivered item is queued for every
+    // eligible account, with no classification filtering -- a deliberate
+    // choice (M4.7.1.3 design resolution), not an oversight; a long
+    // campaign can still queue thousands of items for every account, now
+    // batched (M4.11.5.2.0) into far fewer mails than before instead of
+    // mailing each one immediately.
+    void MailToAllAccounts(uint32_t wowItemEntry, std::string const& familyLabel, Archipelago::Delivery::DeliveryBatch& batch)
     {
         QueryResult result = CharacterDatabase.Query(
             "SELECT guid, name FROM ("
@@ -198,17 +176,44 @@ namespace
             ObjectGuid::LowType lowGuid = fields[0].Get<uint32_t>();
             std::string recipientName = fields[1].Get<std::string>();
 
-            if (MailItemTo(wowItemEntry, lowGuid, recipientName, trans))
-                ++recipientCount;
+            batch.Queue(lowGuid, recipientName, wowItemEntry, familyLabel);
+            ++recipientCount;
         } while (result->NextRow());
 
-        LOG_INFO("module.archipelago_wow", "Archipelago: mailed WoW item entry {} to {} account(s) (AllAccountsDelivery)", wowItemEntry, recipientCount);
+        LOG_INFO("module.archipelago_wow", "Archipelago: queued WoW item entry {} for {} account(s) (AllAccountsDelivery)", wowItemEntry, recipientCount);
+    }
+
+    // M4.11.5.2.0: real, player-facing item name for richer mail text (design
+    // spec Sec5) -- same real lookup/fallback DeliverItem's own Policy::FirstToClaim
+    // branch below already uses for its own realm-wide announcement, reused here
+    // rather than duplicated.
+    std::string RealItemName(uint32_t wowItemEntry)
+    {
+        if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(wowItemEntry))
+            return itemTemplate->Name1;
+        return Acore::StringFormat("item #{}", wowItemEntry);
+    }
+
+    // M4.11.5.2.0: real body text for one flushed, possibly-multi-item mail --
+    // one line per real item name plus the family it came from. Never a raw
+    // entry id on its own (RealItemName's own fallback still names the entry,
+    // just clearly labeled "item #N" rather than silently blank). No "finder"
+    // line -- see this plan's Global Constraints for why no real live finder
+    // identity is available to include here.
+    std::string BuildBatchedMailBody(std::vector<Archipelago::Delivery::QueuedItem> const& items)
+    {
+        std::string body = items.size() == 1
+            ? "Your multiworld delivered 1 item:\n"
+            : Acore::StringFormat("Your multiworld delivered {} items:\n", items.size());
+        for (Archipelago::Delivery::QueuedItem const& queuedItem : items)
+            body += Acore::StringFormat("- {} ({})\n", RealItemName(queuedItem.wowItemEntry), queuedItem.familyLabel);
+        return body;
     }
 }
 
 namespace Archipelago::Delivery
 {
-    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, CharacterDatabaseTransaction trans)
+    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans)
     {
         switch (policy)
         {
@@ -236,23 +241,55 @@ namespace Archipelago::Delivery
                 // and is claimed independently by whoever gets to the NPC first.
                 trans->Append("INSERT INTO archipelago_first_to_claim_pending (wow_item_entry) VALUES ({})", wowItemEntry);
 
-                std::string itemName = Acore::StringFormat("item #{}", wowItemEntry);
-                if (ItemTemplate const* itemTemplate = sObjectMgr->GetItemTemplate(wowItemEntry))
-                    itemName = itemTemplate->Name1;
+                std::string itemName = RealItemName(wowItemEntry);
                 sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, Acore::StringFormat(
                     "Archipelago: '{}' is up for grabs at the Archipelago Cache Keeper (Northshire Abbey) -- first come, first served!", itemName));
                 break;
             }
 
             case Policy::AllAccountsDelivery:
-                MailToAllAccounts(wowItemEntry, trans);
+                MailToAllAccounts(wowItemEntry, familyLabel, batch);
                 break;
 
             case Policy::SingleDeliveryCharacter:
             default:
-                GrantOrMailToDeliveryCharacter(wowItemEntry, deliveryCharacter, trans);
+                GrantOrMailToDeliveryCharacter(wowItemEntry, deliveryCharacter, familyLabel, batch, trans);
                 break;
         }
+    }
+
+    void FlushDeliveryBatch(DeliveryBatch& batch, CharacterDatabaseTransaction trans)
+    {
+        for (auto& [lowGuid, queue] : batch.queues)
+        {
+            Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(lowGuid);
+            for (size_t offset = 0; offset < queue.items.size(); offset += MAX_MAIL_ITEMS)
+            {
+                size_t count = std::min<size_t>(MAX_MAIL_ITEMS, queue.items.size() - offset);
+                std::vector<QueuedItem> chunk(queue.items.begin() + offset, queue.items.begin() + offset + count);
+
+                MailDraft draft("Archipelago", BuildBatchedMailBody(chunk));
+                bool anyItemAdded = false;
+                for (QueuedItem const& queuedItem : chunk)
+                {
+                    Item* item = Item::CreateItem(queuedItem.wowItemEntry, 1);
+                    if (!item)
+                    {
+                        LOG_ERROR("module.archipelago_wow", "Archipelago: Item::CreateItem failed for WoW item entry {} while mailing to '{}', item is lost", queuedItem.wowItemEntry, queue.recipientLabel);
+                        continue;
+                    }
+                    item->SaveToDB(trans);
+                    draft.AddItem(item);
+                    anyItemAdded = true;
+                }
+                if (!anyItemAdded)
+                    continue;
+
+                MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches GiveOrMailItem's own precedent below */);
+                draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
+            }
+        }
+        batch.queues.clear();
     }
 
     void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans)

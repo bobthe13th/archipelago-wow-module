@@ -94,6 +94,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
 
     int64_t lastIndex = GetLastItemIndex();
     CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+    Archipelago::Delivery::DeliveryBatch batch; // M4.11.5.2.0: flushed once, below, after every item in this drain has been dispatched.
     int64_t highestSeen = lastIndex;
 
     for (Archipelago::ReceivedItem const& received : items)
@@ -283,7 +284,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto fishEntryIt = Archipelago::Fish::ApItemIdToWowItemEntry.find(received.item);
         if (fishEntryIt != Archipelago::Fish::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, fishEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, fishEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Fish", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", fishEntryIt->second);
             // Realm-wide "has this exact fish species ever been received"
             // set, backing Fishing Quest's "all 46 species" completion check
@@ -332,7 +333,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto collectionEntryIt = Archipelago::Collections::ApItemIdToWowItemEntry.find(received.item);
         if (collectionEntryIt != Archipelago::Collections::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, collectionEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, collectionEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Collections", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", collectionEntryIt->second);
             // Realm-wide "has this exact mount/pet ever been received" flag,
             // backing Collector's "all 264 collectibles" completion check --
@@ -352,7 +353,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto recipeEntryIt = ArchipelagoRECIPESContent::ApItemIdToWowItemEntry.find(received.item);
         if (recipeEntryIt != ArchipelagoRECIPESContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, recipeEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, recipeEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Recipes", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", recipeEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -361,7 +362,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto trainerSpellEntryIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToWowItemEntry.find(received.item);
         if (trainerSpellEntryIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, trainerSpellEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, trainerSpellEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Trainer Spells", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", trainerSpellEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -417,7 +418,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto gathersanityEntryIt = ArchipelagoGATHERSANITYContent::ApItemIdToWowItemEntry.find(received.item);
         if (gathersanityEntryIt != ArchipelagoGATHERSANITYContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, gathersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, gathersanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Gathersanity", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", gathersanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -438,7 +439,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto craftsanityEntryIt = ArchipelagoCRAFTSANITYContent::ApItemIdToWowItemEntry.find(received.item);
         if (craftsanityEntryIt != ArchipelagoCRAFTSANITYContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, craftsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, craftsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Craftsanity", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", craftsanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -454,7 +455,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto itemsanityEntryIt = ArchipelagoITEMSANITYContent::ApItemIdToWowItemEntry.find(received.item);
         if (itemsanityEntryIt != ArchipelagoITEMSANITYContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, itemsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, itemsanityEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Itemsanity", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", itemsanityEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -465,7 +466,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto fillerItemEntryIt = ArchipelagoFILLER_REWARD_ITEMSContent::ApItemIdToWowItemEntry.find(received.item);
         if (fillerItemEntryIt != ArchipelagoFILLER_REWARD_ITEMSContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, fillerItemEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, fillerItemEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Filler", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", fillerItemEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -513,7 +514,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto questRewardEntryIt = ArchipelagoQUEST_REWARDSContent::ApItemIdToWowItemEntry.find(received.item);
         if (questRewardEntryIt != ArchipelagoQUEST_REWARDSContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, questRewardEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, questRewardEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Quest Rewards", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", questRewardEntryIt->second);
             // M4.11.1 Task 15 fix: Quest Rewards deliveries never set a
             // per-item "received" flag or called CheckAndSendGoalComplete,
@@ -539,7 +540,7 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         auto vendorStockEntryIt = ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry.find(received.item);
         if (vendorStockEntryIt != ArchipelagoVENDOR_STOCKContent::ApItemIdToWowItemEntry.end())
         {
-            Archipelago::Delivery::DeliverItem(deliveryPolicy, vendorStockEntryIt->second, deliveryCharacter, auctionHouseCostTier, trans);
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, vendorStockEntryIt->second, deliveryCharacter, auctionHouseCostTier, "Vendor Stock", batch, trans);
             trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", vendorStockEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
@@ -572,6 +573,8 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
 
     if (highestSeen > lastIndex)
         trans->Append("UPDATE archipelago_state SET last_item_index = {} WHERE id = 1", highestSeen);
+
+    Archipelago::Delivery::FlushDeliveryBatch(batch, trans); // M4.11.5.2.0: turn every item queued into batch above into real, batched mails.
 
     CharacterDatabase.CommitTransaction(trans);
 

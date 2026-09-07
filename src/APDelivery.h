@@ -4,7 +4,9 @@
 #include "DatabaseEnv.h"
 
 #include <cstdint>
+#include <map>
 #include <string>
+#include <vector>
 
 class Player;
 
@@ -48,16 +50,65 @@ namespace Archipelago::Delivery
         Random,
     };
 
+    // M4.11.5.2.0: one item queued for mail-shaped delivery, waiting to be flushed
+    // by FlushDeliveryBatch. familyLabel is which family's own ApItemIdToWowItemEntry
+    // map resolved this item (e.g. "Quest Rewards", "Vendor Stock") -- surfaced in
+    // the flushed mail's own body text so the player knows where a delivered item
+    // came from, not just what it is.
+    struct QueuedItem
+    {
+        uint32_t wowItemEntry;
+        std::string familyLabel;
+    };
+
+    // M4.11.5.2.0: accumulates every item queued for mail-shaped delivery
+    // (SingleDeliveryCharacter's offline branch, AllAccountsDelivery) across one
+    // whole DeliverArchipelagoItems drain, so FlushDeliveryBatch can combine them
+    // into as few real mails as MAX_MAIL_ITEMS (12) allows per recipient, instead
+    // of always sending one mail per item. AuctionHouse/SharedCacheNpc/FirstToClaim
+    // never touch this -- confirmed live, none of them ever construct a MailDraft.
+    struct DeliveryBatch
+    {
+        struct RecipientQueue
+        {
+            std::string recipientLabel; // the character/account-selected name MailItemTo's old error log used, kept for the same purpose here
+            std::vector<QueuedItem> items;
+        };
+
+        void Queue(ObjectGuid::LowType lowGuid, std::string const& recipientLabel, uint32_t wowItemEntry, std::string const& familyLabel)
+        {
+            RecipientQueue& queue = queues[lowGuid];
+            queue.recipientLabel = recipientLabel;
+            queue.items.push_back({ wowItemEntry, familyLabel });
+        }
+
+        std::map<ObjectGuid::LowType, RecipientQueue> queues;
+    };
+
     // wowItemEntry is the WoW item_template entry to deliver. Policy::SingleDeliveryCharacter
     // constructs and mails one Item of this entry to deliveryCharacter (M2/M2.1's original,
-    // only behavior, unchanged). Policy::SharedCacheNpc never constructs an Item here at
+    // only behavior, unchanged) -- or, since M4.11.5.0.2, grants it directly if that character
+    // is online right now. Policy::SharedCacheNpc never constructs an Item here at
     // all -- see the enum comment above. Task 12 originally took an already-constructed
     // Item* here; changed to a raw entry id in Task 13 once SharedCacheNpc showed that
     // "construct then hand off" doesn't fit every policy (there is no single owner to
     // construct an Item for at receive time), so construction is now each branch's own
     // decision, made if and when it actually needs one. costTier is only consulted by
-    // Policy::AuctionHouse.
-    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, CharacterDatabaseTransaction trans);
+    // Policy::AuctionHouse. familyLabel/batch (M4.11.5.2.0) are only consulted by the two
+    // mail-shaped policies (SingleDeliveryCharacter's offline branch, AllAccountsDelivery),
+    // which queue into batch instead of mailing immediately -- see FlushDeliveryBatch.
+    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans);
+
+    // M4.11.5.2.0: flushes every recipient's own queued items (built up by however many
+    // DeliverItem calls queued into batch since it was last flushed) into real mails,
+    // chunked at MAX_MAIL_ITEMS (12) items per mail per recipient. Real item name +
+    // family label per line, built at flush time (not queue time) so item-name
+    // resolution only happens once, right before the mail is actually sent. Clears
+    // batch's own queues once flushed, so calling this twice on the same batch is
+    // safe (a no-op the second time). Call once, after every DeliverItem call for a
+    // given drain has completed, before committing the same trans those DeliverItem
+    // calls' own trans->Append (or Item::SaveToDB) calls used.
+    void FlushDeliveryBatch(DeliveryBatch& batch, CharacterDatabaseTransaction trans);
 
     // Shared "give this online player one copy of wowItemEntry right now" primitive:
     // stores it directly into their bags if there's room, otherwise mails it (same
@@ -66,6 +117,7 @@ namespace Archipelago::Delivery
     // online Player* -- the Archipelago Cache Keeper's claim options (Tasks 13/15)
     // and new-character catch-up (Task 16) -- as opposed to DeliverItem above, which
     // routes a freshly-received AP item according to the realm's configured policy
-    // and doesn't assume a specific online recipient.
+    // and doesn't assume a specific online recipient. Unchanged by M4.11.5.2.0 -- a
+    // separate, single-item, single-known-recipient call context.
     void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans);
 }
