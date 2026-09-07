@@ -130,7 +130,7 @@ namespace
 
         if (Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter()))
         {
-            Archipelago::Delivery::GiveOrMailItem(onlineReceiver, wowItemEntry, trans);
+            Archipelago::Delivery::GiveOrMailItem(onlineReceiver, wowItemEntry, trans, familyLabel);
             return;
         }
 
@@ -156,31 +156,36 @@ namespace
     // mailing each one immediately.
     void MailToAllAccounts(uint32_t wowItemEntry, std::string const& familyLabel, Archipelago::Delivery::DeliveryBatch& batch)
     {
-        QueryResult result = CharacterDatabase.Query(
-            "SELECT guid, name FROM ("
-            "  SELECT guid, name, "
-            "         ROW_NUMBER() OVER (PARTITION BY account ORDER BY logout_time DESC, guid DESC) AS rn "
-            "  FROM characters WHERE deleteDate IS NULL"
-            ") ranked WHERE rn = 1"
-        );
-        if (!result)
+        if (!batch.allAccountsRecipients.has_value())
+        {
+            batch.allAccountsRecipients.emplace();
+            if (QueryResult result = CharacterDatabase.Query(
+                "SELECT guid, name FROM ("
+                "  SELECT guid, name, "
+                "         ROW_NUMBER() OVER (PARTITION BY account ORDER BY logout_time DESC, guid DESC) AS rn "
+                "  FROM characters WHERE deleteDate IS NULL"
+                ") ranked WHERE rn = 1"
+            ))
+            {
+                do
+                {
+                    Field* fields = result->Fetch();
+                    ObjectGuid::LowType lowGuid = fields[0].Get<uint32_t>();
+                    std::string recipientName = fields[1].Get<std::string>();
+                    batch.allAccountsRecipients->emplace_back(lowGuid, recipientName);
+                } while (result->NextRow());
+            }
+            LOG_INFO("module.archipelago_wow", "Archipelago: AllAccountsDelivery resolved {} eligible account(s) for this drain", batch.allAccountsRecipients->size());
+        }
+
+        if (batch.allAccountsRecipients->empty())
         {
             LOG_ERROR("module.archipelago_wow", "Archipelago: AllAccountsDelivery found no eligible accounts (no real characters exist yet), dropping item {}", wowItemEntry);
             return;
         }
 
-        uint32_t recipientCount = 0;
-        do
-        {
-            Field* fields = result->Fetch();
-            ObjectGuid::LowType lowGuid = fields[0].Get<uint32_t>();
-            std::string recipientName = fields[1].Get<std::string>();
-
+        for (auto const& [lowGuid, recipientName] : *batch.allAccountsRecipients)
             batch.Queue(lowGuid, recipientName, wowItemEntry, familyLabel);
-            ++recipientCount;
-        } while (result->NextRow());
-
-        LOG_INFO("module.archipelago_wow", "Archipelago: queued WoW item entry {} for {} account(s) (AllAccountsDelivery)", wowItemEntry, recipientCount);
     }
 
     // M4.11.5.2.0: real, player-facing item name for richer mail text (design
@@ -293,14 +298,23 @@ namespace Archipelago::Delivery
                 for (Item* item : createdItems)
                     draft.AddItem(item);
 
-                MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches GiveOrMailItem's own precedent below */);
+                MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
                 draft.SendMailTo(trans, MailReceiver(onlineReceiver, lowGuid), sender);
             }
         }
+
+        size_t totalItems = 0, totalMails = 0, totalRecipients = batch.queues.size();
+        for (auto const& [lowGuid, queue] : batch.queues)
+        {
+            totalItems += queue.items.size();
+            totalMails += (queue.items.size() + MAX_MAIL_ITEMS - 1) / MAX_MAIL_ITEMS;
+        }
+        LOG_INFO("module.archipelago_wow", "Archipelago: flushed {} item(s) into {} mail(s) across {} recipient(s)", totalItems, totalMails, totalRecipients);
+
         batch.queues.clear();
     }
 
-    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans)
+    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans, std::string const& familyLabel)
     {
         ItemPosCountVec dest;
         InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, wowItemEntry, 1);
@@ -318,9 +332,12 @@ namespace Archipelago::Delivery
             return;
         }
         item->SaveToDB(trans);
-        MailDraft draft("Archipelago", "An item from Archipelago has arrived (your bags were full).");
+        std::string body = familyLabel.empty()
+            ? "An item from Archipelago has arrived (your bags were full)."
+            : Acore::StringFormat("{} ({}) has arrived, but your bags were full -- mailed instead.", RealItemName(wowItemEntry), familyLabel);
+        MailDraft draft("Archipelago", body);
         draft.AddItem(item);
-        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches MailToDeliveryCharacter's precedent above */);
+        MailSender sender(MAIL_CREATURE, 34337 /* The Postmaster, matches cs_item.cpp's precedent */);
         draft.SendMailTo(trans, MailReceiver(player, player->GetGUID().GetCounter()), sender);
     }
 }

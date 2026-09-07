@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -84,6 +85,15 @@ namespace Archipelago::Delivery
         }
 
         std::map<ObjectGuid::LowType, RecipientQueue> queues;
+
+        // M4.11.5.2.0 fix: AllAccountsDelivery's own account-resolution query
+        // (see MailToAllAccounts, APDelivery.cpp) is a real, expensive
+        // full-table scan+sort -- the approved spec requires it run once per
+        // whole drain, not once per delivered item. Cached here the first
+        // time AllAccountsDelivery is queued into this batch (nullopt means
+        // "not yet resolved this drain"); every later item in the same
+        // drain reuses it instead of re-querying.
+        std::optional<std::vector<std::pair<ObjectGuid::LowType, std::string>>> allAccountsRecipients;
     };
 
     // wowItemEntry is the WoW item_template entry to deliver. Policy::SingleDeliveryCharacter
@@ -118,7 +128,9 @@ namespace Archipelago::Delivery
     // online Player* -- the Archipelago Cache Keeper's claim options (Tasks 13/15)
     // and new-character catch-up (Task 16) -- as opposed to DeliverItem above, which
     // routes a freshly-received AP item according to the realm's configured policy
-    // and doesn't assume a specific online recipient. Unchanged by M4.11.5.2.0 -- a
-    // separate, single-item, single-known-recipient call context.
-    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans);
+    // and doesn't assume a specific online recipient. familyLabel (M4.11.5.2.0 fix) is
+    // only known/passed by GrantOrMailToDeliveryCharacter's own real AP-delivery call
+    // site -- every other caller has no family concept and omits it, keeping today's
+    // exact generic fallback body for those calls.
+    void GiveOrMailItem(Player* player, uint32_t wowItemEntry, CharacterDatabaseTransaction trans, std::string const& familyLabel = "");
 }
