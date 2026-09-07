@@ -41,7 +41,9 @@ public:
                 checks.push_back(locationId);
         }
         if (!checks.empty())
+        {
             sArchipelagoMgr->SendLocationChecks(checks);
+        }
         for (int64_t locationId : checks)
             sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
     }

@@ -424,6 +424,10 @@ namespace Archipelago
             // surrounding frame has no Connected command in it at all (the
             // normal case: an ItemSend arrives on its own, whenever any real
             // slot in the multiworld finds a check, long after connect).
+            // Offline-gap limitation: this realm only observes ItemSend
+            // broadcasts while this APClient is connected -- checks found by
+            // other slots while this realm was disconnected are never
+            // recorded and cannot be reconstructed after the fact.
             auto itemSendEvents = ParseItemSendEvents(message);
             if (!itemSendEvents.empty() && _callbacks.onItemSendEventsReceived)
                 _callbacks.onItemSendEventsReceived(itemSendEvents);

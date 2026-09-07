@@ -249,8 +249,9 @@ namespace Archipelago
     // vector (never throws) on malformed JSON.
     std::vector<std::string> ParsePrintJSONText(std::string const& raw);
 
-    // One real "ItemSend" PrintJSON event (a player received an item, per the
-    // real Archipelago network protocol's own PrintJsonType enum) -- the
+    // One real "ItemSend" PrintJSON event (a real location check was found
+    // and its item sent onward to a recipient slot, per the real
+    // Archipelago network protocol's own PrintJsonType enum) -- the
     // structured fields this project's own ParsePrintJSONText already
     // discards in favor of flattened display text (M4.11.5.6). sourceSlot is
     // the real slot id that FOUND the check (item.player, per the protocol's
@@ -261,6 +262,8 @@ namespace Archipelago
     struct ItemSendEvent
     {
         int64_t sourceSlot = 0;
+        // Not yet consumed by any caller -- parsed and stored for a future
+        // per-recipient breakdown.
         int64_t destinationSlot = 0;
     };
 

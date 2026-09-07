@@ -1,7 +1,8 @@
 # M4.11.5.6 — Check Leaderboard Command: Manual Verification Checklist
 
 Automated coverage: only Task 1's `ParseItemSendEvents` (`APProtocol.cpp`) is covered by
-`archipelago_wow_tests` (real doctest coverage, 6 new cases). Every other file this milestone
+`archipelago_wow_tests` (real doctest coverage, 7 new `TEST_CASE` blocks / 15 assertions). Every
+other file this milestone
 touches (`ArchipelagoRealmState.cpp`, `ArchipelagoWorldScript.cpp`,
 `ArchipelagoCommandScript.cpp`, and all 14 real `SendLocationChecks` call-site files) has no
 automated coverage at all -- everything below requires a live worldserver + a real, live AP

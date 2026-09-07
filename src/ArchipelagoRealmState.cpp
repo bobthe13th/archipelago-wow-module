@@ -1,6 +1,8 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoRealmState.cpp
 #include "ArchipelagoRealmState.h"
 
+#include <algorithm>
+
 #include "DatabaseEnv.h"
 #include "GameTime.h"
 #include "Log.h"
@@ -78,9 +80,27 @@ void ArchipelagoRealmState::Load()
         } while (result->NextRow());
     }
 
+    // M4.11.5.6 fix wave: populate both the dedup gate and the per-player
+    // count cache from the same single query, exact mirror of how
+    // _sentLocationChecks is populated above -- avoids a DB round-trip on
+    // every RecordLocationCheckAttribution call and every .ap leaderboard
+    // invocation (see RecordLocationCheckAttribution/GetCheckCountsByPlayer
+    // below).
+    _attributedLocations.clear();
+    _checkCountsByPlayer.clear();
+    if (QueryResult result = CharacterDatabase.Query("SELECT location_id, player_guid FROM archipelago_check_attribution"))
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            _attributedLocations.insert(fields[0].Get<uint64_t>());
+            ++_checkCountsByPlayer[fields[1].Get<uint32_t>()];
+        } while (result->NextRow());
+    }
+
     LOG_INFO("module.archipelago_wow",
-        "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, goal_complete={}, unlocked_instances={}, unlock_flags={}, sent_checks={}, recorded_boss_kills={})",
-        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _goalComplete, _unlockedInstances.size(), _flagTiers.size(), _sentLocationChecks.size(), _recordedBossKills.size());
+        "Archipelago: realm state loaded (level_cap={}, dark_portal={}, northrend_passage={}, goal_complete={}, unlocked_instances={}, unlock_flags={}, sent_checks={}, recorded_boss_kills={}, attributed_checks={})",
+        _levelCap, _darkPortalUnlocked, _northrendPassageUnlocked, _goalComplete, _unlockedInstances.size(), _flagTiers.size(), _sentLocationChecks.size(), _recordedBossKills.size(), _attributedLocations.size());
 }
 
 void ArchipelagoRealmState::RaiseLevelCap(uint32_t newCap)
@@ -177,24 +197,23 @@ void ArchipelagoRealmState::RecordSlotItemSend(int64_t sourceSlot)
 
 void ArchipelagoRealmState::RecordLocationCheckAttribution(uint64_t locationId, uint32_t playerGuidLow)
 {
-    CharacterDatabase.Execute(
-        "INSERT IGNORE INTO archipelago_check_attribution (location_id, player_guid) VALUES ({}, {})",
-        locationId, playerGuidLow);
+    if (_attributedLocations.insert(locationId).second)
+    {
+        CharacterDatabase.Execute(
+            "INSERT IGNORE INTO archipelago_check_attribution (location_id, player_guid) VALUES ({}, {})",
+            locationId, playerGuidLow);
+        ++_checkCountsByPlayer[playerGuidLow];
+    }
 }
 
 std::vector<std::pair<uint32_t, uint64_t>> ArchipelagoRealmState::GetCheckCountsByPlayer() const
 {
-    std::vector<std::pair<uint32_t, uint64_t>> result;
-    if (QueryResult queryResult = CharacterDatabase.Query(
-            "SELECT player_guid, COUNT(*) AS check_count FROM archipelago_check_attribution "
-            "GROUP BY player_guid ORDER BY check_count DESC"))
-    {
-        do
+    std::vector<std::pair<uint32_t, uint64_t>> result(_checkCountsByPlayer.begin(), _checkCountsByPlayer.end());
+    std::stable_sort(result.begin(), result.end(),
+        [](std::pair<uint32_t, uint64_t> const& lhs, std::pair<uint32_t, uint64_t> const& rhs)
         {
-            Field* fields = queryResult->Fetch();
-            result.emplace_back(fields[0].Get<uint32_t>(), fields[1].Get<uint64_t>());
-        } while (queryResult->NextRow());
-    }
+            return lhs.second > rhs.second;
+        });
     return result;
 }
 

@@ -25,11 +25,11 @@ public:
     {
         static ChatCommandTable apCommandTable =
         {
-            { "status",  HandleApStatusCommand,  SEC_PLAYER,     Console::No },
-            { "leaderboard", HandleApLeaderboardCommand, SEC_PLAYER, Console::No },
-            { "missing", HandleApMissingCommand, SEC_PLAYER,     Console::No },
-            { "hint",    HandleApHintCommand,    SEC_PLAYER,     Console::No },
-            { "port",    HandleApPortCommand,    SEC_GAMEMASTER, Console::No },
+            { "status",      HandleApStatusCommand,      SEC_PLAYER,     Console::No },
+            { "leaderboard", HandleApLeaderboardCommand, SEC_PLAYER,     Console::No },
+            { "missing",     HandleApMissingCommand,     SEC_PLAYER,     Console::No },
+            { "hint",        HandleApHintCommand,        SEC_PLAYER,     Console::No },
+            { "port",        HandleApPortCommand,        SEC_GAMEMASTER, Console::No },
         };
         static ChatCommandTable commandTable =
         {
@@ -75,13 +75,16 @@ public:
     // this milestone (spec's own Non-Goals).
     static bool HandleApLeaderboardCommand(ChatHandler* handler, const char* /*args*/)
     {
+        handler->PSendSysMessage("Archipelago: Note -- per-character totals count every check this realm sent to "
+            "the multiworld; per-slot totals count only checks the multiworld actually accepted -- the two are "
+            "not expected to sum to the same number.");
+
         auto const& slotTotals = sArchipelagoRealmState->GetSlotTotals();
         if (slotTotals.empty())
         {
             handler->PSendSysMessage("Archipelago: no cross-slot check activity observed yet "
                 "(this realm only sees ItemSend broadcasts while connected -- checks found "
-                "while this realm was offline are never recorded, and no new checks have been "
-                "observed since this realm was last restarted).");
+                "while this realm was offline are never recorded).");
         }
         else
         {
