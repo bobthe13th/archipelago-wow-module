@@ -54,16 +54,21 @@ namespace
         }
     }
 
-    // Policy::AuctionHouse (Task 14): lists the item on the neutral Auction House
-    // (design spec Sec7.1: "forces cross-faction contact") as a system auction --
-    // owner is ObjectGuid::Empty since there is no real seller, so no deposit is
-    // charged and no payout is owed to anyone on sale (AuctionHouseMgr::
-    // SendAuctionSuccessfulMail's payout/mail block is guarded on the owner
-    // existing, confirmed against this checkout, so an empty owner just means the
-    // "sale proceeds" are never paid out -- appropriate for a gifted AP item, not a
-    // real player's auction). startbid == buyout: a flat "buy now" price, no
-    // bidding war, matching the fact this isn't a real economic listing.
-    void ListOnAuctionHouse(uint32_t wowItemEntry, Archipelago::Delivery::CostTier costTier, CharacterDatabaseTransaction trans)
+    // M4.11.5.2.1: the real per-house listing logic, extracted verbatim from the
+    // original single-house ListOnAuctionHouse below (Task 14) -- one real,
+    // independent Item/AuctionEntry per call, parameterized by which house.
+    char const* AuctionHouseIdName(AuctionHouseId houseId)
+    {
+        switch (houseId)
+        {
+            case AuctionHouseId::Alliance: return "Alliance";
+            case AuctionHouseId::Horde:    return "Horde";
+            case AuctionHouseId::Neutral:
+            default:                       return "neutral";
+        }
+    }
+
+    void ListOnAuctionHouseCopy(uint32_t wowItemEntry, Archipelago::Delivery::CostTier costTier, AuctionHouseId houseId, CharacterDatabaseTransaction trans)
     {
         Item* item = Item::CreateItem(wowItemEntry, 1);
         if (!item)
@@ -75,12 +80,12 @@ namespace
         ItemTemplate const* itemTemplate = item->GetTemplate();
         uint32_t buyout = BuyoutForCostTier(costTier, itemTemplate);
 
-        AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMapByHouseId(AuctionHouseId::Neutral);
-        AuctionHouseEntry const* auctionHouseEntry = AuctionHouseMgr::GetAuctionHouseEntryFromHouse(AuctionHouseId::Neutral);
+        AuctionHouseObject* auctionHouse = sAuctionMgr->GetAuctionsMapByHouseId(houseId);
+        AuctionHouseEntry const* auctionHouseEntry = AuctionHouseMgr::GetAuctionHouseEntryFromHouse(houseId);
 
         AuctionEntry* auction = new AuctionEntry();
         auction->Id = sObjectMgr->GenerateAuctionID();
-        auction->houseId = AuctionHouseId::Neutral;
+        auction->houseId = houseId;
         auction->item_guid = item->GetGUID();
         auction->item_template = item->GetEntry();
         auction->itemCount = item->GetCount();
@@ -89,15 +94,11 @@ namespace
         auction->bidder = ObjectGuid::Empty;
         auction->bid = 0;
         auction->buyout = buyout;
-        // NOT a short listing window: AuctionHouseObject::Update()'s expiry path
-        // (AuctionHouseMgr.cpp) calls SendAuctionExpiredMail for any unbidded auction
-        // past expire_time, and that function's "owner doesn't exist" branch --
-        // exactly our case, owner is ObjectGuid::Empty -- permanently deletes the
-        // item via RemoveAItem(..., true, ...) instead of mailing it back to anyone.
-        // A real player's listing expiring back to their own mailbox is normal; an
-        // AP-earned progression item silently vanishing because nobody bought it in
-        // 48 hours is not acceptable. 10 years effectively never expires under normal
-        // server operation, so the item just waits indefinitely to be bought instead.
+        // NOT a short listing window -- see the original Task 14 comment this
+        // function inherits verbatim: AuctionHouseObject::Update()'s expiry path
+        // permanently deletes an owner-less unbidded auction past expire_time
+        // rather than mailing it back to anyone, so 10 years effectively never
+        // expires under normal server operation instead.
         auction->expire_time = GameTime::GetGameTime().count() + 10 * YEAR;
         auction->deposit = 0; // no real seller to charge
         auction->auctionHouseEntry = auctionHouseEntry;
@@ -107,7 +108,31 @@ namespace
         auctionHouse->AddAuction(auction);
         auction->SaveToDB(trans);
 
-        LOG_INFO("module.archipelago_wow", "Archipelago: listed WoW item entry {} on the neutral Auction House (auction #{}, buyout {} copper)", wowItemEntry, auction->Id, buyout);
+        LOG_INFO("module.archipelago_wow", "Archipelago: listed WoW item entry {} on the {} Auction House (auction #{}, buyout {} copper)", wowItemEntry, AuctionHouseIdName(houseId), auction->Id, buyout);
+    }
+
+    // Policy::AuctionHouse (Task 14, M4.11.5.2.1): Merged (default) matches
+    // today's original single-listing behavior exactly -- one copy, the
+    // neutral house. PerFaction lists three genuinely independent copies (own
+    // Item, own AuctionEntry each) on Alliance/Horde/Neutral, confirmed with
+    // the user as three separate, independently-buyable items rather than one
+    // shared listing across houses (design spec Sec4). Deliberately unrelated
+    // to Archipelago.AllowTwoSide.Interaction.Auction (the real, separate
+    // server-wide config governing every OTHER real player-to-player auction
+    // on the realm) -- this module never reads or writes that setting.
+    void ListOnAuctionHouse(uint32_t wowItemEntry, Archipelago::Delivery::CostTier costTier, Archipelago::Delivery::AuctionHouseFactionMode factionMode, CharacterDatabaseTransaction trans)
+    {
+        using Archipelago::Delivery::AuctionHouseFactionMode;
+        if (factionMode == AuctionHouseFactionMode::PerFaction)
+        {
+            ListOnAuctionHouseCopy(wowItemEntry, costTier, AuctionHouseId::Alliance, trans);
+            ListOnAuctionHouseCopy(wowItemEntry, costTier, AuctionHouseId::Horde, trans);
+            ListOnAuctionHouseCopy(wowItemEntry, costTier, AuctionHouseId::Neutral, trans);
+        }
+        else
+        {
+            ListOnAuctionHouseCopy(wowItemEntry, costTier, AuctionHouseId::Neutral, trans);
+        }
     }
 
     // M4.11.5.0.2: SingleDeliveryCharacter's recipient IS the finder in every
@@ -218,12 +243,12 @@ namespace
 
 namespace Archipelago::Delivery
 {
-    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans)
+    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, AuctionHouseFactionMode factionMode, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans)
     {
         switch (policy)
         {
             case Policy::AuctionHouse:
-                ListOnAuctionHouse(wowItemEntry, costTier, trans);
+                ListOnAuctionHouse(wowItemEntry, costTier, factionMode, trans);
                 break;
 
             case Policy::SharedCacheNpc:

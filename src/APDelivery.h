@@ -52,6 +52,17 @@ namespace Archipelago::Delivery
         Random,
     };
 
+    // M4.11.5.2.1: which real Auction House(s) Policy::AuctionHouse lists a
+    // delivered item on, independent of the real, unrelated server-wide
+    // Archipelago.AllowTwoSide.Interaction.Auction config (which this module
+    // never reads or writes) -- see ListOnAuctionHouse (APDelivery.cpp) for
+    // the real per-mode dispatch.
+    enum class AuctionHouseFactionMode
+    {
+        Merged,     // today's existing, only behavior: one listing, AuctionHouseId::Neutral
+        PerFaction, // three independent copies: AuctionHouseId::Alliance, Horde, and Neutral
+    };
+
     // M4.11.5.2.0: one item queued for mail-shaped delivery, waiting to be flushed
     // by FlushDeliveryBatch. familyLabel is which family's own ApItemIdToWowItemEntry
     // map resolved this item (e.g. "Quest Rewards", "Vendor Stock") -- surfaced in
@@ -105,10 +116,12 @@ namespace Archipelago::Delivery
     // "construct then hand off" doesn't fit every policy (there is no single owner to
     // construct an Item for at receive time), so construction is now each branch's own
     // decision, made if and when it actually needs one. costTier is only consulted by
-    // Policy::AuctionHouse. familyLabel/batch (M4.11.5.2.0) are only consulted by the two
-    // mail-shaped policies (SingleDeliveryCharacter's offline branch, AllAccountsDelivery),
-    // which queue into batch instead of mailing immediately -- see FlushDeliveryBatch.
-    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans);
+    // Policy::AuctionHouse. factionMode is only consulted by Policy::AuctionHouse
+    // (M4.11.5.2.1), exactly like costTier. familyLabel/batch (M4.11.5.2.0) are only
+    // consulted by the two mail-shaped policies (SingleDeliveryCharacter's offline
+    // branch, AllAccountsDelivery), which queue into batch instead of mailing
+    // immediately -- see FlushDeliveryBatch.
+    void DeliverItem(Policy policy, uint32_t wowItemEntry, std::string const& deliveryCharacter, CostTier costTier, AuctionHouseFactionMode factionMode, std::string const& familyLabel, DeliveryBatch& batch, CharacterDatabaseTransaction trans);
 
     // M4.11.5.2.0: flushes every recipient's own queued items (built up by however many
     // DeliverItem calls queued into batch since it was last flushed) into real mails,

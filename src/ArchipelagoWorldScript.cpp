@@ -21,7 +21,7 @@
 
 // Defined in ArchipelagoPlayerScript.cpp. Touches Player/CharacterCache/
 // CharacterDatabase, so it must only ever be invoked from the world thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier);
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier, Archipelago::Delivery::AuctionHouseFactionMode auctionHouseFactionMode);
 
 namespace
 {
@@ -61,6 +61,19 @@ namespace
         if (value != "Market")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseCostTier '{}', falling back to Market", value);
         return Archipelago::Delivery::CostTier::Market;
+    }
+
+    // M4.11.5.2.1: same manual-sync mirror as ParseCostTier above, for the new
+    // AuctionHouseFactionMode setting -- deliberately unrelated to the real,
+    // separate server-wide Archipelago.AllowTwoSide.Interaction.Auction config,
+    // which this module never reads.
+    Archipelago::Delivery::AuctionHouseFactionMode ParseAuctionHouseFactionMode(std::string const& value)
+    {
+        if (value == "PerFaction")
+            return Archipelago::Delivery::AuctionHouseFactionMode::PerFaction;
+        if (value != "Merged")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseFactionMode '{}', falling back to Merged", value);
+        return Archipelago::Delivery::AuctionHouseFactionMode::Merged;
     }
 
     // Task 20: parses the apworld's SpiritHealerVariant Choice into its two
@@ -209,6 +222,7 @@ public:
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "SingleDeliveryCharacter"));
         _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
+        _auctionHouseFactionMode = ParseAuctionHouseFactionMode(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseFactionMode", "Merged"));
 
         // Task 16 (design spec Sec7.2): same manual-sync mirror-toggle discipline as
         // every other option above -- mirrored into ArchipelagoRealmState rather than
@@ -500,7 +514,7 @@ public:
             items.swap(_pendingItems);
         }
         if (!items.empty())
-            DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier);
+            DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier, _auctionHouseFactionMode);
 
         std::vector<Archipelago::IncomingDeathLink> deathLinks;
         {
@@ -660,6 +674,7 @@ private:
     std::string _deliveryCharacter;
     Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::SingleDeliveryCharacter;
     Archipelago::Delivery::CostTier _auctionHouseCostTier = Archipelago::Delivery::CostTier::Market;
+    Archipelago::Delivery::AuctionHouseFactionMode _auctionHouseFactionMode = Archipelago::Delivery::AuctionHouseFactionMode::Merged;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
     bool _proficiencyGating = false;
