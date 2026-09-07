@@ -165,12 +165,18 @@ Archipelago.AuctionHouseCostTier = "Market"
 #                      genuinely independent copies -- one each on the
 #                      Alliance, Horde, and neutral houses, each its own
 #                      real item and independently buyable/rollable
-#                      (a Random CostTier rolls separately per copy).
-#                      Deliberately unrelated to the real, separate
-#                      Archipelago.AllowTwoSide.Interaction.Auction
-#                      server-wide config, which this module never reads
-#                      or writes -- every other real player-to-player
-#                      auction on the realm is unaffected either way.
+#                      (a Random CostTier rolls separately per copy) --
+#                      UNLESS the real, separate worldserver.conf setting
+#                      AllowTwoSide.Interaction.Auction is enabled (default
+#                      off): AzerothCore's own AuctionHouseMgr routes every
+#                      house lookup to the neutral house whenever that
+#                      setting is on, so all three PerFaction copies land
+#                      on the neutral house as three duplicate listings
+#                      instead of one per faction. This module never reads
+#                      or writes that setting itself -- if you want
+#                      PerFaction's real three-house split, leave
+#                      worldserver.conf's AllowTwoSide.Interaction.Auction
+#                      at its own default (off).
 #        Values:      "Merged" (default) | "PerFaction"
 #        Default:     "Merged"
 

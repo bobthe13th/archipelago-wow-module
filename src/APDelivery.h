@@ -53,10 +53,11 @@ namespace Archipelago::Delivery
     };
 
     // M4.11.5.2.1: which real Auction House(s) Policy::AuctionHouse lists a
-    // delivered item on, independent of the real, unrelated server-wide
-    // Archipelago.AllowTwoSide.Interaction.Auction config (which this module
-    // never reads or writes) -- see ListOnAuctionHouse (APDelivery.cpp) for
-    // the real per-mode dispatch.
+    // delivered item on. This module never reads or writes the real, separate
+    // worldserver.conf setting AllowTwoSide.Interaction.Auction -- but see
+    // ListOnAuctionHouse's own comment (APDelivery.cpp) for the real
+    // consequence when that OTHER setting is on: it collapses PerFaction's
+    // three copies onto one house.
     enum class AuctionHouseFactionMode
     {
         Merged,     // today's existing, only behavior: one listing, AuctionHouseId::Neutral

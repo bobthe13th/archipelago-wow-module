@@ -54,9 +54,12 @@ namespace
         }
     }
 
-    // M4.11.5.2.1: the real per-house listing logic, extracted verbatim from the
-    // original single-house ListOnAuctionHouse below (Task 14) -- one real,
-    // independent Item/AuctionEntry per call, parameterized by which house.
+    // M4.11.5.2.1: real, human-readable house name for LOG_INFO lines below --
+    // lowercase "neutral" for AuctionHouseId::Neutral specifically (matching
+    // the exact pre-existing log text ListOnAuctionHouseCopy's own Merged path
+    // renders, so Merged's log output stays byte-identical to before this
+    // milestone; do not capitalize it to "Neutral" for consistency with
+    // "Alliance"/"Horde" below, that would change Merged's own log text).
     char const* AuctionHouseIdName(AuctionHouseId houseId)
     {
         switch (houseId)
@@ -68,6 +71,9 @@ namespace
         }
     }
 
+    // M4.11.5.2.1: the real per-house listing logic, extracted verbatim from the
+    // original single-house ListOnAuctionHouse (Task 14) -- one real,
+    // independent Item/AuctionEntry per call, parameterized by which house.
     void ListOnAuctionHouseCopy(uint32_t wowItemEntry, Archipelago::Delivery::CostTier costTier, AuctionHouseId houseId, CharacterDatabaseTransaction trans)
     {
         Item* item = Item::CreateItem(wowItemEntry, 1);
@@ -94,11 +100,15 @@ namespace
         auction->bidder = ObjectGuid::Empty;
         auction->bid = 0;
         auction->buyout = buyout;
-        // NOT a short listing window -- see the original Task 14 comment this
-        // function inherits verbatim: AuctionHouseObject::Update()'s expiry path
-        // permanently deletes an owner-less unbidded auction past expire_time
-        // rather than mailing it back to anyone, so 10 years effectively never
-        // expires under normal server operation instead.
+        // NOT a short listing window: AuctionHouseObject::Update()'s expiry path
+        // (AuctionHouseMgr.cpp) calls SendAuctionExpiredMail for any unbidded auction
+        // past expire_time, and that function's "owner doesn't exist" branch --
+        // exactly our case, owner is ObjectGuid::Empty -- permanently deletes the
+        // item via RemoveAItem(..., true, ...) instead of mailing it back to anyone.
+        // A real player's listing expiring back to their own mailbox is normal; an
+        // AP-earned progression item silently vanishing because nobody bought it in
+        // 48 hours is not acceptable. 10 years effectively never expires under normal
+        // server operation, so the item just waits indefinitely to be bought instead.
         auction->expire_time = GameTime::GetGameTime().count() + 10 * YEAR;
         auction->deposit = 0; // no real seller to charge
         auction->auctionHouseEntry = auctionHouseEntry;
@@ -116,10 +126,17 @@ namespace
     // neutral house. PerFaction lists three genuinely independent copies (own
     // Item, own AuctionEntry each) on Alliance/Horde/Neutral, confirmed with
     // the user as three separate, independently-buyable items rather than one
-    // shared listing across houses (design spec Sec4). Deliberately unrelated
-    // to Archipelago.AllowTwoSide.Interaction.Auction (the real, separate
-    // server-wide config governing every OTHER real player-to-player auction
-    // on the realm) -- this module never reads or writes that setting.
+    // shared listing across houses (design spec Sec4) -- UNLESS the real,
+    // separate worldserver.conf setting AllowTwoSide.Interaction.Auction is
+    // on, in which case AzerothCore's own AuctionHouseMgr::
+    // GetAuctionsMapByHouseId/GetAuctionHouseEntryFromHouse route every house
+    // lookup to the neutral house regardless of the houseId requested
+    // (AuctionHouseMgr.cpp), collapsing all three copies into three
+    // duplicate neutral-house listings. This module never reads or writes
+    // that server-wide config itself -- every other real player-to-player
+    // auction on the realm is unaffected by this module's own setting either
+    // way, but PerFaction's own real three-house split depends on that other
+    // setting staying at its own default (off).
     void ListOnAuctionHouse(uint32_t wowItemEntry, Archipelago::Delivery::CostTier costTier, Archipelago::Delivery::AuctionHouseFactionMode factionMode, CharacterDatabaseTransaction trans)
     {
         using Archipelago::Delivery::AuctionHouseFactionMode;

@@ -64,9 +64,11 @@ namespace
     }
 
     // M4.11.5.2.1: same manual-sync mirror as ParseCostTier above, for the new
-    // AuctionHouseFactionMode setting -- deliberately unrelated to the real,
-    // separate server-wide Archipelago.AllowTwoSide.Interaction.Auction config,
-    // which this module never reads.
+    // AuctionHouseFactionMode setting. This module never reads or writes the
+    // real, separate worldserver.conf setting AllowTwoSide.Interaction.Auction
+    // -- but see ListOnAuctionHouse's own comment (APDelivery.cpp) for the
+    // real consequence when that OTHER setting is on: it collapses
+    // PerFaction's three copies onto one house.
     Archipelago::Delivery::AuctionHouseFactionMode ParseAuctionHouseFactionMode(std::string const& value)
     {
         if (value == "PerFaction")
