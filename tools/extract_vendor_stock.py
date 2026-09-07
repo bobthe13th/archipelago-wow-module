@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """DB-driven extraction for the Vendor Inventories content family (M4.5 Group 2).
-Run this to regenerate content/vendor_stock.yaml; never hand-edit that file."""
+Run this to regenerate content/vendor_stock.yaml; never hand-edit that file.
+
+WARNING: extract()'s own base query joins through npc_vendor.item -- this
+column is rewritten at runtime by this module's own live vendor-purchase
+interception mechanism (APItemDisplay.cpp) once a check has been claimed on
+a played-on realm. See tools/README.md's own "Regenerating against a
+played-on realm" section before regenerating against a realm that has been
+played on at all -- this already happened once (M4.11.5.5) and required a
+live DB restore to recover from. _load_vendor_types (below) is immune --
+it's keyed only on npc_vendor.entry, never npc_vendor.item."""
 from __future__ import annotations
 
 import pathlib
@@ -102,7 +111,14 @@ def _load_vendor_types() -> dict[int, frozenset[str]]:
     real item<4,000,000 value). A vendor with none of these five flags maps
     to an empty frozenset (an "untagged for this dimension" row, the normal
     case) -- see build_row's own docstring for why an empty set must not
-    become an empty tags["vendor_type"] list."""
+    become an empty tags["vendor_type"] list.
+
+    Reads creature_template.npcflag (the TEMPLATE's own flags), never a
+    per-spawn creature.npcflag override -- npc_vendor is itself keyed by
+    creature TEMPLATE id, not by a specific spawn, so a per-spawn override
+    couldn't be meaningfully attributed to one particular npc_vendor row
+    anyway; the template-level flag is the only real, unambiguous signal
+    available at this granularity."""
     rows = run_query("""
         SELECT nv.entry, ct.npcflag
         FROM npc_vendor nv
