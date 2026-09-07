@@ -63,6 +63,12 @@ namespace Archipelago
         int32_t flags = 0;
     };
 
+    // Forward declaration: ItemSendEvent (full definition below, near
+    // ParseItemSendEvents) is referenced by ArchipelagoCallbacks::
+    // onItemSendEventsReceived immediately below, before its own point of
+    // definition in this file (M4.11.5.6).
+    struct ItemSendEvent;
+
     // Bundles every APClient/ArchipelagoManager callback. Introduced M4.13 when
     // adding a 7th callback (onPrintJsonReceived) would have made Initialize's
     // positional-lambda parameter list unreadable -- see the M4.13 plan's "Real
@@ -91,6 +97,7 @@ namespace Archipelago
         std::function<void(uint32_t)> onZoneLevelerInstancesRequiredReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onZoneLevelerInstanceKeysReceived = nullptr;
         std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
+        std::function<void(std::vector<ItemSendEvent> const&)> onItemSendEventsReceived = nullptr;
         // Connected's top-level missing_locations array (M4.13, ".ap missing" --
         // see ArchipelagoManager::GetLastKnownMissingLocations/
         // SetLastKnownMissingLocations and ArchipelagoCommandScript.cpp's consumer).

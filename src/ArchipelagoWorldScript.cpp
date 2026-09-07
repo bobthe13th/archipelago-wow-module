@@ -493,6 +493,10 @@ public:
             std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
             _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
         };
+        callbacks.onItemSendEventsReceived = [this](std::vector<Archipelago::ItemSendEvent> const& events) {
+            std::lock_guard<std::mutex> lock(_pendingItemSendEventsMutex);
+            _pendingItemSendEvents.insert(_pendingItemSendEvents.end(), events.begin(), events.end());
+        };
         callbacks.onMissingLocationsReceived = [this](std::vector<int64_t> const& locations) {
             std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
             _pendingMissingLocations = locations;
@@ -653,6 +657,14 @@ public:
         for (std::string const& text : printJsonText)
             sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, text);
 
+        std::vector<Archipelago::ItemSendEvent> itemSendEvents;
+        {
+            std::lock_guard<std::mutex> lock(_pendingItemSendEventsMutex);
+            itemSendEvents.swap(_pendingItemSendEvents);
+        }
+        for (Archipelago::ItemSendEvent const& event : itemSendEvents)
+            sArchipelagoRealmState->RecordSlotItemSend(event.sourceSlot);
+
         std::optional<std::vector<int64_t>> missingLocations;
         {
             std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
@@ -777,6 +789,9 @@ private:
     // arrive many times over a realm's lifetime, not just once at connect.
     std::mutex _pendingPrintJsonTextMutex;
     std::vector<std::string> _pendingPrintJsonText;
+
+    std::mutex _pendingItemSendEventsMutex;
+    std::vector<Archipelago::ItemSendEvent> _pendingItemSendEvents;
 
     // Same io-thread-producer/world-thread-consumer shape as _pendingPrintJsonText
     // above, for Connected/RoomUpdate's missing_locations snapshot (M4.13,

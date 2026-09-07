@@ -418,6 +418,16 @@ namespace Archipelago
             if (!printJsonText.empty() && _callbacks.onPrintJsonReceived)
                 _callbacks.onPrintJsonReceived(printJsonText);
 
+            // M4.11.5.6: same unconditional-parse rationale as ParsePrintJSONText
+            // immediately above -- a real ItemSend broadcast for the check
+            // leaderboard's per-slot totals is meaningful even when the
+            // surrounding frame has no Connected command in it at all (the
+            // normal case: an ItemSend arrives on its own, whenever any real
+            // slot in the multiworld finds a check, long after connect).
+            auto itemSendEvents = ParseItemSendEvents(message);
+            if (!itemSendEvents.empty() && _callbacks.onItemSendEventsReceived)
+                _callbacks.onItemSendEventsReceived(itemSendEvents);
+
             // Connected's real, top-level missing_locations array (M4.13, ".ap missing")
             // -- ParseMissingLocationsFromConnected internally checks cmd == "Connected"
             // itself, same unconditional-parse rationale as every other Parse* call above.
