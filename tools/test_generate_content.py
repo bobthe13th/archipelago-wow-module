@@ -1544,5 +1544,61 @@ class TestItemDeliveryLookupLearnSpellKind(unittest.TestCase):
         self.assertIn("std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};", lines)
 
 
+class TestLearnNextChainRankDelivery(unittest.TestCase):
+    """M4.11.5.7 (Task 7): trainer_spells' replacement for "learn_spell" --
+    one "Progressive <Spell>" item per multi-rank chain, delivery.spell_ids
+    the ordered rank spell_ids. Sibling coverage to
+    TestLearnSpellTriggerLookup.test_learn_spell_row_missing_spell_id_is_rejected
+    (validation) and TestItemDeliveryLookupLearnSpellKind's real-rows/empty-
+    map-fallback pair (emission) -- same direct-call-the-function,
+    assertRaises/assertIn style those use, applied to the new
+    "learn_next_chain_rank" delivery.kind branches instead of "learn_spell"."""
+
+    def test_learn_next_chain_rank_row_missing_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank"}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_learn_next_chain_rank_row_with_empty_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank", "spell_ids": []}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_emits_chain_spell_ids_map_for_real_chain_rows(self) -> None:
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 7500116, "name": "Progressive Frostbolt",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+            {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+        ]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertIn("{ 7500116, { 116, 205, 837 } }", lines)
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertIn("{ 7500999, 42 }", lines)
+
+    def test_learn_next_chain_rank_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
+        # trainer_spells' real shape today (Task 8 regenerates the actual
+        # content, but the schema is already eligible): schema-eligible for
+        # "learn_next_chain_rank" -- the symbol must still exist (empty)
+        # since the C++ dispatch code (ArchipelagoPlayerScript.cpp)
+        # references it unconditionally, same MSVC C3316 concern
+        # (empty `T arr[] = {};` can't be used in a range-based for) as the
+        # sibling "learn_spell" empty-map fallback.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 7500001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertNotIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertIn("std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = {};", lines)
+
+
 if __name__ == "__main__":
     unittest.main()
