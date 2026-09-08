@@ -77,18 +77,25 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
     // AllAccountsDelivery, have no single recipient at all, so an operator running
     // one of those policies should not be forced to also configure a delivery
     // character that nothing here will use.
+    //
+    // A missing/nonexistent DeliveryCharacter used to drop the whole batch here.
+    // Falling back to Policy::AuctionHouse instead (same idiom ArchipelagoWorldScript
+    // already uses the other direction for AccessGating=1) keeps every item
+    // recoverable -- auctionHouseCostTier/auctionHouseFactionMode are always parsed
+    // from config with real defaults regardless of the configured policy, so they're
+    // already valid to use here even when SingleDeliveryCharacter was the operator's
+    // primary choice.
     if (deliveryPolicy == Archipelago::Delivery::Policy::SingleDeliveryCharacter)
     {
         if (deliveryCharacter.empty())
         {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: received {} item(s) but Archipelago.DeliveryCharacter is unset, dropping", items.size());
-            return;
+            LOG_ERROR("module.archipelago_wow", "Archipelago: Archipelago.DeliveryCharacter is unset, falling back to Auction House delivery for {} item(s)", items.size());
+            deliveryPolicy = Archipelago::Delivery::Policy::AuctionHouse;
         }
-
-        if (sCharacterCache->GetCharacterGuidByName(deliveryCharacter).IsEmpty())
+        else if (sCharacterCache->GetCharacterGuidByName(deliveryCharacter).IsEmpty())
         {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, dropping {} item(s)", deliveryCharacter, items.size());
-            return;
+            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, falling back to Auction House delivery for {} item(s)", deliveryCharacter, items.size());
+            deliveryPolicy = Archipelago::Delivery::Policy::AuctionHouse;
         }
     }
 

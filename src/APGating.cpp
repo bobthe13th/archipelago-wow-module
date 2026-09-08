@@ -7,8 +7,10 @@
 #include "DBCStores.h"
 #include "DBCStructure.h"
 #include "GameObject.h"
+#include "GameTime.h"
 #include "ItemTemplate.h"
 #include "MiscScript.h"
+#include "ObjectGuid.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
@@ -107,6 +109,27 @@ namespace
     // effect that resets its cooldown looks it up via both: item 6948,
     // spell 8690).
     constexpr uint32_t ITEM_HEARTHSTONE = 6948;
+
+    // ArchipelagoRidingGateScript's PLAYERHOOK_CAN_USE_ITEM and
+    // ArchipelagoMountSpellScript's ALLSPELLHOOK_ON_SPELL_CHECK_CAST both deny
+    // the same mount attempt and both print the same denial text -- across a
+    // death/respawn transition the client can re-submit a queued mount cast
+    // several times in quick succession, so without a throttle the player sees
+    // "You need Progressive Riding to mount up." repeated back-to-back for one
+    // real attempt. The gating decision itself must still run (and deny) every
+    // time; only the chat spam is throttled.
+    constexpr int64_t RIDING_GATE_MESSAGE_COOLDOWN_SECONDS = 3;
+    std::unordered_map<ObjectGuid, int64_t> g_lastRidingGateMessageAt;
+
+    bool ShouldPrintRidingGateMessage(ObjectGuid guid)
+    {
+        int64_t now = GameTime::GetGameTime().count();
+        auto [it, inserted] = g_lastRidingGateMessageAt.try_emplace(guid, now);
+        if (!inserted && now - it->second < RIDING_GATE_MESSAGE_COOLDOWN_SECONDS)
+            return false;
+        it->second = now;
+        return true;
+    }
 }
 
 class ArchipelagoRidingGateScript : public PlayerScript
@@ -126,7 +149,8 @@ public:
             return true;
 
         result = EQUIP_ERR_CANT_DO_RIGHT_NOW;
-        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Riding to mount up.");
+        if (ShouldPrintRidingGateMessage(player->GetGUID()))
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Riding to mount up.");
         return false;
     }
 
@@ -169,7 +193,8 @@ public:
         if (Unit* caster = spell->GetCaster())
         {
             if (Player* player = caster->ToPlayer())
-                ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Riding to mount up.");
+                if (ShouldPrintRidingGateMessage(player->GetGUID()))
+                    ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Riding to mount up.");
         }
     }
 };
