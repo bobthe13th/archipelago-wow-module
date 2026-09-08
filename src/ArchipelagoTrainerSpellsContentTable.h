@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <initializer_list>
 #include <map>
 #include <string>
 #include <unordered_map>
@@ -1987,1007 +1988,408 @@ inline std::map<std::string, uint32_t> BuildLOCATIONS()
 }
 inline const std::map<std::string, uint32_t> LOCATIONS = BuildLOCATIONS();
 inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
-    {"Trainer Spell Item: Blizzard (#10)", 7500010},
-    {"Trainer Spell Item: Power Word: Shield (#17)", 7500017},
-    {"Trainer Spell Item: Backstab (#53)", 7500053},
+    {"Progressive Blizzard", 7500010},
+    {"Progressive Power Word: Shield", 7500017},
+    {"Progressive Backstab", 7500053},
+    {"Progressive Heroic Strike", 7500078},
+    {"Progressive Demoralizing Roar", 7500099},
+    {"Progressive Charge", 7500100},
+    {"Progressive Frostbolt", 7500116},
+    {"Progressive Polymorph", 7500118},
+    {"Progressive Cone of Cold", 7500120},
+    {"Progressive Frost Nova", 7500122},
+    {"Progressive Fireball", 7500133},
+    {"Progressive Mend Pet", 7500136},
+    {"Progressive Renew", 7500139},
+    {"Progressive Frost Armor", 7500168},
+    {"Progressive Corruption", 7500172},
+    {"Progressive Lightning Shield", 7500324},
+    {"Progressive Healing Wave", 7500331},
+    {"Progressive Entangling Roots", 7500339},
+    {"Progressive Immolate", 7500348},
+    {"Progressive Purge", 7500370},
+    {"Progressive Lightning Bolt", 7500403},
+    {"Progressive Kidney Shot", 7500408},
+    {"Progressive Chain Lightning", 7500421},
+    {"Progressive Devotion Aura", 7500465},
+    {"Progressive Thorns", 7500467},
+    {"Progressive Commanding Shout", 7500469},
+    {"Progressive Dispel Magic", 7500527},
+    {"Progressive Fire Ward", 7500543},
+    {"Progressive Smite", 7500585},
+    {"Progressive Conjure Food", 7500587},
+    {"Progressive Inner Fire", 7500588},
+    {"Progressive Shadow Word: Pain", 7500589},
+    {"Progressive Prayer of Healing", 7500596},
+    {"Progressive Curse of Doom", 7500603},
+    {"Progressive Dampen Magic", 7500604},
+    {"Progressive Lay on Hands", 7500633},
+    {"Progressive Holy Light", 7500635},
+    {"Progressive Shadow Bolt", 7500686},
+    {"Progressive Demon Skin", 7500687},
+    {"Progressive Drain Life", 7500689},
+    {"Progressive Create Soulstone", 7500693},
+    {"Progressive Curse of Weakness", 7500702},
+    {"Progressive Garrote", 7500703},
+    {"Progressive Demon Armor", 7500706},
+    {"Progressive Banish", 7500710},
+    {"Progressive Lightwell", 7500724},
+    {"Progressive Tranquility", 7500740},
+    {"Progressive Health Funnel", 7500755},
+    {"Progressive Conjure Mana Gem", 7500759},
+    {"Progressive Rend", 7500772},
+    {"Progressive Rejuvenation", 7500774},
+    {"Progressive Swipe (Bear)", 7500779},
+    {"Progressive Cleave", 7500845},
+    {"Progressive Hammer of Justice", 7500853},
+    {"Progressive Exorcism", 7500879},
+    {"Progressive Earth Shield", 7500974},
+    {"Progressive Shadow Protection", 7500976},
+    {"Progressive Curse of Agony", 7500980},
+    {"Progressive Amplify Magic", 7501008},
+    {"Progressive Hand of Protection", 7501022},
+    {"Progressive Chain Heal", 7501064},
+    {"Progressive Rip", 7501079},
+    {"Progressive Claw", 7501082},
+    {"Progressive Enslave Demon", 7501098},
+    {"Progressive Drain Soul", 7501120},
+    {"Progressive Mark of the Wild", 7501126},
+    {"Progressive Hunter's Mark", 7501130},
+    {"Progressive Demoralizing Shout", 7501160},
+    {"Progressive Power Word: Fortitude", 7501243},
+    {"Progressive Mutilate", 7501329},
+    {"Progressive Arcane Explosion", 7501449},
+    {"Progressive Life Tap", 7501454},
+    {"Progressive Arcane Intellect", 7501459},
+    {"Progressive Mana Shield", 7501463},
+    {"Progressive Slam", 7501464},
+    {"Progressive Curse of the Elements", 7501490},
+    {"Progressive Mongoose Bite", 7501495},
+    {"Progressive Freezing Trap", 7501499},
+    {"Progressive Volley", 7501510},
+    {"Progressive Scare Beast", 7501513},
+    {"Progressive Fire Nova", 7501535},
+    {"Progressive Curse of Tongues", 7501714},
+    {"Progressive Sinister Strike", 7501752},
+    {"Progressive Rake", 7501822},
+    {"Progressive Dash", 7501850},
+    {"Progressive Vanish", 7501856},
+    {"Progressive Rupture", 7501943},
+    {"Progressive Hellfire", 7501949},
+    {"Progressive Feint", 7501966},
+    {"Progressive Serpent Sting", 7501978},
+    {"Progressive Resurrection", 7502006},
+    {"Progressive Ancestral Spirit", 7502008},
+    {"Progressive Lesser Heal", 7502050},
+    {"Progressive Heal", 7502054},
+    {"Progressive Greater Heal", 7502060},
+    {"Progressive Flash Heal", 7502061},
+    {"Progressive Mind Vision", 7502096},
+    {"Progressive Eviscerate", 7502098},
+    {"Progressive Flamestrike", 7502120},
+    {"Progressive Fire Blast", 7502136},
+    {"Progressive Create Spellstone", 7502362},
+    {"Progressive Hibernate", 7502637},
+    {"Progressive Multi-Shot", 7502643},
+    {"Progressive Holy Wrath", 7502812},
+    {"Progressive Soothe Animal", 7502908},
+    {"Progressive Starfire", 7502912},
+    {"Progressive Devouring Plague", 7502944},
+    {"Progressive Scorch", 7502948},
+    {"Progressive Raptor Strike", 7502973},
+    {"Progressive Sprint", 7502983},
+    {"Progressive Arcane Shot", 7503044},
+    {"Progressive Searing Totem", 7503599},
+    {"Progressive Black Arrow", 7503674},
+    {"Progressive Arcane Missiles", 7505143},
+    {"Progressive Slice and Dice", 7505171},
+    {"Progressive Wrath", 7505176},
+    {"Progressive Healing Touch", 7505185},
+    {"Progressive Bash", 7505211},
+    {"Progressive Tiger's Fury", 7505217},
+    {"Progressive Shred", 7505221},
+    {"Progressive Evasion", 7505277},
+    {"Progressive Execute", 7505308},
+    {"Progressive Healing Stream Totem", 7505394},
+    {"Progressive Howl of Terror", 7505484},
+    {"Progressive Bear Form", 7505487},
+    {"Progressive Conjure Water", 7505504},
+    {"Progressive Insect Swarm", 7505570},
+    {"Progressive Mana Spring Totem", 7505675},
+    {"Progressive Searing Pain", 7505676},
+    {"Progressive Stoneclaw Totem", 7505730},
+    {"Progressive Rain of Fire", 7505740},
+    {"Progressive Fear", 7505782},
+    {"Progressive Mage Armor", 7506117},
+    {"Progressive Frost Ward", 7506143},
+    {"Progressive Create Healthstone", 7506201},
+    {"Progressive Shadow Ward", 7506229},
+    {"Progressive Thunder Clap", 7506343},
+    {"Progressive Soul Fire", 7506353},
+    {"Progressive Create Firestone", 7506366},
+    {"Progressive Revenge", 7506572},
+    {"Progressive Battle Shout", 7506673},
+    {"Progressive Sap", 7506770},
+    {"Progressive Ravage", 7506785},
+    {"Progressive Death Coil (Warlock)", 7506789},
+    {"Progressive Maul", 7506807},
+    {"Progressive Retribution Aura", 7507294},
+    {"Progressive Ice Armor", 7507302},
+    {"Progressive Redemption", 7507328},
+    {"Progressive Lesser Healing Wave", 7508004},
+    {"Progressive Rockbiter Weapon", 7508017},
+    {"Progressive Flametongue Weapon", 7508024},
+    {"Progressive Frostbrand Weapon", 7508033},
+    {"Progressive Earth Shock", 7508042},
+    {"Progressive Flame Shock", 7508050},
+    {"Progressive Frost Shock", 7508056},
+    {"Progressive Stoneskin Totem", 7508071},
+    {"Progressive Strength of Earth Totem", 7508075},
+    {"Progressive Mind Blast", 7508092},
+    {"Progressive Psychic Scream", 7508122},
+    {"Progressive Frost Resistance Totem", 7508181},
+    {"Progressive Fire Resistance Totem", 7508184},
+    {"Progressive Magma Totem", 7508190},
+    {"Progressive Flametongue Totem", 7508227},
+    {"Progressive Windfury Weapon", 7508232},
+    {"Progressive Ambush", 7508676},
+    {"Progressive Moonfire", 7508921},
+    {"Progressive Regrowth", 7508936},
+    {"Progressive Cower", 7508998},
+    {"Progressive Pounce", 7509005},
+    {"Progressive Shackle Undead", 7509484},
+    {"Progressive Nature Resistance Totem", 7510595},
+    {"Progressive Blast Wave", 7511113},
+    {"Progressive Pyroblast", 7511366},
+    {"Progressive Ice Barrier", 7511426},
+    {"Progressive Mortal Strike", 7512294},
+    {"Progressive Aspect of the Hawk", 7513165},
+    {"Progressive Immolation Trap", 7513795},
+    {"Progressive Explosive Trap", 7513813},
+    {"Progressive Divine Spirit", 7514752},
+    {"Progressive Holy Fire", 7514914},
+    {"Progressive Holy Nova", 7515237},
+    {"Progressive Mind Flay", 7515407},
+    {"Progressive Hemorrhage", 7516511},
+    {"Progressive Nature's Grasp", 7516689},
+    {"Progressive Hurricane", 7516914},
+    {"Progressive Shadowburn", 7517877},
+    {"Progressive Dark Pact", 7518220},
+    {"Progressive Desperate Prayer", 7519236},
+    {"Progressive Counterattack", 7519306},
+    {"Progressive Wyvern Sting", 7519386},
+    {"Progressive Aimed Shot", 7519434},
+    {"Progressive Blessing of Might", 7519740},
+    {"Progressive Blessing of Wisdom", 7519742},
+    {"Progressive Flash of Light", 7519750},
+    {"Progressive Shadow Resistance Aura", 7519876},
+    {"Progressive Frost Resistance Aura", 7519888},
+    {"Progressive Fire Resistance Aura", 7519891},
+    {"Progressive Aspect of the Wild", 7520043},
+    {"Progressive Devastate", 7520243},
+    {"Progressive Holy Shock", 7520473},
+    {"Progressive Rebirth", 7520484},
+    {"Progressive Holy Shield", 7520925},
+    {"Progressive Prayer of Fortitude", 7521562},
+    {"Progressive Gift of the Wild", 7521849},
+    {"Progressive Ferocious Bite", 7522568},
+    {"Progressive Maim", 7522570},
+    {"Progressive Arcane Brilliance", 7523028},
+    {"Progressive Shield Slam", 7523922},
+    {"Progressive Hammer of Wrath", 7524275},
+    {"Progressive Greater Blessing of Might", 7525782},
+    {"Progressive Greater Blessing of Wisdom", 7525894},
+    {"Progressive Consecration", 7526573},
+    {"Progressive Deadly Throw", 7526679},
+    {"Progressive Seed of Corruption", 7527243},
+    {"Progressive Prayer of Spirit", 7527681},
+    {"Progressive Prayer of Shadow Protection", 7527683},
+    {"Progressive Fel Armor", 7528176},
+    {"Progressive Incinerate", 7529722},
+    {"Progressive Ritual of Souls", 7529893},
+    {"Progressive Unstable Affliction", 7530108},
+    {"Progressive Shadowfury", 7530283},
+    {"Progressive Arcane Blast", 7530451},
+    {"Progressive Ice Lance", 7530455},
+    {"Progressive Molten Armor", 7530482},
+    {"Progressive Totem of Wrath", 7530706},
+    {"Progressive Dragon's Breath", 7531661},
+    {"Progressive Avenger's Shield", 7531935},
+    {"Progressive Shadow Word: Death", 7532379},
+    {"Progressive Binding Heal", 7532546},
+    {"Progressive Envenom", 7532645},
+    {"Progressive Prayer of Mending", 7533076},
+    {"Progressive Lacerate", 7533745},
+    {"Progressive Lifebloom", 7533763},
+    {"Progressive Mangle (Cat)", 7533876},
+    {"Progressive Mangle (Bear)", 7533878},
+    {"Progressive Flight Form", 7533943},
+    {"Progressive Circle of Healing", 7534861},
+    {"Progressive Vampiric Touch", 7534914},
+    {"Progressive Conjure Refreshment", 7542955},
+    {"Progressive Death and Decay", 7543265},
+    {"Progressive Ritual of Refreshment", 7543987},
+    {"Progressive Arcane Barrage", 7544425},
+    {"Progressive Living Bomb", 7544457},
+    {"Progressive Frostfire Bolt", 7544614},
+    {"Progressive Plague Strike", 7545462},
+    {"Progressive Icy Touch", 7545477},
+    {"Progressive Blood Strike", 7545902},
+    {"Progressive Penance", 7547540},
+    {"Progressive Death Coil (Death Knight)", 7547541},
+    {"Progressive Shadowflame", 7547897},
+    {"Progressive Mind Sear", 7548045},
+    {"Progressive Haunt", 7548181},
+    {"Progressive Wild Growth", 7548438},
+    {"Progressive Starfall", 7548505},
+    {"Progressive Blood Boil", 7548721},
+    {"Progressive Obliterate", 7549020},
+    {"Progressive Frost Strike", 7549143},
+    {"Progressive Corpse Explosion", 7549158},
+    {"Progressive Howling Blast", 7549184},
+    {"Progressive Death Strike", 7549998},
+    {"Progressive Typhoon", 7550516},
+    {"Progressive Revive", 7550769},
+    {"Progressive Chaos Bolt", 7550796},
+    {"Progressive Thunderstorm", 7551490},
+    {"Progressive Lava Burst", 7551505},
+    {"Progressive Earthliving Weapon", 7551730},
+    {"Progressive Water Shield", 7552127},
+    {"Progressive Explosive Shot", 7553301},
+    {"Progressive Kill Shot", 7553351},
+    {"Progressive Shield of Righteousness", 7553600},
+    {"Progressive Heart Strike", 7555050},
+    {"Progressive Scourge Strike", 7555090},
+    {"Progressive Steady Shot", 7556641},
+    {"Progressive Horn of Winter", 7557330},
+    {"Progressive Riptide", 7561295},
+    {"Progressive Aspect of the Dragonhawk", 7561846},
     {"Trainer Spell Item: Invisibility (#66)", 7500066},
     {"Trainer Spell Item: Shield Bash (#72)", 7500072},
-    {"Trainer Spell Item: Demoralizing Roar (#99)", 7500099},
-    {"Trainer Spell Item: Charge (#100)", 7500100},
-    {"Trainer Spell Item: Frostbolt (#116)", 7500116},
-    {"Trainer Spell Item: Polymorph (#118)", 7500118},
-    {"Trainer Spell Item: Cone of Cold (#120)", 7500120},
-    {"Trainer Spell Item: Frost Nova (#122)", 7500122},
     {"Trainer Spell Item: Eye of Kilrogg (#126)", 7500126},
     {"Trainer Spell Item: Slow Fall (#130)", 7500130},
     {"Trainer Spell Item: Water Breathing (#131)", 7500131},
     {"Trainer Spell Item: Detect Invisibility (#132)", 7500132},
-    {"Trainer Spell Item: Mend Pet (#136)", 7500136},
-    {"Trainer Spell Item: Renew (#139)", 7500139},
-    {"Trainer Spell Item: Fireball (#143)", 7500143},
-    {"Trainer Spell Item: Fireball (#145)", 7500145},
-    {"Trainer Spell Item: Corruption (#172)", 7500172},
-    {"Trainer Spell Item: Frostbolt (#205)", 7500205},
-    {"Trainer Spell Item: Heroic Strike (#284)", 7500284},
-    {"Trainer Spell Item: Heroic Strike (#285)", 7500285},
-    {"Trainer Spell Item: Lightning Shield (#324)", 7500324},
-    {"Trainer Spell Item: Lightning Shield (#325)", 7500325},
-    {"Trainer Spell Item: Healing Wave (#332)", 7500332},
-    {"Trainer Spell Item: Entangling Roots (#339)", 7500339},
-    {"Trainer Spell Item: Immolate (#348)", 7500348},
-    {"Trainer Spell Item: Purge (#370)", 7500370},
-    {"Trainer Spell Item: Kidney Shot (#408)", 7500408},
-    {"Trainer Spell Item: Chain Lightning (#421)", 7500421},
     {"Trainer Spell Item: Mind Soothe (#453)", 7500453},
-    {"Trainer Spell Item: Devotion Aura (#465)", 7500465},
-    {"Trainer Spell Item: Thorns (#467)", 7500467},
-    {"Trainer Spell Item: Commanding Shout (#469)", 7500469},
     {"Trainer Spell Item: Remove Curse (#475)", 7500475},
     {"Trainer Spell Item: Divine Protection (#498)", 7500498},
     {"Trainer Spell Item: Cure Toxins (#526)", 7500526},
-    {"Trainer Spell Item: Dispel Magic (#527)", 7500527},
     {"Trainer Spell Item: Cure Disease (#528)", 7500528},
-    {"Trainer Spell Item: Lightning Bolt (#529)", 7500529},
-    {"Trainer Spell Item: Fire Ward (#543)", 7500543},
     {"Trainer Spell Item: Water Walking (#546)", 7500546},
-    {"Trainer Spell Item: Healing Wave (#547)", 7500547},
-    {"Trainer Spell Item: Lightning Bolt (#548)", 7500548},
     {"Trainer Spell Item: Abolish Disease (#552)", 7500552},
     {"Trainer Spell Item: Astral Recall (#556)", 7500556},
     {"Trainer Spell Item: Fade (#586)", 7500586},
-    {"Trainer Spell Item: Conjure Food (#587)", 7500587},
-    {"Trainer Spell Item: Inner Fire (#588)", 7500588},
-    {"Trainer Spell Item: Shadow Word: Pain (#589)", 7500589},
-    {"Trainer Spell Item: Smite (#591)", 7500591},
-    {"Trainer Spell Item: Power Word: Shield (#592)", 7500592},
-    {"Trainer Spell Item: Shadow Word: Pain (#594)", 7500594},
-    {"Trainer Spell Item: Prayer of Healing (#596)", 7500596},
-    {"Trainer Spell Item: Conjure Food (#597)", 7500597},
-    {"Trainer Spell Item: Smite (#598)", 7500598},
-    {"Trainer Spell Item: Inner Fire (#602)", 7500602},
-    {"Trainer Spell Item: Curse of Doom (#603)", 7500603},
-    {"Trainer Spell Item: Dampen Magic (#604)", 7500604},
     {"Trainer Spell Item: Mind Control (#605)", 7500605},
-    {"Trainer Spell Item: Lay on Hands (#633)", 7500633},
-    {"Trainer Spell Item: Holy Light (#639)", 7500639},
     {"Trainer Spell Item: Divine Shield (#642)", 7500642},
-    {"Trainer Spell Item: Devotion Aura (#643)", 7500643},
-    {"Trainer Spell Item: Holy Light (#647)", 7500647},
     {"Trainer Spell Item: Dual Wield (#674)", 7500674},
     {"Trainer Spell Item: Disarm (#676)", 7500676},
     {"Trainer Spell Item: Summon Imp (#688)", 7500688},
-    {"Trainer Spell Item: Drain Life (#689)", 7500689},
-    {"Trainer Spell Item: Create Soulstone (#693)", 7500693},
     {"Trainer Spell Item: Mocking Blow (#694)", 7500694},
-    {"Trainer Spell Item: Shadow Bolt (#695)", 7500695},
-    {"Trainer Spell Item: Demon Skin (#696)", 7500696},
     {"Trainer Spell Item: Ritual of Summoning (#698)", 7500698},
-    {"Trainer Spell Item: Drain Life (#699)", 7500699},
-    {"Trainer Spell Item: Curse of Weakness (#702)", 7500702},
-    {"Trainer Spell Item: Garrote (#703)", 7500703},
-    {"Trainer Spell Item: Shadow Bolt (#705)", 7500705},
-    {"Trainer Spell Item: Demon Armor (#706)", 7500706},
-    {"Trainer Spell Item: Immolate (#707)", 7500707},
-    {"Trainer Spell Item: Drain Life (#709)", 7500709},
-    {"Trainer Spell Item: Banish (#710)", 7500710},
-    {"Trainer Spell Item: Tranquility (#740)", 7500740},
     {"Trainer Spell Item: Plate Mail (#750)", 7500750},
-    {"Trainer Spell Item: Health Funnel (#755)", 7500755},
-    {"Trainer Spell Item: Conjure Mana Gem (#759)", 7500759},
     {"Trainer Spell Item: Cat Form (#768)", 7500768},
-    {"Trainer Spell Item: Swipe (Bear) (#769)", 7500769},
     {"Trainer Spell Item: Faerie Fire (#770)", 7500770},
-    {"Trainer Spell Item: Rend (#772)", 7500772},
-    {"Trainer Spell Item: Rejuvenation (#774)", 7500774},
-    {"Trainer Spell Item: Swipe (Bear) (#779)", 7500779},
-    {"Trainer Spell Item: Swipe (Bear) (#780)", 7500780},
     {"Trainer Spell Item: Disengage (#781)", 7500781},
-    {"Trainer Spell Item: Thorns (#782)", 7500782},
     {"Trainer Spell Item: Travel Form (#783)", 7500783},
-    {"Trainer Spell Item: Frostbolt (#837)", 7500837},
-    {"Trainer Spell Item: Cleave (#845)", 7500845},
-    {"Trainer Spell Item: Hammer of Justice (#853)", 7500853},
-    {"Trainer Spell Item: Frost Nova (#865)", 7500865},
     {"Trainer Spell Item: Shield Wall (#871)", 7500871},
-    {"Trainer Spell Item: Exorcism (#879)", 7500879},
-    {"Trainer Spell Item: Lightning Shield (#905)", 7500905},
-    {"Trainer Spell Item: Healing Wave (#913)", 7500913},
-    {"Trainer Spell Item: Lightning Bolt (#915)", 7500915},
     {"Trainer Spell Item: Pick Pocket (#921)", 7500921},
-    {"Trainer Spell Item: Chain Lightning (#930)", 7500930},
-    {"Trainer Spell Item: Healing Wave (#939)", 7500939},
-    {"Trainer Spell Item: Lightning Bolt (#943)", 7500943},
-    {"Trainer Spell Item: Lightning Shield (#945)", 7500945},
-    {"Trainer Spell Item: Healing Wave (#959)", 7500959},
-    {"Trainer Spell Item: Shadow Word: Pain (#970)", 7500970},
-    {"Trainer Spell Item: Shadow Protection (#976)", 7500976},
-    {"Trainer Spell Item: Curse of Agony (#980)", 7500980},
-    {"Trainer Spell Item: Smite (#984)", 7500984},
-    {"Trainer Spell Item: Dispel Magic (#988)", 7500988},
-    {"Trainer Spell Item: Conjure Food (#990)", 7500990},
-    {"Trainer Spell Item: Shadow Word: Pain (#992)", 7500992},
-    {"Trainer Spell Item: Prayer of Healing (#996)", 7500996},
     {"Trainer Spell Item: Eyes of the Beast (#1002)", 7501002},
-    {"Trainer Spell Item: Smite (#1004)", 7501004},
-    {"Trainer Spell Item: Inner Fire (#1006)", 7501006},
-    {"Trainer Spell Item: Amplify Magic (#1008)", 7501008},
-    {"Trainer Spell Item: Curse of Agony (#1014)", 7501014},
-    {"Trainer Spell Item: Hand of Protection (#1022)", 7501022},
-    {"Trainer Spell Item: Holy Light (#1026)", 7501026},
-    {"Trainer Spell Item: Devotion Aura (#1032)", 7501032},
     {"Trainer Spell Item: Hand of Salvation (#1038)", 7501038},
-    {"Trainer Spell Item: Holy Light (#1042)", 7501042},
     {"Trainer Spell Item: Hand of Freedom (#1044)", 7501044},
-    {"Trainer Spell Item: Rejuvenation (#1058)", 7501058},
-    {"Trainer Spell Item: Entangling Roots (#1062)", 7501062},
-    {"Trainer Spell Item: Chain Heal (#1064)", 7501064},
     {"Trainer Spell Item: Aquatic Form (#1066)", 7501066},
-    {"Trainer Spell Item: Thorns (#1075)", 7501075},
-    {"Trainer Spell Item: Rip (#1079)", 7501079},
-    {"Trainer Spell Item: Claw (#1082)", 7501082},
-    {"Trainer Spell Item: Demon Armor (#1086)", 7501086},
-    {"Trainer Spell Item: Shadow Bolt (#1088)", 7501088},
-    {"Trainer Spell Item: Enslave Demon (#1098)", 7501098},
-    {"Trainer Spell Item: Shadow Bolt (#1106)", 7501106},
-    {"Trainer Spell Item: Curse of Weakness (#1108)", 7501108},
-    {"Trainer Spell Item: Drain Soul (#1120)", 7501120},
-    {"Trainer Spell Item: Mark of the Wild (#1126)", 7501126},
-    {"Trainer Spell Item: Hunter's Mark (#1130)", 7501130},
     {"Trainer Spell Item: Purify (#1152)", 7501152},
-    {"Trainer Spell Item: Demoralizing Shout (#1160)", 7501160},
     {"Trainer Spell Item: Challenging Shout (#1161)", 7501161},
-    {"Trainer Spell Item: Power Word: Fortitude (#1243)", 7501243},
-    {"Trainer Spell Item: Power Word: Fortitude (#1244)", 7501244},
-    {"Trainer Spell Item: Power Word: Fortitude (#1245)", 7501245},
-    {"Trainer Spell Item: Rejuvenation (#1430)", 7501430},
-    {"Trainer Spell Item: Arcane Explosion (#1449)", 7501449},
-    {"Trainer Spell Item: Life Tap (#1454)", 7501454},
-    {"Trainer Spell Item: Life Tap (#1455)", 7501455},
-    {"Trainer Spell Item: Life Tap (#1456)", 7501456},
-    {"Trainer Spell Item: Arcane Intellect (#1459)", 7501459},
-    {"Trainer Spell Item: Arcane Intellect (#1460)", 7501460},
-    {"Trainer Spell Item: Arcane Intellect (#1461)", 7501461},
     {"Trainer Spell Item: Beast Lore (#1462)", 7501462},
-    {"Trainer Spell Item: Mana Shield (#1463)", 7501463},
-    {"Trainer Spell Item: Slam (#1464)", 7501464},
-    {"Trainer Spell Item: Curse of the Elements (#1490)", 7501490},
     {"Trainer Spell Item: Track Beasts (#1494)", 7501494},
-    {"Trainer Spell Item: Mongoose Bite (#1495)", 7501495},
-    {"Trainer Spell Item: Freezing Trap (#1499)", 7501499},
-    {"Trainer Spell Item: Volley (#1510)", 7501510},
-    {"Trainer Spell Item: Scare Beast (#1513)", 7501513},
-    {"Trainer Spell Item: Fire Nova (#1535)", 7501535},
     {"Trainer Spell Item: Flare (#1543)", 7501543},
-    {"Trainer Spell Item: Heroic Strike (#1608)", 7501608},
     {"Trainer Spell Item: Whirlwind (#1680)", 7501680},
     {"Trainer Spell Item: Levitate (#1706)", 7501706},
     {"Trainer Spell Item: Summon Felsteed (#1710)", 7501710},
-    {"Trainer Spell Item: Curse of Tongues (#1714)", 7501714},
     {"Trainer Spell Item: Hamstring (#1715)", 7501715},
     {"Trainer Spell Item: Recklessness (#1719)", 7501719},
     {"Trainer Spell Item: Distract (#1725)", 7501725},
-    {"Trainer Spell Item: Demoralizing Roar (#1735)", 7501735},
-    {"Trainer Spell Item: Sinister Strike (#1757)", 7501757},
-    {"Trainer Spell Item: Sinister Strike (#1758)", 7501758},
-    {"Trainer Spell Item: Sinister Strike (#1759)", 7501759},
-    {"Trainer Spell Item: Sinister Strike (#1760)", 7501760},
     {"Trainer Spell Item: Kick (#1766)", 7501766},
     {"Trainer Spell Item: Gouge (#1776)", 7501776},
     {"Trainer Spell Item: Stealth (#1784)", 7501784},
     {"Trainer Spell Item: Pick Lock (#1804)", 7501804},
-    {"Trainer Spell Item: Rake (#1822)", 7501822},
-    {"Trainer Spell Item: Rake (#1823)", 7501823},
-    {"Trainer Spell Item: Rake (#1824)", 7501824},
     {"Trainer Spell Item: Cheap Shot (#1833)", 7501833},
     {"Trainer Spell Item: Disarm Trap (#1842)", 7501842},
-    {"Trainer Spell Item: Dash (#1850)", 7501850},
-    {"Trainer Spell Item: Vanish (#1856)", 7501856},
-    {"Trainer Spell Item: Vanish (#1857)", 7501857},
     {"Trainer Spell Item: Safe Fall (#1860)", 7501860},
-    {"Trainer Spell Item: Rupture (#1943)", 7501943},
-    {"Trainer Spell Item: Hellfire (#1949)", 7501949},
     {"Trainer Spell Item: Blink (#1953)", 7501953},
-    {"Trainer Spell Item: Feint (#1966)", 7501966},
-    {"Trainer Spell Item: Serpent Sting (#1978)", 7501978},
-    {"Trainer Spell Item: Resurrection (#2006)", 7502006},
-    {"Trainer Spell Item: Ancestral Spirit (#2008)", 7502008},
-    {"Trainer Spell Item: Resurrection (#2010)", 7502010},
-    {"Trainer Spell Item: Battle Shout (#2048)", 7502048},
-    {"Trainer Spell Item: Lesser Heal (#2052)", 7502052},
-    {"Trainer Spell Item: Lesser Heal (#2053)", 7502053},
-    {"Trainer Spell Item: Heal (#2054)", 7502054},
-    {"Trainer Spell Item: Heal (#2055)", 7502055},
-    {"Trainer Spell Item: Greater Heal (#2060)", 7502060},
-    {"Trainer Spell Item: Flash Heal (#2061)", 7502061},
     {"Trainer Spell Item: Earth Elemental Totem (#2062)", 7502062},
-    {"Trainer Spell Item: Sap (#2070)", 7502070},
-    {"Trainer Spell Item: Rejuvenation (#2090)", 7502090},
-    {"Trainer Spell Item: Rejuvenation (#2091)", 7502091},
     {"Trainer Spell Item: Blind (#2094)", 7502094},
-    {"Trainer Spell Item: Mind Vision (#2096)", 7502096},
-    {"Trainer Spell Item: Flamestrike (#2120)", 7502120},
-    {"Trainer Spell Item: Flamestrike (#2121)", 7502121},
-    {"Trainer Spell Item: Fire Blast (#2136)", 7502136},
-    {"Trainer Spell Item: Fire Blast (#2137)", 7502137},
-    {"Trainer Spell Item: Fire Blast (#2138)", 7502138},
     {"Trainer Spell Item: Counterspell (#2139)", 7502139},
-    {"Trainer Spell Item: Create Spellstone (#2362)", 7502362},
     {"Trainer Spell Item: Earthbind Totem (#2484)", 7502484},
     {"Trainer Spell Item: Shield Block (#2565)", 7502565},
-    {"Trainer Spell Item: Backstab (#2589)", 7502589},
-    {"Trainer Spell Item: Backstab (#2590)", 7502590},
-    {"Trainer Spell Item: Backstab (#2591)", 7502591},
-    {"Trainer Spell Item: Hibernate (#2637)", 7502637},
-    {"Trainer Spell Item: Multi-Shot (#2643)", 7502643},
     {"Trainer Spell Item: Ghost Wolf (#2645)", 7502645},
     {"Trainer Spell Item: Bloodrage (#2687)", 7502687},
-    {"Trainer Spell Item: Shadow Word: Pain (#2767)", 7502767},
     {"Trainer Spell Item: Remove Curse (#2782)", 7502782},
-    {"Trainer Spell Item: Power Word: Fortitude (#2791)", 7502791},
-    {"Trainer Spell Item: Lay on Hands (#2800)", 7502800},
-    {"Trainer Spell Item: Holy Wrath (#2812)", 7502812},
     {"Trainer Spell Item: Bloodlust (#2825)", 7502825},
     {"Trainer Spell Item: Detect Traps (#2836)", 7502836},
-    {"Trainer Spell Item: Chain Lightning (#2860)", 7502860},
     {"Trainer Spell Item: Abolish Poison (#2893)", 7502893},
     {"Trainer Spell Item: Fire Elemental Totem (#2894)", 7502894},
-    {"Trainer Spell Item: Soothe Animal (#2908)", 7502908},
-    {"Trainer Spell Item: Starfire (#2912)", 7502912},
-    {"Trainer Spell Item: Immolate (#2941)", 7502941},
-    {"Trainer Spell Item: Devouring Plague (#2944)", 7502944},
-    {"Trainer Spell Item: Scorch (#2948)", 7502948},
     {"Trainer Spell Item: Wing Clip (#2974)", 7502974},
-    {"Trainer Spell Item: Sprint (#2983)", 7502983},
-    {"Trainer Spell Item: Claw (#3029)", 7503029},
     {"Trainer Spell Item: Viper Sting (#3034)", 7503034},
     {"Trainer Spell Item: Scorpid Sting (#3043)", 7503043},
-    {"Trainer Spell Item: Arcane Shot (#3044)", 7503044},
     {"Trainer Spell Item: Rapid Fire (#3045)", 7503045},
-    {"Trainer Spell Item: Mend Pet (#3111)", 7503111},
     {"Trainer Spell Item: Parry (#3127)", 7503127},
-    {"Trainer Spell Item: Fireball (#3140)", 7503140},
     {"Trainer Spell Item: Intervene (#3411)", 7503411},
-    {"Trainer Spell Item: Holy Light (#3472)", 7503472},
-    {"Trainer Spell Item: Conjure Mana Gem (#3552)", 7503552},
     {"Trainer Spell Item: Teleport: Stormwind (#3561)", 7503561},
     {"Trainer Spell Item: Teleport: Ironforge (#3562)", 7503562},
     {"Trainer Spell Item: Teleport: Undercity (#3563)", 7503563},
     {"Trainer Spell Item: Teleport: Darnassus (#3565)", 7503565},
     {"Trainer Spell Item: Teleport: Thunder Bluff (#3566)", 7503566},
     {"Trainer Spell Item: Teleport: Orgrimmar (#3567)", 7503567},
-    {"Trainer Spell Item: Rejuvenation (#3627)", 7503627},
-    {"Trainer Spell Item: Mend Pet (#3661)", 7503661},
-    {"Trainer Spell Item: Mend Pet (#3662)", 7503662},
-    {"Trainer Spell Item: Health Funnel (#3698)", 7503698},
-    {"Trainer Spell Item: Health Funnel (#3699)", 7503699},
-    {"Trainer Spell Item: Health Funnel (#3700)", 7503700},
     {"Trainer Spell Item: Path of Frost (#3714)", 7503714},
     {"Trainer Spell Item: Wrath of Air Totem (#3738)", 7503738},
-    {"Trainer Spell Item: Power Word: Shield (#3747)", 7503747},
     {"Trainer Spell Item: Cleanse (#4987)", 7504987},
     {"Trainer Spell Item: Concussive Shot (#5116)", 7505116},
     {"Trainer Spell Item: Aspect of the Cheetah (#5118)", 7505118},
     {"Trainer Spell Item: Drain Mana (#5138)", 7505138},
-    {"Trainer Spell Item: Arcane Missiles (#5143)", 7505143},
-    {"Trainer Spell Item: Arcane Missiles (#5144)", 7505144},
-    {"Trainer Spell Item: Arcane Missiles (#5145)", 7505145},
-    {"Trainer Spell Item: Slice and Dice (#5171)", 7505171},
-    {"Trainer Spell Item: Wrath (#5177)", 7505177},
-    {"Trainer Spell Item: Wrath (#5178)", 7505178},
-    {"Trainer Spell Item: Wrath (#5179)", 7505179},
-    {"Trainer Spell Item: Wrath (#5180)", 7505180},
-    {"Trainer Spell Item: Healing Touch (#5186)", 7505186},
-    {"Trainer Spell Item: Healing Touch (#5187)", 7505187},
-    {"Trainer Spell Item: Healing Touch (#5188)", 7505188},
-    {"Trainer Spell Item: Healing Touch (#5189)", 7505189},
-    {"Trainer Spell Item: Entangling Roots (#5195)", 7505195},
-    {"Trainer Spell Item: Entangling Roots (#5196)", 7505196},
-    {"Trainer Spell Item: Claw (#5201)", 7505201},
     {"Trainer Spell Item: Challenging Roar (#5209)", 7505209},
-    {"Trainer Spell Item: Bash (#5211)", 7505211},
     {"Trainer Spell Item: Prowl (#5215)", 7505215},
-    {"Trainer Spell Item: Tiger's Fury (#5217)", 7505217},
-    {"Trainer Spell Item: Shred (#5221)", 7505221},
     {"Trainer Spell Item: Track Humanoids (#5225)", 7505225},
     {"Trainer Spell Item: Enrage (#5229)", 7505229},
-    {"Trainer Spell Item: Mark of the Wild (#5232)", 7505232},
-    {"Trainer Spell Item: Mark of the Wild (#5234)", 7505234},
-    {"Trainer Spell Item: Battle Shout (#5242)", 7505242},
     {"Trainer Spell Item: Intimidating Shout (#5246)", 7505246},
-    {"Trainer Spell Item: Evasion (#5277)", 7505277},
-    {"Trainer Spell Item: Execute (#5308)", 7505308},
     {"Trainer Spell Item: Feign Death (#5384)", 7505384},
-    {"Trainer Spell Item: Howl of Terror (#5484)", 7505484},
     {"Trainer Spell Item: Sense Demons (#5500)", 7505500},
     {"Trainer Spell Item: Sense Undead (#5502)", 7505502},
-    {"Trainer Spell Item: Conjure Water (#5504)", 7505504},
-    {"Trainer Spell Item: Conjure Water (#5505)", 7505505},
-    {"Trainer Spell Item: Conjure Water (#5506)", 7505506},
-    {"Trainer Spell Item: Hammer of Justice (#5588)", 7505588},
-    {"Trainer Spell Item: Hammer of Justice (#5589)", 7505589},
-    {"Trainer Spell Item: Hand of Protection (#5599)", 7505599},
-    {"Trainer Spell Item: Exorcism (#5614)", 7505614},
-    {"Trainer Spell Item: Exorcism (#5615)", 7505615},
-    {"Trainer Spell Item: Mana Spring Totem (#5675)", 7505675},
-    {"Trainer Spell Item: Searing Pain (#5676)", 7505676},
     {"Trainer Spell Item: Unending Breath (#5697)", 7505697},
-    {"Trainer Spell Item: Create Healthstone (#5699)", 7505699},
-    {"Trainer Spell Item: Stoneclaw Totem (#5730)", 7505730},
-    {"Trainer Spell Item: Rain of Fire (#5740)", 7505740},
-    {"Trainer Spell Item: Fear (#5782)", 7505782},
     {"Trainer Spell Item: Shiv (#5938)", 7505938},
-    {"Trainer Spell Item: Lightning Bolt (#6041)", 7506041},
-    {"Trainer Spell Item: Smite (#6060)", 7506060},
-    {"Trainer Spell Item: Heal (#6064)", 7506064},
-    {"Trainer Spell Item: Power Word: Shield (#6065)", 7506065},
-    {"Trainer Spell Item: Power Word: Shield (#6066)", 7506066},
-    {"Trainer Spell Item: Renew (#6074)", 7506074},
-    {"Trainer Spell Item: Renew (#6075)", 7506075},
-    {"Trainer Spell Item: Renew (#6076)", 7506076},
-    {"Trainer Spell Item: Renew (#6077)", 7506077},
-    {"Trainer Spell Item: Renew (#6078)", 7506078},
-    {"Trainer Spell Item: Mage Armor (#6117)", 7506117},
-    {"Trainer Spell Item: Conjure Water (#6127)", 7506127},
-    {"Trainer Spell Item: Conjure Food (#6129)", 7506129},
-    {"Trainer Spell Item: Frost Nova (#6131)", 7506131},
-    {"Trainer Spell Item: Blizzard (#6141)", 7506141},
-    {"Trainer Spell Item: Frost Ward (#6143)", 7506143},
-    {"Trainer Spell Item: Charge (#6178)", 7506178},
-    {"Trainer Spell Item: Demoralizing Shout (#6190)", 7506190},
-    {"Trainer Spell Item: Battle Shout (#6192)", 7506192},
     {"Trainer Spell Item: Far Sight (#6196)", 7506196},
     {"Trainer Spell Item: Eagle Eye (#6197)", 7506197},
-    {"Trainer Spell Item: Create Healthstone (#6201)", 7506201},
-    {"Trainer Spell Item: Create Healthstone (#6202)", 7506202},
-    {"Trainer Spell Item: Curse of Weakness (#6205)", 7506205},
-    {"Trainer Spell Item: Fear (#6213)", 7506213},
-    {"Trainer Spell Item: Fear (#6215)", 7506215},
-    {"Trainer Spell Item: Curse of Agony (#6217)", 7506217},
-    {"Trainer Spell Item: Rain of Fire (#6219)", 7506219},
-    {"Trainer Spell Item: Corruption (#6222)", 7506222},
-    {"Trainer Spell Item: Corruption (#6223)", 7506223},
-    {"Trainer Spell Item: Shadow Ward (#6229)", 7506229},
-    {"Trainer Spell Item: Thunder Clap (#6343)", 7506343},
     {"Trainer Spell Item: Fear Ward (#6346)", 7506346},
-    {"Trainer Spell Item: Soul Fire (#6353)", 7506353},
-    {"Trainer Spell Item: Searing Totem (#6363)", 7506363},
-    {"Trainer Spell Item: Searing Totem (#6364)", 7506364},
-    {"Trainer Spell Item: Searing Totem (#6365)", 7506365},
-    {"Trainer Spell Item: Create Firestone (#6366)", 7506366},
-    {"Trainer Spell Item: Healing Stream Totem (#6375)", 7506375},
-    {"Trainer Spell Item: Healing Stream Totem (#6377)", 7506377},
-    {"Trainer Spell Item: Stoneclaw Totem (#6390)", 7506390},
-    {"Trainer Spell Item: Stoneclaw Totem (#6391)", 7506391},
-    {"Trainer Spell Item: Stoneclaw Totem (#6392)", 7506392},
     {"Trainer Spell Item: Sentry Totem (#6495)", 7506495},
-    {"Trainer Spell Item: Rend (#6546)", 7506546},
-    {"Trainer Spell Item: Rend (#6547)", 7506547},
-    {"Trainer Spell Item: Rend (#6548)", 7506548},
     {"Trainer Spell Item: Pummel (#6552)", 7506552},
-    {"Trainer Spell Item: Revenge (#6572)", 7506572},
-    {"Trainer Spell Item: Revenge (#6574)", 7506574},
-    {"Trainer Spell Item: Battle Shout (#6673)", 7506673},
-    {"Trainer Spell Item: Mark of the Wild (#6756)", 7506756},
-    {"Trainer Spell Item: Eviscerate (#6760)", 7506760},
-    {"Trainer Spell Item: Eviscerate (#6761)", 7506761},
-    {"Trainer Spell Item: Eviscerate (#6762)", 7506762},
-    {"Trainer Spell Item: Feint (#6768)", 7506768},
-    {"Trainer Spell Item: Sap (#6770)", 7506770},
-    {"Trainer Spell Item: Slice and Dice (#6774)", 7506774},
-    {"Trainer Spell Item: Healing Touch (#6778)", 7506778},
-    {"Trainer Spell Item: Wrath (#6780)", 7506780},
-    {"Trainer Spell Item: Ravage (#6785)", 7506785},
-    {"Trainer Spell Item: Ravage (#6787)", 7506787},
-    {"Trainer Spell Item: Death Coil (#6789)", 7506789},
-    {"Trainer Spell Item: Tiger's Fury (#6793)", 7506793},
-    {"Trainer Spell Item: Bash (#6798)", 7506798},
-    {"Trainer Spell Item: Shred (#6800)", 7506800},
-    {"Trainer Spell Item: Maul (#6808)", 7506808},
-    {"Trainer Spell Item: Maul (#6809)", 7506809},
     {"Trainer Spell Item: Hand of Sacrifice (#6940)", 7506940},
-    {"Trainer Spell Item: Inner Fire (#7128)", 7507128},
-    {"Trainer Spell Item: Retribution Aura (#7294)", 7507294},
-    {"Trainer Spell Item: Frost Armor (#7300)", 7507300},
-    {"Trainer Spell Item: Frost Armor (#7301)", 7507301},
-    {"Trainer Spell Item: Ice Armor (#7302)", 7507302},
-    {"Trainer Spell Item: Ice Armor (#7320)", 7507320},
-    {"Trainer Spell Item: Frostbolt (#7322)", 7507322},
-    {"Trainer Spell Item: Cleave (#7369)", 7507369},
-    {"Trainer Spell Item: Revenge (#7379)", 7507379},
     {"Trainer Spell Item: Overpower (#7384)", 7507384},
-    {"Trainer Spell Item: Shadow Bolt (#7641)", 7507641},
-    {"Trainer Spell Item: Curse of Weakness (#7646)", 7507646},
-    {"Trainer Spell Item: Corruption (#7648)", 7507648},
-    {"Trainer Spell Item: Drain Life (#7651)", 7507651},
-    {"Trainer Spell Item: Lesser Healing Wave (#8004)", 7508004},
-    {"Trainer Spell Item: Healing Wave (#8005)", 7508005},
-    {"Trainer Spell Item: Lesser Healing Wave (#8008)", 7508008},
-    {"Trainer Spell Item: Lesser Healing Wave (#8010)", 7508010},
-    {"Trainer Spell Item: Purge (#8012)", 7508012},
-    {"Trainer Spell Item: Rockbiter Weapon (#8017)", 7508017},
-    {"Trainer Spell Item: Rockbiter Weapon (#8018)", 7508018},
-    {"Trainer Spell Item: Rockbiter Weapon (#8019)", 7508019},
-    {"Trainer Spell Item: Flametongue Weapon (#8024)", 7508024},
-    {"Trainer Spell Item: Flametongue Weapon (#8027)", 7508027},
-    {"Trainer Spell Item: Flametongue Weapon (#8030)", 7508030},
-    {"Trainer Spell Item: Frostbrand Weapon (#8033)", 7508033},
-    {"Trainer Spell Item: Frostbrand Weapon (#8038)", 7508038},
-    {"Trainer Spell Item: Earth Shock (#8042)", 7508042},
-    {"Trainer Spell Item: Earth Shock (#8044)", 7508044},
-    {"Trainer Spell Item: Earth Shock (#8045)", 7508045},
-    {"Trainer Spell Item: Earth Shock (#8046)", 7508046},
-    {"Trainer Spell Item: Flame Shock (#8050)", 7508050},
-    {"Trainer Spell Item: Flame Shock (#8052)", 7508052},
-    {"Trainer Spell Item: Flame Shock (#8053)", 7508053},
-    {"Trainer Spell Item: Frost Shock (#8056)", 7508056},
-    {"Trainer Spell Item: Frost Shock (#8058)", 7508058},
-    {"Trainer Spell Item: Strength of Earth Totem (#8075)", 7508075},
-    {"Trainer Spell Item: Mind Blast (#8092)", 7508092},
-    {"Trainer Spell Item: Mind Blast (#8102)", 7508102},
-    {"Trainer Spell Item: Mind Blast (#8103)", 7508103},
-    {"Trainer Spell Item: Mind Blast (#8104)", 7508104},
-    {"Trainer Spell Item: Mind Blast (#8105)", 7508105},
-    {"Trainer Spell Item: Mind Blast (#8106)", 7508106},
-    {"Trainer Spell Item: Psychic Scream (#8122)", 7508122},
-    {"Trainer Spell Item: Psychic Scream (#8124)", 7508124},
     {"Trainer Spell Item: Mana Burn (#8129)", 7508129},
-    {"Trainer Spell Item: Lightning Shield (#8134)", 7508134},
     {"Trainer Spell Item: Tremor Totem (#8143)", 7508143},
-    {"Trainer Spell Item: Stoneskin Totem (#8154)", 7508154},
-    {"Trainer Spell Item: Stoneskin Totem (#8155)", 7508155},
-    {"Trainer Spell Item: Strength of Earth Totem (#8160)", 7508160},
-    {"Trainer Spell Item: Strength of Earth Totem (#8161)", 7508161},
     {"Trainer Spell Item: Cleansing Totem (#8170)", 7508170},
     {"Trainer Spell Item: Grounding Totem (#8177)", 7508177},
-    {"Trainer Spell Item: Frost Resistance Totem (#8181)", 7508181},
-    {"Trainer Spell Item: Fire Resistance Totem (#8184)", 7508184},
-    {"Trainer Spell Item: Magma Totem (#8190)", 7508190},
-    {"Trainer Spell Item: Thunder Clap (#8198)", 7508198},
-    {"Trainer Spell Item: Thunder Clap (#8204)", 7508204},
-    {"Trainer Spell Item: Thunder Clap (#8205)", 7508205},
-    {"Trainer Spell Item: Flametongue Totem (#8227)", 7508227},
-    {"Trainer Spell Item: Windfury Weapon (#8232)", 7508232},
-    {"Trainer Spell Item: Windfury Weapon (#8235)", 7508235},
-    {"Trainer Spell Item: Flametongue Totem (#8249)", 7508249},
-    {"Trainer Spell Item: Drain Soul (#8288)", 7508288},
-    {"Trainer Spell Item: Drain Soul (#8289)", 7508289},
-    {"Trainer Spell Item: Fireball (#8400)", 7508400},
-    {"Trainer Spell Item: Fireball (#8401)", 7508401},
-    {"Trainer Spell Item: Fireball (#8402)", 7508402},
-    {"Trainer Spell Item: Frostbolt (#8406)", 7508406},
-    {"Trainer Spell Item: Frostbolt (#8407)", 7508407},
-    {"Trainer Spell Item: Frostbolt (#8408)", 7508408},
-    {"Trainer Spell Item: Fire Blast (#8412)", 7508412},
-    {"Trainer Spell Item: Fire Blast (#8413)", 7508413},
-    {"Trainer Spell Item: Arcane Missiles (#8416)", 7508416},
-    {"Trainer Spell Item: Arcane Missiles (#8417)", 7508417},
-    {"Trainer Spell Item: Flamestrike (#8422)", 7508422},
-    {"Trainer Spell Item: Flamestrike (#8423)", 7508423},
-    {"Trainer Spell Item: Blizzard (#8427)", 7508427},
-    {"Trainer Spell Item: Arcane Explosion (#8437)", 7508437},
-    {"Trainer Spell Item: Arcane Explosion (#8438)", 7508438},
-    {"Trainer Spell Item: Arcane Explosion (#8439)", 7508439},
-    {"Trainer Spell Item: Scorch (#8444)", 7508444},
-    {"Trainer Spell Item: Scorch (#8445)", 7508445},
-    {"Trainer Spell Item: Scorch (#8446)", 7508446},
-    {"Trainer Spell Item: Dampen Magic (#8450)", 7508450},
-    {"Trainer Spell Item: Dampen Magic (#8451)", 7508451},
-    {"Trainer Spell Item: Amplify Magic (#8455)", 7508455},
-    {"Trainer Spell Item: Fire Ward (#8457)", 7508457},
-    {"Trainer Spell Item: Fire Ward (#8458)", 7508458},
-    {"Trainer Spell Item: Frost Ward (#8461)", 7508461},
-    {"Trainer Spell Item: Frost Ward (#8462)", 7508462},
-    {"Trainer Spell Item: Cone of Cold (#8492)", 7508492},
-    {"Trainer Spell Item: Mana Shield (#8494)", 7508494},
-    {"Trainer Spell Item: Mana Shield (#8495)", 7508495},
-    {"Trainer Spell Item: Fire Nova (#8498)", 7508498},
-    {"Trainer Spell Item: Fire Nova (#8499)", 7508499},
     {"Trainer Spell Item: Windfury Totem (#8512)", 7508512},
-    {"Trainer Spell Item: Sinister Strike (#8621)", 7508621},
-    {"Trainer Spell Item: Eviscerate (#8623)", 7508623},
-    {"Trainer Spell Item: Eviscerate (#8624)", 7508624},
-    {"Trainer Spell Item: Garrote (#8631)", 7508631},
-    {"Trainer Spell Item: Garrote (#8632)", 7508632},
-    {"Trainer Spell Item: Garrote (#8633)", 7508633},
-    {"Trainer Spell Item: Feint (#8637)", 7508637},
-    {"Trainer Spell Item: Rupture (#8639)", 7508639},
-    {"Trainer Spell Item: Rupture (#8640)", 7508640},
-    {"Trainer Spell Item: Kidney Shot (#8643)", 7508643},
     {"Trainer Spell Item: Expose Armor (#8647)", 7508647},
-    {"Trainer Spell Item: Ambush (#8676)", 7508676},
-    {"Trainer Spell Item: Sprint (#8696)", 7508696},
-    {"Trainer Spell Item: Backstab (#8721)", 7508721},
-    {"Trainer Spell Item: Ambush (#8724)", 7508724},
-    {"Trainer Spell Item: Ambush (#8725)", 7508725},
     {"Trainer Spell Item: Mail (#8737)", 7508737},
-    {"Trainer Spell Item: Slam (#8820)", 7508820},
-    {"Trainer Spell Item: Healing Touch (#8903)", 7508903},
-    {"Trainer Spell Item: Wrath (#8905)", 7508905},
-    {"Trainer Spell Item: Mark of the Wild (#8907)", 7508907},
-    {"Trainer Spell Item: Rejuvenation (#8910)", 7508910},
-    {"Trainer Spell Item: Thorns (#8914)", 7508914},
-    {"Trainer Spell Item: Tranquility (#8918)", 7508918},
-    {"Trainer Spell Item: Moonfire (#8921)", 7508921},
-    {"Trainer Spell Item: Moonfire (#8924)", 7508924},
-    {"Trainer Spell Item: Moonfire (#8925)", 7508925},
-    {"Trainer Spell Item: Moonfire (#8926)", 7508926},
-    {"Trainer Spell Item: Moonfire (#8927)", 7508927},
-    {"Trainer Spell Item: Moonfire (#8928)", 7508928},
-    {"Trainer Spell Item: Moonfire (#8929)", 7508929},
-    {"Trainer Spell Item: Regrowth (#8936)", 7508936},
-    {"Trainer Spell Item: Regrowth (#8938)", 7508938},
-    {"Trainer Spell Item: Regrowth (#8939)", 7508939},
-    {"Trainer Spell Item: Regrowth (#8940)", 7508940},
-    {"Trainer Spell Item: Regrowth (#8941)", 7508941},
-    {"Trainer Spell Item: Starfire (#8949)", 7508949},
-    {"Trainer Spell Item: Starfire (#8950)", 7508950},
-    {"Trainer Spell Item: Starfire (#8951)", 7508951},
-    {"Trainer Spell Item: Soothe Animal (#8955)", 7508955},
-    {"Trainer Spell Item: Maul (#8972)", 7508972},
-    {"Trainer Spell Item: Bash (#8983)", 7508983},
-    {"Trainer Spell Item: Shred (#8992)", 7508992},
-    {"Trainer Spell Item: Cower (#8998)", 7508998},
-    {"Trainer Spell Item: Cower (#9000)", 7509000},
-    {"Trainer Spell Item: Pounce (#9005)", 7509005},
-    {"Trainer Spell Item: Flash Heal (#9472)", 7509472},
-    {"Trainer Spell Item: Flash Heal (#9473)", 7509473},
-    {"Trainer Spell Item: Flash Heal (#9474)", 7509474},
-    {"Trainer Spell Item: Shackle Undead (#9484)", 7509484},
-    {"Trainer Spell Item: Shackle Undead (#9485)", 7509485},
-    {"Trainer Spell Item: Demoralizing Roar (#9490)", 7509490},
-    {"Trainer Spell Item: Rip (#9492)", 7509492},
-    {"Trainer Spell Item: Rip (#9493)", 7509493},
-    {"Trainer Spell Item: Dire Bear Form (#9634)", 7509634},
-    {"Trainer Spell Item: Maul (#9745)", 7509745},
-    {"Trainer Spell Item: Demoralizing Roar (#9747)", 7509747},
-    {"Trainer Spell Item: Regrowth (#9750)", 7509750},
-    {"Trainer Spell Item: Rip (#9752)", 7509752},
-    {"Trainer Spell Item: Swipe (Bear) (#9754)", 7509754},
-    {"Trainer Spell Item: Thorns (#9756)", 7509756},
-    {"Trainer Spell Item: Healing Touch (#9758)", 7509758},
-    {"Trainer Spell Item: Dash (#9821)", 7509821},
-    {"Trainer Spell Item: Pounce (#9823)", 7509823},
-    {"Trainer Spell Item: Pounce (#9827)", 7509827},
-    {"Trainer Spell Item: Shred (#9829)", 7509829},
-    {"Trainer Spell Item: Shred (#9830)", 7509830},
-    {"Trainer Spell Item: Moonfire (#9833)", 7509833},
-    {"Trainer Spell Item: Moonfire (#9834)", 7509834},
-    {"Trainer Spell Item: Moonfire (#9835)", 7509835},
-    {"Trainer Spell Item: Rejuvenation (#9839)", 7509839},
-    {"Trainer Spell Item: Rejuvenation (#9840)", 7509840},
-    {"Trainer Spell Item: Rejuvenation (#9841)", 7509841},
-    {"Trainer Spell Item: Tiger's Fury (#9845)", 7509845},
-    {"Trainer Spell Item: Tiger's Fury (#9846)", 7509846},
-    {"Trainer Spell Item: Claw (#9849)", 7509849},
-    {"Trainer Spell Item: Claw (#9850)", 7509850},
-    {"Trainer Spell Item: Entangling Roots (#9852)", 7509852},
-    {"Trainer Spell Item: Entangling Roots (#9853)", 7509853},
-    {"Trainer Spell Item: Regrowth (#9856)", 7509856},
-    {"Trainer Spell Item: Regrowth (#9857)", 7509857},
-    {"Trainer Spell Item: Regrowth (#9858)", 7509858},
-    {"Trainer Spell Item: Tranquility (#9862)", 7509862},
-    {"Trainer Spell Item: Tranquility (#9863)", 7509863},
-    {"Trainer Spell Item: Ravage (#9866)", 7509866},
-    {"Trainer Spell Item: Ravage (#9867)", 7509867},
-    {"Trainer Spell Item: Starfire (#9875)", 7509875},
-    {"Trainer Spell Item: Starfire (#9876)", 7509876},
-    {"Trainer Spell Item: Maul (#9880)", 7509880},
-    {"Trainer Spell Item: Maul (#9881)", 7509881},
-    {"Trainer Spell Item: Mark of the Wild (#9884)", 7509884},
-    {"Trainer Spell Item: Mark of the Wild (#9885)", 7509885},
-    {"Trainer Spell Item: Healing Touch (#9888)", 7509888},
-    {"Trainer Spell Item: Healing Touch (#9889)", 7509889},
-    {"Trainer Spell Item: Cower (#9892)", 7509892},
-    {"Trainer Spell Item: Rip (#9894)", 7509894},
-    {"Trainer Spell Item: Rip (#9896)", 7509896},
-    {"Trainer Spell Item: Demoralizing Roar (#9898)", 7509898},
-    {"Trainer Spell Item: Soothe Animal (#9901)", 7509901},
-    {"Trainer Spell Item: Rake (#9904)", 7509904},
-    {"Trainer Spell Item: Swipe (Bear) (#9908)", 7509908},
-    {"Trainer Spell Item: Thorns (#9910)", 7509910},
-    {"Trainer Spell Item: Wrath (#9912)", 7509912},
-    {"Trainer Spell Item: Conjure Mana Gem (#10053)", 7510053},
-    {"Trainer Spell Item: Conjure Mana Gem (#10054)", 7510054},
     {"Trainer Spell Item: Portal: Stormwind (#10059)", 7510059},
-    {"Trainer Spell Item: Conjure Water (#10138)", 7510138},
-    {"Trainer Spell Item: Conjure Water (#10139)", 7510139},
-    {"Trainer Spell Item: Conjure Water (#10140)", 7510140},
-    {"Trainer Spell Item: Conjure Food (#10144)", 7510144},
-    {"Trainer Spell Item: Conjure Food (#10145)", 7510145},
-    {"Trainer Spell Item: Fireball (#10148)", 7510148},
-    {"Trainer Spell Item: Fireball (#10149)", 7510149},
-    {"Trainer Spell Item: Fireball (#10150)", 7510150},
-    {"Trainer Spell Item: Fireball (#10151)", 7510151},
-    {"Trainer Spell Item: Arcane Intellect (#10156)", 7510156},
-    {"Trainer Spell Item: Arcane Intellect (#10157)", 7510157},
-    {"Trainer Spell Item: Cone of Cold (#10159)", 7510159},
-    {"Trainer Spell Item: Cone of Cold (#10160)", 7510160},
-    {"Trainer Spell Item: Cone of Cold (#10161)", 7510161},
-    {"Trainer Spell Item: Amplify Magic (#10169)", 7510169},
-    {"Trainer Spell Item: Amplify Magic (#10170)", 7510170},
-    {"Trainer Spell Item: Dampen Magic (#10173)", 7510173},
-    {"Trainer Spell Item: Dampen Magic (#10174)", 7510174},
-    {"Trainer Spell Item: Frost Ward (#10177)", 7510177},
-    {"Trainer Spell Item: Frostbolt (#10179)", 7510179},
-    {"Trainer Spell Item: Frostbolt (#10180)", 7510180},
-    {"Trainer Spell Item: Frostbolt (#10181)", 7510181},
-    {"Trainer Spell Item: Blizzard (#10185)", 7510185},
-    {"Trainer Spell Item: Blizzard (#10186)", 7510186},
-    {"Trainer Spell Item: Blizzard (#10187)", 7510187},
-    {"Trainer Spell Item: Mana Shield (#10191)", 7510191},
-    {"Trainer Spell Item: Mana Shield (#10192)", 7510192},
-    {"Trainer Spell Item: Mana Shield (#10193)", 7510193},
-    {"Trainer Spell Item: Fire Blast (#10197)", 7510197},
-    {"Trainer Spell Item: Fire Blast (#10199)", 7510199},
-    {"Trainer Spell Item: Arcane Explosion (#10201)", 7510201},
-    {"Trainer Spell Item: Arcane Explosion (#10202)", 7510202},
-    {"Trainer Spell Item: Scorch (#10205)", 7510205},
-    {"Trainer Spell Item: Scorch (#10206)", 7510206},
-    {"Trainer Spell Item: Scorch (#10207)", 7510207},
-    {"Trainer Spell Item: Arcane Missiles (#10211)", 7510211},
-    {"Trainer Spell Item: Arcane Missiles (#10212)", 7510212},
-    {"Trainer Spell Item: Flamestrike (#10215)", 7510215},
-    {"Trainer Spell Item: Flamestrike (#10216)", 7510216},
-    {"Trainer Spell Item: Ice Armor (#10219)", 7510219},
-    {"Trainer Spell Item: Ice Armor (#10220)", 7510220},
-    {"Trainer Spell Item: Fire Ward (#10223)", 7510223},
-    {"Trainer Spell Item: Fire Ward (#10225)", 7510225},
-    {"Trainer Spell Item: Frost Nova (#10230)", 7510230},
-    {"Trainer Spell Item: Hand of Protection (#10278)", 7510278},
-    {"Trainer Spell Item: Devotion Aura (#10290)", 7510290},
-    {"Trainer Spell Item: Devotion Aura (#10291)", 7510291},
-    {"Trainer Spell Item: Devotion Aura (#10292)", 7510292},
-    {"Trainer Spell Item: Devotion Aura (#10293)", 7510293},
-    {"Trainer Spell Item: Retribution Aura (#10298)", 7510298},
-    {"Trainer Spell Item: Retribution Aura (#10299)", 7510299},
-    {"Trainer Spell Item: Retribution Aura (#10300)", 7510300},
-    {"Trainer Spell Item: Retribution Aura (#10301)", 7510301},
-    {"Trainer Spell Item: Hammer of Justice (#10308)", 7510308},
-    {"Trainer Spell Item: Lay on Hands (#10310)", 7510310},
-    {"Trainer Spell Item: Exorcism (#10312)", 7510312},
-    {"Trainer Spell Item: Exorcism (#10313)", 7510313},
-    {"Trainer Spell Item: Exorcism (#10314)", 7510314},
-    {"Trainer Spell Item: Holy Wrath (#10318)", 7510318},
     {"Trainer Spell Item: Judgement (#10321)", 7510321},
-    {"Trainer Spell Item: Redemption (#10322)", 7510322},
-    {"Trainer Spell Item: Redemption (#10324)", 7510324},
     {"Trainer Spell Item: Turn Evil (#10326)", 7510326},
-    {"Trainer Spell Item: Holy Light (#10328)", 7510328},
-    {"Trainer Spell Item: Holy Light (#10329)", 7510329},
-    {"Trainer Spell Item: Lightning Bolt (#10391)", 7510391},
-    {"Trainer Spell Item: Lightning Bolt (#10392)", 7510392},
-    {"Trainer Spell Item: Healing Wave (#10395)", 7510395},
-    {"Trainer Spell Item: Healing Wave (#10396)", 7510396},
-    {"Trainer Spell Item: Rockbiter Weapon (#10399)", 7510399},
-    {"Trainer Spell Item: Stoneskin Totem (#10406)", 7510406},
-    {"Trainer Spell Item: Stoneskin Totem (#10407)", 7510407},
-    {"Trainer Spell Item: Stoneskin Totem (#10408)", 7510408},
-    {"Trainer Spell Item: Earth Shock (#10412)", 7510412},
-    {"Trainer Spell Item: Earth Shock (#10413)", 7510413},
-    {"Trainer Spell Item: Earth Shock (#10414)", 7510414},
-    {"Trainer Spell Item: Stoneclaw Totem (#10427)", 7510427},
-    {"Trainer Spell Item: Stoneclaw Totem (#10428)", 7510428},
-    {"Trainer Spell Item: Lightning Shield (#10431)", 7510431},
-    {"Trainer Spell Item: Lightning Shield (#10432)", 7510432},
-    {"Trainer Spell Item: Searing Totem (#10437)", 7510437},
-    {"Trainer Spell Item: Searing Totem (#10438)", 7510438},
-    {"Trainer Spell Item: Strength of Earth Totem (#10442)", 7510442},
-    {"Trainer Spell Item: Flame Shock (#10447)", 7510447},
-    {"Trainer Spell Item: Flame Shock (#10448)", 7510448},
-    {"Trainer Spell Item: Frostbrand Weapon (#10456)", 7510456},
-    {"Trainer Spell Item: Healing Stream Totem (#10462)", 7510462},
-    {"Trainer Spell Item: Healing Stream Totem (#10463)", 7510463},
-    {"Trainer Spell Item: Lesser Healing Wave (#10466)", 7510466},
-    {"Trainer Spell Item: Lesser Healing Wave (#10467)", 7510467},
-    {"Trainer Spell Item: Lesser Healing Wave (#10468)", 7510468},
-    {"Trainer Spell Item: Frost Shock (#10472)", 7510472},
-    {"Trainer Spell Item: Frost Shock (#10473)", 7510473},
-    {"Trainer Spell Item: Frost Resistance Totem (#10478)", 7510478},
-    {"Trainer Spell Item: Frost Resistance Totem (#10479)", 7510479},
-    {"Trainer Spell Item: Windfury Weapon (#10486)", 7510486},
-    {"Trainer Spell Item: Mana Spring Totem (#10495)", 7510495},
-    {"Trainer Spell Item: Mana Spring Totem (#10496)", 7510496},
-    {"Trainer Spell Item: Mana Spring Totem (#10497)", 7510497},
-    {"Trainer Spell Item: Flametongue Totem (#10526)", 7510526},
-    {"Trainer Spell Item: Fire Resistance Totem (#10537)", 7510537},
-    {"Trainer Spell Item: Fire Resistance Totem (#10538)", 7510538},
-    {"Trainer Spell Item: Magma Totem (#10585)", 7510585},
-    {"Trainer Spell Item: Magma Totem (#10586)", 7510586},
-    {"Trainer Spell Item: Magma Totem (#10587)", 7510587},
-    {"Trainer Spell Item: Nature Resistance Totem (#10595)", 7510595},
-    {"Trainer Spell Item: Nature Resistance Totem (#10600)", 7510600},
-    {"Trainer Spell Item: Nature Resistance Totem (#10601)", 7510601},
-    {"Trainer Spell Item: Chain Lightning (#10605)", 7510605},
-    {"Trainer Spell Item: Chain Heal (#10622)", 7510622},
-    {"Trainer Spell Item: Chain Heal (#10623)", 7510623},
-    {"Trainer Spell Item: Resurrection (#10880)", 7510880},
-    {"Trainer Spell Item: Resurrection (#10881)", 7510881},
-    {"Trainer Spell Item: Psychic Scream (#10888)", 7510888},
-    {"Trainer Spell Item: Psychic Scream (#10890)", 7510890},
-    {"Trainer Spell Item: Shadow Word: Pain (#10892)", 7510892},
-    {"Trainer Spell Item: Shadow Word: Pain (#10893)", 7510893},
-    {"Trainer Spell Item: Shadow Word: Pain (#10894)", 7510894},
-    {"Trainer Spell Item: Power Word: Shield (#10898)", 7510898},
-    {"Trainer Spell Item: Power Word: Shield (#10899)", 7510899},
-    {"Trainer Spell Item: Power Word: Shield (#10900)", 7510900},
-    {"Trainer Spell Item: Power Word: Shield (#10901)", 7510901},
-    {"Trainer Spell Item: Mind Vision (#10909)", 7510909},
-    {"Trainer Spell Item: Flash Heal (#10915)", 7510915},
-    {"Trainer Spell Item: Flash Heal (#10916)", 7510916},
-    {"Trainer Spell Item: Flash Heal (#10917)", 7510917},
-    {"Trainer Spell Item: Renew (#10927)", 7510927},
-    {"Trainer Spell Item: Renew (#10928)", 7510928},
-    {"Trainer Spell Item: Renew (#10929)", 7510929},
-    {"Trainer Spell Item: Smite (#10933)", 7510933},
-    {"Trainer Spell Item: Smite (#10934)", 7510934},
-    {"Trainer Spell Item: Power Word: Fortitude (#10937)", 7510937},
-    {"Trainer Spell Item: Power Word: Fortitude (#10938)", 7510938},
-    {"Trainer Spell Item: Mind Blast (#10945)", 7510945},
-    {"Trainer Spell Item: Mind Blast (#10946)", 7510946},
-    {"Trainer Spell Item: Mind Blast (#10947)", 7510947},
-    {"Trainer Spell Item: Inner Fire (#10951)", 7510951},
-    {"Trainer Spell Item: Inner Fire (#10952)", 7510952},
-    {"Trainer Spell Item: Shackle Undead (#10955)", 7510955},
-    {"Trainer Spell Item: Shadow Protection (#10957)", 7510957},
-    {"Trainer Spell Item: Shadow Protection (#10958)", 7510958},
-    {"Trainer Spell Item: Prayer of Healing (#10960)", 7510960},
-    {"Trainer Spell Item: Prayer of Healing (#10961)", 7510961},
-    {"Trainer Spell Item: Greater Heal (#10963)", 7510963},
-    {"Trainer Spell Item: Greater Heal (#10964)", 7510964},
-    {"Trainer Spell Item: Greater Heal (#10965)", 7510965},
-    {"Trainer Spell Item: Ambush (#11267)", 7511267},
-    {"Trainer Spell Item: Ambush (#11268)", 7511268},
-    {"Trainer Spell Item: Ambush (#11269)", 7511269},
-    {"Trainer Spell Item: Rupture (#11273)", 7511273},
-    {"Trainer Spell Item: Rupture (#11274)", 7511274},
-    {"Trainer Spell Item: Rupture (#11275)", 7511275},
-    {"Trainer Spell Item: Backstab (#11279)", 7511279},
-    {"Trainer Spell Item: Backstab (#11280)", 7511280},
-    {"Trainer Spell Item: Backstab (#11281)", 7511281},
-    {"Trainer Spell Item: Garrote (#11289)", 7511289},
-    {"Trainer Spell Item: Garrote (#11290)", 7511290},
-    {"Trainer Spell Item: Sinister Strike (#11293)", 7511293},
-    {"Trainer Spell Item: Sinister Strike (#11294)", 7511294},
-    {"Trainer Spell Item: Sap (#11297)", 7511297},
-    {"Trainer Spell Item: Eviscerate (#11299)", 7511299},
-    {"Trainer Spell Item: Eviscerate (#11300)", 7511300},
-    {"Trainer Spell Item: Feint (#11303)", 7511303},
-    {"Trainer Spell Item: Sprint (#11305)", 7511305},
-    {"Trainer Spell Item: Fire Nova (#11314)", 7511314},
-    {"Trainer Spell Item: Fire Nova (#11315)", 7511315},
     {"Trainer Spell Item: Portal: Ironforge (#11416)", 7511416},
     {"Trainer Spell Item: Portal: Orgrimmar (#11417)", 7511417},
     {"Trainer Spell Item: Portal: Undercity (#11418)", 7511418},
     {"Trainer Spell Item: Portal: Darnassus (#11419)", 7511419},
     {"Trainer Spell Item: Portal: Thunder Bluff (#11420)", 7511420},
-    {"Trainer Spell Item: Battle Shout (#11549)", 7511549},
-    {"Trainer Spell Item: Battle Shout (#11550)", 7511550},
-    {"Trainer Spell Item: Battle Shout (#11551)", 7511551},
-    {"Trainer Spell Item: Demoralizing Shout (#11554)", 7511554},
-    {"Trainer Spell Item: Demoralizing Shout (#11555)", 7511555},
-    {"Trainer Spell Item: Demoralizing Shout (#11556)", 7511556},
-    {"Trainer Spell Item: Heroic Strike (#11564)", 7511564},
-    {"Trainer Spell Item: Heroic Strike (#11565)", 7511565},
-    {"Trainer Spell Item: Heroic Strike (#11566)", 7511566},
-    {"Trainer Spell Item: Heroic Strike (#11567)", 7511567},
-    {"Trainer Spell Item: Rend (#11572)", 7511572},
-    {"Trainer Spell Item: Rend (#11573)", 7511573},
-    {"Trainer Spell Item: Rend (#11574)", 7511574},
-    {"Trainer Spell Item: Charge (#11578)", 7511578},
-    {"Trainer Spell Item: Thunder Clap (#11580)", 7511580},
-    {"Trainer Spell Item: Thunder Clap (#11581)", 7511581},
-    {"Trainer Spell Item: Revenge (#11600)", 7511600},
-    {"Trainer Spell Item: Revenge (#11601)", 7511601},
-    {"Trainer Spell Item: Slam (#11604)", 7511604},
-    {"Trainer Spell Item: Slam (#11605)", 7511605},
-    {"Trainer Spell Item: Cleave (#11608)", 7511608},
-    {"Trainer Spell Item: Cleave (#11609)", 7511609},
-    {"Trainer Spell Item: Shadow Bolt (#11659)", 7511659},
-    {"Trainer Spell Item: Shadow Bolt (#11660)", 7511660},
-    {"Trainer Spell Item: Shadow Bolt (#11661)", 7511661},
-    {"Trainer Spell Item: Immolate (#11665)", 7511665},
-    {"Trainer Spell Item: Immolate (#11667)", 7511667},
-    {"Trainer Spell Item: Immolate (#11668)", 7511668},
-    {"Trainer Spell Item: Corruption (#11671)", 7511671},
-    {"Trainer Spell Item: Corruption (#11672)", 7511672},
-    {"Trainer Spell Item: Drain Soul (#11675)", 7511675},
-    {"Trainer Spell Item: Rain of Fire (#11677)", 7511677},
-    {"Trainer Spell Item: Rain of Fire (#11678)", 7511678},
-    {"Trainer Spell Item: Hellfire (#11683)", 7511683},
-    {"Trainer Spell Item: Hellfire (#11684)", 7511684},
-    {"Trainer Spell Item: Life Tap (#11687)", 7511687},
-    {"Trainer Spell Item: Life Tap (#11688)", 7511688},
-    {"Trainer Spell Item: Life Tap (#11689)", 7511689},
-    {"Trainer Spell Item: Health Funnel (#11693)", 7511693},
-    {"Trainer Spell Item: Health Funnel (#11694)", 7511694},
-    {"Trainer Spell Item: Health Funnel (#11695)", 7511695},
-    {"Trainer Spell Item: Drain Life (#11699)", 7511699},
-    {"Trainer Spell Item: Drain Life (#11700)", 7511700},
-    {"Trainer Spell Item: Curse of Weakness (#11707)", 7511707},
-    {"Trainer Spell Item: Curse of Weakness (#11708)", 7511708},
-    {"Trainer Spell Item: Curse of Agony (#11711)", 7511711},
-    {"Trainer Spell Item: Curse of Agony (#11712)", 7511712},
-    {"Trainer Spell Item: Curse of Agony (#11713)", 7511713},
-    {"Trainer Spell Item: Curse of Tongues (#11719)", 7511719},
-    {"Trainer Spell Item: Curse of the Elements (#11721)", 7511721},
-    {"Trainer Spell Item: Curse of the Elements (#11722)", 7511722},
-    {"Trainer Spell Item: Enslave Demon (#11725)", 7511725},
-    {"Trainer Spell Item: Enslave Demon (#11726)", 7511726},
-    {"Trainer Spell Item: Create Healthstone (#11729)", 7511729},
-    {"Trainer Spell Item: Create Healthstone (#11730)", 7511730},
-    {"Trainer Spell Item: Demon Armor (#11733)", 7511733},
-    {"Trainer Spell Item: Demon Armor (#11734)", 7511734},
-    {"Trainer Spell Item: Demon Armor (#11735)", 7511735},
-    {"Trainer Spell Item: Shadow Ward (#11739)", 7511739},
-    {"Trainer Spell Item: Shadow Ward (#11740)", 7511740},
     {"Trainer Spell Item: Evocation (#12051)", 7512051},
-    {"Trainer Spell Item: Pyroblast (#12505)", 7512505},
-    {"Trainer Spell Item: Pyroblast (#12522)", 7512522},
-    {"Trainer Spell Item: Pyroblast (#12523)", 7512523},
-    {"Trainer Spell Item: Pyroblast (#12524)", 7512524},
-    {"Trainer Spell Item: Pyroblast (#12525)", 7512525},
-    {"Trainer Spell Item: Pyroblast (#12526)", 7512526},
     {"Trainer Spell Item: Stance Mastery (#12678)", 7512678},
-    {"Trainer Spell Item: Polymorph (#12824)", 7512824},
-    {"Trainer Spell Item: Polymorph (#12825)", 7512825},
-    {"Trainer Spell Item: Polymorph (#12826)", 7512826},
-    {"Trainer Spell Item: Blast Wave (#13018)", 7513018},
-    {"Trainer Spell Item: Blast Wave (#13019)", 7513019},
-    {"Trainer Spell Item: Blast Wave (#13020)", 7513020},
-    {"Trainer Spell Item: Blast Wave (#13021)", 7513021},
-    {"Trainer Spell Item: Ice Barrier (#13031)", 7513031},
-    {"Trainer Spell Item: Ice Barrier (#13032)", 7513032},
-    {"Trainer Spell Item: Ice Barrier (#13033)", 7513033},
     {"Trainer Spell Item: Aspect of the Pack (#13159)", 7513159},
     {"Trainer Spell Item: Aspect of the Beast (#13161)", 7513161},
     {"Trainer Spell Item: Aspect of the Monkey (#13163)", 7513163},
-    {"Trainer Spell Item: Aspect of the Hawk (#13165)", 7513165},
-    {"Trainer Spell Item: Mend Pet (#13542)", 7513542},
-    {"Trainer Spell Item: Mend Pet (#13543)", 7513543},
-    {"Trainer Spell Item: Mend Pet (#13544)", 7513544},
-    {"Trainer Spell Item: Serpent Sting (#13549)", 7513549},
-    {"Trainer Spell Item: Serpent Sting (#13550)", 7513550},
-    {"Trainer Spell Item: Serpent Sting (#13551)", 7513551},
-    {"Trainer Spell Item: Serpent Sting (#13552)", 7513552},
-    {"Trainer Spell Item: Serpent Sting (#13553)", 7513553},
-    {"Trainer Spell Item: Serpent Sting (#13554)", 7513554},
-    {"Trainer Spell Item: Serpent Sting (#13555)", 7513555},
-    {"Trainer Spell Item: Immolation Trap (#13795)", 7513795},
     {"Trainer Spell Item: Frost Trap (#13809)", 7513809},
-    {"Trainer Spell Item: Explosive Trap (#13813)", 7513813},
     {"Trainer Spell Item: Summon Warhorse (#13820)", 7513820},
-    {"Trainer Spell Item: Raptor Strike (#14260)", 7514260},
-    {"Trainer Spell Item: Raptor Strike (#14261)", 7514261},
-    {"Trainer Spell Item: Raptor Strike (#14262)", 7514262},
-    {"Trainer Spell Item: Raptor Strike (#14263)", 7514263},
-    {"Trainer Spell Item: Raptor Strike (#14264)", 7514264},
-    {"Trainer Spell Item: Raptor Strike (#14265)", 7514265},
-    {"Trainer Spell Item: Raptor Strike (#14266)", 7514266},
-    {"Trainer Spell Item: Mongoose Bite (#14269)", 7514269},
-    {"Trainer Spell Item: Mongoose Bite (#14270)", 7514270},
-    {"Trainer Spell Item: Mongoose Bite (#14271)", 7514271},
-    {"Trainer Spell Item: Arcane Shot (#14281)", 7514281},
-    {"Trainer Spell Item: Arcane Shot (#14282)", 7514282},
-    {"Trainer Spell Item: Arcane Shot (#14283)", 7514283},
-    {"Trainer Spell Item: Arcane Shot (#14284)", 7514284},
-    {"Trainer Spell Item: Arcane Shot (#14285)", 7514285},
-    {"Trainer Spell Item: Arcane Shot (#14286)", 7514286},
-    {"Trainer Spell Item: Arcane Shot (#14287)", 7514287},
-    {"Trainer Spell Item: Multi-Shot (#14288)", 7514288},
-    {"Trainer Spell Item: Multi-Shot (#14289)", 7514289},
-    {"Trainer Spell Item: Multi-Shot (#14290)", 7514290},
-    {"Trainer Spell Item: Volley (#14294)", 7514294},
-    {"Trainer Spell Item: Volley (#14295)", 7514295},
-    {"Trainer Spell Item: Immolation Trap (#14302)", 7514302},
-    {"Trainer Spell Item: Immolation Trap (#14303)", 7514303},
-    {"Trainer Spell Item: Immolation Trap (#14304)", 7514304},
-    {"Trainer Spell Item: Immolation Trap (#14305)", 7514305},
-    {"Trainer Spell Item: Freezing Trap (#14310)", 7514310},
-    {"Trainer Spell Item: Freezing Trap (#14311)", 7514311},
-    {"Trainer Spell Item: Explosive Trap (#14316)", 7514316},
-    {"Trainer Spell Item: Explosive Trap (#14317)", 7514317},
-    {"Trainer Spell Item: Aspect of the Hawk (#14318)", 7514318},
-    {"Trainer Spell Item: Aspect of the Hawk (#14319)", 7514319},
-    {"Trainer Spell Item: Aspect of the Hawk (#14320)", 7514320},
-    {"Trainer Spell Item: Aspect of the Hawk (#14321)", 7514321},
-    {"Trainer Spell Item: Aspect of the Hawk (#14322)", 7514322},
-    {"Trainer Spell Item: Hunter's Mark (#14323)", 7514323},
-    {"Trainer Spell Item: Hunter's Mark (#14324)", 7514324},
-    {"Trainer Spell Item: Hunter's Mark (#14325)", 7514325},
-    {"Trainer Spell Item: Scare Beast (#14326)", 7514326},
-    {"Trainer Spell Item: Scare Beast (#14327)", 7514327},
-    {"Trainer Spell Item: Divine Spirit (#14752)", 7514752},
-    {"Trainer Spell Item: Divine Spirit (#14818)", 7514818},
-    {"Trainer Spell Item: Divine Spirit (#14819)", 7514819},
-    {"Trainer Spell Item: Holy Fire (#14914)", 7514914},
-    {"Trainer Spell Item: Lightning Bolt (#15207)", 7515207},
-    {"Trainer Spell Item: Lightning Bolt (#15208)", 7515208},
-    {"Trainer Spell Item: Holy Nova (#15237)", 7515237},
-    {"Trainer Spell Item: Holy Fire (#15261)", 7515261},
-    {"Trainer Spell Item: Holy Fire (#15262)", 7515262},
-    {"Trainer Spell Item: Holy Fire (#15263)", 7515263},
-    {"Trainer Spell Item: Holy Fire (#15264)", 7515264},
-    {"Trainer Spell Item: Holy Fire (#15265)", 7515265},
-    {"Trainer Spell Item: Holy Fire (#15266)", 7515266},
-    {"Trainer Spell Item: Holy Fire (#15267)", 7515267},
-    {"Trainer Spell Item: Holy Nova (#15430)", 7515430},
-    {"Trainer Spell Item: Holy Nova (#15431)", 7515431},
-    {"Trainer Spell Item: Flametongue Weapon (#16339)", 7516339},
-    {"Trainer Spell Item: Flametongue Weapon (#16341)", 7516341},
-    {"Trainer Spell Item: Flametongue Weapon (#16342)", 7516342},
-    {"Trainer Spell Item: Frostbrand Weapon (#16355)", 7516355},
-    {"Trainer Spell Item: Frostbrand Weapon (#16356)", 7516356},
-    {"Trainer Spell Item: Windfury Weapon (#16362)", 7516362},
-    {"Trainer Spell Item: Flametongue Totem (#16387)", 7516387},
-    {"Trainer Spell Item: Nature's Grasp (#16689)", 7516689},
-    {"Trainer Spell Item: Nature's Grasp (#16810)", 7516810},
-    {"Trainer Spell Item: Nature's Grasp (#16811)", 7516811},
-    {"Trainer Spell Item: Nature's Grasp (#16812)", 7516812},
-    {"Trainer Spell Item: Nature's Grasp (#16813)", 7516813},
     {"Trainer Spell Item: Faerie Fire (Feral) (#16857)", 7516857},
-    {"Trainer Spell Item: Hurricane (#16914)", 7516914},
-    {"Trainer Spell Item: Mind Flay (#17311)", 7517311},
-    {"Trainer Spell Item: Mind Flay (#17312)", 7517312},
-    {"Trainer Spell Item: Mind Flay (#17313)", 7517313},
-    {"Trainer Spell Item: Mind Flay (#17314)", 7517314},
-    {"Trainer Spell Item: Nature's Grasp (#17329)", 7517329},
-    {"Trainer Spell Item: Hemorrhage (#17347)", 7517347},
-    {"Trainer Spell Item: Hemorrhage (#17348)", 7517348},
-    {"Trainer Spell Item: Hurricane (#17401)", 7517401},
-    {"Trainer Spell Item: Hurricane (#17402)", 7517402},
-    {"Trainer Spell Item: Create Spellstone (#17727)", 7517727},
-    {"Trainer Spell Item: Create Spellstone (#17728)", 7517728},
-    {"Trainer Spell Item: Searing Pain (#17919)", 7517919},
-    {"Trainer Spell Item: Searing Pain (#17920)", 7517920},
-    {"Trainer Spell Item: Searing Pain (#17921)", 7517921},
-    {"Trainer Spell Item: Searing Pain (#17922)", 7517922},
-    {"Trainer Spell Item: Searing Pain (#17923)", 7517923},
-    {"Trainer Spell Item: Soul Fire (#17924)", 7517924},
-    {"Trainer Spell Item: Death Coil (#17925)", 7517925},
-    {"Trainer Spell Item: Death Coil (#17926)", 7517926},
-    {"Trainer Spell Item: Howl of Terror (#17928)", 7517928},
-    {"Trainer Spell Item: Create Firestone (#17951)", 7517951},
-    {"Trainer Spell Item: Create Firestone (#17952)", 7517952},
-    {"Trainer Spell Item: Create Firestone (#17953)", 7517953},
     {"Trainer Spell Item: Berserker Rage (#18499)", 7518499},
-    {"Trainer Spell Item: Banish (#18647)", 7518647},
-    {"Trainer Spell Item: Hibernate (#18657)", 7518657},
-    {"Trainer Spell Item: Hibernate (#18658)", 7518658},
-    {"Trainer Spell Item: Mind Flay (#18807)", 7518807},
-    {"Trainer Spell Item: Pyroblast (#18809)", 7518809},
-    {"Trainer Spell Item: Shadowburn (#18867)", 7518867},
-    {"Trainer Spell Item: Shadowburn (#18868)", 7518868},
-    {"Trainer Spell Item: Shadowburn (#18869)", 7518869},
-    {"Trainer Spell Item: Shadowburn (#18870)", 7518870},
-    {"Trainer Spell Item: Shadowburn (#18871)", 7518871},
-    {"Trainer Spell Item: Dark Pact (#18937)", 7518937},
-    {"Trainer Spell Item: Dark Pact (#18938)", 7518938},
-    {"Trainer Spell Item: Desperate Prayer (#19238)", 7519238},
-    {"Trainer Spell Item: Desperate Prayer (#19240)", 7519240},
-    {"Trainer Spell Item: Desperate Prayer (#19241)", 7519241},
-    {"Trainer Spell Item: Desperate Prayer (#19242)", 7519242},
-    {"Trainer Spell Item: Desperate Prayer (#19243)", 7519243},
     {"Trainer Spell Item: Deterrence (#19263)", 7519263},
-    {"Trainer Spell Item: Devouring Plague (#19276)", 7519276},
-    {"Trainer Spell Item: Devouring Plague (#19277)", 7519277},
-    {"Trainer Spell Item: Devouring Plague (#19278)", 7519278},
-    {"Trainer Spell Item: Devouring Plague (#19279)", 7519279},
-    {"Trainer Spell Item: Devouring Plague (#19280)", 7519280},
-    {"Trainer Spell Item: Blessing of Might (#19740)", 7519740},
-    {"Trainer Spell Item: Blessing of Wisdom (#19742)", 7519742},
     {"Trainer Spell Item: Concentration Aura (#19746)", 7519746},
-    {"Trainer Spell Item: Flash of Light (#19750)", 7519750},
     {"Trainer Spell Item: Divine Intervention (#19752)", 7519752},
-    {"Trainer Spell Item: Blessing of Might (#19834)", 7519834},
-    {"Trainer Spell Item: Blessing of Might (#19835)", 7519835},
-    {"Trainer Spell Item: Blessing of Might (#19836)", 7519836},
-    {"Trainer Spell Item: Blessing of Might (#19837)", 7519837},
-    {"Trainer Spell Item: Blessing of Might (#19838)", 7519838},
-    {"Trainer Spell Item: Blessing of Wisdom (#19850)", 7519850},
-    {"Trainer Spell Item: Blessing of Wisdom (#19852)", 7519852},
-    {"Trainer Spell Item: Blessing of Wisdom (#19853)", 7519853},
-    {"Trainer Spell Item: Blessing of Wisdom (#19854)", 7519854},
-    {"Trainer Spell Item: Shadow Resistance Aura (#19876)", 7519876},
     {"Trainer Spell Item: Track Demons (#19878)", 7519878},
     {"Trainer Spell Item: Track Dragonkin (#19879)", 7519879},
     {"Trainer Spell Item: Track Elementals (#19880)", 7519880},
@@ -2995,957 +2397,107 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Trainer Spell Item: Track Humanoids (#19883)", 7519883},
     {"Trainer Spell Item: Track Undead (#19884)", 7519884},
     {"Trainer Spell Item: Track Hidden (#19885)", 7519885},
-    {"Trainer Spell Item: Frost Resistance Aura (#19888)", 7519888},
-    {"Trainer Spell Item: Fire Resistance Aura (#19891)", 7519891},
-    {"Trainer Spell Item: Shadow Resistance Aura (#19895)", 7519895},
-    {"Trainer Spell Item: Shadow Resistance Aura (#19896)", 7519896},
-    {"Trainer Spell Item: Frost Resistance Aura (#19897)", 7519897},
-    {"Trainer Spell Item: Frost Resistance Aura (#19898)", 7519898},
-    {"Trainer Spell Item: Fire Resistance Aura (#19899)", 7519899},
-    {"Trainer Spell Item: Fire Resistance Aura (#19900)", 7519900},
-    {"Trainer Spell Item: Flash of Light (#19939)", 7519939},
-    {"Trainer Spell Item: Flash of Light (#19940)", 7519940},
-    {"Trainer Spell Item: Flash of Light (#19941)", 7519941},
-    {"Trainer Spell Item: Flash of Light (#19942)", 7519942},
-    {"Trainer Spell Item: Flash of Light (#19943)", 7519943},
-    {"Trainer Spell Item: Aspect of the Wild (#20043)", 7520043},
-    {"Trainer Spell Item: Consecration (#20116)", 7520116},
     {"Trainer Spell Item: Seal of Justice (#20164)", 7520164},
     {"Trainer Spell Item: Seal of Light (#20165)", 7520165},
     {"Trainer Spell Item: Seal of Wisdom (#20166)", 7520166},
-    {"Trainer Spell Item: Aspect of the Wild (#20190)", 7520190},
     {"Trainer Spell Item: Blessing of Kings (#20217)", 7520217},
     {"Trainer Spell Item: Retaliation (#20230)", 7520230},
     {"Trainer Spell Item: Intercept (#20252)", 7520252},
-    {"Trainer Spell Item: Rebirth (#20484)", 7520484},
-    {"Trainer Spell Item: Cleave (#20569)", 7520569},
     {"Trainer Spell Item: Reincarnation (#20608)", 7520608},
-    {"Trainer Spell Item: Ancestral Spirit (#20609)", 7520609},
-    {"Trainer Spell Item: Ancestral Spirit (#20610)", 7520610},
-    {"Trainer Spell Item: Execute (#20658)", 7520658},
-    {"Trainer Spell Item: Execute (#20660)", 7520660},
-    {"Trainer Spell Item: Execute (#20661)", 7520661},
-    {"Trainer Spell Item: Execute (#20662)", 7520662},
     {"Trainer Spell Item: Feline Grace (#20719)", 7520719},
     {"Trainer Spell Item: Distracting Shot (#20736)", 7520736},
-    {"Trainer Spell Item: Rebirth (#20739)", 7520739},
-    {"Trainer Spell Item: Rebirth (#20742)", 7520742},
-    {"Trainer Spell Item: Rebirth (#20747)", 7520747},
-    {"Trainer Spell Item: Rebirth (#20748)", 7520748},
-    {"Trainer Spell Item: Create Soulstone (#20752)", 7520752},
-    {"Trainer Spell Item: Create Soulstone (#20755)", 7520755},
-    {"Trainer Spell Item: Create Soulstone (#20756)", 7520756},
-    {"Trainer Spell Item: Create Soulstone (#20757)", 7520757},
-    {"Trainer Spell Item: Resurrection (#20770)", 7520770},
-    {"Trainer Spell Item: Redemption (#20772)", 7520772},
-    {"Trainer Spell Item: Redemption (#20773)", 7520773},
-    {"Trainer Spell Item: Ancestral Spirit (#20776)", 7520776},
-    {"Trainer Spell Item: Ancestral Spirit (#20777)", 7520777},
-    {"Trainer Spell Item: Aimed Shot (#20900)", 7520900},
-    {"Trainer Spell Item: Aimed Shot (#20901)", 7520901},
-    {"Trainer Spell Item: Aimed Shot (#20902)", 7520902},
-    {"Trainer Spell Item: Aimed Shot (#20903)", 7520903},
-    {"Trainer Spell Item: Aimed Shot (#20904)", 7520904},
-    {"Trainer Spell Item: Counterattack (#20909)", 7520909},
-    {"Trainer Spell Item: Counterattack (#20910)", 7520910},
-    {"Trainer Spell Item: Consecration (#20922)", 7520922},
-    {"Trainer Spell Item: Consecration (#20923)", 7520923},
-    {"Trainer Spell Item: Consecration (#20924)", 7520924},
-    {"Trainer Spell Item: Holy Shield (#20927)", 7520927},
-    {"Trainer Spell Item: Holy Shield (#20928)", 7520928},
-    {"Trainer Spell Item: Holy Shock (#20929)", 7520929},
-    {"Trainer Spell Item: Holy Shock (#20930)", 7520930},
-    {"Trainer Spell Item: Mortal Strike (#21551)", 7521551},
-    {"Trainer Spell Item: Mortal Strike (#21552)", 7521552},
-    {"Trainer Spell Item: Mortal Strike (#21553)", 7521553},
-    {"Trainer Spell Item: Ferocious Bite (#22568)", 7522568},
-    {"Trainer Spell Item: Maim (#22570)", 7522570},
-    {"Trainer Spell Item: Mage Armor (#22782)", 7522782},
-    {"Trainer Spell Item: Mage Armor (#22783)", 7522783},
     {"Trainer Spell Item: Barkskin (#22812)", 7522812},
-    {"Trainer Spell Item: Ferocious Bite (#22827)", 7522827},
-    {"Trainer Spell Item: Ferocious Bite (#22828)", 7522828},
-    {"Trainer Spell Item: Ferocious Bite (#22829)", 7522829},
     {"Trainer Spell Item: Frenzied Regeneration (#22842)", 7522842},
     {"Trainer Spell Item: Dreadsteed (#23161)", 7523161},
     {"Trainer Spell Item: Charger (#23214)", 7523214},
     {"Trainer Spell Item: Spell Reflection (#23920)", 7523920},
-    {"Trainer Spell Item: Shield Slam (#23922)", 7523922},
-    {"Trainer Spell Item: Shield Slam (#23923)", 7523923},
-    {"Trainer Spell Item: Shield Slam (#23924)", 7523924},
-    {"Trainer Spell Item: Shield Slam (#23925)", 7523925},
-    {"Trainer Spell Item: Wyvern Sting (#24132)", 7524132},
-    {"Trainer Spell Item: Wyvern Sting (#24133)", 7524133},
-    {"Trainer Spell Item: Hammer of Wrath (#24239)", 7524239},
-    {"Trainer Spell Item: Ferocious Bite (#24248)", 7524248},
-    {"Trainer Spell Item: Hammer of Wrath (#24274)", 7524274},
-    {"Trainer Spell Item: Hammer of Wrath (#24275)", 7524275},
-    {"Trainer Spell Item: Water Shield (#24398)", 7524398},
-    {"Trainer Spell Item: Insect Swarm (#24974)", 7524974},
-    {"Trainer Spell Item: Insect Swarm (#24975)", 7524975},
-    {"Trainer Spell Item: Insect Swarm (#24976)", 7524976},
-    {"Trainer Spell Item: Insect Swarm (#24977)", 7524977},
-    {"Trainer Spell Item: Demoralizing Shout (#25202)", 7525202},
-    {"Trainer Spell Item: Demoralizing Shout (#25203)", 7525203},
-    {"Trainer Spell Item: Rend (#25208)", 7525208},
-    {"Trainer Spell Item: Greater Heal (#25210)", 7525210},
-    {"Trainer Spell Item: Greater Heal (#25213)", 7525213},
-    {"Trainer Spell Item: Power Word: Shield (#25217)", 7525217},
-    {"Trainer Spell Item: Power Word: Shield (#25218)", 7525218},
-    {"Trainer Spell Item: Renew (#25221)", 7525221},
-    {"Trainer Spell Item: Renew (#25222)", 7525222},
-    {"Trainer Spell Item: Cleave (#25231)", 7525231},
-    {"Trainer Spell Item: Flash Heal (#25233)", 7525233},
-    {"Trainer Spell Item: Execute (#25234)", 7525234},
-    {"Trainer Spell Item: Flash Heal (#25235)", 7525235},
-    {"Trainer Spell Item: Execute (#25236)", 7525236},
-    {"Trainer Spell Item: Slam (#25241)", 7525241},
-    {"Trainer Spell Item: Slam (#25242)", 7525242},
-    {"Trainer Spell Item: Mortal Strike (#25248)", 7525248},
-    {"Trainer Spell Item: Shield Slam (#25258)", 7525258},
-    {"Trainer Spell Item: Thunder Clap (#25264)", 7525264},
-    {"Trainer Spell Item: Revenge (#25269)", 7525269},
-    {"Trainer Spell Item: Prayer of Healing (#25308)", 7525308},
-    {"Trainer Spell Item: Divine Spirit (#25312)", 7525312},
-    {"Trainer Spell Item: Holy Nova (#25331)", 7525331},
-    {"Trainer Spell Item: Smite (#25363)", 7525363},
-    {"Trainer Spell Item: Smite (#25364)", 7525364},
-    {"Trainer Spell Item: Shadow Word: Pain (#25367)", 7525367},
-    {"Trainer Spell Item: Shadow Word: Pain (#25368)", 7525368},
-    {"Trainer Spell Item: Mind Blast (#25372)", 7525372},
-    {"Trainer Spell Item: Mind Blast (#25375)", 7525375},
-    {"Trainer Spell Item: Holy Fire (#25384)", 7525384},
-    {"Trainer Spell Item: Mind Flay (#25387)", 7525387},
-    {"Trainer Spell Item: Power Word: Fortitude (#25389)", 7525389},
-    {"Trainer Spell Item: Healing Wave (#25391)", 7525391},
-    {"Trainer Spell Item: Healing Wave (#25396)", 7525396},
-    {"Trainer Spell Item: Lesser Healing Wave (#25420)", 7525420},
-    {"Trainer Spell Item: Chain Heal (#25422)", 7525422},
-    {"Trainer Spell Item: Chain Heal (#25423)", 7525423},
-    {"Trainer Spell Item: Inner Fire (#25431)", 7525431},
-    {"Trainer Spell Item: Shadow Protection (#25433)", 7525433},
-    {"Trainer Spell Item: Resurrection (#25435)", 7525435},
-    {"Trainer Spell Item: Desperate Prayer (#25437)", 7525437},
-    {"Trainer Spell Item: Chain Lightning (#25439)", 7525439},
-    {"Trainer Spell Item: Chain Lightning (#25442)", 7525442},
-    {"Trainer Spell Item: Lightning Bolt (#25448)", 7525448},
-    {"Trainer Spell Item: Lightning Bolt (#25449)", 7525449},
-    {"Trainer Spell Item: Earth Shock (#25454)", 7525454},
-    {"Trainer Spell Item: Flame Shock (#25457)", 7525457},
-    {"Trainer Spell Item: Frost Shock (#25464)", 7525464},
-    {"Trainer Spell Item: Devouring Plague (#25467)", 7525467},
-    {"Trainer Spell Item: Lightning Shield (#25469)", 7525469},
-    {"Trainer Spell Item: Lightning Shield (#25472)", 7525472},
-    {"Trainer Spell Item: Flametongue Weapon (#25489)", 7525489},
-    {"Trainer Spell Item: Frostbrand Weapon (#25500)", 7525500},
-    {"Trainer Spell Item: Windfury Weapon (#25505)", 7525505},
-    {"Trainer Spell Item: Stoneskin Totem (#25508)", 7525508},
-    {"Trainer Spell Item: Stoneskin Totem (#25509)", 7525509},
-    {"Trainer Spell Item: Stoneclaw Totem (#25525)", 7525525},
-    {"Trainer Spell Item: Strength of Earth Totem (#25528)", 7525528},
-    {"Trainer Spell Item: Searing Totem (#25533)", 7525533},
-    {"Trainer Spell Item: Fire Nova (#25546)", 7525546},
-    {"Trainer Spell Item: Fire Nova (#25547)", 7525547},
-    {"Trainer Spell Item: Magma Totem (#25552)", 7525552},
-    {"Trainer Spell Item: Flametongue Totem (#25557)", 7525557},
-    {"Trainer Spell Item: Frost Resistance Totem (#25560)", 7525560},
-    {"Trainer Spell Item: Fire Resistance Totem (#25563)", 7525563},
-    {"Trainer Spell Item: Healing Stream Totem (#25567)", 7525567},
-    {"Trainer Spell Item: Mana Spring Totem (#25570)", 7525570},
-    {"Trainer Spell Item: Nature Resistance Totem (#25574)", 7525574},
-    {"Trainer Spell Item: Ancestral Spirit (#25590)", 7525590},
     {"Trainer Spell Item: Righteous Fury (#25780)", 7525780},
-    {"Trainer Spell Item: Greater Blessing of Might (#25782)", 7525782},
-    {"Trainer Spell Item: Greater Blessing of Wisdom (#25894)", 7525894},
     {"Trainer Spell Item: Greater Blessing of Kings (#25898)", 7525898},
     {"Trainer Spell Item: Greater Blessing of Sanctuary (#25899)", 7525899},
-    {"Trainer Spell Item: Greater Blessing of Might (#25916)", 7525916},
-    {"Trainer Spell Item: Greater Blessing of Wisdom (#25918)", 7525918},
-    {"Trainer Spell Item: Consecration (#26573)", 7526573},
-    {"Trainer Spell Item: Evasion (#26669)", 7526669},
-    {"Trainer Spell Item: Deadly Throw (#26679)", 7526679},
-    {"Trainer Spell Item: Garrote (#26839)", 7526839},
-    {"Trainer Spell Item: Sinister Strike (#26861)", 7526861},
-    {"Trainer Spell Item: Sinister Strike (#26862)", 7526862},
-    {"Trainer Spell Item: Backstab (#26863)", 7526863},
-    {"Trainer Spell Item: Hemorrhage (#26864)", 7526864},
-    {"Trainer Spell Item: Eviscerate (#26865)", 7526865},
-    {"Trainer Spell Item: Rupture (#26867)", 7526867},
-    {"Trainer Spell Item: Garrote (#26884)", 7526884},
-    {"Trainer Spell Item: Vanish (#26889)", 7526889},
-    {"Trainer Spell Item: Healing Touch (#26978)", 7526978},
-    {"Trainer Spell Item: Healing Touch (#26979)", 7526979},
-    {"Trainer Spell Item: Regrowth (#26980)", 7526980},
-    {"Trainer Spell Item: Rejuvenation (#26981)", 7526981},
-    {"Trainer Spell Item: Rejuvenation (#26982)", 7526982},
-    {"Trainer Spell Item: Tranquility (#26983)", 7526983},
-    {"Trainer Spell Item: Wrath (#26984)", 7526984},
-    {"Trainer Spell Item: Wrath (#26985)", 7526985},
-    {"Trainer Spell Item: Starfire (#26986)", 7526986},
-    {"Trainer Spell Item: Moonfire (#26987)", 7526987},
-    {"Trainer Spell Item: Moonfire (#26988)", 7526988},
-    {"Trainer Spell Item: Entangling Roots (#26989)", 7526989},
-    {"Trainer Spell Item: Mark of the Wild (#26990)", 7526990},
-    {"Trainer Spell Item: Thorns (#26992)", 7526992},
-    {"Trainer Spell Item: Rebirth (#26994)", 7526994},
-    {"Trainer Spell Item: Soothe Animal (#26995)", 7526995},
-    {"Trainer Spell Item: Maul (#26996)", 7526996},
-    {"Trainer Spell Item: Swipe (Bear) (#26997)", 7526997},
-    {"Trainer Spell Item: Demoralizing Roar (#26998)", 7526998},
-    {"Trainer Spell Item: Claw (#27000)", 7527000},
-    {"Trainer Spell Item: Shred (#27001)", 7527001},
-    {"Trainer Spell Item: Shred (#27002)", 7527002},
-    {"Trainer Spell Item: Rake (#27003)", 7527003},
-    {"Trainer Spell Item: Cower (#27004)", 7527004},
-    {"Trainer Spell Item: Ravage (#27005)", 7527005},
-    {"Trainer Spell Item: Pounce (#27006)", 7527006},
-    {"Trainer Spell Item: Rip (#27008)", 7527008},
-    {"Trainer Spell Item: Nature's Grasp (#27009)", 7527009},
-    {"Trainer Spell Item: Hurricane (#27012)", 7527012},
-    {"Trainer Spell Item: Insect Swarm (#27013)", 7527013},
-    {"Trainer Spell Item: Raptor Strike (#27014)", 7527014},
-    {"Trainer Spell Item: Serpent Sting (#27016)", 7527016},
-    {"Trainer Spell Item: Arcane Shot (#27019)", 7527019},
-    {"Trainer Spell Item: Multi-Shot (#27021)", 7527021},
-    {"Trainer Spell Item: Volley (#27022)", 7527022},
-    {"Trainer Spell Item: Immolation Trap (#27023)", 7527023},
-    {"Trainer Spell Item: Explosive Trap (#27025)", 7527025},
-    {"Trainer Spell Item: Aspect of the Hawk (#27044)", 7527044},
-    {"Trainer Spell Item: Aspect of the Wild (#27045)", 7527045},
-    {"Trainer Spell Item: Mend Pet (#27046)", 7527046},
-    {"Trainer Spell Item: Aimed Shot (#27065)", 7527065},
-    {"Trainer Spell Item: Counterattack (#27067)", 7527067},
-    {"Trainer Spell Item: Wyvern Sting (#27068)", 7527068},
-    {"Trainer Spell Item: Fireball (#27070)", 7527070},
-    {"Trainer Spell Item: Frostbolt (#27071)", 7527071},
-    {"Trainer Spell Item: Frostbolt (#27072)", 7527072},
-    {"Trainer Spell Item: Scorch (#27073)", 7527073},
-    {"Trainer Spell Item: Scorch (#27074)", 7527074},
-    {"Trainer Spell Item: Arcane Missiles (#27075)", 7527075},
-    {"Trainer Spell Item: Fire Blast (#27078)", 7527078},
-    {"Trainer Spell Item: Fire Blast (#27079)", 7527079},
-    {"Trainer Spell Item: Arcane Explosion (#27080)", 7527080},
-    {"Trainer Spell Item: Arcane Explosion (#27082)", 7527082},
-    {"Trainer Spell Item: Blizzard (#27085)", 7527085},
-    {"Trainer Spell Item: Flamestrike (#27086)", 7527086},
-    {"Trainer Spell Item: Cone of Cold (#27087)", 7527087},
-    {"Trainer Spell Item: Frost Nova (#27088)", 7527088},
-    {"Trainer Spell Item: Conjure Mana Gem (#27101)", 7527101},
-    {"Trainer Spell Item: Ice Armor (#27124)", 7527124},
-    {"Trainer Spell Item: Mage Armor (#27125)", 7527125},
-    {"Trainer Spell Item: Arcane Intellect (#27126)", 7527126},
-    {"Trainer Spell Item: Fire Ward (#27128)", 7527128},
-    {"Trainer Spell Item: Amplify Magic (#27130)", 7527130},
-    {"Trainer Spell Item: Mana Shield (#27131)", 7527131},
-    {"Trainer Spell Item: Pyroblast (#27132)", 7527132},
-    {"Trainer Spell Item: Blast Wave (#27133)", 7527133},
-    {"Trainer Spell Item: Ice Barrier (#27134)", 7527134},
-    {"Trainer Spell Item: Holy Light (#27135)", 7527135},
-    {"Trainer Spell Item: Holy Light (#27136)", 7527136},
-    {"Trainer Spell Item: Flash of Light (#27137)", 7527137},
-    {"Trainer Spell Item: Exorcism (#27138)", 7527138},
-    {"Trainer Spell Item: Holy Wrath (#27139)", 7527139},
-    {"Trainer Spell Item: Blessing of Might (#27140)", 7527140},
-    {"Trainer Spell Item: Greater Blessing of Might (#27141)", 7527141},
-    {"Trainer Spell Item: Blessing of Wisdom (#27142)", 7527142},
-    {"Trainer Spell Item: Greater Blessing of Wisdom (#27143)", 7527143},
-    {"Trainer Spell Item: Devotion Aura (#27149)", 7527149},
-    {"Trainer Spell Item: Retribution Aura (#27150)", 7527150},
-    {"Trainer Spell Item: Shadow Resistance Aura (#27151)", 7527151},
-    {"Trainer Spell Item: Frost Resistance Aura (#27152)", 7527152},
-    {"Trainer Spell Item: Fire Resistance Aura (#27153)", 7527153},
-    {"Trainer Spell Item: Lay on Hands (#27154)", 7527154},
-    {"Trainer Spell Item: Consecration (#27173)", 7527173},
-    {"Trainer Spell Item: Holy Shock (#27174)", 7527174},
-    {"Trainer Spell Item: Holy Shield (#27179)", 7527179},
-    {"Trainer Spell Item: Hammer of Wrath (#27180)", 7527180},
-    {"Trainer Spell Item: Shadow Bolt (#27209)", 7527209},
-    {"Trainer Spell Item: Searing Pain (#27210)", 7527210},
-    {"Trainer Spell Item: Soul Fire (#27211)", 7527211},
-    {"Trainer Spell Item: Rain of Fire (#27212)", 7527212},
-    {"Trainer Spell Item: Hellfire (#27213)", 7527213},
-    {"Trainer Spell Item: Immolate (#27215)", 7527215},
-    {"Trainer Spell Item: Corruption (#27216)", 7527216},
-    {"Trainer Spell Item: Drain Soul (#27217)", 7527217},
-    {"Trainer Spell Item: Curse of Agony (#27218)", 7527218},
-    {"Trainer Spell Item: Drain Life (#27219)", 7527219},
-    {"Trainer Spell Item: Drain Life (#27220)", 7527220},
-    {"Trainer Spell Item: Life Tap (#27222)", 7527222},
-    {"Trainer Spell Item: Death Coil (#27223)", 7527223},
-    {"Trainer Spell Item: Curse of Weakness (#27224)", 7527224},
-    {"Trainer Spell Item: Curse of the Elements (#27228)", 7527228},
-    {"Trainer Spell Item: Create Healthstone (#27230)", 7527230},
-    {"Trainer Spell Item: Create Soulstone (#27238)", 7527238},
-    {"Trainer Spell Item: Seed of Corruption (#27243)", 7527243},
-    {"Trainer Spell Item: Create Firestone (#27250)", 7527250},
-    {"Trainer Spell Item: Health Funnel (#27259)", 7527259},
-    {"Trainer Spell Item: Demon Armor (#27260)", 7527260},
-    {"Trainer Spell Item: Shadowburn (#27263)", 7527263},
-    {"Trainer Spell Item: Dark Pact (#27265)", 7527265},
-    {"Trainer Spell Item: Ambush (#27441)", 7527441},
-    {"Trainer Spell Item: Feint (#27448)", 7527448},
-    {"Trainer Spell Item: Prayer of Spirit (#27681)", 7527681},
-    {"Trainer Spell Item: Holy Nova (#27799)", 7527799},
-    {"Trainer Spell Item: Holy Nova (#27800)", 7527800},
-    {"Trainer Spell Item: Holy Nova (#27801)", 7527801},
-    {"Trainer Spell Item: Divine Spirit (#27841)", 7527841},
-    {"Trainer Spell Item: Lightwell (#27870)", 7527870},
-    {"Trainer Spell Item: Lightwell (#27871)", 7527871},
-    {"Trainer Spell Item: Create Spellstone (#28172)", 7528172},
-    {"Trainer Spell Item: Fel Armor (#28176)", 7528176},
-    {"Trainer Spell Item: Fel Armor (#28189)", 7528189},
-    {"Trainer Spell Item: Lightwell (#28275)", 7528275},
     {"Trainer Spell Item: Innervate (#29166)", 7529166},
-    {"Trainer Spell Item: Heroic Strike (#29707)", 7529707},
-    {"Trainer Spell Item: Incinerate (#29722)", 7529722},
     {"Trainer Spell Item: Soulshatter (#29858)", 7529858},
-    {"Trainer Spell Item: Ritual of Souls (#29893)", 7529893},
-    {"Trainer Spell Item: Devastate (#30016)", 7530016},
-    {"Trainer Spell Item: Devastate (#30022)", 7530022},
-    {"Trainer Spell Item: Heroic Strike (#30324)", 7530324},
-    {"Trainer Spell Item: Mortal Strike (#30330)", 7530330},
-    {"Trainer Spell Item: Shield Slam (#30356)", 7530356},
-    {"Trainer Spell Item: Revenge (#30357)", 7530357},
-    {"Trainer Spell Item: Unstable Affliction (#30404)", 7530404},
-    {"Trainer Spell Item: Unstable Affliction (#30405)", 7530405},
-    {"Trainer Spell Item: Shadowfury (#30413)", 7530413},
-    {"Trainer Spell Item: Shadowfury (#30414)", 7530414},
     {"Trainer Spell Item: Spellsteal (#30449)", 7530449},
-    {"Trainer Spell Item: Arcane Blast (#30451)", 7530451},
-    {"Trainer Spell Item: Ice Lance (#30455)", 7530455},
-    {"Trainer Spell Item: Searing Pain (#30459)", 7530459},
-    {"Trainer Spell Item: Molten Armor (#30482)", 7530482},
-    {"Trainer Spell Item: Soul Fire (#30545)", 7530545},
-    {"Trainer Spell Item: Shadowburn (#30546)", 7530546},
-    {"Trainer Spell Item: Curse of Weakness (#30909)", 7530909},
-    {"Trainer Spell Item: Curse of Doom (#30910)", 7530910},
     {"Trainer Spell Item: Cloak of Shadows (#31224)", 7531224},
     {"Trainer Spell Item: Righteous Defense (#31789)", 7531789},
     {"Trainer Spell Item: Seal of Vengeance (#31801)", 7531801},
     {"Trainer Spell Item: Avenging Wrath (#31884)", 7531884},
     {"Trainer Spell Item: Heroism (#32182)", 7532182},
     {"Trainer Spell Item: Crusader Aura (#32223)", 7532223},
-    {"Trainer Spell Item: Incinerate (#32231)", 7532231},
     {"Trainer Spell Item: Portal: Exodar (#32266)", 7532266},
     {"Trainer Spell Item: Portal: Silvermoon (#32267)", 7532267},
     {"Trainer Spell Item: Teleport: Exodar (#32271)", 7532271},
     {"Trainer Spell Item: Teleport: Silvermoon (#32272)", 7532272},
     {"Trainer Spell Item: Mass Dispel (#32375)", 7532375},
-    {"Trainer Spell Item: Shadow Word: Death (#32379)", 7532379},
-    {"Trainer Spell Item: Binding Heal (#32546)", 7532546},
-    {"Trainer Spell Item: Earth Shield (#32593)", 7532593},
-    {"Trainer Spell Item: Earth Shield (#32594)", 7532594},
-    {"Trainer Spell Item: Envenom (#32645)", 7532645},
-    {"Trainer Spell Item: Envenom (#32684)", 7532684},
-    {"Trainer Spell Item: Avenger's Shield (#32699)", 7532699},
-    {"Trainer Spell Item: Avenger's Shield (#32700)", 7532700},
-    {"Trainer Spell Item: Frost Ward (#32796)", 7532796},
-    {"Trainer Spell Item: Shadow Word: Death (#32996)", 7532996},
-    {"Trainer Spell Item: Prayer of Spirit (#32999)", 7532999},
-    {"Trainer Spell Item: Dragon's Breath (#33041)", 7533041},
-    {"Trainer Spell Item: Dragon's Breath (#33042)", 7533042},
-    {"Trainer Spell Item: Dragon's Breath (#33043)", 7533043},
-    {"Trainer Spell Item: Holy Shock (#33072)", 7533072},
-    {"Trainer Spell Item: Prayer of Mending (#33076)", 7533076},
-    {"Trainer Spell Item: Dash (#33357)", 7533357},
-    {"Trainer Spell Item: Ice Barrier (#33405)", 7533405},
     {"Trainer Spell Item: Teleport: Shattrath (#33690)", 7533690},
     {"Trainer Spell Item: Portal: Shattrath (#33691)", 7533691},
-    {"Trainer Spell Item: Water Shield (#33736)", 7533736},
-    {"Trainer Spell Item: Lacerate (#33745)", 7533745},
-    {"Trainer Spell Item: Lifebloom (#33763)", 7533763},
     {"Trainer Spell Item: Cyclone (#33786)", 7533786},
-    {"Trainer Spell Item: Blast Wave (#33933)", 7533933},
-    {"Trainer Spell Item: Pyroblast (#33938)", 7533938},
-    {"Trainer Spell Item: Dampen Magic (#33944)", 7533944},
-    {"Trainer Spell Item: Amplify Magic (#33946)", 7533946},
     {"Trainer Spell Item: Flight Form (#33950)", 7533950},
-    {"Trainer Spell Item: Mangle (Cat) (#33982)", 7533982},
-    {"Trainer Spell Item: Mangle (Cat) (#33983)", 7533983},
-    {"Trainer Spell Item: Mangle (Bear) (#33986)", 7533986},
-    {"Trainer Spell Item: Mangle (Bear) (#33987)", 7533987},
     {"Trainer Spell Item: Kill Command (#34026)", 7534026},
     {"Trainer Spell Item: Aspect of the Viper (#34074)", 7534074},
-    {"Trainer Spell Item: Steady Shot (#34120)", 7534120},
-    {"Trainer Spell Item: Mutilate (#34411)", 7534411},
-    {"Trainer Spell Item: Mutilate (#34412)", 7534412},
-    {"Trainer Spell Item: Mutilate (#34413)", 7534413},
     {"Trainer Spell Item: Victory Rush (#34428)", 7534428},
     {"Trainer Spell Item: Shadowfiend (#34433)", 7534433},
     {"Trainer Spell Item: Misdirection (#34477)", 7534477},
     {"Trainer Spell Item: Snake Trap (#34600)", 7534600},
     {"Trainer Spell Item: Summon Charger (#34767)", 7534767},
     {"Trainer Spell Item: Summon Warhorse (#34768)", 7534768},
-    {"Trainer Spell Item: Circle of Healing (#34863)", 7534863},
-    {"Trainer Spell Item: Circle of Healing (#34864)", 7534864},
-    {"Trainer Spell Item: Circle of Healing (#34865)", 7534865},
-    {"Trainer Spell Item: Circle of Healing (#34866)", 7534866},
-    {"Trainer Spell Item: Vampiric Touch (#34916)", 7534916},
-    {"Trainer Spell Item: Vampiric Touch (#34917)", 7534917},
     {"Trainer Spell Item: Teleport: Shattrath (#35715)", 7535715},
     {"Trainer Spell Item: Portal: Shattrath (#35717)", 7535717},
-    {"Trainer Spell Item: Mongoose Bite (#36916)", 7536916},
     {"Trainer Spell Item: Totemic Recall (#36936)", 7536936},
-    {"Trainer Spell Item: Conjure Water (#37420)", 7537420},
-    {"Trainer Spell Item: Fireball (#38692)", 7538692},
-    {"Trainer Spell Item: Frostbolt (#38697)", 7538697},
-    {"Trainer Spell Item: Arcane Missiles (#38699)", 7538699},
-    {"Trainer Spell Item: Arcane Missiles (#38704)", 7538704},
-    {"Trainer Spell Item: Swift Flight Form (#40120)", 7540120},
     {"Trainer Spell Item: Army of the Dead (#42650)", 7542650},
-    {"Trainer Spell Item: Fireball (#42832)", 7542832},
-    {"Trainer Spell Item: Fireball (#42833)", 7542833},
-    {"Trainer Spell Item: Frostbolt (#42841)", 7542841},
-    {"Trainer Spell Item: Frostbolt (#42842)", 7542842},
-    {"Trainer Spell Item: Arcane Missiles (#42843)", 7542843},
-    {"Trainer Spell Item: Arcane Missiles (#42846)", 7542846},
-    {"Trainer Spell Item: Scorch (#42858)", 7542858},
-    {"Trainer Spell Item: Scorch (#42859)", 7542859},
-    {"Trainer Spell Item: Fire Blast (#42872)", 7542872},
-    {"Trainer Spell Item: Fire Blast (#42873)", 7542873},
-    {"Trainer Spell Item: Pyroblast (#42890)", 7542890},
-    {"Trainer Spell Item: Pyroblast (#42891)", 7542891},
-    {"Trainer Spell Item: Arcane Blast (#42894)", 7542894},
-    {"Trainer Spell Item: Arcane Blast (#42896)", 7542896},
-    {"Trainer Spell Item: Arcane Blast (#42897)", 7542897},
-    {"Trainer Spell Item: Ice Lance (#42913)", 7542913},
-    {"Trainer Spell Item: Ice Lance (#42914)", 7542914},
-    {"Trainer Spell Item: Frost Nova (#42917)", 7542917},
-    {"Trainer Spell Item: Arcane Explosion (#42920)", 7542920},
-    {"Trainer Spell Item: Arcane Explosion (#42921)", 7542921},
-    {"Trainer Spell Item: Flamestrike (#42925)", 7542925},
-    {"Trainer Spell Item: Flamestrike (#42926)", 7542926},
-    {"Trainer Spell Item: Cone of Cold (#42930)", 7542930},
-    {"Trainer Spell Item: Cone of Cold (#42931)", 7542931},
-    {"Trainer Spell Item: Blizzard (#42939)", 7542939},
-    {"Trainer Spell Item: Blizzard (#42940)", 7542940},
-    {"Trainer Spell Item: Blast Wave (#42944)", 7542944},
-    {"Trainer Spell Item: Blast Wave (#42945)", 7542945},
-    {"Trainer Spell Item: Dragon's Breath (#42949)", 7542949},
-    {"Trainer Spell Item: Dragon's Breath (#42950)", 7542950},
-    {"Trainer Spell Item: Conjure Refreshment (#42955)", 7542955},
-    {"Trainer Spell Item: Conjure Refreshment (#42956)", 7542956},
-    {"Trainer Spell Item: Conjure Mana Gem (#42985)", 7542985},
-    {"Trainer Spell Item: Arcane Intellect (#42995)", 7542995},
-    {"Trainer Spell Item: Arcane Brilliance (#43002)", 7543002},
-    {"Trainer Spell Item: Ice Armor (#43008)", 7543008},
-    {"Trainer Spell Item: Fire Ward (#43010)", 7543010},
-    {"Trainer Spell Item: Frost Ward (#43012)", 7543012},
-    {"Trainer Spell Item: Dampen Magic (#43015)", 7543015},
-    {"Trainer Spell Item: Amplify Magic (#43017)", 7543017},
-    {"Trainer Spell Item: Mana Shield (#43019)", 7543019},
-    {"Trainer Spell Item: Mana Shield (#43020)", 7543020},
-    {"Trainer Spell Item: Mage Armor (#43023)", 7543023},
-    {"Trainer Spell Item: Mage Armor (#43024)", 7543024},
-    {"Trainer Spell Item: Ice Barrier (#43038)", 7543038},
-    {"Trainer Spell Item: Ice Barrier (#43039)", 7543039},
-    {"Trainer Spell Item: Molten Armor (#43045)", 7543045},
-    {"Trainer Spell Item: Molten Armor (#43046)", 7543046},
-    {"Trainer Spell Item: Death and Decay (#43265)", 7543265},
-    {"Trainer Spell Item: Ritual of Refreshment (#43987)", 7543987},
-    {"Trainer Spell Item: Frostfire Bolt (#44614)", 7544614},
-    {"Trainer Spell Item: Arcane Barrage (#44780)", 7544780},
-    {"Trainer Spell Item: Arcane Barrage (#44781)", 7544781},
     {"Trainer Spell Item: Ice Block (#45438)", 7545438},
-    {"Trainer Spell Item: Death Strike (#45463)", 7545463},
     {"Trainer Spell Item: Chains of Ice (#45524)", 7545524},
     {"Trainer Spell Item: Blood Tap (#45529)", 7545529},
     {"Trainer Spell Item: Raise Dead (#46584)", 7546584},
-    {"Trainer Spell Item: Rend (#46845)", 7546845},
-    {"Trainer Spell Item: Battle Shout (#47436)", 7547436},
-    {"Trainer Spell Item: Demoralizing Shout (#47437)", 7547437},
-    {"Trainer Spell Item: Commanding Shout (#47439)", 7547439},
-    {"Trainer Spell Item: Commanding Shout (#47440)", 7547440},
-    {"Trainer Spell Item: Heroic Strike (#47449)", 7547449},
-    {"Trainer Spell Item: Heroic Strike (#47450)", 7547450},
-    {"Trainer Spell Item: Rend (#47465)", 7547465},
-    {"Trainer Spell Item: Execute (#47470)", 7547470},
-    {"Trainer Spell Item: Execute (#47471)", 7547471},
-    {"Trainer Spell Item: Slam (#47474)", 7547474},
-    {"Trainer Spell Item: Slam (#47475)", 7547475},
     {"Trainer Spell Item: Strangulate (#47476)", 7547476},
-    {"Trainer Spell Item: Mortal Strike (#47485)", 7547485},
-    {"Trainer Spell Item: Mortal Strike (#47486)", 7547486},
-    {"Trainer Spell Item: Shield Slam (#47487)", 7547487},
-    {"Trainer Spell Item: Shield Slam (#47488)", 7547488},
-    {"Trainer Spell Item: Devastate (#47497)", 7547497},
-    {"Trainer Spell Item: Devastate (#47498)", 7547498},
-    {"Trainer Spell Item: Thunder Clap (#47501)", 7547501},
-    {"Trainer Spell Item: Thunder Clap (#47502)", 7547502},
-    {"Trainer Spell Item: Cleave (#47519)", 7547519},
-    {"Trainer Spell Item: Cleave (#47520)", 7547520},
     {"Trainer Spell Item: Mind Freeze (#47528)", 7547528},
     {"Trainer Spell Item: Empower Rune Weapon (#47568)", 7547568},
-    {"Trainer Spell Item: Frostfire Bolt (#47610)", 7547610},
-    {"Trainer Spell Item: Demon Armor (#47793)", 7547793},
-    {"Trainer Spell Item: Shadow Bolt (#47808)", 7547808},
-    {"Trainer Spell Item: Shadow Bolt (#47809)", 7547809},
-    {"Trainer Spell Item: Immolate (#47810)", 7547810},
-    {"Trainer Spell Item: Immolate (#47811)", 7547811},
-    {"Trainer Spell Item: Corruption (#47812)", 7547812},
-    {"Trainer Spell Item: Corruption (#47813)", 7547813},
-    {"Trainer Spell Item: Searing Pain (#47814)", 7547814},
-    {"Trainer Spell Item: Searing Pain (#47815)", 7547815},
-    {"Trainer Spell Item: Rain of Fire (#47819)", 7547819},
-    {"Trainer Spell Item: Rain of Fire (#47820)", 7547820},
-    {"Trainer Spell Item: Hellfire (#47823)", 7547823},
-    {"Trainer Spell Item: Soul Fire (#47824)", 7547824},
-    {"Trainer Spell Item: Soul Fire (#47825)", 7547825},
-    {"Trainer Spell Item: Shadowburn (#47826)", 7547826},
-    {"Trainer Spell Item: Shadowburn (#47827)", 7547827},
-    {"Trainer Spell Item: Seed of Corruption (#47835)", 7547835},
-    {"Trainer Spell Item: Seed of Corruption (#47836)", 7547836},
-    {"Trainer Spell Item: Incinerate (#47837)", 7547837},
-    {"Trainer Spell Item: Incinerate (#47838)", 7547838},
-    {"Trainer Spell Item: Unstable Affliction (#47841)", 7547841},
-    {"Trainer Spell Item: Unstable Affliction (#47843)", 7547843},
-    {"Trainer Spell Item: Shadowfury (#47846)", 7547846},
-    {"Trainer Spell Item: Shadowfury (#47847)", 7547847},
-    {"Trainer Spell Item: Drain Soul (#47855)", 7547855},
-    {"Trainer Spell Item: Health Funnel (#47856)", 7547856},
-    {"Trainer Spell Item: Drain Life (#47857)", 7547857},
-    {"Trainer Spell Item: Death Coil (#47859)", 7547859},
-    {"Trainer Spell Item: Death Coil (#47860)", 7547860},
-    {"Trainer Spell Item: Curse of Agony (#47863)", 7547863},
-    {"Trainer Spell Item: Curse of Agony (#47864)", 7547864},
-    {"Trainer Spell Item: Curse of the Elements (#47865)", 7547865},
-    {"Trainer Spell Item: Curse of Doom (#47867)", 7547867},
-    {"Trainer Spell Item: Create Healthstone (#47871)", 7547871},
-    {"Trainer Spell Item: Create Healthstone (#47878)", 7547878},
-    {"Trainer Spell Item: Create Soulstone (#47884)", 7547884},
-    {"Trainer Spell Item: Create Spellstone (#47886)", 7547886},
-    {"Trainer Spell Item: Create Spellstone (#47888)", 7547888},
-    {"Trainer Spell Item: Demon Armor (#47889)", 7547889},
-    {"Trainer Spell Item: Shadow Ward (#47890)", 7547890},
-    {"Trainer Spell Item: Shadow Ward (#47891)", 7547891},
-    {"Trainer Spell Item: Fel Armor (#47892)", 7547892},
-    {"Trainer Spell Item: Fel Armor (#47893)", 7547893},
-    {"Trainer Spell Item: Shadowflame (#47897)", 7547897},
     {"Trainer Spell Item: Demonic Circle: Summon (#48018)", 7548018},
     {"Trainer Spell Item: Demonic Circle: Teleport (#48020)", 7548020},
-    {"Trainer Spell Item: Inner Fire (#48040)", 7548040},
-    {"Trainer Spell Item: Mind Sear (#48045)", 7548045},
-    {"Trainer Spell Item: Greater Heal (#48062)", 7548062},
-    {"Trainer Spell Item: Greater Heal (#48063)", 7548063},
-    {"Trainer Spell Item: Power Word: Shield (#48065)", 7548065},
-    {"Trainer Spell Item: Power Word: Shield (#48066)", 7548066},
-    {"Trainer Spell Item: Renew (#48067)", 7548067},
-    {"Trainer Spell Item: Renew (#48068)", 7548068},
-    {"Trainer Spell Item: Flash Heal (#48070)", 7548070},
-    {"Trainer Spell Item: Flash Heal (#48071)", 7548071},
-    {"Trainer Spell Item: Prayer of Healing (#48072)", 7548072},
-    {"Trainer Spell Item: Divine Spirit (#48073)", 7548073},
-    {"Trainer Spell Item: Prayer of Spirit (#48074)", 7548074},
-    {"Trainer Spell Item: Holy Nova (#48077)", 7548077},
-    {"Trainer Spell Item: Holy Nova (#48078)", 7548078},
-    {"Trainer Spell Item: Lightwell (#48086)", 7548086},
-    {"Trainer Spell Item: Lightwell (#48087)", 7548087},
-    {"Trainer Spell Item: Circle of Healing (#48088)", 7548088},
-    {"Trainer Spell Item: Circle of Healing (#48089)", 7548089},
-    {"Trainer Spell Item: Prayer of Mending (#48112)", 7548112},
-    {"Trainer Spell Item: Prayer of Mending (#48113)", 7548113},
-    {"Trainer Spell Item: Binding Heal (#48119)", 7548119},
-    {"Trainer Spell Item: Binding Heal (#48120)", 7548120},
-    {"Trainer Spell Item: Smite (#48122)", 7548122},
-    {"Trainer Spell Item: Smite (#48123)", 7548123},
-    {"Trainer Spell Item: Shadow Word: Pain (#48124)", 7548124},
-    {"Trainer Spell Item: Shadow Word: Pain (#48125)", 7548125},
-    {"Trainer Spell Item: Mind Blast (#48126)", 7548126},
-    {"Trainer Spell Item: Mind Blast (#48127)", 7548127},
-    {"Trainer Spell Item: Holy Fire (#48134)", 7548134},
-    {"Trainer Spell Item: Holy Fire (#48135)", 7548135},
-    {"Trainer Spell Item: Mind Flay (#48155)", 7548155},
-    {"Trainer Spell Item: Mind Flay (#48156)", 7548156},
-    {"Trainer Spell Item: Shadow Word: Death (#48157)", 7548157},
-    {"Trainer Spell Item: Shadow Word: Death (#48158)", 7548158},
-    {"Trainer Spell Item: Vampiric Touch (#48159)", 7548159},
-    {"Trainer Spell Item: Vampiric Touch (#48160)", 7548160},
-    {"Trainer Spell Item: Power Word: Fortitude (#48161)", 7548161},
-    {"Trainer Spell Item: Prayer of Fortitude (#48162)", 7548162},
-    {"Trainer Spell Item: Inner Fire (#48168)", 7548168},
-    {"Trainer Spell Item: Shadow Protection (#48169)", 7548169},
-    {"Trainer Spell Item: Prayer of Shadow Protection (#48170)", 7548170},
-    {"Trainer Spell Item: Resurrection (#48171)", 7548171},
-    {"Trainer Spell Item: Desperate Prayer (#48172)", 7548172},
-    {"Trainer Spell Item: Desperate Prayer (#48173)", 7548173},
     {"Trainer Spell Item: Frost Presence (#48263)", 7548263},
     {"Trainer Spell Item: Unholy Presence (#48265)", 7548265},
-    {"Trainer Spell Item: Devouring Plague (#48299)", 7548299},
-    {"Trainer Spell Item: Devouring Plague (#48300)", 7548300},
-    {"Trainer Spell Item: Healing Touch (#48377)", 7548377},
-    {"Trainer Spell Item: Healing Touch (#48378)", 7548378},
-    {"Trainer Spell Item: Rejuvenation (#48440)", 7548440},
-    {"Trainer Spell Item: Rejuvenation (#48441)", 7548441},
-    {"Trainer Spell Item: Regrowth (#48442)", 7548442},
-    {"Trainer Spell Item: Regrowth (#48443)", 7548443},
-    {"Trainer Spell Item: Tranquility (#48446)", 7548446},
-    {"Trainer Spell Item: Tranquility (#48447)", 7548447},
-    {"Trainer Spell Item: Lifebloom (#48450)", 7548450},
-    {"Trainer Spell Item: Lifebloom (#48451)", 7548451},
-    {"Trainer Spell Item: Wrath (#48459)", 7548459},
-    {"Trainer Spell Item: Wrath (#48461)", 7548461},
-    {"Trainer Spell Item: Moonfire (#48462)", 7548462},
-    {"Trainer Spell Item: Moonfire (#48463)", 7548463},
-    {"Trainer Spell Item: Starfire (#48464)", 7548464},
-    {"Trainer Spell Item: Starfire (#48465)", 7548465},
-    {"Trainer Spell Item: Hurricane (#48467)", 7548467},
-    {"Trainer Spell Item: Insect Swarm (#48468)", 7548468},
-    {"Trainer Spell Item: Mark of the Wild (#48469)", 7548469},
-    {"Trainer Spell Item: Gift of the Wild (#48470)", 7548470},
-    {"Trainer Spell Item: Rebirth (#48477)", 7548477},
-    {"Trainer Spell Item: Maul (#48479)", 7548479},
-    {"Trainer Spell Item: Maul (#48480)", 7548480},
-    {"Trainer Spell Item: Demoralizing Roar (#48559)", 7548559},
-    {"Trainer Spell Item: Demoralizing Roar (#48560)", 7548560},
-    {"Trainer Spell Item: Swipe (Bear) (#48561)", 7548561},
-    {"Trainer Spell Item: Swipe (Bear) (#48562)", 7548562},
-    {"Trainer Spell Item: Mangle (Bear) (#48563)", 7548563},
-    {"Trainer Spell Item: Mangle (Bear) (#48564)", 7548564},
-    {"Trainer Spell Item: Mangle (Cat) (#48565)", 7548565},
-    {"Trainer Spell Item: Mangle (Cat) (#48566)", 7548566},
-    {"Trainer Spell Item: Lacerate (#48567)", 7548567},
-    {"Trainer Spell Item: Lacerate (#48568)", 7548568},
-    {"Trainer Spell Item: Claw (#48569)", 7548569},
-    {"Trainer Spell Item: Claw (#48570)", 7548570},
-    {"Trainer Spell Item: Shred (#48571)", 7548571},
-    {"Trainer Spell Item: Shred (#48572)", 7548572},
-    {"Trainer Spell Item: Rake (#48573)", 7548573},
-    {"Trainer Spell Item: Rake (#48574)", 7548574},
-    {"Trainer Spell Item: Cower (#48575)", 7548575},
-    {"Trainer Spell Item: Ferocious Bite (#48576)", 7548576},
-    {"Trainer Spell Item: Ferocious Bite (#48577)", 7548577},
-    {"Trainer Spell Item: Ravage (#48578)", 7548578},
-    {"Trainer Spell Item: Ravage (#48579)", 7548579},
-    {"Trainer Spell Item: Sinister Strike (#48637)", 7548637},
-    {"Trainer Spell Item: Sinister Strike (#48638)", 7548638},
-    {"Trainer Spell Item: Backstab (#48656)", 7548656},
-    {"Trainer Spell Item: Backstab (#48657)", 7548657},
-    {"Trainer Spell Item: Feint (#48658)", 7548658},
-    {"Trainer Spell Item: Feint (#48659)", 7548659},
-    {"Trainer Spell Item: Hemorrhage (#48660)", 7548660},
-    {"Trainer Spell Item: Mutilate (#48663)", 7548663},
-    {"Trainer Spell Item: Mutilate (#48666)", 7548666},
-    {"Trainer Spell Item: Eviscerate (#48667)", 7548667},
-    {"Trainer Spell Item: Eviscerate (#48668)", 7548668},
-    {"Trainer Spell Item: Rupture (#48671)", 7548671},
-    {"Trainer Spell Item: Rupture (#48672)", 7548672},
-    {"Trainer Spell Item: Deadly Throw (#48673)", 7548673},
-    {"Trainer Spell Item: Deadly Throw (#48674)", 7548674},
-    {"Trainer Spell Item: Garrote (#48675)", 7548675},
-    {"Trainer Spell Item: Garrote (#48676)", 7548676},
-    {"Trainer Spell Item: Ambush (#48689)", 7548689},
-    {"Trainer Spell Item: Ambush (#48690)", 7548690},
-    {"Trainer Spell Item: Ambush (#48691)", 7548691},
     {"Trainer Spell Item: Anti-Magic Shell (#48707)", 7548707},
-    {"Trainer Spell Item: Blood Boil (#48721)", 7548721},
     {"Trainer Spell Item: Death Pact (#48743)", 7548743},
-    {"Trainer Spell Item: Holy Light (#48781)", 7548781},
-    {"Trainer Spell Item: Holy Light (#48782)", 7548782},
-    {"Trainer Spell Item: Flash of Light (#48784)", 7548784},
-    {"Trainer Spell Item: Flash of Light (#48785)", 7548785},
-    {"Trainer Spell Item: Lay on Hands (#48788)", 7548788},
     {"Trainer Spell Item: Icebound Fortitude (#48792)", 7548792},
-    {"Trainer Spell Item: Exorcism (#48800)", 7548800},
-    {"Trainer Spell Item: Exorcism (#48801)", 7548801},
-    {"Trainer Spell Item: Hammer of Wrath (#48805)", 7548805},
-    {"Trainer Spell Item: Hammer of Wrath (#48806)", 7548806},
-    {"Trainer Spell Item: Holy Wrath (#48816)", 7548816},
-    {"Trainer Spell Item: Holy Wrath (#48817)", 7548817},
-    {"Trainer Spell Item: Consecration (#48818)", 7548818},
-    {"Trainer Spell Item: Consecration (#48819)", 7548819},
-    {"Trainer Spell Item: Holy Shock (#48824)", 7548824},
-    {"Trainer Spell Item: Holy Shock (#48825)", 7548825},
-    {"Trainer Spell Item: Avenger's Shield (#48826)", 7548826},
-    {"Trainer Spell Item: Avenger's Shield (#48827)", 7548827},
-    {"Trainer Spell Item: Blessing of Might (#48931)", 7548931},
-    {"Trainer Spell Item: Blessing of Might (#48932)", 7548932},
-    {"Trainer Spell Item: Greater Blessing of Might (#48933)", 7548933},
-    {"Trainer Spell Item: Greater Blessing of Might (#48934)", 7548934},
-    {"Trainer Spell Item: Blessing of Wisdom (#48935)", 7548935},
-    {"Trainer Spell Item: Blessing of Wisdom (#48936)", 7548936},
-    {"Trainer Spell Item: Greater Blessing of Wisdom (#48937)", 7548937},
-    {"Trainer Spell Item: Greater Blessing of Wisdom (#48938)", 7548938},
-    {"Trainer Spell Item: Devotion Aura (#48941)", 7548941},
-    {"Trainer Spell Item: Devotion Aura (#48942)", 7548942},
-    {"Trainer Spell Item: Shadow Resistance Aura (#48943)", 7548943},
-    {"Trainer Spell Item: Frost Resistance Aura (#48945)", 7548945},
-    {"Trainer Spell Item: Fire Resistance Aura (#48947)", 7548947},
-    {"Trainer Spell Item: Redemption (#48949)", 7548949},
-    {"Trainer Spell Item: Redemption (#48950)", 7548950},
-    {"Trainer Spell Item: Holy Shield (#48951)", 7548951},
-    {"Trainer Spell Item: Holy Shield (#48952)", 7548952},
-    {"Trainer Spell Item: Mend Pet (#48989)", 7548989},
-    {"Trainer Spell Item: Mend Pet (#48990)", 7548990},
-    {"Trainer Spell Item: Raptor Strike (#48995)", 7548995},
-    {"Trainer Spell Item: Raptor Strike (#48996)", 7548996},
-    {"Trainer Spell Item: Counterattack (#48998)", 7548998},
-    {"Trainer Spell Item: Counterattack (#48999)", 7548999},
-    {"Trainer Spell Item: Serpent Sting (#49000)", 7549000},
-    {"Trainer Spell Item: Serpent Sting (#49001)", 7549001},
-    {"Trainer Spell Item: Wyvern Sting (#49011)", 7549011},
-    {"Trainer Spell Item: Wyvern Sting (#49012)", 7549012},
-    {"Trainer Spell Item: Obliterate (#49020)", 7549020},
-    {"Trainer Spell Item: Arcane Shot (#49044)", 7549044},
-    {"Trainer Spell Item: Arcane Shot (#49045)", 7549045},
-    {"Trainer Spell Item: Multi-Shot (#49047)", 7549047},
-    {"Trainer Spell Item: Multi-Shot (#49048)", 7549048},
-    {"Trainer Spell Item: Aimed Shot (#49049)", 7549049},
-    {"Trainer Spell Item: Aimed Shot (#49050)", 7549050},
-    {"Trainer Spell Item: Steady Shot (#49051)", 7549051},
-    {"Trainer Spell Item: Steady Shot (#49052)", 7549052},
-    {"Trainer Spell Item: Immolation Trap (#49055)", 7549055},
-    {"Trainer Spell Item: Immolation Trap (#49056)", 7549056},
-    {"Trainer Spell Item: Explosive Trap (#49066)", 7549066},
-    {"Trainer Spell Item: Explosive Trap (#49067)", 7549067},
-    {"Trainer Spell Item: Aspect of the Wild (#49071)", 7549071},
-    {"Trainer Spell Item: Earth Shock (#49230)", 7549230},
-    {"Trainer Spell Item: Earth Shock (#49231)", 7549231},
-    {"Trainer Spell Item: Flame Shock (#49232)", 7549232},
-    {"Trainer Spell Item: Flame Shock (#49233)", 7549233},
-    {"Trainer Spell Item: Frost Shock (#49235)", 7549235},
-    {"Trainer Spell Item: Frost Shock (#49236)", 7549236},
-    {"Trainer Spell Item: Lightning Bolt (#49237)", 7549237},
-    {"Trainer Spell Item: Lightning Bolt (#49238)", 7549238},
-    {"Trainer Spell Item: Chain Lightning (#49270)", 7549270},
-    {"Trainer Spell Item: Chain Lightning (#49271)", 7549271},
-    {"Trainer Spell Item: Healing Wave (#49272)", 7549272},
-    {"Trainer Spell Item: Healing Wave (#49273)", 7549273},
-    {"Trainer Spell Item: Lesser Healing Wave (#49275)", 7549275},
-    {"Trainer Spell Item: Lesser Healing Wave (#49276)", 7549276},
-    {"Trainer Spell Item: Ancestral Spirit (#49277)", 7549277},
-    {"Trainer Spell Item: Lightning Shield (#49280)", 7549280},
-    {"Trainer Spell Item: Lightning Shield (#49281)", 7549281},
-    {"Trainer Spell Item: Earth Shield (#49283)", 7549283},
-    {"Trainer Spell Item: Earth Shield (#49284)", 7549284},
     {"Trainer Spell Item: Teleport: Stonard (#49358)", 7549358},
     {"Trainer Spell Item: Teleport: Theramore (#49359)", 7549359},
     {"Trainer Spell Item: Portal: Theramore (#49360)", 7549360},
     {"Trainer Spell Item: Portal: Stonard (#49361)", 7549361},
-    {"Trainer Spell Item: Rip (#49799)", 7549799},
-    {"Trainer Spell Item: Rip (#49800)", 7549800},
-    {"Trainer Spell Item: Maim (#49802)", 7549802},
-    {"Trainer Spell Item: Pounce (#49803)", 7549803},
-    {"Trainer Spell Item: Death Coil (#49892)", 7549892},
-    {"Trainer Spell Item: Death Coil (#49893)", 7549893},
-    {"Trainer Spell Item: Death Coil (#49894)", 7549894},
-    {"Trainer Spell Item: Death Coil (#49895)", 7549895},
-    {"Trainer Spell Item: Icy Touch (#49896)", 7549896},
-    {"Trainer Spell Item: Icy Touch (#49903)", 7549903},
-    {"Trainer Spell Item: Icy Touch (#49904)", 7549904},
-    {"Trainer Spell Item: Icy Touch (#49909)", 7549909},
-    {"Trainer Spell Item: Plague Strike (#49917)", 7549917},
-    {"Trainer Spell Item: Plague Strike (#49918)", 7549918},
-    {"Trainer Spell Item: Plague Strike (#49919)", 7549919},
-    {"Trainer Spell Item: Plague Strike (#49920)", 7549920},
-    {"Trainer Spell Item: Plague Strike (#49921)", 7549921},
-    {"Trainer Spell Item: Death Strike (#49923)", 7549923},
-    {"Trainer Spell Item: Death Strike (#49924)", 7549924},
-    {"Trainer Spell Item: Blood Strike (#49926)", 7549926},
-    {"Trainer Spell Item: Blood Strike (#49927)", 7549927},
-    {"Trainer Spell Item: Blood Strike (#49928)", 7549928},
-    {"Trainer Spell Item: Blood Strike (#49929)", 7549929},
-    {"Trainer Spell Item: Blood Strike (#49930)", 7549930},
-    {"Trainer Spell Item: Death and Decay (#49936)", 7549936},
-    {"Trainer Spell Item: Death and Decay (#49937)", 7549937},
-    {"Trainer Spell Item: Death and Decay (#49938)", 7549938},
-    {"Trainer Spell Item: Blood Boil (#49939)", 7549939},
-    {"Trainer Spell Item: Blood Boil (#49940)", 7549940},
-    {"Trainer Spell Item: Blood Boil (#49941)", 7549941},
-    {"Trainer Spell Item: Death Strike (#49998)", 7549998},
-    {"Trainer Spell Item: Death Strike (#49999)", 7549999},
-    {"Trainer Spell Item: Tiger's Fury (#50212)", 7550212},
-    {"Trainer Spell Item: Tiger's Fury (#50213)", 7550213},
     {"Trainer Spell Item: Nourish (#50464)", 7550464},
-    {"Trainer Spell Item: Curse of Weakness (#50511)", 7550511},
-    {"Trainer Spell Item: Revive (#50763)", 7550763},
-    {"Trainer Spell Item: Revive (#50764)", 7550764},
-    {"Trainer Spell Item: Revive (#50765)", 7550765},
-    {"Trainer Spell Item: Revive (#50766)", 7550766},
-    {"Trainer Spell Item: Revive (#50767)", 7550767},
-    {"Trainer Spell Item: Revive (#50768)", 7550768},
-    {"Trainer Spell Item: Revive (#50769)", 7550769},
     {"Trainer Spell Item: Pestilence (#50842)", 7550842},
-    {"Trainer Spell Item: Corpse Explosion (#51325)", 7551325},
-    {"Trainer Spell Item: Corpse Explosion (#51326)", 7551326},
-    {"Trainer Spell Item: Corpse Explosion (#51327)", 7551327},
-    {"Trainer Spell Item: Corpse Explosion (#51328)", 7551328},
-    {"Trainer Spell Item: Howling Blast (#51409)", 7551409},
-    {"Trainer Spell Item: Howling Blast (#51410)", 7551410},
-    {"Trainer Spell Item: Howling Blast (#51411)", 7551411},
-    {"Trainer Spell Item: Frost Strike (#51416)", 7551416},
-    {"Trainer Spell Item: Frost Strike (#51417)", 7551417},
-    {"Trainer Spell Item: Frost Strike (#51418)", 7551418},
-    {"Trainer Spell Item: Frost Strike (#51419)", 7551419},
-    {"Trainer Spell Item: Obliterate (#51423)", 7551423},
-    {"Trainer Spell Item: Obliterate (#51424)", 7551424},
-    {"Trainer Spell Item: Obliterate (#51425)", 7551425},
-    {"Trainer Spell Item: Lava Burst (#51505)", 7551505},
     {"Trainer Spell Item: Hex (#51514)", 7551514},
     {"Trainer Spell Item: Dismantle (#51722)", 7551722},
     {"Trainer Spell Item: Fan of Knives (#51723)", 7551723},
-    {"Trainer Spell Item: Sap (#51724)", 7551724},
-    {"Trainer Spell Item: Earthliving Weapon (#51730)", 7551730},
-    {"Trainer Spell Item: Earthliving Weapon (#51988)", 7551988},
-    {"Trainer Spell Item: Earthliving Weapon (#51991)", 7551991},
-    {"Trainer Spell Item: Earthliving Weapon (#51992)", 7551992},
-    {"Trainer Spell Item: Earthliving Weapon (#51993)", 7551993},
-    {"Trainer Spell Item: Earthliving Weapon (#51994)", 7551994},
-    {"Trainer Spell Item: Water Shield (#52127)", 7552127},
-    {"Trainer Spell Item: Water Shield (#52129)", 7552129},
-    {"Trainer Spell Item: Water Shield (#52131)", 7552131},
-    {"Trainer Spell Item: Water Shield (#52134)", 7552134},
-    {"Trainer Spell Item: Water Shield (#52136)", 7552136},
-    {"Trainer Spell Item: Water Shield (#52138)", 7552138},
     {"Trainer Spell Item: Savage Roar (#52610)", 7552610},
-    {"Trainer Spell Item: Penance (#53005)", 7553005},
-    {"Trainer Spell Item: Penance (#53006)", 7553006},
-    {"Trainer Spell Item: Penance (#53007)", 7553007},
-    {"Trainer Spell Item: Mind Sear (#53023)", 7553023},
     {"Trainer Spell Item: Teleport: Dalaran (#53140)", 7553140},
     {"Trainer Spell Item: Portal: Dalaran (#53142)", 7553142},
-    {"Trainer Spell Item: Starfall (#53199)", 7553199},
-    {"Trainer Spell Item: Starfall (#53200)", 7553200},
-    {"Trainer Spell Item: Starfall (#53201)", 7553201},
-    {"Trainer Spell Item: Typhoon (#53223)", 7553223},
-    {"Trainer Spell Item: Typhoon (#53225)", 7553225},
-    {"Trainer Spell Item: Typhoon (#53226)", 7553226},
-    {"Trainer Spell Item: Wild Growth (#53248)", 7553248},
-    {"Trainer Spell Item: Wild Growth (#53249)", 7553249},
-    {"Trainer Spell Item: Wild Growth (#53251)", 7553251},
     {"Trainer Spell Item: Master's Call (#53271)", 7553271},
-    {"Trainer Spell Item: Thorns (#53307)", 7553307},
-    {"Trainer Spell Item: Entangling Roots (#53308)", 7553308},
-    {"Trainer Spell Item: Nature's Grasp (#53312)", 7553312},
     {"Trainer Spell Item: Rune of Swordshattering (#53323)", 7553323},
     {"Trainer Spell Item: Rune of Lichbane (#53331)", 7553331},
-    {"Trainer Spell Item: Hunter's Mark (#53338)", 7553338},
-    {"Trainer Spell Item: Mongoose Bite (#53339)", 7553339},
     {"Trainer Spell Item: Rune of Cinderglacier (#53341)", 7553341},
     {"Trainer Spell Item: Rune of Spellshattering (#53342)", 7553342},
     {"Trainer Spell Item: Rune of Razorice (#53343)", 7553343},
     {"Trainer Spell Item: Rune of the Fallen Crusader (#53344)", 7553344},
-    {"Trainer Spell Item: Kill Shot (#53351)", 7553351},
     {"Trainer Spell Item: Judgement of Justice (#53407)", 7553407},
     {"Trainer Spell Item: Judgement of Wisdom (#53408)", 7553408},
-    {"Trainer Spell Item: Shield of Righteousness (#53600)", 7553600},
     {"Trainer Spell Item: Sacred Shield (#53601)", 7553601},
     {"Trainer Spell Item: Seal of Corruption (#53736)", 7553736},
-    {"Trainer Spell Item: Retribution Aura (#54043)", 7554043},
     {"Trainer Spell Item: Divine Plea (#54428)", 7554428},
     {"Trainer Spell Item: Rune of Swordbreaking (#54446)", 7554446},
     {"Trainer Spell Item: Rune of Spellbreaking (#54447)", 7554447},
-    {"Trainer Spell Item: Heart Strike (#55258)", 7555258},
-    {"Trainer Spell Item: Heart Strike (#55259)", 7555259},
-    {"Trainer Spell Item: Heart Strike (#55260)", 7555260},
-    {"Trainer Spell Item: Heart Strike (#55261)", 7555261},
-    {"Trainer Spell Item: Heart Strike (#55262)", 7555262},
-    {"Trainer Spell Item: Scourge Strike (#55265)", 7555265},
-    {"Trainer Spell Item: Frost Strike (#55268)", 7555268},
-    {"Trainer Spell Item: Scourge Strike (#55270)", 7555270},
-    {"Trainer Spell Item: Scourge Strike (#55271)", 7555271},
     {"Trainer Spell Item: Mirror Image (#55342)", 7555342},
-    {"Trainer Spell Item: Living Bomb (#55359)", 7555359},
-    {"Trainer Spell Item: Living Bomb (#55360)", 7555360},
-    {"Trainer Spell Item: Chain Heal (#55458)", 7555458},
-    {"Trainer Spell Item: Chain Heal (#55459)", 7555459},
     {"Trainer Spell Item: Enraged Regeneration (#55694)", 7555694},
     {"Trainer Spell Item: Dark Command (#56222)", 7556222},
-    {"Trainer Spell Item: Steady Shot (#56641)", 7556641},
     {"Trainer Spell Item: Rune Strike (#56815)", 7556815},
-    {"Trainer Spell Item: Horn of Winter (#57330)", 7557330},
-    {"Trainer Spell Item: Strength of Earth Totem (#57622)", 7557622},
-    {"Trainer Spell Item: Horn of Winter (#57623)", 7557623},
-    {"Trainer Spell Item: Totem of Wrath (#57720)", 7557720},
-    {"Trainer Spell Item: Totem of Wrath (#57721)", 7557721},
-    {"Trainer Spell Item: Totem of Wrath (#57722)", 7557722},
     {"Trainer Spell Item: Heroic Throw (#57755)", 7557755},
-    {"Trainer Spell Item: Revenge (#57823)", 7557823},
     {"Trainer Spell Item: Tricks of the Trade (#57934)", 7557934},
-    {"Trainer Spell Item: Life Tap (#57946)", 7557946},
-    {"Trainer Spell Item: Water Shield (#57960)", 7557960},
-    {"Trainer Spell Item: Envenom (#57992)", 7557992},
-    {"Trainer Spell Item: Envenom (#57993)", 7557993},
     {"Trainer Spell Item: Wind Shear (#57994)", 7557994},
-    {"Trainer Spell Item: Volley (#58431)", 7558431},
-    {"Trainer Spell Item: Volley (#58434)", 7558434},
-    {"Trainer Spell Item: Stoneclaw Totem (#58580)", 7558580},
-    {"Trainer Spell Item: Stoneclaw Totem (#58581)", 7558581},
-    {"Trainer Spell Item: Stoneclaw Totem (#58582)", 7558582},
-    {"Trainer Spell Item: Strength of Earth Totem (#58643)", 7558643},
-    {"Trainer Spell Item: Flametongue Totem (#58649)", 7558649},
-    {"Trainer Spell Item: Flametongue Totem (#58652)", 7558652},
-    {"Trainer Spell Item: Flametongue Totem (#58656)", 7558656},
-    {"Trainer Spell Item: Ritual of Refreshment (#58659)", 7558659},
-    {"Trainer Spell Item: Searing Totem (#58699)", 7558699},
-    {"Trainer Spell Item: Searing Totem (#58703)", 7558703},
-    {"Trainer Spell Item: Searing Totem (#58704)", 7558704},
-    {"Trainer Spell Item: Magma Totem (#58731)", 7558731},
-    {"Trainer Spell Item: Magma Totem (#58734)", 7558734},
-    {"Trainer Spell Item: Fire Resistance Totem (#58737)", 7558737},
-    {"Trainer Spell Item: Fire Resistance Totem (#58739)", 7558739},
-    {"Trainer Spell Item: Frost Resistance Totem (#58741)", 7558741},
-    {"Trainer Spell Item: Frost Resistance Totem (#58745)", 7558745},
-    {"Trainer Spell Item: Nature Resistance Totem (#58746)", 7558746},
-    {"Trainer Spell Item: Nature Resistance Totem (#58749)", 7558749},
-    {"Trainer Spell Item: Stoneskin Totem (#58751)", 7558751},
-    {"Trainer Spell Item: Stoneskin Totem (#58753)", 7558753},
-    {"Trainer Spell Item: Healing Stream Totem (#58755)", 7558755},
-    {"Trainer Spell Item: Healing Stream Totem (#58756)", 7558756},
-    {"Trainer Spell Item: Healing Stream Totem (#58757)", 7558757},
-    {"Trainer Spell Item: Mana Spring Totem (#58771)", 7558771},
-    {"Trainer Spell Item: Mana Spring Totem (#58773)", 7558773},
-    {"Trainer Spell Item: Mana Spring Totem (#58774)", 7558774},
-    {"Trainer Spell Item: Flametongue Weapon (#58785)", 7558785},
-    {"Trainer Spell Item: Flametongue Weapon (#58789)", 7558789},
-    {"Trainer Spell Item: Flametongue Weapon (#58790)", 7558790},
-    {"Trainer Spell Item: Frostbrand Weapon (#58794)", 7558794},
-    {"Trainer Spell Item: Frostbrand Weapon (#58795)", 7558795},
-    {"Trainer Spell Item: Frostbrand Weapon (#58796)", 7558796},
-    {"Trainer Spell Item: Windfury Weapon (#58801)", 7558801},
-    {"Trainer Spell Item: Windfury Weapon (#58803)", 7558803},
-    {"Trainer Spell Item: Windfury Weapon (#58804)", 7558804},
-    {"Trainer Spell Item: Ritual of Souls (#58887)", 7558887},
-    {"Trainer Spell Item: Dark Pact (#59092)", 7559092},
-    {"Trainer Spell Item: Thunderstorm (#59156)", 7559156},
-    {"Trainer Spell Item: Thunderstorm (#59158)", 7559158},
-    {"Trainer Spell Item: Thunderstorm (#59159)", 7559159},
-    {"Trainer Spell Item: Haunt (#59161)", 7559161},
-    {"Trainer Spell Item: Haunt (#59163)", 7559163},
-    {"Trainer Spell Item: Haunt (#59164)", 7559164},
-    {"Trainer Spell Item: Chaos Bolt (#59170)", 7559170},
-    {"Trainer Spell Item: Chaos Bolt (#59171)", 7559171},
-    {"Trainer Spell Item: Chaos Bolt (#59172)", 7559172},
-    {"Trainer Spell Item: Lava Burst (#60043)", 7560043},
-    {"Trainer Spell Item: Explosive Shot (#60051)", 7560051},
-    {"Trainer Spell Item: Explosive Shot (#60052)", 7560052},
-    {"Trainer Spell Item: Explosive Shot (#60053)", 7560053},
     {"Trainer Spell Item: Freezing Arrow (#60192)", 7560192},
-    {"Trainer Spell Item: Create Firestone (#60219)", 7560219},
-    {"Trainer Spell Item: Create Firestone (#60220)", 7560220},
-    {"Trainer Spell Item: Kill Shot (#61005)", 7561005},
-    {"Trainer Spell Item: Kill Shot (#61006)", 7561006},
-    {"Trainer Spell Item: Enslave Demon (#61191)", 7561191},
-    {"Trainer Spell Item: Shadowflame (#61290)", 7561290},
-    {"Trainer Spell Item: Riptide (#61299)", 7561299},
-    {"Trainer Spell Item: Riptide (#61300)", 7561300},
-    {"Trainer Spell Item: Riptide (#61301)", 7561301},
-    {"Trainer Spell Item: Typhoon (#61384)", 7561384},
-    {"Trainer Spell Item: Shield of Righteousness (#61411)", 7561411},
-    {"Trainer Spell Item: Fire Nova (#61649)", 7561649},
-    {"Trainer Spell Item: Fire Nova (#61657)", 7561657},
-    {"Trainer Spell Item: Aspect of the Dragonhawk (#61846)", 7561846},
-    {"Trainer Spell Item: Aspect of the Dragonhawk (#61847)", 7561847},
     {"Trainer Spell Item: Raise Ally (#61999)", 7561999},
     {"Trainer Spell Item: Swipe (Cat) (#62078)", 7562078},
     {"Trainer Spell Item: Hand of Reckoning (#62124)", 7562124},
     {"Trainer Spell Item: Rune of the Stoneskin Gargoyle (#62158)", 7562158},
     {"Trainer Spell Item: Savage Defense (#62600)", 7562600},
     {"Trainer Spell Item: Call Stabled Pet (#62757)", 7562757},
-    {"Trainer Spell Item: Black Arrow (#63668)", 7563668},
-    {"Trainer Spell Item: Black Arrow (#63669)", 7563669},
-    {"Trainer Spell Item: Black Arrow (#63670)", 7563670},
-    {"Trainer Spell Item: Black Arrow (#63671)", 7563671},
-    {"Trainer Spell Item: Black Arrow (#63672)", 7563672},
     {"Trainer Spell Item: Shattering Throw (#64382)", 7564382},
     {"Trainer Spell Item: Divine Hymn (#64843)", 7564843},
     {"Trainer Spell Item: Hymn of Hope (#64901)", 7564901},
@@ -5939,1972 +4491,247 @@ inline std::unordered_map<uint32_t, int64_t> BuildSPELL_ID_TO_LOCATION_ID()
 }
 inline const std::unordered_map<uint32_t, int64_t> SPELL_ID_TO_LOCATION_ID = BuildSPELL_ID_TO_LOCATION_ID();
 inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {
-    { 7500010, 117 }, // "Trainer Spell Item: Blizzard (#10)"
-    { 7500017, 118 }, // "Trainer Spell Item: Power Word: Shield (#17)"
-    { 7500053, 159 }, // "Trainer Spell Item: Backstab (#53)"
-    { 7500066, 414 }, // "Trainer Spell Item: Invisibility (#66)"
-    { 7500072, 422 }, // "Trainer Spell Item: Shield Bash (#72)"
-    { 7500099, 724 }, // "Trainer Spell Item: Demoralizing Roar (#99)"
-    { 7500100, 733 }, // "Trainer Spell Item: Charge (#100)"
-    { 7500116, 787 }, // "Trainer Spell Item: Frostbolt (#116)"
-    { 7500118, 858 }, // "Trainer Spell Item: Polymorph (#118)"
-    { 7500120, 929 }, // "Trainer Spell Item: Cone of Cold (#120)"
-    { 7500122, 954 }, // "Trainer Spell Item: Frost Nova (#122)"
-    { 7500126, 955 }, // "Trainer Spell Item: Eye of Kilrogg (#126)"
-    { 7500130, 961 }, // "Trainer Spell Item: Slow Fall (#130)"
-    { 7500131, 1017 }, // "Trainer Spell Item: Water Breathing (#131)"
-    { 7500132, 1072 }, // "Trainer Spell Item: Detect Invisibility (#132)"
-    { 7500136, 1082 }, // "Trainer Spell Item: Mend Pet (#136)"
-    { 7500139, 1113 }, // "Trainer Spell Item: Renew (#139)"
-    { 7500143, 1114 }, // "Trainer Spell Item: Fireball (#143)"
-    { 7500145, 1119 }, // "Trainer Spell Item: Fireball (#145)"
-    { 7500172, 1165 }, // "Trainer Spell Item: Corruption (#172)"
-    { 7500205, 1179 }, // "Trainer Spell Item: Frostbolt (#205)"
-    { 7500284, 1180 }, // "Trainer Spell Item: Heroic Strike (#284)"
-    { 7500285, 1181 }, // "Trainer Spell Item: Heroic Strike (#285)"
-    { 7500324, 1205 }, // "Trainer Spell Item: Lightning Shield (#324)"
-    { 7500325, 1326 }, // "Trainer Spell Item: Lightning Shield (#325)"
-    { 7500332, 1401 }, // "Trainer Spell Item: Healing Wave (#332)"
-    { 7500339, 1450 }, // "Trainer Spell Item: Entangling Roots (#339)"
-    { 7500348, 1477 }, // "Trainer Spell Item: Immolate (#348)"
-    { 7500370, 1478 }, // "Trainer Spell Item: Purge (#370)"
-    { 7500408, 1487 }, // "Trainer Spell Item: Kidney Shot (#408)"
-    { 7500421, 1645 }, // "Trainer Spell Item: Chain Lightning (#421)"
-    { 7500453, 1707 }, // "Trainer Spell Item: Mind Soothe (#453)"
-    { 7500465, 1708 }, // "Trainer Spell Item: Devotion Aura (#465)"
-    { 7500467, 1710 }, // "Trainer Spell Item: Thorns (#467)"
-    { 7500469, 1711 }, // "Trainer Spell Item: Commanding Shout (#469)"
-    { 7500475, 1712 }, // "Trainer Spell Item: Remove Curse (#475)"
-    { 7500498, 2070 }, // "Trainer Spell Item: Divine Protection (#498)"
-    { 7500526, 2136 }, // "Trainer Spell Item: Cure Toxins (#526)"
-    { 7500527, 2287 }, // "Trainer Spell Item: Dispel Magic (#527)"
-    { 7500528, 2288 }, // "Trainer Spell Item: Cure Disease (#528)"
-    { 7500529, 2289 }, // "Trainer Spell Item: Lightning Bolt (#529)"
-    { 7500543, 2290 }, // "Trainer Spell Item: Fire Ward (#543)"
-    { 7500546, 2454 }, // "Trainer Spell Item: Water Walking (#546)"
-    { 7500547, 2455 }, // "Trainer Spell Item: Healing Wave (#547)"
-    { 7500548, 2456 }, // "Trainer Spell Item: Lightning Bolt (#548)"
-    { 7500552, 2457 }, // "Trainer Spell Item: Abolish Disease (#552)"
-    { 7500556, 2458 }, // "Trainer Spell Item: Astral Recall (#556)"
-    { 7500586, 2459 }, // "Trainer Spell Item: Fade (#586)"
-    { 7500587, 2460 }, // "Trainer Spell Item: Conjure Food (#587)"
-    { 7500588, 2461 }, // "Trainer Spell Item: Inner Fire (#588)"
-    { 7500589, 2462 }, // "Trainer Spell Item: Shadow Word: Pain (#589)"
-    { 7500591, 2593 }, // "Trainer Spell Item: Smite (#591)"
-    { 7500592, 2594 }, // "Trainer Spell Item: Power Word: Shield (#592)"
-    { 7500594, 2595 }, // "Trainer Spell Item: Shadow Word: Pain (#594)"
-    { 7500596, 2596 }, // "Trainer Spell Item: Prayer of Healing (#596)"
-    { 7500597, 2633 }, // "Trainer Spell Item: Conjure Food (#597)"
-    { 7500598, 2679 }, // "Trainer Spell Item: Smite (#598)"
-    { 7500602, 2680 }, // "Trainer Spell Item: Inner Fire (#602)"
-    { 7500603, 2681 }, // "Trainer Spell Item: Curse of Doom (#603)"
-    { 7500604, 2682 }, // "Trainer Spell Item: Dampen Magic (#604)"
-    { 7500605, 2683 }, // "Trainer Spell Item: Mind Control (#605)"
-    { 7500633, 2684 }, // "Trainer Spell Item: Lay on Hands (#633)"
-    { 7500639, 2685 }, // "Trainer Spell Item: Holy Light (#639)"
-    { 7500642, 2686 }, // "Trainer Spell Item: Divine Shield (#642)"
-    { 7500643, 2687 }, // "Trainer Spell Item: Devotion Aura (#643)"
-    { 7500647, 2723 }, // "Trainer Spell Item: Holy Light (#647)"
-    { 7500674, 2888 }, // "Trainer Spell Item: Dual Wield (#674)"
-    { 7500676, 2894 }, // "Trainer Spell Item: Disarm (#676)"
-    { 7500688, 3012 }, // "Trainer Spell Item: Summon Imp (#688)"
-    { 7500689, 3013 }, // "Trainer Spell Item: Drain Life (#689)"
-    { 7500693, 3087 }, // "Trainer Spell Item: Create Soulstone (#693)"
-    { 7500694, 3220 }, // "Trainer Spell Item: Mocking Blow (#694)"
-    { 7500695, 3382 }, // "Trainer Spell Item: Shadow Bolt (#695)"
-    { 7500696, 3383 }, // "Trainer Spell Item: Demon Skin (#696)"
-    { 7500698, 3384 }, // "Trainer Spell Item: Ritual of Summoning (#698)"
-    { 7500699, 3385 }, // "Trainer Spell Item: Drain Life (#699)"
-    { 7500702, 3386 }, // "Trainer Spell Item: Curse of Weakness (#702)"
-    { 7500703, 3387 }, // "Trainer Spell Item: Garrote (#703)"
-    { 7500705, 3388 }, // "Trainer Spell Item: Shadow Bolt (#705)"
-    { 7500706, 3389 }, // "Trainer Spell Item: Demon Armor (#706)"
-    { 7500707, 3390 }, // "Trainer Spell Item: Immolate (#707)"
-    { 7500709, 3391 }, // "Trainer Spell Item: Drain Life (#709)"
-    { 7500710, 3448 }, // "Trainer Spell Item: Banish (#710)"
-    { 7500740, 3662 }, // "Trainer Spell Item: Tranquility (#740)"
-    { 7500750, 3663 }, // "Trainer Spell Item: Plate Mail (#750)"
-    { 7500755, 3664 }, // "Trainer Spell Item: Health Funnel (#755)"
-    { 7500759, 3665 }, // "Trainer Spell Item: Conjure Mana Gem (#759)"
-    { 7500768, 3666 }, // "Trainer Spell Item: Cat Form (#768)"
-    { 7500769, 3703 }, // "Trainer Spell Item: Swipe (Bear) (#769)"
-    { 7500770, 3726 }, // "Trainer Spell Item: Faerie Fire (#770)"
-    { 7500772, 3727 }, // "Trainer Spell Item: Rend (#772)"
-    { 7500774, 3728 }, // "Trainer Spell Item: Rejuvenation (#774)"
-    { 7500779, 3729 }, // "Trainer Spell Item: Swipe (Bear) (#779)"
-    { 7500780, 3770 }, // "Trainer Spell Item: Swipe (Bear) (#780)"
-    { 7500781, 3771 }, // "Trainer Spell Item: Disengage (#781)"
-    { 7500782, 3772 }, // "Trainer Spell Item: Thorns (#782)"
-    { 7500783, 3823 }, // "Trainer Spell Item: Travel Form (#783)"
-    { 7500837, 3825 }, // "Trainer Spell Item: Frostbolt (#837)"
-    { 7500845, 3826 }, // "Trainer Spell Item: Cleave (#845)"
-    { 7500853, 3827 }, // "Trainer Spell Item: Hammer of Justice (#853)"
-    { 7500865, 3828 }, // "Trainer Spell Item: Frost Nova (#865)"
-    { 7500871, 3927 }, // "Trainer Spell Item: Shield Wall (#871)"
-    { 7500879, 3928 }, // "Trainer Spell Item: Exorcism (#879)"
-    { 7500905, 4418 }, // "Trainer Spell Item: Lightning Shield (#905)"
-    { 7500913, 4419 }, // "Trainer Spell Item: Healing Wave (#913)"
-    { 7500915, 4421 }, // "Trainer Spell Item: Lightning Bolt (#915)"
-    { 7500921, 4422 }, // "Trainer Spell Item: Pick Pocket (#921)"
-    { 7500930, 4424 }, // "Trainer Spell Item: Chain Lightning (#930)"
-    { 7500939, 4425 }, // "Trainer Spell Item: Healing Wave (#939)"
-    { 7500943, 4426 }, // "Trainer Spell Item: Lightning Bolt (#943)"
-    { 7500945, 4457 }, // "Trainer Spell Item: Lightning Shield (#945)"
-    { 7500959, 4536 }, // "Trainer Spell Item: Healing Wave (#959)"
-    { 7500970, 4537 }, // "Trainer Spell Item: Shadow Word: Pain (#970)"
-    { 7500976, 4538 }, // "Trainer Spell Item: Shadow Protection (#976)"
-    { 7500980, 4539 }, // "Trainer Spell Item: Curse of Agony (#980)"
-    { 7500984, 4540 }, // "Trainer Spell Item: Smite (#984)"
-    { 7500988, 4541 }, // "Trainer Spell Item: Dispel Magic (#988)"
-    { 7500990, 4542 }, // "Trainer Spell Item: Conjure Food (#990)"
-    { 7500992, 4544 }, // "Trainer Spell Item: Shadow Word: Pain (#992)"
-    { 7500996, 4592 }, // "Trainer Spell Item: Prayer of Healing (#996)"
-    { 7501002, 4593 }, // "Trainer Spell Item: Eyes of the Beast (#1002)"
-    { 7501004, 4594 }, // "Trainer Spell Item: Smite (#1004)"
-    { 7501006, 4595 }, // "Trainer Spell Item: Inner Fire (#1006)"
-    { 7501008, 4596 }, // "Trainer Spell Item: Amplify Magic (#1008)"
-    { 7501014, 4599 }, // "Trainer Spell Item: Curse of Agony (#1014)"
-    { 7501022, 4600 }, // "Trainer Spell Item: Hand of Protection (#1022)"
-    { 7501026, 4601 }, // "Trainer Spell Item: Holy Light (#1026)"
-    { 7501032, 4602 }, // "Trainer Spell Item: Devotion Aura (#1032)"
-    { 7501038, 4604 }, // "Trainer Spell Item: Hand of Salvation (#1038)"
-    { 7501042, 4605 }, // "Trainer Spell Item: Holy Light (#1042)"
-    { 7501044, 4606 }, // "Trainer Spell Item: Hand of Freedom (#1044)"
-    { 7501058, 4607 }, // "Trainer Spell Item: Rejuvenation (#1058)"
-    { 7501062, 4608 }, // "Trainer Spell Item: Entangling Roots (#1062)"
-    { 7501064, 4623 }, // "Trainer Spell Item: Chain Heal (#1064)"
-    { 7501066, 4656 }, // "Trainer Spell Item: Aquatic Form (#1066)"
-    { 7501075, 4791 }, // "Trainer Spell Item: Thorns (#1075)"
-    { 7501079, 5057 }, // "Trainer Spell Item: Rip (#1079)"
-    { 7501082, 5066 }, // "Trainer Spell Item: Claw (#1082)"
-    { 7501086, 5095 }, // "Trainer Spell Item: Demon Armor (#1086)"
-    { 7501088, 5265 }, // "Trainer Spell Item: Shadow Bolt (#1088)"
-    { 7501098, 5342 }, // "Trainer Spell Item: Enslave Demon (#1098)"
-    { 7501106, 5349 }, // "Trainer Spell Item: Shadow Bolt (#1106)"
-    { 7501108, 5350 }, // "Trainer Spell Item: Curse of Weakness (#1108)"
-    { 7501120, 5472 }, // "Trainer Spell Item: Drain Soul (#1120)"
-    { 7501126, 5473 }, // "Trainer Spell Item: Mark of the Wild (#1126)"
-    { 7501130, 5474 }, // "Trainer Spell Item: Hunter's Mark (#1130)"
-    { 7501152, 5476 }, // "Trainer Spell Item: Purify (#1152)"
-    { 7501160, 5477 }, // "Trainer Spell Item: Demoralizing Shout (#1160)"
-    { 7501161, 5478 }, // "Trainer Spell Item: Challenging Shout (#1161)"
-    { 7501243, 5479 }, // "Trainer Spell Item: Power Word: Fortitude (#1243)"
-    { 7501244, 5480 }, // "Trainer Spell Item: Power Word: Fortitude (#1244)"
-    { 7501245, 5525 }, // "Trainer Spell Item: Power Word: Fortitude (#1245)"
-    { 7501430, 5526 }, // "Trainer Spell Item: Rejuvenation (#1430)"
-    { 7501449, 5527 }, // "Trainer Spell Item: Arcane Explosion (#1449)"
-    { 7501454, 5631 }, // "Trainer Spell Item: Life Tap (#1454)"
-    { 7501455, 5632 }, // "Trainer Spell Item: Life Tap (#1455)"
-    { 7501456, 5633 }, // "Trainer Spell Item: Life Tap (#1456)"
-    { 7501459, 5634 }, // "Trainer Spell Item: Arcane Intellect (#1459)"
-    { 7501460, 5816 }, // "Trainer Spell Item: Arcane Intellect (#1460)"
-    { 7501461, 5996 }, // "Trainer Spell Item: Arcane Intellect (#1461)"
-    { 7501462, 5997 }, // "Trainer Spell Item: Beast Lore (#1462)"
-    { 7501463, 6038 }, // "Trainer Spell Item: Mana Shield (#1463)"
-    { 7501464, 6048 }, // "Trainer Spell Item: Slam (#1464)"
-    { 7501490, 6049 }, // "Trainer Spell Item: Curse of the Elements (#1490)"
-    { 7501494, 6050 }, // "Trainer Spell Item: Track Beasts (#1494)"
-    { 7501495, 6051 }, // "Trainer Spell Item: Mongoose Bite (#1495)"
-    { 7501499, 6052 }, // "Trainer Spell Item: Freezing Trap (#1499)"
-    { 7501510, 6149 }, // "Trainer Spell Item: Volley (#1510)"
-    { 7501513, 6290 }, // "Trainer Spell Item: Scare Beast (#1513)"
-    { 7501535, 6299 }, // "Trainer Spell Item: Fire Nova (#1535)"
-    { 7501543, 6316 }, // "Trainer Spell Item: Flare (#1543)"
-    { 7501608, 6372 }, // "Trainer Spell Item: Heroic Strike (#1608)"
-    { 7501680, 6373 }, // "Trainer Spell Item: Whirlwind (#1680)"
-    { 7501706, 6522 }, // "Trainer Spell Item: Levitate (#1706)"
-    { 7501710, 6657 }, // "Trainer Spell Item: Summon Felsteed (#1710)"
-    { 7501714, 6662 }, // "Trainer Spell Item: Curse of Tongues (#1714)"
-    { 7501715, 6807 }, // "Trainer Spell Item: Hamstring (#1715)"
-    { 7501719, 6887 }, // "Trainer Spell Item: Recklessness (#1719)"
-    { 7501725, 6888 }, // "Trainer Spell Item: Distract (#1725)"
-    { 7501735, 6890 }, // "Trainer Spell Item: Demoralizing Roar (#1735)"
-    { 7501757, 7097 }, // "Trainer Spell Item: Sinister Strike (#1757)"
-    { 7501758, 7228 }, // "Trainer Spell Item: Sinister Strike (#1758)"
-    { 7501759, 7676 }, // "Trainer Spell Item: Sinister Strike (#1759)"
-    { 7501760, 7806 }, // "Trainer Spell Item: Sinister Strike (#1760)"
-    { 7501766, 7807 }, // "Trainer Spell Item: Kick (#1766)"
-    { 7501776, 7808 }, // "Trainer Spell Item: Gouge (#1776)"
-    { 7501784, 8075 }, // "Trainer Spell Item: Stealth (#1784)"
-    { 7501804, 8076 }, // "Trainer Spell Item: Pick Lock (#1804)"
-    { 7501822, 8077 }, // "Trainer Spell Item: Rake (#1822)"
-    { 7501823, 8078 }, // "Trainer Spell Item: Rake (#1823)"
-    { 7501824, 8079 }, // "Trainer Spell Item: Rake (#1824)"
-    { 7501833, 8243 }, // "Trainer Spell Item: Cheap Shot (#1833)"
-    { 7501842, 8364 }, // "Trainer Spell Item: Disarm Trap (#1842)"
-    { 7501850, 8529 }, // "Trainer Spell Item: Dash (#1850)"
-    { 7501856, 8543 }, // "Trainer Spell Item: Vanish (#1856)"
-    { 7501857, 8766 }, // "Trainer Spell Item: Vanish (#1857)"
-    { 7501860, 8827 }, // "Trainer Spell Item: Safe Fall (#1860)"
-    { 7501943, 8932 }, // "Trainer Spell Item: Rupture (#1943)"
-    { 7501949, 8948 }, // "Trainer Spell Item: Hellfire (#1949)"
-    { 7501953, 8949 }, // "Trainer Spell Item: Blink (#1953)"
-    { 7501966, 8950 }, // "Trainer Spell Item: Feint (#1966)"
-    { 7501978, 8951 }, // "Trainer Spell Item: Serpent Sting (#1978)"
-    { 7502006, 8952 }, // "Trainer Spell Item: Resurrection (#2006)"
-    { 7502008, 8953 }, // "Trainer Spell Item: Ancestral Spirit (#2008)"
-    { 7502010, 8957 }, // "Trainer Spell Item: Resurrection (#2010)"
-    { 7502048, 9030 }, // "Trainer Spell Item: Battle Shout (#2048)"
-    { 7502052, 9036 }, // "Trainer Spell Item: Lesser Heal (#2052)"
-    { 7502053, 9088 }, // "Trainer Spell Item: Lesser Heal (#2053)"
-    { 7502054, 9144 }, // "Trainer Spell Item: Heal (#2054)"
-    { 7502055, 9154 }, // "Trainer Spell Item: Heal (#2055)"
-    { 7502060, 9155 }, // "Trainer Spell Item: Greater Heal (#2060)"
-    { 7502061, 9172 }, // "Trainer Spell Item: Flash Heal (#2061)"
-    { 7502062, 9179 }, // "Trainer Spell Item: Earth Elemental Totem (#2062)"
-    { 7502070, 9187 }, // "Trainer Spell Item: Sap (#2070)"
-    { 7502090, 9197 }, // "Trainer Spell Item: Rejuvenation (#2090)"
-    { 7502091, 9206 }, // "Trainer Spell Item: Rejuvenation (#2091)"
-    { 7502094, 9224 }, // "Trainer Spell Item: Blind (#2094)"
-    { 7502096, 9233 }, // "Trainer Spell Item: Mind Vision (#2096)"
-    { 7502120, 9260 }, // "Trainer Spell Item: Flamestrike (#2120)"
-    { 7502121, 9264 }, // "Trainer Spell Item: Flamestrike (#2121)"
-    { 7502136, 9360 }, // "Trainer Spell Item: Fire Blast (#2136)"
-    { 7502137, 9361 }, // "Trainer Spell Item: Fire Blast (#2137)"
-    { 7502138, 9451 }, // "Trainer Spell Item: Fire Blast (#2138)"
-    { 7502139, 9681 }, // "Trainer Spell Item: Counterspell (#2139)"
-    { 7502362, 10305 }, // "Trainer Spell Item: Create Spellstone (#2362)"
-    { 7502484, 10306 }, // "Trainer Spell Item: Earthbind Totem (#2484)"
-    { 7502565, 10307 }, // "Trainer Spell Item: Shield Block (#2565)"
-    { 7502589, 10308 }, // "Trainer Spell Item: Backstab (#2589)"
-    { 7502590, 10309 }, // "Trainer Spell Item: Backstab (#2590)"
-    { 7502591, 10310 }, // "Trainer Spell Item: Backstab (#2591)"
-    { 7502637, 10592 }, // "Trainer Spell Item: Hibernate (#2637)"
-    { 7502643, 10841 }, // "Trainer Spell Item: Multi-Shot (#2643)"
-    { 7502645, 11109 }, // "Trainer Spell Item: Ghost Wolf (#2645)"
-    { 7502687, 11415 }, // "Trainer Spell Item: Bloodrage (#2687)"
-    { 7502767, 11444 }, // "Trainer Spell Item: Shadow Word: Pain (#2767)"
-    { 7502782, 11584 }, // "Trainer Spell Item: Remove Curse (#2782)"
-    { 7502791, 11846 }, // "Trainer Spell Item: Power Word: Fortitude (#2791)"
-    { 7502800, 11951 }, // "Trainer Spell Item: Lay on Hands (#2800)"
-    { 7502812, 12003 }, // "Trainer Spell Item: Holy Wrath (#2812)"
-    { 7502825, 12190 }, // "Trainer Spell Item: Bloodlust (#2825)"
-    { 7502836, 12209 }, // "Trainer Spell Item: Detect Traps (#2836)"
-    { 7502860, 12210 }, // "Trainer Spell Item: Chain Lightning (#2860)"
-    { 7502893, 12211 }, // "Trainer Spell Item: Abolish Poison (#2893)"
-    { 7502894, 12212 }, // "Trainer Spell Item: Fire Elemental Totem (#2894)"
-    { 7502908, 12213 }, // "Trainer Spell Item: Soothe Animal (#2908)"
-    { 7502912, 12214 }, // "Trainer Spell Item: Starfire (#2912)"
-    { 7502941, 12215 }, // "Trainer Spell Item: Immolate (#2941)"
-    { 7502944, 12216 }, // "Trainer Spell Item: Devouring Plague (#2944)"
-    { 7502948, 12217 }, // "Trainer Spell Item: Scorch (#2948)"
-    { 7502974, 12218 }, // "Trainer Spell Item: Wing Clip (#2974)"
-    { 7502983, 12224 }, // "Trainer Spell Item: Sprint (#2983)"
-    { 7503029, 12238 }, // "Trainer Spell Item: Claw (#3029)"
-    { 7503034, 12763 }, // "Trainer Spell Item: Viper Sting (#3034)"
-    { 7503043, 12820 }, // "Trainer Spell Item: Scorpid Sting (#3043)"
-    { 7503044, 13442 }, // "Trainer Spell Item: Arcane Shot (#3044)"
-    { 7503045, 13443 }, // "Trainer Spell Item: Rapid Fire (#3045)"
-    { 7503111, 13444 }, // "Trainer Spell Item: Mend Pet (#3111)"
-    { 7503127, 13445 }, // "Trainer Spell Item: Parry (#3127)"
-    { 7503140, 13446 }, // "Trainer Spell Item: Fireball (#3140)"
-    { 7503411, 13447 }, // "Trainer Spell Item: Intervene (#3411)"
-    { 7503472, 13452 }, // "Trainer Spell Item: Holy Light (#3472)"
-    { 7503552, 13453 }, // "Trainer Spell Item: Conjure Mana Gem (#3552)"
-    { 7503561, 13454 }, // "Trainer Spell Item: Teleport: Stormwind (#3561)"
-    { 7503562, 13455 }, // "Trainer Spell Item: Teleport: Ironforge (#3562)"
-    { 7503563, 13456 }, // "Trainer Spell Item: Teleport: Undercity (#3563)"
-    { 7503565, 13457 }, // "Trainer Spell Item: Teleport: Darnassus (#3565)"
-    { 7503566, 13458 }, // "Trainer Spell Item: Teleport: Thunder Bluff (#3566)"
-    { 7503567, 13459 }, // "Trainer Spell Item: Teleport: Orgrimmar (#3567)"
-    { 7503627, 13460 }, // "Trainer Spell Item: Rejuvenation (#3627)"
-    { 7503661, 13461 }, // "Trainer Spell Item: Mend Pet (#3661)"
-    { 7503662, 13462 }, // "Trainer Spell Item: Mend Pet (#3662)"
-    { 7503698, 13506 }, // "Trainer Spell Item: Health Funnel (#3698)"
-    { 7503699, 13510 }, // "Trainer Spell Item: Health Funnel (#3699)"
-    { 7503700, 13511 }, // "Trainer Spell Item: Health Funnel (#3700)"
-    { 7503714, 13512 }, // "Trainer Spell Item: Path of Frost (#3714)"
-    { 7503738, 13513 }, // "Trainer Spell Item: Wrath of Air Totem (#3738)"
-    { 7503747, 13546 }, // "Trainer Spell Item: Power Word: Shield (#3747)"
-    { 7504987, 13724 }, // "Trainer Spell Item: Cleanse (#4987)"
-    { 7505116, 13755 }, // "Trainer Spell Item: Concussive Shot (#5116)"
-    { 7505118, 13810 }, // "Trainer Spell Item: Aspect of the Cheetah (#5118)"
-    { 7505138, 13851 }, // "Trainer Spell Item: Drain Mana (#5138)"
-    { 7505143, 13893 }, // "Trainer Spell Item: Arcane Missiles (#5143)"
-    { 7505144, 13927 }, // "Trainer Spell Item: Arcane Missiles (#5144)"
-    { 7505145, 13928 }, // "Trainer Spell Item: Arcane Missiles (#5145)"
-    { 7505171, 13929 }, // "Trainer Spell Item: Slice and Dice (#5171)"
-    { 7505177, 13930 }, // "Trainer Spell Item: Wrath (#5177)"
-    { 7505178, 13931 }, // "Trainer Spell Item: Wrath (#5178)"
-    { 7505179, 13932 }, // "Trainer Spell Item: Wrath (#5179)"
-    { 7505180, 13933 }, // "Trainer Spell Item: Wrath (#5180)"
-    { 7505186, 13934 }, // "Trainer Spell Item: Healing Touch (#5186)"
-    { 7505187, 13935 }, // "Trainer Spell Item: Healing Touch (#5187)"
-    { 7505188, 16166 }, // "Trainer Spell Item: Healing Touch (#5188)"
-    { 7505189, 16167 }, // "Trainer Spell Item: Healing Touch (#5189)"
-    { 7505195, 16168 }, // "Trainer Spell Item: Entangling Roots (#5195)"
-    { 7505196, 16169 }, // "Trainer Spell Item: Entangling Roots (#5196)"
-    { 7505201, 16170 }, // "Trainer Spell Item: Claw (#5201)"
-    { 7505209, 16171 }, // "Trainer Spell Item: Challenging Roar (#5209)"
-    { 7505211, 16766 }, // "Trainer Spell Item: Bash (#5211)"
-    { 7505215, 16971 }, // "Trainer Spell Item: Prowl (#5215)"
-    { 7505217, 17119 }, // "Trainer Spell Item: Tiger's Fury (#5217)"
-    { 7505221, 17196 }, // "Trainer Spell Item: Shred (#5221)"
-    { 7505225, 17197 }, // "Trainer Spell Item: Track Humanoids (#5225)"
-    { 7505229, 17198 }, // "Trainer Spell Item: Enrage (#5229)"
-    { 7505232, 17199 }, // "Trainer Spell Item: Mark of the Wild (#5232)"
-    { 7505234, 17222 }, // "Trainer Spell Item: Mark of the Wild (#5234)"
-    { 7505242, 17344 }, // "Trainer Spell Item: Battle Shout (#5242)"
-    { 7505246, 17348 }, // "Trainer Spell Item: Intimidating Shout (#5246)"
-    { 7505277, 17349 }, // "Trainer Spell Item: Evasion (#5277)"
-    { 7505308, 17351 }, // "Trainer Spell Item: Execute (#5308)"
-    { 7505384, 17352 }, // "Trainer Spell Item: Feign Death (#5384)"
-    { 7505484, 17402 }, // "Trainer Spell Item: Howl of Terror (#5484)"
-    { 7505500, 17403 }, // "Trainer Spell Item: Sense Demons (#5500)"
-    { 7505502, 17404 }, // "Trainer Spell Item: Sense Undead (#5502)"
-    { 7505504, 17406 }, // "Trainer Spell Item: Conjure Water (#5504)"
-    { 7505505, 17407 }, // "Trainer Spell Item: Conjure Water (#5505)"
-    { 7505506, 17408 }, // "Trainer Spell Item: Conjure Water (#5506)"
-    { 7505588, 17708 }, // "Trainer Spell Item: Hammer of Justice (#5588)"
-    { 7505589, 18045 }, // "Trainer Spell Item: Hammer of Justice (#5589)"
-    { 7505599, 18253 }, // "Trainer Spell Item: Hand of Protection (#5599)"
-    { 7505614, 18254 }, // "Trainer Spell Item: Exorcism (#5614)"
-    { 7505615, 18255 }, // "Trainer Spell Item: Exorcism (#5615)"
-    { 7505675, 18287 }, // "Trainer Spell Item: Mana Spring Totem (#5675)"
-    { 7505676, 18288 }, // "Trainer Spell Item: Searing Pain (#5676)"
-    { 7505697, 18294 }, // "Trainer Spell Item: Unending Breath (#5697)"
-    { 7505699, 18300 }, // "Trainer Spell Item: Create Healthstone (#5699)"
-    { 7505730, 18632 }, // "Trainer Spell Item: Stoneclaw Totem (#5730)"
-    { 7505740, 18633 }, // "Trainer Spell Item: Rain of Fire (#5740)"
-    { 7505782, 18635 }, // "Trainer Spell Item: Fear (#5782)"
-    { 7505938, 18839 }, // "Trainer Spell Item: Shiv (#5938)"
-    { 7506041, 18841 }, // "Trainer Spell Item: Lightning Bolt (#6041)"
-    { 7506060, 19221 }, // "Trainer Spell Item: Smite (#6060)"
-    { 7506064, 19222 }, // "Trainer Spell Item: Heal (#6064)"
-    { 7506065, 19223 }, // "Trainer Spell Item: Power Word: Shield (#6065)"
-    { 7506066, 19224 }, // "Trainer Spell Item: Power Word: Shield (#6066)"
-    { 7506074, 19225 }, // "Trainer Spell Item: Renew (#6074)"
-    { 7506075, 19299 }, // "Trainer Spell Item: Renew (#6075)"
-    { 7506076, 19300 }, // "Trainer Spell Item: Renew (#6076)"
-    { 7506077, 19301 }, // "Trainer Spell Item: Renew (#6077)"
-    { 7506078, 19304 }, // "Trainer Spell Item: Renew (#6078)"
-    { 7506117, 19305 }, // "Trainer Spell Item: Mage Armor (#6117)"
-    { 7506127, 19306 }, // "Trainer Spell Item: Conjure Water (#6127)"
-    { 7506129, 19696 }, // "Trainer Spell Item: Conjure Food (#6129)"
-    { 7506131, 19994 }, // "Trainer Spell Item: Frost Nova (#6131)"
-    { 7506141, 19995 }, // "Trainer Spell Item: Blizzard (#6141)"
-    { 7506143, 19996 }, // "Trainer Spell Item: Frost Ward (#6143)"
-    { 7506178, 20002 }, // "Trainer Spell Item: Charge (#6178)"
-    { 7506190, 20004 }, // "Trainer Spell Item: Demoralizing Shout (#6190)"
-    { 7506192, 20007 }, // "Trainer Spell Item: Battle Shout (#6192)"
-    { 7506196, 20008 }, // "Trainer Spell Item: Far Sight (#6196)"
-    { 7506197, 20031 }, // "Trainer Spell Item: Eagle Eye (#6197)"
-    { 7506201, 20074 }, // "Trainer Spell Item: Create Healthstone (#6201)"
-    { 7506202, 20452 }, // "Trainer Spell Item: Create Healthstone (#6202)"
-    { 7506205, 20516 }, // "Trainer Spell Item: Curse of Weakness (#6205)"
-    { 7506213, 20709 }, // "Trainer Spell Item: Fear (#6213)"
-    { 7506215, 20857 }, // "Trainer Spell Item: Fear (#6215)"
-    { 7506217, 21023 }, // "Trainer Spell Item: Curse of Agony (#6217)"
-    { 7506219, 21030 }, // "Trainer Spell Item: Rain of Fire (#6219)"
-    { 7506222, 21031 }, // "Trainer Spell Item: Corruption (#6222)"
-    { 7506223, 21033 }, // "Trainer Spell Item: Corruption (#6223)"
-    { 7506229, 21072 }, // "Trainer Spell Item: Shadow Ward (#6229)"
-    { 7506343, 21114 }, // "Trainer Spell Item: Thunder Clap (#6343)"
-    { 7506346, 21151 }, // "Trainer Spell Item: Fear Ward (#6346)"
-    { 7506353, 21215 }, // "Trainer Spell Item: Soul Fire (#6353)"
-    { 7506363, 21217 }, // "Trainer Spell Item: Searing Totem (#6363)"
-    { 7506364, 21235 }, // "Trainer Spell Item: Searing Totem (#6364)"
-    { 7506365, 21236 }, // "Trainer Spell Item: Searing Totem (#6365)"
-    { 7506366, 21240 }, // "Trainer Spell Item: Create Firestone (#6366)"
-    { 7506375, 21254 }, // "Trainer Spell Item: Healing Stream Totem (#6375)"
-    { 7506377, 21546 }, // "Trainer Spell Item: Healing Stream Totem (#6377)"
-    { 7506390, 21552 }, // "Trainer Spell Item: Stoneclaw Totem (#6390)"
-    { 7506391, 21721 }, // "Trainer Spell Item: Stoneclaw Totem (#6391)"
-    { 7506392, 22018 }, // "Trainer Spell Item: Stoneclaw Totem (#6392)"
-    { 7506495, 22019 }, // "Trainer Spell Item: Sentry Totem (#6495)"
-    { 7506546, 22324 }, // "Trainer Spell Item: Rend (#6546)"
-    { 7506547, 22645 }, // "Trainer Spell Item: Rend (#6547)"
-    { 7506548, 22823 }, // "Trainer Spell Item: Rend (#6548)"
-    { 7506552, 22824 }, // "Trainer Spell Item: Pummel (#6552)"
-    { 7506572, 22825 }, // "Trainer Spell Item: Revenge (#6572)"
-    { 7506574, 22826 }, // "Trainer Spell Item: Revenge (#6574)"
-    { 7506673, 22827 }, // "Trainer Spell Item: Battle Shout (#6673)"
-    { 7506756, 22828 }, // "Trainer Spell Item: Mark of the Wild (#6756)"
-    { 7506760, 22829 }, // "Trainer Spell Item: Eviscerate (#6760)"
-    { 7506761, 22830 }, // "Trainer Spell Item: Eviscerate (#6761)"
-    { 7506762, 22831 }, // "Trainer Spell Item: Eviscerate (#6762)"
-    { 7506768, 22832 }, // "Trainer Spell Item: Feint (#6768)"
-    { 7506770, 22833 }, // "Trainer Spell Item: Sap (#6770)"
-    { 7506774, 22834 }, // "Trainer Spell Item: Slice and Dice (#6774)"
-    { 7506778, 22835 }, // "Trainer Spell Item: Healing Touch (#6778)"
-    { 7506780, 22836 }, // "Trainer Spell Item: Wrath (#6780)"
-    { 7506785, 22837 }, // "Trainer Spell Item: Ravage (#6785)"
-    { 7506787, 22838 }, // "Trainer Spell Item: Ravage (#6787)"
-    { 7506789, 22839 }, // "Trainer Spell Item: Death Coil (#6789)"
-    { 7506793, 22840 }, // "Trainer Spell Item: Tiger's Fury (#6793)"
-    { 7506798, 22841 }, // "Trainer Spell Item: Bash (#6798)"
-    { 7506800, 22842 }, // "Trainer Spell Item: Shred (#6800)"
-    { 7506808, 22844 }, // "Trainer Spell Item: Maul (#6808)"
-    { 7506809, 22845 }, // "Trainer Spell Item: Maul (#6809)"
-    { 7506940, 22846 }, // "Trainer Spell Item: Hand of Sacrifice (#6940)"
-    { 7507128, 22847 }, // "Trainer Spell Item: Inner Fire (#7128)"
-    { 7507294, 22848 }, // "Trainer Spell Item: Retribution Aura (#7294)"
-    { 7507300, 22849 }, // "Trainer Spell Item: Frost Armor (#7300)"
-    { 7507301, 22850 }, // "Trainer Spell Item: Frost Armor (#7301)"
-    { 7507302, 22851 }, // "Trainer Spell Item: Ice Armor (#7302)"
-    { 7507320, 22853 }, // "Trainer Spell Item: Ice Armor (#7320)"
-    { 7507322, 22854 }, // "Trainer Spell Item: Frostbolt (#7322)"
-    { 7507369, 22861 }, // "Trainer Spell Item: Cleave (#7369)"
-    { 7507379, 22866 }, // "Trainer Spell Item: Revenge (#7379)"
-    { 7507384, 22871 }, // "Trainer Spell Item: Overpower (#7384)"
-    { 7507641, 22895 }, // "Trainer Spell Item: Shadow Bolt (#7641)"
-    { 7507646, 23160 }, // "Trainer Spell Item: Curse of Weakness (#7646)"
-    { 7507648, 23172 }, // "Trainer Spell Item: Corruption (#7648)"
-    { 7507651, 23444 }, // "Trainer Spell Item: Drain Life (#7651)"
-    { 7508004, 23495 }, // "Trainer Spell Item: Lesser Healing Wave (#8004)"
-    { 7508005, 23578 }, // "Trainer Spell Item: Healing Wave (#8005)"
-    { 7508008, 23579 }, // "Trainer Spell Item: Lesser Healing Wave (#8008)"
-    { 7508010, 23683 }, // "Trainer Spell Item: Lesser Healing Wave (#8010)"
-    { 7508012, 23696 }, // "Trainer Spell Item: Purge (#8012)"
-    { 7508017, 23698 }, // "Trainer Spell Item: Rockbiter Weapon (#8017)"
-    { 7508018, 23704 }, // "Trainer Spell Item: Rockbiter Weapon (#8018)"
-    { 7508019, 23756 }, // "Trainer Spell Item: Rockbiter Weapon (#8019)"
-    { 7508024, 23822 }, // "Trainer Spell Item: Flametongue Weapon (#8024)"
-    { 7508027, 23823 }, // "Trainer Spell Item: Flametongue Weapon (#8027)"
-    { 7508030, 23848 }, // "Trainer Spell Item: Flametongue Weapon (#8030)"
-    { 7508033, 23871 }, // "Trainer Spell Item: Frostbrand Weapon (#8033)"
-    { 7508038, 24008 }, // "Trainer Spell Item: Frostbrand Weapon (#8038)"
-    { 7508042, 24009 }, // "Trainer Spell Item: Earth Shock (#8042)"
-    { 7508044, 24072 }, // "Trainer Spell Item: Earth Shock (#8044)"
-    { 7508045, 24105 }, // "Trainer Spell Item: Earth Shock (#8045)"
-    { 7508046, 24338 }, // "Trainer Spell Item: Earth Shock (#8046)"
-    { 7508050, 24539 }, // "Trainer Spell Item: Flame Shock (#8050)"
-    { 7508052, 25539 }, // "Trainer Spell Item: Flame Shock (#8052)"
-    { 7508053, 27498 }, // "Trainer Spell Item: Flame Shock (#8053)"
-    { 7508056, 27499 }, // "Trainer Spell Item: Frost Shock (#8056)"
-    { 7508058, 27500 }, // "Trainer Spell Item: Frost Shock (#8058)"
-    { 7508075, 27501 }, // "Trainer Spell Item: Strength of Earth Totem (#8075)"
-    { 7508092, 27502 }, // "Trainer Spell Item: Mind Blast (#8092)"
-    { 7508102, 27503 }, // "Trainer Spell Item: Mind Blast (#8102)"
-    { 7508103, 27635 }, // "Trainer Spell Item: Mind Blast (#8103)"
-    { 7508104, 27636 }, // "Trainer Spell Item: Mind Blast (#8104)"
-    { 7508105, 27651 }, // "Trainer Spell Item: Mind Blast (#8105)"
-    { 7508106, 27655 }, // "Trainer Spell Item: Mind Blast (#8106)"
-    { 7508122, 27656 }, // "Trainer Spell Item: Psychic Scream (#8122)"
-    { 7508124, 27657 }, // "Trainer Spell Item: Psychic Scream (#8124)"
-    { 7508129, 27658 }, // "Trainer Spell Item: Mana Burn (#8129)"
-    { 7508134, 27659 }, // "Trainer Spell Item: Lightning Shield (#8134)"
-    { 7508143, 27660 }, // "Trainer Spell Item: Tremor Totem (#8143)"
-    { 7508154, 27661 }, // "Trainer Spell Item: Stoneskin Totem (#8154)"
-    { 7508155, 27662 }, // "Trainer Spell Item: Stoneskin Totem (#8155)"
-    { 7508160, 27663 }, // "Trainer Spell Item: Strength of Earth Totem (#8160)"
-    { 7508161, 27664 }, // "Trainer Spell Item: Strength of Earth Totem (#8161)"
-    { 7508170, 27665 }, // "Trainer Spell Item: Cleansing Totem (#8170)"
-    { 7508177, 27666 }, // "Trainer Spell Item: Grounding Totem (#8177)"
-    { 7508181, 27667 }, // "Trainer Spell Item: Frost Resistance Totem (#8181)"
-    { 7508184, 27854 }, // "Trainer Spell Item: Fire Resistance Totem (#8184)"
-    { 7508190, 27855 }, // "Trainer Spell Item: Magma Totem (#8190)"
-    { 7508198, 27856 }, // "Trainer Spell Item: Thunder Clap (#8198)"
-    { 7508204, 27857 }, // "Trainer Spell Item: Thunder Clap (#8204)"
-    { 7508205, 27858 }, // "Trainer Spell Item: Thunder Clap (#8205)"
-    { 7508227, 27859 }, // "Trainer Spell Item: Flametongue Totem (#8227)"
-    { 7508232, 27860 }, // "Trainer Spell Item: Windfury Weapon (#8232)"
-    { 7508235, 28100 }, // "Trainer Spell Item: Windfury Weapon (#8235)"
-    { 7508249, 28101 }, // "Trainer Spell Item: Flametongue Totem (#8249)"
-    { 7508288, 28102 }, // "Trainer Spell Item: Drain Soul (#8288)"
-    { 7508289, 28103 }, // "Trainer Spell Item: Drain Soul (#8289)"
-    { 7508400, 28104 }, // "Trainer Spell Item: Fireball (#8400)"
-    { 7508401, 28112 }, // "Trainer Spell Item: Fireball (#8401)"
-    { 7508402, 28284 }, // "Trainer Spell Item: Fireball (#8402)"
-    { 7508406, 28399 }, // "Trainer Spell Item: Frostbolt (#8406)"
-    { 7508407, 28486 }, // "Trainer Spell Item: Frostbolt (#8407)"
-    { 7508408, 28501 }, // "Trainer Spell Item: Frostbolt (#8408)"
-    { 7508412, 29112 }, // "Trainer Spell Item: Fire Blast (#8412)"
-    { 7508413, 29292 }, // "Trainer Spell Item: Fire Blast (#8413)"
-    { 7508416, 29293 }, // "Trainer Spell Item: Arcane Missiles (#8416)"
-    { 7508417, 29393 }, // "Trainer Spell Item: Arcane Missiles (#8417)"
-    { 7508422, 29394 }, // "Trainer Spell Item: Flamestrike (#8422)"
-    { 7508423, 29395 }, // "Trainer Spell Item: Flamestrike (#8423)"
-    { 7508427, 29401 }, // "Trainer Spell Item: Blizzard (#8427)"
-    { 7508437, 29402 }, // "Trainer Spell Item: Arcane Explosion (#8437)"
-    { 7508438, 29412 }, // "Trainer Spell Item: Arcane Explosion (#8438)"
-    { 7508439, 29448 }, // "Trainer Spell Item: Arcane Explosion (#8439)"
-    { 7508444, 29449 }, // "Trainer Spell Item: Scorch (#8444)"
-    { 7508445, 29450 }, // "Trainer Spell Item: Scorch (#8445)"
-    { 7508446, 29451 }, // "Trainer Spell Item: Scorch (#8446)"
-    { 7508450, 29452 }, // "Trainer Spell Item: Dampen Magic (#8450)"
-    { 7508451, 29453 }, // "Trainer Spell Item: Dampen Magic (#8451)"
-    { 7508455, 29454 }, // "Trainer Spell Item: Amplify Magic (#8455)"
-    { 7508457, 30155 }, // "Trainer Spell Item: Fire Ward (#8457)"
-    { 7508458, 30355 }, // "Trainer Spell Item: Fire Ward (#8458)"
-    { 7508461, 30357 }, // "Trainer Spell Item: Frost Ward (#8461)"
-    { 7508462, 30358 }, // "Trainer Spell Item: Frost Ward (#8462)"
-    { 7508492, 30359 }, // "Trainer Spell Item: Cone of Cold (#8492)"
-    { 7508494, 30361 }, // "Trainer Spell Item: Mana Shield (#8494)"
-    { 7508495, 30457 }, // "Trainer Spell Item: Mana Shield (#8495)"
-    { 7508498, 30458 }, // "Trainer Spell Item: Fire Nova (#8498)"
-    { 7508499, 30610 }, // "Trainer Spell Item: Fire Nova (#8499)"
-    { 7508512, 30703 }, // "Trainer Spell Item: Windfury Totem (#8512)"
-    { 7508621, 30793 }, // "Trainer Spell Item: Sinister Strike (#8621)"
-    { 7508623, 30816 }, // "Trainer Spell Item: Eviscerate (#8623)"
-    { 7508624, 31672 }, // "Trainer Spell Item: Eviscerate (#8624)"
-    { 7508631, 31673 }, // "Trainer Spell Item: Garrote (#8631)"
-    { 7508632, 31676 }, // "Trainer Spell Item: Garrote (#8632)"
-    { 7508633, 31677 }, // "Trainer Spell Item: Garrote (#8633)"
-    { 7508637, 31679 }, // "Trainer Spell Item: Feint (#8637)"
-    { 7508639, 31838 }, // "Trainer Spell Item: Rupture (#8639)"
-    { 7508640, 31839 }, // "Trainer Spell Item: Rupture (#8640)"
-    { 7508643, 31840 }, // "Trainer Spell Item: Kidney Shot (#8643)"
-    { 7508647, 31841 }, // "Trainer Spell Item: Expose Armor (#8647)"
-    { 7508676, 31852 }, // "Trainer Spell Item: Ambush (#8676)"
-    { 7508696, 31853 }, // "Trainer Spell Item: Sprint (#8696)"
-    { 7508721, 31854 }, // "Trainer Spell Item: Backstab (#8721)"
-    { 7508724, 31855 }, // "Trainer Spell Item: Ambush (#8724)"
-    { 7508725, 32062 }, // "Trainer Spell Item: Ambush (#8725)"
-    { 7508737, 32063 }, // "Trainer Spell Item: Mail (#8737)"
-    { 7508820, 32067 }, // "Trainer Spell Item: Slam (#8820)"
-    { 7508903, 32068 }, // "Trainer Spell Item: Healing Touch (#8903)"
-    { 7508905, 32453 }, // "Trainer Spell Item: Wrath (#8905)"
-    { 7508907, 32455 }, // "Trainer Spell Item: Mark of the Wild (#8907)"
-    { 7508910, 32596 }, // "Trainer Spell Item: Rejuvenation (#8910)"
-    { 7508914, 32597 }, // "Trainer Spell Item: Thorns (#8914)"
-    { 7508918, 32598 }, // "Trainer Spell Item: Tranquility (#8918)"
-    { 7508921, 32599 }, // "Trainer Spell Item: Moonfire (#8921)"
-    { 7508924, 32600 }, // "Trainer Spell Item: Moonfire (#8924)"
-    { 7508925, 32601 }, // "Trainer Spell Item: Moonfire (#8925)"
-    { 7508926, 32667 }, // "Trainer Spell Item: Moonfire (#8926)"
-    { 7508927, 32668 }, // "Trainer Spell Item: Moonfire (#8927)"
-    { 7508928, 32685 }, // "Trainer Spell Item: Moonfire (#8928)"
-    { 7508929, 32686 }, // "Trainer Spell Item: Moonfire (#8929)"
-    { 7508936, 32721 }, // "Trainer Spell Item: Regrowth (#8936)"
-    { 7508938, 32722 }, // "Trainer Spell Item: Regrowth (#8938)"
-    { 7508939, 32762 }, // "Trainer Spell Item: Regrowth (#8939)"
-    { 7508940, 32763 }, // "Trainer Spell Item: Regrowth (#8940)"
-    { 7508941, 32764 }, // "Trainer Spell Item: Regrowth (#8941)"
-    { 7508949, 32765 }, // "Trainer Spell Item: Starfire (#8949)"
-    { 7508950, 32766 }, // "Trainer Spell Item: Starfire (#8950)"
-    { 7508951, 32767 }, // "Trainer Spell Item: Starfire (#8951)"
-    { 7508955, 32783 }, // "Trainer Spell Item: Soothe Animal (#8955)"
-    { 7508972, 32784 }, // "Trainer Spell Item: Maul (#8972)"
-    { 7508983, 32840 }, // "Trainer Spell Item: Bash (#8983)"
-    { 7508992, 32844 }, // "Trainer Spell Item: Shred (#8992)"
-    { 7508998, 32845 }, // "Trainer Spell Item: Cower (#8998)"
-    { 7509000, 32846 }, // "Trainer Spell Item: Cower (#9000)"
-    { 7509005, 32847 }, // "Trainer Spell Item: Pounce (#9005)"
-    { 7509472, 32898 }, // "Trainer Spell Item: Flash Heal (#9472)"
-    { 7509473, 32899 }, // "Trainer Spell Item: Flash Heal (#9473)"
-    { 7509474, 32900 }, // "Trainer Spell Item: Flash Heal (#9474)"
-    { 7509484, 32901 }, // "Trainer Spell Item: Shackle Undead (#9484)"
-    { 7509485, 32902 }, // "Trainer Spell Item: Shackle Undead (#9485)"
-    { 7509490, 32903 }, // "Trainer Spell Item: Demoralizing Roar (#9490)"
-    { 7509492, 32904 }, // "Trainer Spell Item: Rip (#9492)"
-    { 7509493, 32905 }, // "Trainer Spell Item: Rip (#9493)"
-    { 7509634, 32909 }, // "Trainer Spell Item: Dire Bear Form (#9634)"
-    { 7509745, 32910 }, // "Trainer Spell Item: Maul (#9745)"
-    { 7509747, 32947 }, // "Trainer Spell Item: Demoralizing Roar (#9747)"
-    { 7509750, 32948 }, // "Trainer Spell Item: Regrowth (#9750)"
-    { 7509752, 33004 }, // "Trainer Spell Item: Rip (#9752)"
-    { 7509754, 33042 }, // "Trainer Spell Item: Swipe (Bear) (#9754)"
-    { 7509756, 33048 }, // "Trainer Spell Item: Thorns (#9756)"
-    { 7509758, 33052 }, // "Trainer Spell Item: Healing Touch (#9758)"
-    { 7509821, 33053 }, // "Trainer Spell Item: Dash (#9821)"
-    { 7509823, 33092 }, // "Trainer Spell Item: Pounce (#9823)"
-    { 7509827, 33093 }, // "Trainer Spell Item: Pounce (#9827)"
-    { 7509829, 33208 }, // "Trainer Spell Item: Shred (#9829)"
-    { 7509830, 33443 }, // "Trainer Spell Item: Shred (#9830)"
-    { 7509833, 33444 }, // "Trainer Spell Item: Moonfire (#9833)"
-    { 7509834, 33445 }, // "Trainer Spell Item: Moonfire (#9834)"
-    { 7509835, 33447 }, // "Trainer Spell Item: Moonfire (#9835)"
-    { 7509839, 33448 }, // "Trainer Spell Item: Rejuvenation (#9839)"
-    { 7509840, 33449 }, // "Trainer Spell Item: Rejuvenation (#9840)"
-    { 7509841, 33451 }, // "Trainer Spell Item: Rejuvenation (#9841)"
-    { 7509845, 33452 }, // "Trainer Spell Item: Tiger's Fury (#9845)"
-    { 7509846, 33454 }, // "Trainer Spell Item: Tiger's Fury (#9846)"
-    { 7509849, 33457 }, // "Trainer Spell Item: Claw (#9849)"
-    { 7509850, 33458 }, // "Trainer Spell Item: Claw (#9850)"
-    { 7509852, 33459 }, // "Trainer Spell Item: Entangling Roots (#9852)"
-    { 7509853, 33460 }, // "Trainer Spell Item: Entangling Roots (#9853)"
-    { 7509856, 33461 }, // "Trainer Spell Item: Regrowth (#9856)"
-    { 7509857, 33462 }, // "Trainer Spell Item: Regrowth (#9857)"
-    { 7509858, 33822 }, // "Trainer Spell Item: Regrowth (#9858)"
-    { 7509862, 33825 }, // "Trainer Spell Item: Tranquility (#9862)"
-    { 7509863, 33866 }, // "Trainer Spell Item: Tranquility (#9863)"
-    { 7509866, 33867 }, // "Trainer Spell Item: Ravage (#9866)"
-    { 7509867, 33872 }, // "Trainer Spell Item: Ravage (#9867)"
-    { 7509875, 33874 }, // "Trainer Spell Item: Starfire (#9875)"
-    { 7509876, 33924 }, // "Trainer Spell Item: Starfire (#9876)"
-    { 7509880, 33934 }, // "Trainer Spell Item: Maul (#9880)"
-    { 7509881, 33935 }, // "Trainer Spell Item: Maul (#9881)"
-    { 7509884, 34062 }, // "Trainer Spell Item: Mark of the Wild (#9884)"
-    { 7509885, 34125 }, // "Trainer Spell Item: Mark of the Wild (#9885)"
-    { 7509888, 34130 }, // "Trainer Spell Item: Healing Touch (#9888)"
-    { 7509889, 34411 }, // "Trainer Spell Item: Healing Touch (#9889)"
-    { 7509892, 34440 }, // "Trainer Spell Item: Cower (#9892)"
-    { 7509894, 34537 }, // "Trainer Spell Item: Rip (#9894)"
-    { 7509896, 34641 }, // "Trainer Spell Item: Rip (#9896)"
-    { 7509898, 34646 }, // "Trainer Spell Item: Demoralizing Roar (#9898)"
-    { 7509901, 34747 }, // "Trainer Spell Item: Soothe Animal (#9901)"
-    { 7509904, 34748 }, // "Trainer Spell Item: Rake (#9904)"
-    { 7509908, 34749 }, // "Trainer Spell Item: Swipe (Bear) (#9908)"
-    { 7509910, 34750 }, // "Trainer Spell Item: Thorns (#9910)"
-    { 7509912, 34751 }, // "Trainer Spell Item: Wrath (#9912)"
-    { 7510053, 34752 }, // "Trainer Spell Item: Conjure Mana Gem (#10053)"
-    { 7510054, 34753 }, // "Trainer Spell Item: Conjure Mana Gem (#10054)"
-    { 7510059, 34754 }, // "Trainer Spell Item: Portal: Stormwind (#10059)"
-    { 7510138, 34755 }, // "Trainer Spell Item: Conjure Water (#10138)"
-    { 7510139, 34756 }, // "Trainer Spell Item: Conjure Water (#10139)"
-    { 7510140, 34757 }, // "Trainer Spell Item: Conjure Water (#10140)"
-    { 7510144, 34758 }, // "Trainer Spell Item: Conjure Food (#10144)"
-    { 7510145, 34759 }, // "Trainer Spell Item: Conjure Food (#10145)"
-    { 7510148, 34760 }, // "Trainer Spell Item: Fireball (#10148)"
-    { 7510149, 34761 }, // "Trainer Spell Item: Fireball (#10149)"
-    { 7510150, 34762 }, // "Trainer Spell Item: Fireball (#10150)"
-    { 7510151, 34763 }, // "Trainer Spell Item: Fireball (#10151)"
-    { 7510156, 34764 }, // "Trainer Spell Item: Arcane Intellect (#10156)"
-    { 7510157, 34765 }, // "Trainer Spell Item: Arcane Intellect (#10157)"
-    { 7510159, 34766 }, // "Trainer Spell Item: Cone of Cold (#10159)"
-    { 7510160, 34767 }, // "Trainer Spell Item: Cone of Cold (#10160)"
-    { 7510161, 34768 }, // "Trainer Spell Item: Cone of Cold (#10161)"
-    { 7510169, 34769 }, // "Trainer Spell Item: Amplify Magic (#10169)"
-    { 7510170, 34770 }, // "Trainer Spell Item: Amplify Magic (#10170)"
-    { 7510173, 34780 }, // "Trainer Spell Item: Dampen Magic (#10173)"
-    { 7510174, 34832 }, // "Trainer Spell Item: Dampen Magic (#10174)"
-    { 7510177, 35563 }, // "Trainer Spell Item: Frost Ward (#10177)"
-    { 7510179, 35565 }, // "Trainer Spell Item: Frostbolt (#10179)"
-    { 7510180, 35710 }, // "Trainer Spell Item: Frostbolt (#10180)"
-    { 7510181, 35716 }, // "Trainer Spell Item: Frostbolt (#10181)"
-    { 7510185, 35717 }, // "Trainer Spell Item: Blizzard (#10185)"
-    { 7510186, 35720 }, // "Trainer Spell Item: Blizzard (#10186)"
-    { 7510187, 35947 }, // "Trainer Spell Item: Blizzard (#10187)"
-    { 7510191, 35948 }, // "Trainer Spell Item: Mana Shield (#10191)"
-    { 7510192, 35949 }, // "Trainer Spell Item: Mana Shield (#10192)"
-    { 7510193, 35950 }, // "Trainer Spell Item: Mana Shield (#10193)"
-    { 7510197, 35951 }, // "Trainer Spell Item: Fire Blast (#10197)"
-    { 7510199, 35952 }, // "Trainer Spell Item: Fire Blast (#10199)"
-    { 7510201, 35953 }, // "Trainer Spell Item: Arcane Explosion (#10201)"
-    { 7510202, 35954 }, // "Trainer Spell Item: Arcane Explosion (#10202)"
-    { 7510205, 36770 }, // "Trainer Spell Item: Scorch (#10205)"
-    { 7510206, 36831 }, // "Trainer Spell Item: Scorch (#10206)"
-    { 7510207, 36845 }, // "Trainer Spell Item: Scorch (#10207)"
-    { 7510211, 37091 }, // "Trainer Spell Item: Arcane Missiles (#10211)"
-    { 7510212, 37092 }, // "Trainer Spell Item: Arcane Missiles (#10212)"
-    { 7510215, 37093 }, // "Trainer Spell Item: Flamestrike (#10215)"
-    { 7510216, 37094 }, // "Trainer Spell Item: Flamestrike (#10216)"
-    { 7510219, 37097 }, // "Trainer Spell Item: Ice Armor (#10219)"
-    { 7510220, 37098 }, // "Trainer Spell Item: Ice Armor (#10220)"
-    { 7510223, 37118 }, // "Trainer Spell Item: Fire Ward (#10223)"
-    { 7510225, 37252 }, // "Trainer Spell Item: Fire Ward (#10225)"
-    { 7510230, 37253 }, // "Trainer Spell Item: Frost Nova (#10230)"
-    { 7510278, 37449 }, // "Trainer Spell Item: Hand of Protection (#10278)"
-    { 7510290, 37452 }, // "Trainer Spell Item: Devotion Aura (#10290)"
-    { 7510291, 37926 }, // "Trainer Spell Item: Devotion Aura (#10291)"
-    { 7510292, 38350 }, // "Trainer Spell Item: Devotion Aura (#10292)"
-    { 7510293, 38351 }, // "Trainer Spell Item: Devotion Aura (#10293)"
-    { 7510298, 38427 }, // "Trainer Spell Item: Retribution Aura (#10298)"
-    { 7510299, 38428 }, // "Trainer Spell Item: Retribution Aura (#10299)"
-    { 7510300, 38429 }, // "Trainer Spell Item: Retribution Aura (#10300)"
-    { 7510301, 38430 }, // "Trainer Spell Item: Retribution Aura (#10301)"
-    { 7510308, 38431 }, // "Trainer Spell Item: Hammer of Justice (#10308)"
-    { 7510310, 38432 }, // "Trainer Spell Item: Lay on Hands (#10310)"
-    { 7510312, 38466 }, // "Trainer Spell Item: Exorcism (#10312)"
-    { 7510313, 38698 }, // "Trainer Spell Item: Exorcism (#10313)"
-    { 7510314, 38706 }, // "Trainer Spell Item: Exorcism (#10314)"
-    { 7510318, 39327 }, // "Trainer Spell Item: Holy Wrath (#10318)"
-    { 7510321, 39520 }, // "Trainer Spell Item: Judgement (#10321)"
-    { 7510322, 39666 }, // "Trainer Spell Item: Redemption (#10322)"
-    { 7510324, 39671 }, // "Trainer Spell Item: Redemption (#10324)"
-    { 7510326, 39691 }, // "Trainer Spell Item: Turn Evil (#10326)"
-    { 7510328, 39971 }, // "Trainer Spell Item: Holy Light (#10328)"
-    { 7510329, 40035 }, // "Trainer Spell Item: Holy Light (#10329)"
-    { 7510391, 40036 }, // "Trainer Spell Item: Lightning Bolt (#10391)"
-    { 7510392, 40042 }, // "Trainer Spell Item: Lightning Bolt (#10392)"
-    { 7510395, 40067 }, // "Trainer Spell Item: Healing Wave (#10395)"
-    { 7510396, 40068 }, // "Trainer Spell Item: Healing Wave (#10396)"
-    { 7510399, 40070 }, // "Trainer Spell Item: Rockbiter Weapon (#10399)"
-    { 7510406, 40072 }, // "Trainer Spell Item: Stoneskin Totem (#10406)"
-    { 7510407, 40073 }, // "Trainer Spell Item: Stoneskin Totem (#10407)"
-    { 7510408, 40076 }, // "Trainer Spell Item: Stoneskin Totem (#10408)"
-    { 7510412, 40077 }, // "Trainer Spell Item: Earth Shock (#10412)"
-    { 7510413, 40078 }, // "Trainer Spell Item: Earth Shock (#10413)"
-    { 7510414, 40079 }, // "Trainer Spell Item: Earth Shock (#10414)"
-    { 7510427, 40081 }, // "Trainer Spell Item: Stoneclaw Totem (#10427)"
-    { 7510428, 40082 }, // "Trainer Spell Item: Stoneclaw Totem (#10428)"
-    { 7510431, 40083 }, // "Trainer Spell Item: Lightning Shield (#10431)"
-    { 7510432, 40084 }, // "Trainer Spell Item: Lightning Shield (#10432)"
-    { 7510437, 40087 }, // "Trainer Spell Item: Searing Totem (#10437)"
-    { 7510438, 40093 }, // "Trainer Spell Item: Searing Totem (#10438)"
-    { 7510442, 40097 }, // "Trainer Spell Item: Strength of Earth Totem (#10442)"
-    { 7510447, 40109 }, // "Trainer Spell Item: Flame Shock (#10447)"
-    { 7510448, 40202 }, // "Trainer Spell Item: Flame Shock (#10448)"
-    { 7510456, 40211 }, // "Trainer Spell Item: Frostbrand Weapon (#10456)"
-    { 7510462, 40212 }, // "Trainer Spell Item: Healing Stream Totem (#10462)"
-    { 7510463, 40213 }, // "Trainer Spell Item: Healing Stream Totem (#10463)"
-    { 7510466, 40214 }, // "Trainer Spell Item: Lesser Healing Wave (#10466)"
-    { 7510467, 40215 }, // "Trainer Spell Item: Lesser Healing Wave (#10467)"
-    { 7510468, 40216 }, // "Trainer Spell Item: Lesser Healing Wave (#10468)"
-    { 7510472, 40217 }, // "Trainer Spell Item: Frost Shock (#10472)"
-    { 7510473, 40356 }, // "Trainer Spell Item: Frost Shock (#10473)"
-    { 7510478, 40357 }, // "Trainer Spell Item: Frost Resistance Totem (#10478)"
-    { 7510479, 40358 }, // "Trainer Spell Item: Frost Resistance Totem (#10479)"
-    { 7510486, 40359 }, // "Trainer Spell Item: Windfury Weapon (#10486)"
-    { 7510495, 40404 }, // "Trainer Spell Item: Mana Spring Totem (#10495)"
-    { 7510496, 40413 }, // "Trainer Spell Item: Mana Spring Totem (#10496)"
-    { 7510497, 40667 }, // "Trainer Spell Item: Mana Spring Totem (#10497)"
-    { 7510526, 40677 }, // "Trainer Spell Item: Flametongue Totem (#10526)"
-    { 7510537, 41166 }, // "Trainer Spell Item: Fire Resistance Totem (#10537)"
-    { 7510538, 41374 }, // "Trainer Spell Item: Fire Resistance Totem (#10538)"
-    { 7510585, 41729 }, // "Trainer Spell Item: Magma Totem (#10585)"
-    { 7510586, 41731 }, // "Trainer Spell Item: Magma Totem (#10586)"
-    { 7510587, 41751 }, // "Trainer Spell Item: Magma Totem (#10587)"
-    { 7510595, 42428 }, // "Trainer Spell Item: Nature Resistance Totem (#10595)"
-    { 7510600, 42429 }, // "Trainer Spell Item: Nature Resistance Totem (#10600)"
-    { 7510601, 42430 }, // "Trainer Spell Item: Nature Resistance Totem (#10601)"
-    { 7510605, 42431 }, // "Trainer Spell Item: Chain Lightning (#10605)"
-    { 7510622, 42432 }, // "Trainer Spell Item: Chain Heal (#10622)"
-    { 7510623, 42433 }, // "Trainer Spell Item: Chain Heal (#10623)"
-    { 7510880, 42434 }, // "Trainer Spell Item: Resurrection (#10880)"
-    { 7510881, 42545 }, // "Trainer Spell Item: Resurrection (#10881)"
-    { 7510888, 42548 }, // "Trainer Spell Item: Psychic Scream (#10888)"
-    { 7510890, 42590 }, // "Trainer Spell Item: Psychic Scream (#10890)"
-    { 7510892, 42777 }, // "Trainer Spell Item: Shadow Word: Pain (#10892)"
-    { 7510893, 42778 }, // "Trainer Spell Item: Shadow Word: Pain (#10893)"
-    { 7510894, 42779 }, // "Trainer Spell Item: Shadow Word: Pain (#10894)"
-    { 7510898, 42942 }, // "Trainer Spell Item: Power Word: Shield (#10898)"
-    { 7510899, 42993 }, // "Trainer Spell Item: Power Word: Shield (#10899)"
-    { 7510900, 42994 }, // "Trainer Spell Item: Power Word: Shield (#10900)"
-    { 7510901, 42995 }, // "Trainer Spell Item: Power Word: Shield (#10901)"
-    { 7510909, 42996 }, // "Trainer Spell Item: Mind Vision (#10909)"
-    { 7510915, 42997 }, // "Trainer Spell Item: Flash Heal (#10915)"
-    { 7510916, 42998 }, // "Trainer Spell Item: Flash Heal (#10916)"
-    { 7510917, 42999 }, // "Trainer Spell Item: Flash Heal (#10917)"
-    { 7510927, 43000 }, // "Trainer Spell Item: Renew (#10927)"
-    { 7510928, 43001 }, // "Trainer Spell Item: Renew (#10928)"
-    { 7510929, 43004 }, // "Trainer Spell Item: Renew (#10929)"
-    { 7510933, 43005 }, // "Trainer Spell Item: Smite (#10933)"
-    { 7510934, 43015 }, // "Trainer Spell Item: Smite (#10934)"
-    { 7510937, 43086 }, // "Trainer Spell Item: Power Word: Fortitude (#10937)"
-    { 7510938, 43087 }, // "Trainer Spell Item: Power Word: Fortitude (#10938)"
-    { 7510945, 43236 }, // "Trainer Spell Item: Mind Blast (#10945)"
-    { 7510946, 43268 }, // "Trainer Spell Item: Mind Blast (#10946)"
-    { 7510947, 43463 }, // "Trainer Spell Item: Mind Blast (#10947)"
-    { 7510951, 43464 }, // "Trainer Spell Item: Inner Fire (#10951)"
-    { 7510952, 43465 }, // "Trainer Spell Item: Inner Fire (#10952)"
-    { 7510955, 43466 }, // "Trainer Spell Item: Shackle Undead (#10955)"
-    { 7510957, 43467 }, // "Trainer Spell Item: Shadow Protection (#10957)"
-    { 7510958, 43468 }, // "Trainer Spell Item: Shadow Protection (#10958)"
-    { 7510960, 43478 }, // "Trainer Spell Item: Prayer of Healing (#10960)"
-    { 7510961, 43480 }, // "Trainer Spell Item: Prayer of Healing (#10961)"
-    { 7510963, 43488 }, // "Trainer Spell Item: Greater Heal (#10963)"
-    { 7510964, 43490 }, // "Trainer Spell Item: Greater Heal (#10964)"
-    { 7510965, 43491 }, // "Trainer Spell Item: Greater Heal (#10965)"
-    { 7511267, 43492 }, // "Trainer Spell Item: Ambush (#11267)"
-    { 7511268, 43496 }, // "Trainer Spell Item: Ambush (#11268)"
-    { 7511269, 43518 }, // "Trainer Spell Item: Ambush (#11269)"
-    { 7511273, 43523 }, // "Trainer Spell Item: Rupture (#11273)"
-    { 7511274, 43530 }, // "Trainer Spell Item: Rupture (#11274)"
-    { 7511275, 43531 }, // "Trainer Spell Item: Rupture (#11275)"
-    { 7511279, 43569 }, // "Trainer Spell Item: Backstab (#11279)"
-    { 7511280, 43570 }, // "Trainer Spell Item: Backstab (#11280)"
-    { 7511281, 43695 }, // "Trainer Spell Item: Backstab (#11281)"
-    { 7511289, 43696 }, // "Trainer Spell Item: Garrote (#11289)"
-    { 7511290, 44012 }, // "Trainer Spell Item: Garrote (#11290)"
-    { 7511293, 44049 }, // "Trainer Spell Item: Sinister Strike (#11293)"
-    { 7511294, 44071 }, // "Trainer Spell Item: Sinister Strike (#11294)"
-    { 7511297, 44072 }, // "Trainer Spell Item: Sap (#11297)"
-    { 7511299, 44114 }, // "Trainer Spell Item: Eviscerate (#11299)"
-    { 7511300, 44228 }, // "Trainer Spell Item: Eviscerate (#11300)"
-    { 7511303, 44314 }, // "Trainer Spell Item: Feint (#11303)"
-    { 7511305, 44315 }, // "Trainer Spell Item: Sprint (#11305)"
-    { 7511314, 44325 }, // "Trainer Spell Item: Fire Nova (#11314)"
-    { 7511315, 44327 }, // "Trainer Spell Item: Fire Nova (#11315)"
-    { 7511416, 44328 }, // "Trainer Spell Item: Portal: Ironforge (#11416)"
-    { 7511417, 44329 }, // "Trainer Spell Item: Portal: Orgrimmar (#11417)"
-    { 7511418, 44330 }, // "Trainer Spell Item: Portal: Undercity (#11418)"
-    { 7511419, 44331 }, // "Trainer Spell Item: Portal: Darnassus (#11419)"
-    { 7511420, 44332 }, // "Trainer Spell Item: Portal: Thunder Bluff (#11420)"
-    { 7511549, 44570 }, // "Trainer Spell Item: Battle Shout (#11549)"
-    { 7511550, 44571 }, // "Trainer Spell Item: Battle Shout (#11550)"
-    { 7511551, 44572 }, // "Trainer Spell Item: Battle Shout (#11551)"
-    { 7511554, 44573 }, // "Trainer Spell Item: Demoralizing Shout (#11554)"
-    { 7511555, 44574 }, // "Trainer Spell Item: Demoralizing Shout (#11555)"
-    { 7511556, 44575 }, // "Trainer Spell Item: Demoralizing Shout (#11556)"
-    { 7511564, 44607 }, // "Trainer Spell Item: Heroic Strike (#11564)"
-    { 7511565, 44608 }, // "Trainer Spell Item: Heroic Strike (#11565)"
-    { 7511566, 44609 }, // "Trainer Spell Item: Heroic Strike (#11566)"
-    { 7511567, 44616 }, // "Trainer Spell Item: Heroic Strike (#11567)"
-    { 7511572, 44617 }, // "Trainer Spell Item: Rend (#11572)"
-    { 7511573, 44618 }, // "Trainer Spell Item: Rend (#11573)"
-    { 7511574, 44619 }, // "Trainer Spell Item: Rend (#11574)"
-    { 7511578, 44620 }, // "Trainer Spell Item: Charge (#11578)"
-    { 7511580, 44722 }, // "Trainer Spell Item: Thunder Clap (#11580)"
-    { 7511581, 44728 }, // "Trainer Spell Item: Thunder Clap (#11581)"
-    { 7511600, 44749 }, // "Trainer Spell Item: Revenge (#11600)"
-    { 7511601, 44750 }, // "Trainer Spell Item: Revenge (#11601)"
-    { 7511604, 44836 }, // "Trainer Spell Item: Slam (#11604)"
-    { 7511605, 44837 }, // "Trainer Spell Item: Slam (#11605)"
-    { 7511608, 44838 }, // "Trainer Spell Item: Cleave (#11608)"
-    { 7511609, 44839 }, // "Trainer Spell Item: Cleave (#11609)"
-    { 7511659, 44840 }, // "Trainer Spell Item: Shadow Bolt (#11659)"
-    { 7511660, 44854 }, // "Trainer Spell Item: Shadow Bolt (#11660)"
-    { 7511661, 44855 }, // "Trainer Spell Item: Shadow Bolt (#11661)"
-    { 7511665, 44939 }, // "Trainer Spell Item: Immolate (#11665)"
-    { 7511667, 44940 }, // "Trainer Spell Item: Immolate (#11667)"
-    { 7511668, 44941 }, // "Trainer Spell Item: Immolate (#11668)"
-    { 7511671, 44953 }, // "Trainer Spell Item: Corruption (#11671)"
-    { 7511672, 45006 }, // "Trainer Spell Item: Corruption (#11672)"
-    { 7511675, 45007 }, // "Trainer Spell Item: Drain Soul (#11675)"
-    { 7511677, 45008 }, // "Trainer Spell Item: Rain of Fire (#11677)"
-    { 7511678, 45009 }, // "Trainer Spell Item: Rain of Fire (#11678)"
-    { 7511683, 45276 }, // "Trainer Spell Item: Hellfire (#11683)"
-    { 7511684, 45277 }, // "Trainer Spell Item: Hellfire (#11684)"
-    { 7511687, 45279 }, // "Trainer Spell Item: Life Tap (#11687)"
-    { 7511688, 45621 }, // "Trainer Spell Item: Life Tap (#11688)"
-    { 7511689, 45901 }, // "Trainer Spell Item: Life Tap (#11689)"
-    { 7511693, 45932 }, // "Trainer Spell Item: Health Funnel (#11693)"
-    { 7511694, 46336 }, // "Trainer Spell Item: Health Funnel (#11694)"
-    { 7511695, 46376 }, // "Trainer Spell Item: Health Funnel (#11695)"
-    { 7511699, 46377 }, // "Trainer Spell Item: Drain Life (#11699)"
-    { 7511700, 46378 }, // "Trainer Spell Item: Drain Life (#11700)"
-    { 7511707, 46379 }, // "Trainer Spell Item: Curse of Weakness (#11707)"
-    { 7511708, 46784 }, // "Trainer Spell Item: Curse of Weakness (#11708)"
-    { 7511711, 46793 }, // "Trainer Spell Item: Curse of Agony (#11711)"
-    { 7511712, 46796 }, // "Trainer Spell Item: Curse of Agony (#11712)"
-    { 7511713, 46797 }, // "Trainer Spell Item: Curse of Agony (#11713)"
-    { 7511719, 46887 }, // "Trainer Spell Item: Curse of Tongues (#11719)"
-    { 7511721, 47499 }, // "Trainer Spell Item: Curse of the Elements (#11721)"
-    { 7511722, 49632 }, // "Trainer Spell Item: Curse of the Elements (#11722)"
-    { 7511725, 49768 }, // "Trainer Spell Item: Enslave Demon (#11725)"
-    { 7511726, 49863 }, // "Trainer Spell Item: Enslave Demon (#11726)"
-    { 7511729, 117 }, // "Trainer Spell Item: Create Healthstone (#11729)"
-    { 7511730, 118 }, // "Trainer Spell Item: Create Healthstone (#11730)"
-    { 7511733, 159 }, // "Trainer Spell Item: Demon Armor (#11733)"
-    { 7511734, 414 }, // "Trainer Spell Item: Demon Armor (#11734)"
-    { 7511735, 422 }, // "Trainer Spell Item: Demon Armor (#11735)"
-    { 7511739, 724 }, // "Trainer Spell Item: Shadow Ward (#11739)"
-    { 7511740, 733 }, // "Trainer Spell Item: Shadow Ward (#11740)"
-    { 7512051, 787 }, // "Trainer Spell Item: Evocation (#12051)"
-    { 7512505, 858 }, // "Trainer Spell Item: Pyroblast (#12505)"
-    { 7512522, 929 }, // "Trainer Spell Item: Pyroblast (#12522)"
-    { 7512523, 954 }, // "Trainer Spell Item: Pyroblast (#12523)"
-    { 7512524, 955 }, // "Trainer Spell Item: Pyroblast (#12524)"
-    { 7512525, 961 }, // "Trainer Spell Item: Pyroblast (#12525)"
-    { 7512526, 1017 }, // "Trainer Spell Item: Pyroblast (#12526)"
-    { 7512678, 1072 }, // "Trainer Spell Item: Stance Mastery (#12678)"
-    { 7512824, 1082 }, // "Trainer Spell Item: Polymorph (#12824)"
-    { 7512825, 1113 }, // "Trainer Spell Item: Polymorph (#12825)"
-    { 7512826, 1114 }, // "Trainer Spell Item: Polymorph (#12826)"
-    { 7513018, 1119 }, // "Trainer Spell Item: Blast Wave (#13018)"
-    { 7513019, 1165 }, // "Trainer Spell Item: Blast Wave (#13019)"
-    { 7513020, 1179 }, // "Trainer Spell Item: Blast Wave (#13020)"
-    { 7513021, 1180 }, // "Trainer Spell Item: Blast Wave (#13021)"
-    { 7513031, 1181 }, // "Trainer Spell Item: Ice Barrier (#13031)"
-    { 7513032, 1205 }, // "Trainer Spell Item: Ice Barrier (#13032)"
-    { 7513033, 1326 }, // "Trainer Spell Item: Ice Barrier (#13033)"
-    { 7513159, 1401 }, // "Trainer Spell Item: Aspect of the Pack (#13159)"
-    { 7513161, 1450 }, // "Trainer Spell Item: Aspect of the Beast (#13161)"
-    { 7513163, 1477 }, // "Trainer Spell Item: Aspect of the Monkey (#13163)"
-    { 7513165, 1478 }, // "Trainer Spell Item: Aspect of the Hawk (#13165)"
-    { 7513542, 1487 }, // "Trainer Spell Item: Mend Pet (#13542)"
-    { 7513543, 1645 }, // "Trainer Spell Item: Mend Pet (#13543)"
-    { 7513544, 1707 }, // "Trainer Spell Item: Mend Pet (#13544)"
-    { 7513549, 1708 }, // "Trainer Spell Item: Serpent Sting (#13549)"
-    { 7513550, 1710 }, // "Trainer Spell Item: Serpent Sting (#13550)"
-    { 7513551, 1711 }, // "Trainer Spell Item: Serpent Sting (#13551)"
-    { 7513552, 1712 }, // "Trainer Spell Item: Serpent Sting (#13552)"
-    { 7513553, 2070 }, // "Trainer Spell Item: Serpent Sting (#13553)"
-    { 7513554, 2136 }, // "Trainer Spell Item: Serpent Sting (#13554)"
-    { 7513555, 2287 }, // "Trainer Spell Item: Serpent Sting (#13555)"
-    { 7513795, 2288 }, // "Trainer Spell Item: Immolation Trap (#13795)"
-    { 7513809, 2289 }, // "Trainer Spell Item: Frost Trap (#13809)"
-    { 7513813, 2290 }, // "Trainer Spell Item: Explosive Trap (#13813)"
-    { 7513820, 2454 }, // "Trainer Spell Item: Summon Warhorse (#13820)"
-    { 7514260, 2455 }, // "Trainer Spell Item: Raptor Strike (#14260)"
-    { 7514261, 2456 }, // "Trainer Spell Item: Raptor Strike (#14261)"
-    { 7514262, 2457 }, // "Trainer Spell Item: Raptor Strike (#14262)"
-    { 7514263, 2458 }, // "Trainer Spell Item: Raptor Strike (#14263)"
-    { 7514264, 2459 }, // "Trainer Spell Item: Raptor Strike (#14264)"
-    { 7514265, 2460 }, // "Trainer Spell Item: Raptor Strike (#14265)"
-    { 7514266, 2461 }, // "Trainer Spell Item: Raptor Strike (#14266)"
-    { 7514269, 2462 }, // "Trainer Spell Item: Mongoose Bite (#14269)"
-    { 7514270, 2593 }, // "Trainer Spell Item: Mongoose Bite (#14270)"
-    { 7514271, 2594 }, // "Trainer Spell Item: Mongoose Bite (#14271)"
-    { 7514281, 2595 }, // "Trainer Spell Item: Arcane Shot (#14281)"
-    { 7514282, 2596 }, // "Trainer Spell Item: Arcane Shot (#14282)"
-    { 7514283, 2633 }, // "Trainer Spell Item: Arcane Shot (#14283)"
-    { 7514284, 2679 }, // "Trainer Spell Item: Arcane Shot (#14284)"
-    { 7514285, 2680 }, // "Trainer Spell Item: Arcane Shot (#14285)"
-    { 7514286, 2681 }, // "Trainer Spell Item: Arcane Shot (#14286)"
-    { 7514287, 2682 }, // "Trainer Spell Item: Arcane Shot (#14287)"
-    { 7514288, 2683 }, // "Trainer Spell Item: Multi-Shot (#14288)"
-    { 7514289, 2684 }, // "Trainer Spell Item: Multi-Shot (#14289)"
-    { 7514290, 2685 }, // "Trainer Spell Item: Multi-Shot (#14290)"
-    { 7514294, 2686 }, // "Trainer Spell Item: Volley (#14294)"
-    { 7514295, 2687 }, // "Trainer Spell Item: Volley (#14295)"
-    { 7514302, 2723 }, // "Trainer Spell Item: Immolation Trap (#14302)"
-    { 7514303, 2888 }, // "Trainer Spell Item: Immolation Trap (#14303)"
-    { 7514304, 2894 }, // "Trainer Spell Item: Immolation Trap (#14304)"
-    { 7514305, 3012 }, // "Trainer Spell Item: Immolation Trap (#14305)"
-    { 7514310, 3013 }, // "Trainer Spell Item: Freezing Trap (#14310)"
-    { 7514311, 3087 }, // "Trainer Spell Item: Freezing Trap (#14311)"
-    { 7514316, 3220 }, // "Trainer Spell Item: Explosive Trap (#14316)"
-    { 7514317, 3382 }, // "Trainer Spell Item: Explosive Trap (#14317)"
-    { 7514318, 3383 }, // "Trainer Spell Item: Aspect of the Hawk (#14318)"
-    { 7514319, 3384 }, // "Trainer Spell Item: Aspect of the Hawk (#14319)"
-    { 7514320, 3385 }, // "Trainer Spell Item: Aspect of the Hawk (#14320)"
-    { 7514321, 3386 }, // "Trainer Spell Item: Aspect of the Hawk (#14321)"
-    { 7514322, 3387 }, // "Trainer Spell Item: Aspect of the Hawk (#14322)"
-    { 7514323, 3388 }, // "Trainer Spell Item: Hunter's Mark (#14323)"
-    { 7514324, 3389 }, // "Trainer Spell Item: Hunter's Mark (#14324)"
-    { 7514325, 3390 }, // "Trainer Spell Item: Hunter's Mark (#14325)"
-    { 7514326, 3391 }, // "Trainer Spell Item: Scare Beast (#14326)"
-    { 7514327, 3448 }, // "Trainer Spell Item: Scare Beast (#14327)"
-    { 7514752, 3662 }, // "Trainer Spell Item: Divine Spirit (#14752)"
-    { 7514818, 3663 }, // "Trainer Spell Item: Divine Spirit (#14818)"
-    { 7514819, 3664 }, // "Trainer Spell Item: Divine Spirit (#14819)"
-    { 7514914, 3665 }, // "Trainer Spell Item: Holy Fire (#14914)"
-    { 7515207, 3666 }, // "Trainer Spell Item: Lightning Bolt (#15207)"
-    { 7515208, 3703 }, // "Trainer Spell Item: Lightning Bolt (#15208)"
-    { 7515237, 3726 }, // "Trainer Spell Item: Holy Nova (#15237)"
-    { 7515261, 3727 }, // "Trainer Spell Item: Holy Fire (#15261)"
-    { 7515262, 3728 }, // "Trainer Spell Item: Holy Fire (#15262)"
-    { 7515263, 3729 }, // "Trainer Spell Item: Holy Fire (#15263)"
-    { 7515264, 3770 }, // "Trainer Spell Item: Holy Fire (#15264)"
-    { 7515265, 3771 }, // "Trainer Spell Item: Holy Fire (#15265)"
-    { 7515266, 3772 }, // "Trainer Spell Item: Holy Fire (#15266)"
-    { 7515267, 3823 }, // "Trainer Spell Item: Holy Fire (#15267)"
-    { 7515430, 3825 }, // "Trainer Spell Item: Holy Nova (#15430)"
-    { 7515431, 3826 }, // "Trainer Spell Item: Holy Nova (#15431)"
-    { 7516339, 3827 }, // "Trainer Spell Item: Flametongue Weapon (#16339)"
-    { 7516341, 3828 }, // "Trainer Spell Item: Flametongue Weapon (#16341)"
-    { 7516342, 3927 }, // "Trainer Spell Item: Flametongue Weapon (#16342)"
-    { 7516355, 3928 }, // "Trainer Spell Item: Frostbrand Weapon (#16355)"
-    { 7516356, 4418 }, // "Trainer Spell Item: Frostbrand Weapon (#16356)"
-    { 7516362, 4419 }, // "Trainer Spell Item: Windfury Weapon (#16362)"
-    { 7516387, 4421 }, // "Trainer Spell Item: Flametongue Totem (#16387)"
-    { 7516689, 4422 }, // "Trainer Spell Item: Nature's Grasp (#16689)"
-    { 7516810, 4424 }, // "Trainer Spell Item: Nature's Grasp (#16810)"
-    { 7516811, 4425 }, // "Trainer Spell Item: Nature's Grasp (#16811)"
-    { 7516812, 4426 }, // "Trainer Spell Item: Nature's Grasp (#16812)"
-    { 7516813, 4457 }, // "Trainer Spell Item: Nature's Grasp (#16813)"
-    { 7516857, 4536 }, // "Trainer Spell Item: Faerie Fire (Feral) (#16857)"
-    { 7516914, 4537 }, // "Trainer Spell Item: Hurricane (#16914)"
-    { 7517311, 4538 }, // "Trainer Spell Item: Mind Flay (#17311)"
-    { 7517312, 4539 }, // "Trainer Spell Item: Mind Flay (#17312)"
-    { 7517313, 4540 }, // "Trainer Spell Item: Mind Flay (#17313)"
-    { 7517314, 4541 }, // "Trainer Spell Item: Mind Flay (#17314)"
-    { 7517329, 4542 }, // "Trainer Spell Item: Nature's Grasp (#17329)"
-    { 7517347, 4544 }, // "Trainer Spell Item: Hemorrhage (#17347)"
-    { 7517348, 4592 }, // "Trainer Spell Item: Hemorrhage (#17348)"
-    { 7517401, 4593 }, // "Trainer Spell Item: Hurricane (#17401)"
-    { 7517402, 4594 }, // "Trainer Spell Item: Hurricane (#17402)"
-    { 7517727, 4595 }, // "Trainer Spell Item: Create Spellstone (#17727)"
-    { 7517728, 4596 }, // "Trainer Spell Item: Create Spellstone (#17728)"
-    { 7517919, 4599 }, // "Trainer Spell Item: Searing Pain (#17919)"
-    { 7517920, 4600 }, // "Trainer Spell Item: Searing Pain (#17920)"
-    { 7517921, 4601 }, // "Trainer Spell Item: Searing Pain (#17921)"
-    { 7517922, 4602 }, // "Trainer Spell Item: Searing Pain (#17922)"
-    { 7517923, 4604 }, // "Trainer Spell Item: Searing Pain (#17923)"
-    { 7517924, 4605 }, // "Trainer Spell Item: Soul Fire (#17924)"
-    { 7517925, 4606 }, // "Trainer Spell Item: Death Coil (#17925)"
-    { 7517926, 4607 }, // "Trainer Spell Item: Death Coil (#17926)"
-    { 7517928, 4608 }, // "Trainer Spell Item: Howl of Terror (#17928)"
-    { 7517951, 4623 }, // "Trainer Spell Item: Create Firestone (#17951)"
-    { 7517952, 4656 }, // "Trainer Spell Item: Create Firestone (#17952)"
-    { 7517953, 4791 }, // "Trainer Spell Item: Create Firestone (#17953)"
-    { 7518499, 5057 }, // "Trainer Spell Item: Berserker Rage (#18499)"
-    { 7518647, 5066 }, // "Trainer Spell Item: Banish (#18647)"
-    { 7518657, 5095 }, // "Trainer Spell Item: Hibernate (#18657)"
-    { 7518658, 5265 }, // "Trainer Spell Item: Hibernate (#18658)"
-    { 7518807, 5342 }, // "Trainer Spell Item: Mind Flay (#18807)"
-    { 7518809, 5349 }, // "Trainer Spell Item: Pyroblast (#18809)"
-    { 7518867, 5350 }, // "Trainer Spell Item: Shadowburn (#18867)"
-    { 7518868, 5472 }, // "Trainer Spell Item: Shadowburn (#18868)"
-    { 7518869, 5473 }, // "Trainer Spell Item: Shadowburn (#18869)"
-    { 7518870, 5474 }, // "Trainer Spell Item: Shadowburn (#18870)"
-    { 7518871, 5476 }, // "Trainer Spell Item: Shadowburn (#18871)"
-    { 7518937, 5477 }, // "Trainer Spell Item: Dark Pact (#18937)"
-    { 7518938, 5478 }, // "Trainer Spell Item: Dark Pact (#18938)"
-    { 7519238, 5479 }, // "Trainer Spell Item: Desperate Prayer (#19238)"
-    { 7519240, 5480 }, // "Trainer Spell Item: Desperate Prayer (#19240)"
-    { 7519241, 5525 }, // "Trainer Spell Item: Desperate Prayer (#19241)"
-    { 7519242, 5526 }, // "Trainer Spell Item: Desperate Prayer (#19242)"
-    { 7519243, 5527 }, // "Trainer Spell Item: Desperate Prayer (#19243)"
-    { 7519263, 5631 }, // "Trainer Spell Item: Deterrence (#19263)"
-    { 7519276, 5632 }, // "Trainer Spell Item: Devouring Plague (#19276)"
-    { 7519277, 5633 }, // "Trainer Spell Item: Devouring Plague (#19277)"
-    { 7519278, 5634 }, // "Trainer Spell Item: Devouring Plague (#19278)"
-    { 7519279, 5816 }, // "Trainer Spell Item: Devouring Plague (#19279)"
-    { 7519280, 5996 }, // "Trainer Spell Item: Devouring Plague (#19280)"
-    { 7519740, 5997 }, // "Trainer Spell Item: Blessing of Might (#19740)"
-    { 7519742, 6038 }, // "Trainer Spell Item: Blessing of Wisdom (#19742)"
-    { 7519746, 6048 }, // "Trainer Spell Item: Concentration Aura (#19746)"
-    { 7519750, 6049 }, // "Trainer Spell Item: Flash of Light (#19750)"
-    { 7519752, 6050 }, // "Trainer Spell Item: Divine Intervention (#19752)"
-    { 7519834, 6051 }, // "Trainer Spell Item: Blessing of Might (#19834)"
-    { 7519835, 6052 }, // "Trainer Spell Item: Blessing of Might (#19835)"
-    { 7519836, 6149 }, // "Trainer Spell Item: Blessing of Might (#19836)"
-    { 7519837, 6290 }, // "Trainer Spell Item: Blessing of Might (#19837)"
-    { 7519838, 6299 }, // "Trainer Spell Item: Blessing of Might (#19838)"
-    { 7519850, 6316 }, // "Trainer Spell Item: Blessing of Wisdom (#19850)"
-    { 7519852, 6372 }, // "Trainer Spell Item: Blessing of Wisdom (#19852)"
-    { 7519853, 6373 }, // "Trainer Spell Item: Blessing of Wisdom (#19853)"
-    { 7519854, 6522 }, // "Trainer Spell Item: Blessing of Wisdom (#19854)"
-    { 7519876, 6657 }, // "Trainer Spell Item: Shadow Resistance Aura (#19876)"
-    { 7519878, 6662 }, // "Trainer Spell Item: Track Demons (#19878)"
-    { 7519879, 6807 }, // "Trainer Spell Item: Track Dragonkin (#19879)"
-    { 7519880, 6887 }, // "Trainer Spell Item: Track Elementals (#19880)"
-    { 7519882, 6888 }, // "Trainer Spell Item: Track Giants (#19882)"
-    { 7519883, 6890 }, // "Trainer Spell Item: Track Humanoids (#19883)"
-    { 7519884, 7097 }, // "Trainer Spell Item: Track Undead (#19884)"
-    { 7519885, 7228 }, // "Trainer Spell Item: Track Hidden (#19885)"
-    { 7519888, 7676 }, // "Trainer Spell Item: Frost Resistance Aura (#19888)"
-    { 7519891, 7806 }, // "Trainer Spell Item: Fire Resistance Aura (#19891)"
-    { 7519895, 7807 }, // "Trainer Spell Item: Shadow Resistance Aura (#19895)"
-    { 7519896, 7808 }, // "Trainer Spell Item: Shadow Resistance Aura (#19896)"
-    { 7519897, 8075 }, // "Trainer Spell Item: Frost Resistance Aura (#19897)"
-    { 7519898, 8076 }, // "Trainer Spell Item: Frost Resistance Aura (#19898)"
-    { 7519899, 8077 }, // "Trainer Spell Item: Fire Resistance Aura (#19899)"
-    { 7519900, 8078 }, // "Trainer Spell Item: Fire Resistance Aura (#19900)"
-    { 7519939, 8079 }, // "Trainer Spell Item: Flash of Light (#19939)"
-    { 7519940, 8243 }, // "Trainer Spell Item: Flash of Light (#19940)"
-    { 7519941, 8364 }, // "Trainer Spell Item: Flash of Light (#19941)"
-    { 7519942, 8529 }, // "Trainer Spell Item: Flash of Light (#19942)"
-    { 7519943, 8543 }, // "Trainer Spell Item: Flash of Light (#19943)"
-    { 7520043, 8766 }, // "Trainer Spell Item: Aspect of the Wild (#20043)"
-    { 7520116, 8827 }, // "Trainer Spell Item: Consecration (#20116)"
-    { 7520164, 8932 }, // "Trainer Spell Item: Seal of Justice (#20164)"
-    { 7520165, 8948 }, // "Trainer Spell Item: Seal of Light (#20165)"
-    { 7520166, 8949 }, // "Trainer Spell Item: Seal of Wisdom (#20166)"
-    { 7520190, 8950 }, // "Trainer Spell Item: Aspect of the Wild (#20190)"
-    { 7520217, 8951 }, // "Trainer Spell Item: Blessing of Kings (#20217)"
-    { 7520230, 8952 }, // "Trainer Spell Item: Retaliation (#20230)"
-    { 7520252, 8953 }, // "Trainer Spell Item: Intercept (#20252)"
-    { 7520484, 8957 }, // "Trainer Spell Item: Rebirth (#20484)"
-    { 7520569, 9030 }, // "Trainer Spell Item: Cleave (#20569)"
-    { 7520608, 9036 }, // "Trainer Spell Item: Reincarnation (#20608)"
-    { 7520609, 9088 }, // "Trainer Spell Item: Ancestral Spirit (#20609)"
-    { 7520610, 9144 }, // "Trainer Spell Item: Ancestral Spirit (#20610)"
-    { 7520658, 9154 }, // "Trainer Spell Item: Execute (#20658)"
-    { 7520660, 9155 }, // "Trainer Spell Item: Execute (#20660)"
-    { 7520661, 9172 }, // "Trainer Spell Item: Execute (#20661)"
-    { 7520662, 9179 }, // "Trainer Spell Item: Execute (#20662)"
-    { 7520719, 9187 }, // "Trainer Spell Item: Feline Grace (#20719)"
-    { 7520736, 9197 }, // "Trainer Spell Item: Distracting Shot (#20736)"
-    { 7520739, 9206 }, // "Trainer Spell Item: Rebirth (#20739)"
-    { 7520742, 9224 }, // "Trainer Spell Item: Rebirth (#20742)"
-    { 7520747, 9233 }, // "Trainer Spell Item: Rebirth (#20747)"
-    { 7520748, 9260 }, // "Trainer Spell Item: Rebirth (#20748)"
-    { 7520752, 9264 }, // "Trainer Spell Item: Create Soulstone (#20752)"
-    { 7520755, 9360 }, // "Trainer Spell Item: Create Soulstone (#20755)"
-    { 7520756, 9361 }, // "Trainer Spell Item: Create Soulstone (#20756)"
-    { 7520757, 9451 }, // "Trainer Spell Item: Create Soulstone (#20757)"
-    { 7520770, 9681 }, // "Trainer Spell Item: Resurrection (#20770)"
-    { 7520772, 10305 }, // "Trainer Spell Item: Redemption (#20772)"
-    { 7520773, 10306 }, // "Trainer Spell Item: Redemption (#20773)"
-    { 7520776, 10307 }, // "Trainer Spell Item: Ancestral Spirit (#20776)"
-    { 7520777, 10308 }, // "Trainer Spell Item: Ancestral Spirit (#20777)"
-    { 7520900, 10309 }, // "Trainer Spell Item: Aimed Shot (#20900)"
-    { 7520901, 10310 }, // "Trainer Spell Item: Aimed Shot (#20901)"
-    { 7520902, 10592 }, // "Trainer Spell Item: Aimed Shot (#20902)"
-    { 7520903, 10841 }, // "Trainer Spell Item: Aimed Shot (#20903)"
-    { 7520904, 11109 }, // "Trainer Spell Item: Aimed Shot (#20904)"
-    { 7520909, 11415 }, // "Trainer Spell Item: Counterattack (#20909)"
-    { 7520910, 11444 }, // "Trainer Spell Item: Counterattack (#20910)"
-    { 7520922, 11584 }, // "Trainer Spell Item: Consecration (#20922)"
-    { 7520923, 11846 }, // "Trainer Spell Item: Consecration (#20923)"
-    { 7520924, 11951 }, // "Trainer Spell Item: Consecration (#20924)"
-    { 7520927, 12003 }, // "Trainer Spell Item: Holy Shield (#20927)"
-    { 7520928, 12190 }, // "Trainer Spell Item: Holy Shield (#20928)"
-    { 7520929, 12209 }, // "Trainer Spell Item: Holy Shock (#20929)"
-    { 7520930, 12210 }, // "Trainer Spell Item: Holy Shock (#20930)"
-    { 7521551, 12211 }, // "Trainer Spell Item: Mortal Strike (#21551)"
-    { 7521552, 12212 }, // "Trainer Spell Item: Mortal Strike (#21552)"
-    { 7521553, 12213 }, // "Trainer Spell Item: Mortal Strike (#21553)"
-    { 7522568, 12214 }, // "Trainer Spell Item: Ferocious Bite (#22568)"
-    { 7522570, 12215 }, // "Trainer Spell Item: Maim (#22570)"
-    { 7522782, 12216 }, // "Trainer Spell Item: Mage Armor (#22782)"
-    { 7522783, 12217 }, // "Trainer Spell Item: Mage Armor (#22783)"
-    { 7522812, 12218 }, // "Trainer Spell Item: Barkskin (#22812)"
-    { 7522827, 12224 }, // "Trainer Spell Item: Ferocious Bite (#22827)"
-    { 7522828, 12238 }, // "Trainer Spell Item: Ferocious Bite (#22828)"
-    { 7522829, 12763 }, // "Trainer Spell Item: Ferocious Bite (#22829)"
-    { 7522842, 12820 }, // "Trainer Spell Item: Frenzied Regeneration (#22842)"
-    { 7523161, 13442 }, // "Trainer Spell Item: Dreadsteed (#23161)"
-    { 7523214, 13443 }, // "Trainer Spell Item: Charger (#23214)"
-    { 7523920, 13444 }, // "Trainer Spell Item: Spell Reflection (#23920)"
-    { 7523922, 13445 }, // "Trainer Spell Item: Shield Slam (#23922)"
-    { 7523923, 13446 }, // "Trainer Spell Item: Shield Slam (#23923)"
-    { 7523924, 13447 }, // "Trainer Spell Item: Shield Slam (#23924)"
-    { 7523925, 13452 }, // "Trainer Spell Item: Shield Slam (#23925)"
-    { 7524132, 13453 }, // "Trainer Spell Item: Wyvern Sting (#24132)"
-    { 7524133, 13454 }, // "Trainer Spell Item: Wyvern Sting (#24133)"
-    { 7524239, 13455 }, // "Trainer Spell Item: Hammer of Wrath (#24239)"
-    { 7524248, 13456 }, // "Trainer Spell Item: Ferocious Bite (#24248)"
-    { 7524274, 13457 }, // "Trainer Spell Item: Hammer of Wrath (#24274)"
-    { 7524275, 13458 }, // "Trainer Spell Item: Hammer of Wrath (#24275)"
-    { 7524398, 13459 }, // "Trainer Spell Item: Water Shield (#24398)"
-    { 7524974, 13460 }, // "Trainer Spell Item: Insect Swarm (#24974)"
-    { 7524975, 13461 }, // "Trainer Spell Item: Insect Swarm (#24975)"
-    { 7524976, 13462 }, // "Trainer Spell Item: Insect Swarm (#24976)"
-    { 7524977, 13506 }, // "Trainer Spell Item: Insect Swarm (#24977)"
-    { 7525202, 13510 }, // "Trainer Spell Item: Demoralizing Shout (#25202)"
-    { 7525203, 13511 }, // "Trainer Spell Item: Demoralizing Shout (#25203)"
-    { 7525208, 13512 }, // "Trainer Spell Item: Rend (#25208)"
-    { 7525210, 13513 }, // "Trainer Spell Item: Greater Heal (#25210)"
-    { 7525213, 13546 }, // "Trainer Spell Item: Greater Heal (#25213)"
-    { 7525217, 13724 }, // "Trainer Spell Item: Power Word: Shield (#25217)"
-    { 7525218, 13755 }, // "Trainer Spell Item: Power Word: Shield (#25218)"
-    { 7525221, 13810 }, // "Trainer Spell Item: Renew (#25221)"
-    { 7525222, 13851 }, // "Trainer Spell Item: Renew (#25222)"
-    { 7525231, 13893 }, // "Trainer Spell Item: Cleave (#25231)"
-    { 7525233, 13927 }, // "Trainer Spell Item: Flash Heal (#25233)"
-    { 7525234, 13928 }, // "Trainer Spell Item: Execute (#25234)"
-    { 7525235, 13929 }, // "Trainer Spell Item: Flash Heal (#25235)"
-    { 7525236, 13930 }, // "Trainer Spell Item: Execute (#25236)"
-    { 7525241, 13931 }, // "Trainer Spell Item: Slam (#25241)"
-    { 7525242, 13932 }, // "Trainer Spell Item: Slam (#25242)"
-    { 7525248, 13933 }, // "Trainer Spell Item: Mortal Strike (#25248)"
-    { 7525258, 13934 }, // "Trainer Spell Item: Shield Slam (#25258)"
-    { 7525264, 13935 }, // "Trainer Spell Item: Thunder Clap (#25264)"
-    { 7525269, 16166 }, // "Trainer Spell Item: Revenge (#25269)"
-    { 7525308, 16167 }, // "Trainer Spell Item: Prayer of Healing (#25308)"
-    { 7525312, 16168 }, // "Trainer Spell Item: Divine Spirit (#25312)"
-    { 7525331, 16169 }, // "Trainer Spell Item: Holy Nova (#25331)"
-    { 7525363, 16170 }, // "Trainer Spell Item: Smite (#25363)"
-    { 7525364, 16171 }, // "Trainer Spell Item: Smite (#25364)"
-    { 7525367, 16766 }, // "Trainer Spell Item: Shadow Word: Pain (#25367)"
-    { 7525368, 16971 }, // "Trainer Spell Item: Shadow Word: Pain (#25368)"
-    { 7525372, 17119 }, // "Trainer Spell Item: Mind Blast (#25372)"
-    { 7525375, 17196 }, // "Trainer Spell Item: Mind Blast (#25375)"
-    { 7525384, 17197 }, // "Trainer Spell Item: Holy Fire (#25384)"
-    { 7525387, 17198 }, // "Trainer Spell Item: Mind Flay (#25387)"
-    { 7525389, 17199 }, // "Trainer Spell Item: Power Word: Fortitude (#25389)"
-    { 7525391, 17222 }, // "Trainer Spell Item: Healing Wave (#25391)"
-    { 7525396, 17344 }, // "Trainer Spell Item: Healing Wave (#25396)"
-    { 7525420, 17348 }, // "Trainer Spell Item: Lesser Healing Wave (#25420)"
-    { 7525422, 17349 }, // "Trainer Spell Item: Chain Heal (#25422)"
-    { 7525423, 17351 }, // "Trainer Spell Item: Chain Heal (#25423)"
-    { 7525431, 17352 }, // "Trainer Spell Item: Inner Fire (#25431)"
-    { 7525433, 17402 }, // "Trainer Spell Item: Shadow Protection (#25433)"
-    { 7525435, 17403 }, // "Trainer Spell Item: Resurrection (#25435)"
-    { 7525437, 17404 }, // "Trainer Spell Item: Desperate Prayer (#25437)"
-    { 7525439, 17406 }, // "Trainer Spell Item: Chain Lightning (#25439)"
-    { 7525442, 17407 }, // "Trainer Spell Item: Chain Lightning (#25442)"
-    { 7525448, 17408 }, // "Trainer Spell Item: Lightning Bolt (#25448)"
-    { 7525449, 17708 }, // "Trainer Spell Item: Lightning Bolt (#25449)"
-    { 7525454, 18045 }, // "Trainer Spell Item: Earth Shock (#25454)"
-    { 7525457, 18253 }, // "Trainer Spell Item: Flame Shock (#25457)"
-    { 7525464, 18254 }, // "Trainer Spell Item: Frost Shock (#25464)"
-    { 7525467, 18255 }, // "Trainer Spell Item: Devouring Plague (#25467)"
-    { 7525469, 18287 }, // "Trainer Spell Item: Lightning Shield (#25469)"
-    { 7525472, 18288 }, // "Trainer Spell Item: Lightning Shield (#25472)"
-    { 7525489, 18294 }, // "Trainer Spell Item: Flametongue Weapon (#25489)"
-    { 7525500, 18300 }, // "Trainer Spell Item: Frostbrand Weapon (#25500)"
-    { 7525505, 18632 }, // "Trainer Spell Item: Windfury Weapon (#25505)"
-    { 7525508, 18633 }, // "Trainer Spell Item: Stoneskin Totem (#25508)"
-    { 7525509, 18635 }, // "Trainer Spell Item: Stoneskin Totem (#25509)"
-    { 7525525, 18839 }, // "Trainer Spell Item: Stoneclaw Totem (#25525)"
-    { 7525528, 18841 }, // "Trainer Spell Item: Strength of Earth Totem (#25528)"
-    { 7525533, 19221 }, // "Trainer Spell Item: Searing Totem (#25533)"
-    { 7525546, 19222 }, // "Trainer Spell Item: Fire Nova (#25546)"
-    { 7525547, 19223 }, // "Trainer Spell Item: Fire Nova (#25547)"
-    { 7525552, 19224 }, // "Trainer Spell Item: Magma Totem (#25552)"
-    { 7525557, 19225 }, // "Trainer Spell Item: Flametongue Totem (#25557)"
-    { 7525560, 19299 }, // "Trainer Spell Item: Frost Resistance Totem (#25560)"
-    { 7525563, 19300 }, // "Trainer Spell Item: Fire Resistance Totem (#25563)"
-    { 7525567, 19301 }, // "Trainer Spell Item: Healing Stream Totem (#25567)"
-    { 7525570, 19304 }, // "Trainer Spell Item: Mana Spring Totem (#25570)"
-    { 7525574, 19305 }, // "Trainer Spell Item: Nature Resistance Totem (#25574)"
-    { 7525590, 19306 }, // "Trainer Spell Item: Ancestral Spirit (#25590)"
-    { 7525780, 19696 }, // "Trainer Spell Item: Righteous Fury (#25780)"
-    { 7525782, 19994 }, // "Trainer Spell Item: Greater Blessing of Might (#25782)"
-    { 7525894, 19995 }, // "Trainer Spell Item: Greater Blessing of Wisdom (#25894)"
-    { 7525898, 19996 }, // "Trainer Spell Item: Greater Blessing of Kings (#25898)"
-    { 7525899, 20002 }, // "Trainer Spell Item: Greater Blessing of Sanctuary (#25899)"
-    { 7525916, 20004 }, // "Trainer Spell Item: Greater Blessing of Might (#25916)"
-    { 7525918, 20007 }, // "Trainer Spell Item: Greater Blessing of Wisdom (#25918)"
-    { 7526573, 20008 }, // "Trainer Spell Item: Consecration (#26573)"
-    { 7526669, 20031 }, // "Trainer Spell Item: Evasion (#26669)"
-    { 7526679, 20074 }, // "Trainer Spell Item: Deadly Throw (#26679)"
-    { 7526839, 20452 }, // "Trainer Spell Item: Garrote (#26839)"
-    { 7526861, 20516 }, // "Trainer Spell Item: Sinister Strike (#26861)"
-    { 7526862, 20709 }, // "Trainer Spell Item: Sinister Strike (#26862)"
-    { 7526863, 20857 }, // "Trainer Spell Item: Backstab (#26863)"
-    { 7526864, 21023 }, // "Trainer Spell Item: Hemorrhage (#26864)"
-    { 7526865, 21030 }, // "Trainer Spell Item: Eviscerate (#26865)"
-    { 7526867, 21031 }, // "Trainer Spell Item: Rupture (#26867)"
-    { 7526884, 21033 }, // "Trainer Spell Item: Garrote (#26884)"
-    { 7526889, 21072 }, // "Trainer Spell Item: Vanish (#26889)"
-    { 7526978, 21114 }, // "Trainer Spell Item: Healing Touch (#26978)"
-    { 7526979, 21151 }, // "Trainer Spell Item: Healing Touch (#26979)"
-    { 7526980, 21215 }, // "Trainer Spell Item: Regrowth (#26980)"
-    { 7526981, 21217 }, // "Trainer Spell Item: Rejuvenation (#26981)"
-    { 7526982, 21235 }, // "Trainer Spell Item: Rejuvenation (#26982)"
-    { 7526983, 21236 }, // "Trainer Spell Item: Tranquility (#26983)"
-    { 7526984, 21240 }, // "Trainer Spell Item: Wrath (#26984)"
-    { 7526985, 21254 }, // "Trainer Spell Item: Wrath (#26985)"
-    { 7526986, 21546 }, // "Trainer Spell Item: Starfire (#26986)"
-    { 7526987, 21552 }, // "Trainer Spell Item: Moonfire (#26987)"
-    { 7526988, 21721 }, // "Trainer Spell Item: Moonfire (#26988)"
-    { 7526989, 22018 }, // "Trainer Spell Item: Entangling Roots (#26989)"
-    { 7526990, 22019 }, // "Trainer Spell Item: Mark of the Wild (#26990)"
-    { 7526992, 22324 }, // "Trainer Spell Item: Thorns (#26992)"
-    { 7526994, 22645 }, // "Trainer Spell Item: Rebirth (#26994)"
-    { 7526995, 22823 }, // "Trainer Spell Item: Soothe Animal (#26995)"
-    { 7526996, 22824 }, // "Trainer Spell Item: Maul (#26996)"
-    { 7526997, 22825 }, // "Trainer Spell Item: Swipe (Bear) (#26997)"
-    { 7526998, 22826 }, // "Trainer Spell Item: Demoralizing Roar (#26998)"
-    { 7527000, 22827 }, // "Trainer Spell Item: Claw (#27000)"
-    { 7527001, 22828 }, // "Trainer Spell Item: Shred (#27001)"
-    { 7527002, 22829 }, // "Trainer Spell Item: Shred (#27002)"
-    { 7527003, 22830 }, // "Trainer Spell Item: Rake (#27003)"
-    { 7527004, 22831 }, // "Trainer Spell Item: Cower (#27004)"
-    { 7527005, 22832 }, // "Trainer Spell Item: Ravage (#27005)"
-    { 7527006, 22833 }, // "Trainer Spell Item: Pounce (#27006)"
-    { 7527008, 22834 }, // "Trainer Spell Item: Rip (#27008)"
-    { 7527009, 22835 }, // "Trainer Spell Item: Nature's Grasp (#27009)"
-    { 7527012, 22836 }, // "Trainer Spell Item: Hurricane (#27012)"
-    { 7527013, 22837 }, // "Trainer Spell Item: Insect Swarm (#27013)"
-    { 7527014, 22838 }, // "Trainer Spell Item: Raptor Strike (#27014)"
-    { 7527016, 22839 }, // "Trainer Spell Item: Serpent Sting (#27016)"
-    { 7527019, 22840 }, // "Trainer Spell Item: Arcane Shot (#27019)"
-    { 7527021, 22841 }, // "Trainer Spell Item: Multi-Shot (#27021)"
-    { 7527022, 22842 }, // "Trainer Spell Item: Volley (#27022)"
-    { 7527023, 22844 }, // "Trainer Spell Item: Immolation Trap (#27023)"
-    { 7527025, 22845 }, // "Trainer Spell Item: Explosive Trap (#27025)"
-    { 7527044, 22846 }, // "Trainer Spell Item: Aspect of the Hawk (#27044)"
-    { 7527045, 22847 }, // "Trainer Spell Item: Aspect of the Wild (#27045)"
-    { 7527046, 22848 }, // "Trainer Spell Item: Mend Pet (#27046)"
-    { 7527065, 22849 }, // "Trainer Spell Item: Aimed Shot (#27065)"
-    { 7527067, 22850 }, // "Trainer Spell Item: Counterattack (#27067)"
-    { 7527068, 22851 }, // "Trainer Spell Item: Wyvern Sting (#27068)"
-    { 7527070, 22853 }, // "Trainer Spell Item: Fireball (#27070)"
-    { 7527071, 22854 }, // "Trainer Spell Item: Frostbolt (#27071)"
-    { 7527072, 22861 }, // "Trainer Spell Item: Frostbolt (#27072)"
-    { 7527073, 22866 }, // "Trainer Spell Item: Scorch (#27073)"
-    { 7527074, 22871 }, // "Trainer Spell Item: Scorch (#27074)"
-    { 7527075, 22895 }, // "Trainer Spell Item: Arcane Missiles (#27075)"
-    { 7527078, 23160 }, // "Trainer Spell Item: Fire Blast (#27078)"
-    { 7527079, 23172 }, // "Trainer Spell Item: Fire Blast (#27079)"
-    { 7527080, 23444 }, // "Trainer Spell Item: Arcane Explosion (#27080)"
-    { 7527082, 23495 }, // "Trainer Spell Item: Arcane Explosion (#27082)"
-    { 7527085, 23578 }, // "Trainer Spell Item: Blizzard (#27085)"
-    { 7527086, 23579 }, // "Trainer Spell Item: Flamestrike (#27086)"
-    { 7527087, 23683 }, // "Trainer Spell Item: Cone of Cold (#27087)"
-    { 7527088, 23696 }, // "Trainer Spell Item: Frost Nova (#27088)"
-    { 7527101, 23698 }, // "Trainer Spell Item: Conjure Mana Gem (#27101)"
-    { 7527124, 23704 }, // "Trainer Spell Item: Ice Armor (#27124)"
-    { 7527125, 23756 }, // "Trainer Spell Item: Mage Armor (#27125)"
-    { 7527126, 23822 }, // "Trainer Spell Item: Arcane Intellect (#27126)"
-    { 7527128, 23823 }, // "Trainer Spell Item: Fire Ward (#27128)"
-    { 7527130, 23848 }, // "Trainer Spell Item: Amplify Magic (#27130)"
-    { 7527131, 23871 }, // "Trainer Spell Item: Mana Shield (#27131)"
-    { 7527132, 24008 }, // "Trainer Spell Item: Pyroblast (#27132)"
-    { 7527133, 24009 }, // "Trainer Spell Item: Blast Wave (#27133)"
-    { 7527134, 24072 }, // "Trainer Spell Item: Ice Barrier (#27134)"
-    { 7527135, 24105 }, // "Trainer Spell Item: Holy Light (#27135)"
-    { 7527136, 24338 }, // "Trainer Spell Item: Holy Light (#27136)"
-    { 7527137, 24539 }, // "Trainer Spell Item: Flash of Light (#27137)"
-    { 7527138, 25539 }, // "Trainer Spell Item: Exorcism (#27138)"
-    { 7527139, 27498 }, // "Trainer Spell Item: Holy Wrath (#27139)"
-    { 7527140, 27499 }, // "Trainer Spell Item: Blessing of Might (#27140)"
-    { 7527141, 27500 }, // "Trainer Spell Item: Greater Blessing of Might (#27141)"
-    { 7527142, 27501 }, // "Trainer Spell Item: Blessing of Wisdom (#27142)"
-    { 7527143, 27502 }, // "Trainer Spell Item: Greater Blessing of Wisdom (#27143)"
-    { 7527149, 27503 }, // "Trainer Spell Item: Devotion Aura (#27149)"
-    { 7527150, 27635 }, // "Trainer Spell Item: Retribution Aura (#27150)"
-    { 7527151, 27636 }, // "Trainer Spell Item: Shadow Resistance Aura (#27151)"
-    { 7527152, 27651 }, // "Trainer Spell Item: Frost Resistance Aura (#27152)"
-    { 7527153, 27655 }, // "Trainer Spell Item: Fire Resistance Aura (#27153)"
-    { 7527154, 27656 }, // "Trainer Spell Item: Lay on Hands (#27154)"
-    { 7527173, 27657 }, // "Trainer Spell Item: Consecration (#27173)"
-    { 7527174, 27658 }, // "Trainer Spell Item: Holy Shock (#27174)"
-    { 7527179, 27659 }, // "Trainer Spell Item: Holy Shield (#27179)"
-    { 7527180, 27660 }, // "Trainer Spell Item: Hammer of Wrath (#27180)"
-    { 7527209, 27661 }, // "Trainer Spell Item: Shadow Bolt (#27209)"
-    { 7527210, 27662 }, // "Trainer Spell Item: Searing Pain (#27210)"
-    { 7527211, 27663 }, // "Trainer Spell Item: Soul Fire (#27211)"
-    { 7527212, 27664 }, // "Trainer Spell Item: Rain of Fire (#27212)"
-    { 7527213, 27665 }, // "Trainer Spell Item: Hellfire (#27213)"
-    { 7527215, 27666 }, // "Trainer Spell Item: Immolate (#27215)"
-    { 7527216, 27667 }, // "Trainer Spell Item: Corruption (#27216)"
-    { 7527217, 27854 }, // "Trainer Spell Item: Drain Soul (#27217)"
-    { 7527218, 27855 }, // "Trainer Spell Item: Curse of Agony (#27218)"
-    { 7527219, 27856 }, // "Trainer Spell Item: Drain Life (#27219)"
-    { 7527220, 27857 }, // "Trainer Spell Item: Drain Life (#27220)"
-    { 7527222, 27858 }, // "Trainer Spell Item: Life Tap (#27222)"
-    { 7527223, 27859 }, // "Trainer Spell Item: Death Coil (#27223)"
-    { 7527224, 27860 }, // "Trainer Spell Item: Curse of Weakness (#27224)"
-    { 7527228, 28100 }, // "Trainer Spell Item: Curse of the Elements (#27228)"
-    { 7527230, 28101 }, // "Trainer Spell Item: Create Healthstone (#27230)"
-    { 7527238, 28102 }, // "Trainer Spell Item: Create Soulstone (#27238)"
-    { 7527243, 28103 }, // "Trainer Spell Item: Seed of Corruption (#27243)"
-    { 7527250, 28104 }, // "Trainer Spell Item: Create Firestone (#27250)"
-    { 7527259, 28112 }, // "Trainer Spell Item: Health Funnel (#27259)"
-    { 7527260, 28284 }, // "Trainer Spell Item: Demon Armor (#27260)"
-    { 7527263, 28399 }, // "Trainer Spell Item: Shadowburn (#27263)"
-    { 7527265, 28486 }, // "Trainer Spell Item: Dark Pact (#27265)"
-    { 7527441, 28501 }, // "Trainer Spell Item: Ambush (#27441)"
-    { 7527448, 29112 }, // "Trainer Spell Item: Feint (#27448)"
-    { 7527681, 29292 }, // "Trainer Spell Item: Prayer of Spirit (#27681)"
-    { 7527799, 29293 }, // "Trainer Spell Item: Holy Nova (#27799)"
-    { 7527800, 29393 }, // "Trainer Spell Item: Holy Nova (#27800)"
-    { 7527801, 29394 }, // "Trainer Spell Item: Holy Nova (#27801)"
-    { 7527841, 29395 }, // "Trainer Spell Item: Divine Spirit (#27841)"
-    { 7527870, 29401 }, // "Trainer Spell Item: Lightwell (#27870)"
-    { 7527871, 29402 }, // "Trainer Spell Item: Lightwell (#27871)"
-    { 7528172, 29412 }, // "Trainer Spell Item: Create Spellstone (#28172)"
-    { 7528176, 29448 }, // "Trainer Spell Item: Fel Armor (#28176)"
-    { 7528189, 29449 }, // "Trainer Spell Item: Fel Armor (#28189)"
-    { 7528275, 29450 }, // "Trainer Spell Item: Lightwell (#28275)"
-    { 7529166, 29451 }, // "Trainer Spell Item: Innervate (#29166)"
-    { 7529707, 29452 }, // "Trainer Spell Item: Heroic Strike (#29707)"
-    { 7529722, 29453 }, // "Trainer Spell Item: Incinerate (#29722)"
-    { 7529858, 29454 }, // "Trainer Spell Item: Soulshatter (#29858)"
-    { 7529893, 30155 }, // "Trainer Spell Item: Ritual of Souls (#29893)"
-    { 7530016, 30355 }, // "Trainer Spell Item: Devastate (#30016)"
-    { 7530022, 30357 }, // "Trainer Spell Item: Devastate (#30022)"
-    { 7530324, 30358 }, // "Trainer Spell Item: Heroic Strike (#30324)"
-    { 7530330, 30359 }, // "Trainer Spell Item: Mortal Strike (#30330)"
-    { 7530356, 30361 }, // "Trainer Spell Item: Shield Slam (#30356)"
-    { 7530357, 30457 }, // "Trainer Spell Item: Revenge (#30357)"
-    { 7530404, 30458 }, // "Trainer Spell Item: Unstable Affliction (#30404)"
-    { 7530405, 30610 }, // "Trainer Spell Item: Unstable Affliction (#30405)"
-    { 7530413, 30703 }, // "Trainer Spell Item: Shadowfury (#30413)"
-    { 7530414, 30793 }, // "Trainer Spell Item: Shadowfury (#30414)"
-    { 7530449, 30816 }, // "Trainer Spell Item: Spellsteal (#30449)"
-    { 7530451, 31672 }, // "Trainer Spell Item: Arcane Blast (#30451)"
-    { 7530455, 31673 }, // "Trainer Spell Item: Ice Lance (#30455)"
-    { 7530459, 31676 }, // "Trainer Spell Item: Searing Pain (#30459)"
-    { 7530482, 31677 }, // "Trainer Spell Item: Molten Armor (#30482)"
-    { 7530545, 31679 }, // "Trainer Spell Item: Soul Fire (#30545)"
-    { 7530546, 31838 }, // "Trainer Spell Item: Shadowburn (#30546)"
-    { 7530909, 31839 }, // "Trainer Spell Item: Curse of Weakness (#30909)"
-    { 7530910, 31840 }, // "Trainer Spell Item: Curse of Doom (#30910)"
-    { 7531224, 31841 }, // "Trainer Spell Item: Cloak of Shadows (#31224)"
-    { 7531789, 31852 }, // "Trainer Spell Item: Righteous Defense (#31789)"
-    { 7531801, 31853 }, // "Trainer Spell Item: Seal of Vengeance (#31801)"
-    { 7531884, 31854 }, // "Trainer Spell Item: Avenging Wrath (#31884)"
-    { 7532182, 31855 }, // "Trainer Spell Item: Heroism (#32182)"
-    { 7532223, 32062 }, // "Trainer Spell Item: Crusader Aura (#32223)"
-    { 7532231, 32063 }, // "Trainer Spell Item: Incinerate (#32231)"
-    { 7532266, 32067 }, // "Trainer Spell Item: Portal: Exodar (#32266)"
-    { 7532267, 32068 }, // "Trainer Spell Item: Portal: Silvermoon (#32267)"
-    { 7532271, 32453 }, // "Trainer Spell Item: Teleport: Exodar (#32271)"
-    { 7532272, 32455 }, // "Trainer Spell Item: Teleport: Silvermoon (#32272)"
-    { 7532375, 32596 }, // "Trainer Spell Item: Mass Dispel (#32375)"
-    { 7532379, 32597 }, // "Trainer Spell Item: Shadow Word: Death (#32379)"
-    { 7532546, 32598 }, // "Trainer Spell Item: Binding Heal (#32546)"
-    { 7532593, 32599 }, // "Trainer Spell Item: Earth Shield (#32593)"
-    { 7532594, 32600 }, // "Trainer Spell Item: Earth Shield (#32594)"
-    { 7532645, 32601 }, // "Trainer Spell Item: Envenom (#32645)"
-    { 7532684, 32667 }, // "Trainer Spell Item: Envenom (#32684)"
-    { 7532699, 32668 }, // "Trainer Spell Item: Avenger's Shield (#32699)"
-    { 7532700, 32685 }, // "Trainer Spell Item: Avenger's Shield (#32700)"
-    { 7532796, 32686 }, // "Trainer Spell Item: Frost Ward (#32796)"
-    { 7532996, 32721 }, // "Trainer Spell Item: Shadow Word: Death (#32996)"
-    { 7532999, 32722 }, // "Trainer Spell Item: Prayer of Spirit (#32999)"
-    { 7533041, 32762 }, // "Trainer Spell Item: Dragon's Breath (#33041)"
-    { 7533042, 32763 }, // "Trainer Spell Item: Dragon's Breath (#33042)"
-    { 7533043, 32764 }, // "Trainer Spell Item: Dragon's Breath (#33043)"
-    { 7533072, 32765 }, // "Trainer Spell Item: Holy Shock (#33072)"
-    { 7533076, 32766 }, // "Trainer Spell Item: Prayer of Mending (#33076)"
-    { 7533357, 32767 }, // "Trainer Spell Item: Dash (#33357)"
-    { 7533405, 32783 }, // "Trainer Spell Item: Ice Barrier (#33405)"
-    { 7533690, 32784 }, // "Trainer Spell Item: Teleport: Shattrath (#33690)"
-    { 7533691, 32840 }, // "Trainer Spell Item: Portal: Shattrath (#33691)"
-    { 7533736, 32844 }, // "Trainer Spell Item: Water Shield (#33736)"
-    { 7533745, 32845 }, // "Trainer Spell Item: Lacerate (#33745)"
-    { 7533763, 32846 }, // "Trainer Spell Item: Lifebloom (#33763)"
-    { 7533786, 32847 }, // "Trainer Spell Item: Cyclone (#33786)"
-    { 7533933, 32898 }, // "Trainer Spell Item: Blast Wave (#33933)"
-    { 7533938, 32899 }, // "Trainer Spell Item: Pyroblast (#33938)"
-    { 7533944, 32900 }, // "Trainer Spell Item: Dampen Magic (#33944)"
-    { 7533946, 32901 }, // "Trainer Spell Item: Amplify Magic (#33946)"
-    { 7533950, 32902 }, // "Trainer Spell Item: Flight Form (#33950)"
-    { 7533982, 32903 }, // "Trainer Spell Item: Mangle (Cat) (#33982)"
-    { 7533983, 32904 }, // "Trainer Spell Item: Mangle (Cat) (#33983)"
-    { 7533986, 32905 }, // "Trainer Spell Item: Mangle (Bear) (#33986)"
-    { 7533987, 32909 }, // "Trainer Spell Item: Mangle (Bear) (#33987)"
-    { 7534026, 32910 }, // "Trainer Spell Item: Kill Command (#34026)"
-    { 7534074, 32947 }, // "Trainer Spell Item: Aspect of the Viper (#34074)"
-    { 7534120, 32948 }, // "Trainer Spell Item: Steady Shot (#34120)"
-    { 7534411, 33004 }, // "Trainer Spell Item: Mutilate (#34411)"
-    { 7534412, 33042 }, // "Trainer Spell Item: Mutilate (#34412)"
-    { 7534413, 33048 }, // "Trainer Spell Item: Mutilate (#34413)"
-    { 7534428, 33052 }, // "Trainer Spell Item: Victory Rush (#34428)"
-    { 7534433, 33053 }, // "Trainer Spell Item: Shadowfiend (#34433)"
-    { 7534477, 33092 }, // "Trainer Spell Item: Misdirection (#34477)"
-    { 7534600, 33093 }, // "Trainer Spell Item: Snake Trap (#34600)"
-    { 7534767, 33208 }, // "Trainer Spell Item: Summon Charger (#34767)"
-    { 7534768, 33443 }, // "Trainer Spell Item: Summon Warhorse (#34768)"
-    { 7534863, 33444 }, // "Trainer Spell Item: Circle of Healing (#34863)"
-    { 7534864, 33445 }, // "Trainer Spell Item: Circle of Healing (#34864)"
-    { 7534865, 33447 }, // "Trainer Spell Item: Circle of Healing (#34865)"
-    { 7534866, 33448 }, // "Trainer Spell Item: Circle of Healing (#34866)"
-    { 7534916, 33449 }, // "Trainer Spell Item: Vampiric Touch (#34916)"
-    { 7534917, 33451 }, // "Trainer Spell Item: Vampiric Touch (#34917)"
-    { 7535715, 33452 }, // "Trainer Spell Item: Teleport: Shattrath (#35715)"
-    { 7535717, 33454 }, // "Trainer Spell Item: Portal: Shattrath (#35717)"
-    { 7536916, 33457 }, // "Trainer Spell Item: Mongoose Bite (#36916)"
-    { 7536936, 33458 }, // "Trainer Spell Item: Totemic Recall (#36936)"
-    { 7537420, 33459 }, // "Trainer Spell Item: Conjure Water (#37420)"
-    { 7538692, 33460 }, // "Trainer Spell Item: Fireball (#38692)"
-    { 7538697, 33461 }, // "Trainer Spell Item: Frostbolt (#38697)"
-    { 7538699, 33462 }, // "Trainer Spell Item: Arcane Missiles (#38699)"
-    { 7538704, 33822 }, // "Trainer Spell Item: Arcane Missiles (#38704)"
-    { 7540120, 33825 }, // "Trainer Spell Item: Swift Flight Form (#40120)"
-    { 7542650, 33866 }, // "Trainer Spell Item: Army of the Dead (#42650)"
-    { 7542832, 33867 }, // "Trainer Spell Item: Fireball (#42832)"
-    { 7542833, 33872 }, // "Trainer Spell Item: Fireball (#42833)"
-    { 7542841, 33874 }, // "Trainer Spell Item: Frostbolt (#42841)"
-    { 7542842, 33924 }, // "Trainer Spell Item: Frostbolt (#42842)"
-    { 7542843, 33934 }, // "Trainer Spell Item: Arcane Missiles (#42843)"
-    { 7542846, 33935 }, // "Trainer Spell Item: Arcane Missiles (#42846)"
-    { 7542858, 34062 }, // "Trainer Spell Item: Scorch (#42858)"
-    { 7542859, 34125 }, // "Trainer Spell Item: Scorch (#42859)"
-    { 7542872, 34130 }, // "Trainer Spell Item: Fire Blast (#42872)"
-    { 7542873, 34411 }, // "Trainer Spell Item: Fire Blast (#42873)"
-    { 7542890, 34440 }, // "Trainer Spell Item: Pyroblast (#42890)"
-    { 7542891, 34537 }, // "Trainer Spell Item: Pyroblast (#42891)"
-    { 7542894, 34641 }, // "Trainer Spell Item: Arcane Blast (#42894)"
-    { 7542896, 34646 }, // "Trainer Spell Item: Arcane Blast (#42896)"
-    { 7542897, 34747 }, // "Trainer Spell Item: Arcane Blast (#42897)"
-    { 7542913, 34748 }, // "Trainer Spell Item: Ice Lance (#42913)"
-    { 7542914, 34749 }, // "Trainer Spell Item: Ice Lance (#42914)"
-    { 7542917, 34750 }, // "Trainer Spell Item: Frost Nova (#42917)"
-    { 7542920, 34751 }, // "Trainer Spell Item: Arcane Explosion (#42920)"
-    { 7542921, 34752 }, // "Trainer Spell Item: Arcane Explosion (#42921)"
-    { 7542925, 34753 }, // "Trainer Spell Item: Flamestrike (#42925)"
-    { 7542926, 34754 }, // "Trainer Spell Item: Flamestrike (#42926)"
-    { 7542930, 34755 }, // "Trainer Spell Item: Cone of Cold (#42930)"
-    { 7542931, 34756 }, // "Trainer Spell Item: Cone of Cold (#42931)"
-    { 7542939, 34757 }, // "Trainer Spell Item: Blizzard (#42939)"
-    { 7542940, 34758 }, // "Trainer Spell Item: Blizzard (#42940)"
-    { 7542944, 34759 }, // "Trainer Spell Item: Blast Wave (#42944)"
-    { 7542945, 34760 }, // "Trainer Spell Item: Blast Wave (#42945)"
-    { 7542949, 34761 }, // "Trainer Spell Item: Dragon's Breath (#42949)"
-    { 7542950, 34762 }, // "Trainer Spell Item: Dragon's Breath (#42950)"
-    { 7542955, 34763 }, // "Trainer Spell Item: Conjure Refreshment (#42955)"
-    { 7542956, 34764 }, // "Trainer Spell Item: Conjure Refreshment (#42956)"
-    { 7542985, 34765 }, // "Trainer Spell Item: Conjure Mana Gem (#42985)"
-    { 7542995, 34766 }, // "Trainer Spell Item: Arcane Intellect (#42995)"
-    { 7543002, 34767 }, // "Trainer Spell Item: Arcane Brilliance (#43002)"
-    { 7543008, 34768 }, // "Trainer Spell Item: Ice Armor (#43008)"
-    { 7543010, 34769 }, // "Trainer Spell Item: Fire Ward (#43010)"
-    { 7543012, 34770 }, // "Trainer Spell Item: Frost Ward (#43012)"
-    { 7543015, 34780 }, // "Trainer Spell Item: Dampen Magic (#43015)"
-    { 7543017, 34832 }, // "Trainer Spell Item: Amplify Magic (#43017)"
-    { 7543019, 35563 }, // "Trainer Spell Item: Mana Shield (#43019)"
-    { 7543020, 35565 }, // "Trainer Spell Item: Mana Shield (#43020)"
-    { 7543023, 35710 }, // "Trainer Spell Item: Mage Armor (#43023)"
-    { 7543024, 35716 }, // "Trainer Spell Item: Mage Armor (#43024)"
-    { 7543038, 35717 }, // "Trainer Spell Item: Ice Barrier (#43038)"
-    { 7543039, 35720 }, // "Trainer Spell Item: Ice Barrier (#43039)"
-    { 7543045, 35947 }, // "Trainer Spell Item: Molten Armor (#43045)"
-    { 7543046, 35948 }, // "Trainer Spell Item: Molten Armor (#43046)"
-    { 7543265, 35949 }, // "Trainer Spell Item: Death and Decay (#43265)"
-    { 7543987, 35950 }, // "Trainer Spell Item: Ritual of Refreshment (#43987)"
-    { 7544614, 35951 }, // "Trainer Spell Item: Frostfire Bolt (#44614)"
-    { 7544780, 35952 }, // "Trainer Spell Item: Arcane Barrage (#44780)"
-    { 7544781, 35953 }, // "Trainer Spell Item: Arcane Barrage (#44781)"
-    { 7545438, 35954 }, // "Trainer Spell Item: Ice Block (#45438)"
-    { 7545463, 36770 }, // "Trainer Spell Item: Death Strike (#45463)"
-    { 7545524, 36831 }, // "Trainer Spell Item: Chains of Ice (#45524)"
-    { 7545529, 36845 }, // "Trainer Spell Item: Blood Tap (#45529)"
-    { 7546584, 37091 }, // "Trainer Spell Item: Raise Dead (#46584)"
-    { 7546845, 37092 }, // "Trainer Spell Item: Rend (#46845)"
-    { 7547436, 37093 }, // "Trainer Spell Item: Battle Shout (#47436)"
-    { 7547437, 37094 }, // "Trainer Spell Item: Demoralizing Shout (#47437)"
-    { 7547439, 37097 }, // "Trainer Spell Item: Commanding Shout (#47439)"
-    { 7547440, 37098 }, // "Trainer Spell Item: Commanding Shout (#47440)"
-    { 7547449, 37118 }, // "Trainer Spell Item: Heroic Strike (#47449)"
-    { 7547450, 37252 }, // "Trainer Spell Item: Heroic Strike (#47450)"
-    { 7547465, 37253 }, // "Trainer Spell Item: Rend (#47465)"
-    { 7547470, 37449 }, // "Trainer Spell Item: Execute (#47470)"
-    { 7547471, 37452 }, // "Trainer Spell Item: Execute (#47471)"
-    { 7547474, 37926 }, // "Trainer Spell Item: Slam (#47474)"
-    { 7547475, 38350 }, // "Trainer Spell Item: Slam (#47475)"
-    { 7547476, 38351 }, // "Trainer Spell Item: Strangulate (#47476)"
-    { 7547485, 38427 }, // "Trainer Spell Item: Mortal Strike (#47485)"
-    { 7547486, 38428 }, // "Trainer Spell Item: Mortal Strike (#47486)"
-    { 7547487, 38429 }, // "Trainer Spell Item: Shield Slam (#47487)"
-    { 7547488, 38430 }, // "Trainer Spell Item: Shield Slam (#47488)"
-    { 7547497, 38431 }, // "Trainer Spell Item: Devastate (#47497)"
-    { 7547498, 38432 }, // "Trainer Spell Item: Devastate (#47498)"
-    { 7547501, 38466 }, // "Trainer Spell Item: Thunder Clap (#47501)"
-    { 7547502, 38698 }, // "Trainer Spell Item: Thunder Clap (#47502)"
-    { 7547519, 38706 }, // "Trainer Spell Item: Cleave (#47519)"
-    { 7547520, 39327 }, // "Trainer Spell Item: Cleave (#47520)"
-    { 7547528, 39520 }, // "Trainer Spell Item: Mind Freeze (#47528)"
-    { 7547568, 39666 }, // "Trainer Spell Item: Empower Rune Weapon (#47568)"
-    { 7547610, 39671 }, // "Trainer Spell Item: Frostfire Bolt (#47610)"
-    { 7547793, 39691 }, // "Trainer Spell Item: Demon Armor (#47793)"
-    { 7547808, 39971 }, // "Trainer Spell Item: Shadow Bolt (#47808)"
-    { 7547809, 40035 }, // "Trainer Spell Item: Shadow Bolt (#47809)"
-    { 7547810, 40036 }, // "Trainer Spell Item: Immolate (#47810)"
-    { 7547811, 40042 }, // "Trainer Spell Item: Immolate (#47811)"
-    { 7547812, 40067 }, // "Trainer Spell Item: Corruption (#47812)"
-    { 7547813, 40068 }, // "Trainer Spell Item: Corruption (#47813)"
-    { 7547814, 40070 }, // "Trainer Spell Item: Searing Pain (#47814)"
-    { 7547815, 40072 }, // "Trainer Spell Item: Searing Pain (#47815)"
-    { 7547819, 40073 }, // "Trainer Spell Item: Rain of Fire (#47819)"
-    { 7547820, 40076 }, // "Trainer Spell Item: Rain of Fire (#47820)"
-    { 7547823, 40077 }, // "Trainer Spell Item: Hellfire (#47823)"
-    { 7547824, 40078 }, // "Trainer Spell Item: Soul Fire (#47824)"
-    { 7547825, 40079 }, // "Trainer Spell Item: Soul Fire (#47825)"
-    { 7547826, 40081 }, // "Trainer Spell Item: Shadowburn (#47826)"
-    { 7547827, 40082 }, // "Trainer Spell Item: Shadowburn (#47827)"
-    { 7547835, 40083 }, // "Trainer Spell Item: Seed of Corruption (#47835)"
-    { 7547836, 40084 }, // "Trainer Spell Item: Seed of Corruption (#47836)"
-    { 7547837, 40087 }, // "Trainer Spell Item: Incinerate (#47837)"
-    { 7547838, 40093 }, // "Trainer Spell Item: Incinerate (#47838)"
-    { 7547841, 40097 }, // "Trainer Spell Item: Unstable Affliction (#47841)"
-    { 7547843, 40109 }, // "Trainer Spell Item: Unstable Affliction (#47843)"
-    { 7547846, 40202 }, // "Trainer Spell Item: Shadowfury (#47846)"
-    { 7547847, 40211 }, // "Trainer Spell Item: Shadowfury (#47847)"
-    { 7547855, 40212 }, // "Trainer Spell Item: Drain Soul (#47855)"
-    { 7547856, 40213 }, // "Trainer Spell Item: Health Funnel (#47856)"
-    { 7547857, 40214 }, // "Trainer Spell Item: Drain Life (#47857)"
-    { 7547859, 40215 }, // "Trainer Spell Item: Death Coil (#47859)"
-    { 7547860, 40216 }, // "Trainer Spell Item: Death Coil (#47860)"
-    { 7547863, 40217 }, // "Trainer Spell Item: Curse of Agony (#47863)"
-    { 7547864, 40356 }, // "Trainer Spell Item: Curse of Agony (#47864)"
-    { 7547865, 40357 }, // "Trainer Spell Item: Curse of the Elements (#47865)"
-    { 7547867, 40358 }, // "Trainer Spell Item: Curse of Doom (#47867)"
-    { 7547871, 40359 }, // "Trainer Spell Item: Create Healthstone (#47871)"
-    { 7547878, 40404 }, // "Trainer Spell Item: Create Healthstone (#47878)"
-    { 7547884, 40413 }, // "Trainer Spell Item: Create Soulstone (#47884)"
-    { 7547886, 40667 }, // "Trainer Spell Item: Create Spellstone (#47886)"
-    { 7547888, 40677 }, // "Trainer Spell Item: Create Spellstone (#47888)"
-    { 7547889, 41166 }, // "Trainer Spell Item: Demon Armor (#47889)"
-    { 7547890, 41374 }, // "Trainer Spell Item: Shadow Ward (#47890)"
-    { 7547891, 41729 }, // "Trainer Spell Item: Shadow Ward (#47891)"
-    { 7547892, 41731 }, // "Trainer Spell Item: Fel Armor (#47892)"
-    { 7547893, 41751 }, // "Trainer Spell Item: Fel Armor (#47893)"
-    { 7547897, 42428 }, // "Trainer Spell Item: Shadowflame (#47897)"
-    { 7548018, 42429 }, // "Trainer Spell Item: Demonic Circle: Summon (#48018)"
-    { 7548020, 42430 }, // "Trainer Spell Item: Demonic Circle: Teleport (#48020)"
-    { 7548040, 42431 }, // "Trainer Spell Item: Inner Fire (#48040)"
-    { 7548045, 42432 }, // "Trainer Spell Item: Mind Sear (#48045)"
-    { 7548062, 42433 }, // "Trainer Spell Item: Greater Heal (#48062)"
-    { 7548063, 42434 }, // "Trainer Spell Item: Greater Heal (#48063)"
-    { 7548065, 42545 }, // "Trainer Spell Item: Power Word: Shield (#48065)"
-    { 7548066, 42548 }, // "Trainer Spell Item: Power Word: Shield (#48066)"
-    { 7548067, 42590 }, // "Trainer Spell Item: Renew (#48067)"
-    { 7548068, 42777 }, // "Trainer Spell Item: Renew (#48068)"
-    { 7548070, 42778 }, // "Trainer Spell Item: Flash Heal (#48070)"
-    { 7548071, 42779 }, // "Trainer Spell Item: Flash Heal (#48071)"
-    { 7548072, 42942 }, // "Trainer Spell Item: Prayer of Healing (#48072)"
-    { 7548073, 42993 }, // "Trainer Spell Item: Divine Spirit (#48073)"
-    { 7548074, 42994 }, // "Trainer Spell Item: Prayer of Spirit (#48074)"
-    { 7548077, 42995 }, // "Trainer Spell Item: Holy Nova (#48077)"
-    { 7548078, 42996 }, // "Trainer Spell Item: Holy Nova (#48078)"
-    { 7548086, 42997 }, // "Trainer Spell Item: Lightwell (#48086)"
-    { 7548087, 42998 }, // "Trainer Spell Item: Lightwell (#48087)"
-    { 7548088, 42999 }, // "Trainer Spell Item: Circle of Healing (#48088)"
-    { 7548089, 43000 }, // "Trainer Spell Item: Circle of Healing (#48089)"
-    { 7548112, 43001 }, // "Trainer Spell Item: Prayer of Mending (#48112)"
-    { 7548113, 43004 }, // "Trainer Spell Item: Prayer of Mending (#48113)"
-    { 7548119, 43005 }, // "Trainer Spell Item: Binding Heal (#48119)"
-    { 7548120, 43015 }, // "Trainer Spell Item: Binding Heal (#48120)"
-    { 7548122, 43086 }, // "Trainer Spell Item: Smite (#48122)"
-    { 7548123, 43087 }, // "Trainer Spell Item: Smite (#48123)"
-    { 7548124, 43236 }, // "Trainer Spell Item: Shadow Word: Pain (#48124)"
-    { 7548125, 43268 }, // "Trainer Spell Item: Shadow Word: Pain (#48125)"
-    { 7548126, 43463 }, // "Trainer Spell Item: Mind Blast (#48126)"
-    { 7548127, 43464 }, // "Trainer Spell Item: Mind Blast (#48127)"
-    { 7548134, 43465 }, // "Trainer Spell Item: Holy Fire (#48134)"
-    { 7548135, 43466 }, // "Trainer Spell Item: Holy Fire (#48135)"
-    { 7548155, 43467 }, // "Trainer Spell Item: Mind Flay (#48155)"
-    { 7548156, 43468 }, // "Trainer Spell Item: Mind Flay (#48156)"
-    { 7548157, 43478 }, // "Trainer Spell Item: Shadow Word: Death (#48157)"
-    { 7548158, 43480 }, // "Trainer Spell Item: Shadow Word: Death (#48158)"
-    { 7548159, 43488 }, // "Trainer Spell Item: Vampiric Touch (#48159)"
-    { 7548160, 43490 }, // "Trainer Spell Item: Vampiric Touch (#48160)"
-    { 7548161, 43491 }, // "Trainer Spell Item: Power Word: Fortitude (#48161)"
-    { 7548162, 43492 }, // "Trainer Spell Item: Prayer of Fortitude (#48162)"
-    { 7548168, 43496 }, // "Trainer Spell Item: Inner Fire (#48168)"
-    { 7548169, 43518 }, // "Trainer Spell Item: Shadow Protection (#48169)"
-    { 7548170, 43523 }, // "Trainer Spell Item: Prayer of Shadow Protection (#48170)"
-    { 7548171, 43530 }, // "Trainer Spell Item: Resurrection (#48171)"
-    { 7548172, 43531 }, // "Trainer Spell Item: Desperate Prayer (#48172)"
-    { 7548173, 43569 }, // "Trainer Spell Item: Desperate Prayer (#48173)"
-    { 7548263, 43570 }, // "Trainer Spell Item: Frost Presence (#48263)"
-    { 7548265, 43695 }, // "Trainer Spell Item: Unholy Presence (#48265)"
-    { 7548299, 43696 }, // "Trainer Spell Item: Devouring Plague (#48299)"
-    { 7548300, 44012 }, // "Trainer Spell Item: Devouring Plague (#48300)"
-    { 7548377, 44049 }, // "Trainer Spell Item: Healing Touch (#48377)"
-    { 7548378, 44071 }, // "Trainer Spell Item: Healing Touch (#48378)"
-    { 7548440, 44072 }, // "Trainer Spell Item: Rejuvenation (#48440)"
-    { 7548441, 44114 }, // "Trainer Spell Item: Rejuvenation (#48441)"
-    { 7548442, 44228 }, // "Trainer Spell Item: Regrowth (#48442)"
-    { 7548443, 44314 }, // "Trainer Spell Item: Regrowth (#48443)"
-    { 7548446, 44315 }, // "Trainer Spell Item: Tranquility (#48446)"
-    { 7548447, 44325 }, // "Trainer Spell Item: Tranquility (#48447)"
-    { 7548450, 44327 }, // "Trainer Spell Item: Lifebloom (#48450)"
-    { 7548451, 44328 }, // "Trainer Spell Item: Lifebloom (#48451)"
-    { 7548459, 44329 }, // "Trainer Spell Item: Wrath (#48459)"
-    { 7548461, 44330 }, // "Trainer Spell Item: Wrath (#48461)"
-    { 7548462, 44331 }, // "Trainer Spell Item: Moonfire (#48462)"
-    { 7548463, 44332 }, // "Trainer Spell Item: Moonfire (#48463)"
-    { 7548464, 44570 }, // "Trainer Spell Item: Starfire (#48464)"
-    { 7548465, 44571 }, // "Trainer Spell Item: Starfire (#48465)"
-    { 7548467, 44572 }, // "Trainer Spell Item: Hurricane (#48467)"
-    { 7548468, 44573 }, // "Trainer Spell Item: Insect Swarm (#48468)"
-    { 7548469, 44574 }, // "Trainer Spell Item: Mark of the Wild (#48469)"
-    { 7548470, 44575 }, // "Trainer Spell Item: Gift of the Wild (#48470)"
-    { 7548477, 44607 }, // "Trainer Spell Item: Rebirth (#48477)"
-    { 7548479, 44608 }, // "Trainer Spell Item: Maul (#48479)"
-    { 7548480, 44609 }, // "Trainer Spell Item: Maul (#48480)"
-    { 7548559, 44616 }, // "Trainer Spell Item: Demoralizing Roar (#48559)"
-    { 7548560, 44617 }, // "Trainer Spell Item: Demoralizing Roar (#48560)"
-    { 7548561, 44618 }, // "Trainer Spell Item: Swipe (Bear) (#48561)"
-    { 7548562, 44619 }, // "Trainer Spell Item: Swipe (Bear) (#48562)"
-    { 7548563, 44620 }, // "Trainer Spell Item: Mangle (Bear) (#48563)"
-    { 7548564, 44722 }, // "Trainer Spell Item: Mangle (Bear) (#48564)"
-    { 7548565, 44728 }, // "Trainer Spell Item: Mangle (Cat) (#48565)"
-    { 7548566, 44749 }, // "Trainer Spell Item: Mangle (Cat) (#48566)"
-    { 7548567, 44750 }, // "Trainer Spell Item: Lacerate (#48567)"
-    { 7548568, 44836 }, // "Trainer Spell Item: Lacerate (#48568)"
-    { 7548569, 44837 }, // "Trainer Spell Item: Claw (#48569)"
-    { 7548570, 44838 }, // "Trainer Spell Item: Claw (#48570)"
-    { 7548571, 44839 }, // "Trainer Spell Item: Shred (#48571)"
-    { 7548572, 44840 }, // "Trainer Spell Item: Shred (#48572)"
-    { 7548573, 44854 }, // "Trainer Spell Item: Rake (#48573)"
-    { 7548574, 44855 }, // "Trainer Spell Item: Rake (#48574)"
-    { 7548575, 44939 }, // "Trainer Spell Item: Cower (#48575)"
-    { 7548576, 44940 }, // "Trainer Spell Item: Ferocious Bite (#48576)"
-    { 7548577, 44941 }, // "Trainer Spell Item: Ferocious Bite (#48577)"
-    { 7548578, 44953 }, // "Trainer Spell Item: Ravage (#48578)"
-    { 7548579, 45006 }, // "Trainer Spell Item: Ravage (#48579)"
-    { 7548637, 45007 }, // "Trainer Spell Item: Sinister Strike (#48637)"
-    { 7548638, 45008 }, // "Trainer Spell Item: Sinister Strike (#48638)"
-    { 7548656, 45009 }, // "Trainer Spell Item: Backstab (#48656)"
-    { 7548657, 45276 }, // "Trainer Spell Item: Backstab (#48657)"
-    { 7548658, 45277 }, // "Trainer Spell Item: Feint (#48658)"
-    { 7548659, 45279 }, // "Trainer Spell Item: Feint (#48659)"
-    { 7548660, 45621 }, // "Trainer Spell Item: Hemorrhage (#48660)"
-    { 7548663, 45901 }, // "Trainer Spell Item: Mutilate (#48663)"
-    { 7548666, 45932 }, // "Trainer Spell Item: Mutilate (#48666)"
-    { 7548667, 46336 }, // "Trainer Spell Item: Eviscerate (#48667)"
-    { 7548668, 46376 }, // "Trainer Spell Item: Eviscerate (#48668)"
-    { 7548671, 46377 }, // "Trainer Spell Item: Rupture (#48671)"
-    { 7548672, 46378 }, // "Trainer Spell Item: Rupture (#48672)"
-    { 7548673, 46379 }, // "Trainer Spell Item: Deadly Throw (#48673)"
-    { 7548674, 46784 }, // "Trainer Spell Item: Deadly Throw (#48674)"
-    { 7548675, 46793 }, // "Trainer Spell Item: Garrote (#48675)"
-    { 7548676, 46796 }, // "Trainer Spell Item: Garrote (#48676)"
-    { 7548689, 46797 }, // "Trainer Spell Item: Ambush (#48689)"
-    { 7548690, 46887 }, // "Trainer Spell Item: Ambush (#48690)"
-    { 7548691, 47499 }, // "Trainer Spell Item: Ambush (#48691)"
-    { 7548707, 49632 }, // "Trainer Spell Item: Anti-Magic Shell (#48707)"
-    { 7548721, 49768 }, // "Trainer Spell Item: Blood Boil (#48721)"
-    { 7548743, 49863 }, // "Trainer Spell Item: Death Pact (#48743)"
-    { 7548781, 117 }, // "Trainer Spell Item: Holy Light (#48781)"
-    { 7548782, 118 }, // "Trainer Spell Item: Holy Light (#48782)"
-    { 7548784, 159 }, // "Trainer Spell Item: Flash of Light (#48784)"
-    { 7548785, 414 }, // "Trainer Spell Item: Flash of Light (#48785)"
-    { 7548788, 422 }, // "Trainer Spell Item: Lay on Hands (#48788)"
-    { 7548792, 724 }, // "Trainer Spell Item: Icebound Fortitude (#48792)"
-    { 7548800, 733 }, // "Trainer Spell Item: Exorcism (#48800)"
-    { 7548801, 787 }, // "Trainer Spell Item: Exorcism (#48801)"
-    { 7548805, 858 }, // "Trainer Spell Item: Hammer of Wrath (#48805)"
-    { 7548806, 929 }, // "Trainer Spell Item: Hammer of Wrath (#48806)"
-    { 7548816, 954 }, // "Trainer Spell Item: Holy Wrath (#48816)"
-    { 7548817, 955 }, // "Trainer Spell Item: Holy Wrath (#48817)"
-    { 7548818, 961 }, // "Trainer Spell Item: Consecration (#48818)"
-    { 7548819, 1017 }, // "Trainer Spell Item: Consecration (#48819)"
-    { 7548824, 1072 }, // "Trainer Spell Item: Holy Shock (#48824)"
-    { 7548825, 1082 }, // "Trainer Spell Item: Holy Shock (#48825)"
-    { 7548826, 1113 }, // "Trainer Spell Item: Avenger's Shield (#48826)"
-    { 7548827, 1114 }, // "Trainer Spell Item: Avenger's Shield (#48827)"
-    { 7548931, 1119 }, // "Trainer Spell Item: Blessing of Might (#48931)"
-    { 7548932, 1165 }, // "Trainer Spell Item: Blessing of Might (#48932)"
-    { 7548933, 1179 }, // "Trainer Spell Item: Greater Blessing of Might (#48933)"
-    { 7548934, 1180 }, // "Trainer Spell Item: Greater Blessing of Might (#48934)"
-    { 7548935, 1181 }, // "Trainer Spell Item: Blessing of Wisdom (#48935)"
-    { 7548936, 1205 }, // "Trainer Spell Item: Blessing of Wisdom (#48936)"
-    { 7548937, 1326 }, // "Trainer Spell Item: Greater Blessing of Wisdom (#48937)"
-    { 7548938, 1401 }, // "Trainer Spell Item: Greater Blessing of Wisdom (#48938)"
-    { 7548941, 1450 }, // "Trainer Spell Item: Devotion Aura (#48941)"
-    { 7548942, 1477 }, // "Trainer Spell Item: Devotion Aura (#48942)"
-    { 7548943, 1478 }, // "Trainer Spell Item: Shadow Resistance Aura (#48943)"
-    { 7548945, 1487 }, // "Trainer Spell Item: Frost Resistance Aura (#48945)"
-    { 7548947, 1645 }, // "Trainer Spell Item: Fire Resistance Aura (#48947)"
-    { 7548949, 1707 }, // "Trainer Spell Item: Redemption (#48949)"
-    { 7548950, 1708 }, // "Trainer Spell Item: Redemption (#48950)"
-    { 7548951, 1710 }, // "Trainer Spell Item: Holy Shield (#48951)"
-    { 7548952, 1711 }, // "Trainer Spell Item: Holy Shield (#48952)"
-    { 7548989, 1712 }, // "Trainer Spell Item: Mend Pet (#48989)"
-    { 7548990, 2070 }, // "Trainer Spell Item: Mend Pet (#48990)"
-    { 7548995, 2136 }, // "Trainer Spell Item: Raptor Strike (#48995)"
-    { 7548996, 2287 }, // "Trainer Spell Item: Raptor Strike (#48996)"
-    { 7548998, 2288 }, // "Trainer Spell Item: Counterattack (#48998)"
-    { 7548999, 2289 }, // "Trainer Spell Item: Counterattack (#48999)"
-    { 7549000, 2290 }, // "Trainer Spell Item: Serpent Sting (#49000)"
-    { 7549001, 2454 }, // "Trainer Spell Item: Serpent Sting (#49001)"
-    { 7549011, 2455 }, // "Trainer Spell Item: Wyvern Sting (#49011)"
-    { 7549012, 2456 }, // "Trainer Spell Item: Wyvern Sting (#49012)"
-    { 7549020, 2457 }, // "Trainer Spell Item: Obliterate (#49020)"
-    { 7549044, 2458 }, // "Trainer Spell Item: Arcane Shot (#49044)"
-    { 7549045, 2459 }, // "Trainer Spell Item: Arcane Shot (#49045)"
-    { 7549047, 2460 }, // "Trainer Spell Item: Multi-Shot (#49047)"
-    { 7549048, 2461 }, // "Trainer Spell Item: Multi-Shot (#49048)"
-    { 7549049, 2462 }, // "Trainer Spell Item: Aimed Shot (#49049)"
-    { 7549050, 2593 }, // "Trainer Spell Item: Aimed Shot (#49050)"
-    { 7549051, 2594 }, // "Trainer Spell Item: Steady Shot (#49051)"
-    { 7549052, 2595 }, // "Trainer Spell Item: Steady Shot (#49052)"
-    { 7549055, 2596 }, // "Trainer Spell Item: Immolation Trap (#49055)"
-    { 7549056, 2633 }, // "Trainer Spell Item: Immolation Trap (#49056)"
-    { 7549066, 2679 }, // "Trainer Spell Item: Explosive Trap (#49066)"
-    { 7549067, 2680 }, // "Trainer Spell Item: Explosive Trap (#49067)"
-    { 7549071, 2681 }, // "Trainer Spell Item: Aspect of the Wild (#49071)"
-    { 7549230, 2682 }, // "Trainer Spell Item: Earth Shock (#49230)"
-    { 7549231, 2683 }, // "Trainer Spell Item: Earth Shock (#49231)"
-    { 7549232, 2684 }, // "Trainer Spell Item: Flame Shock (#49232)"
-    { 7549233, 2685 }, // "Trainer Spell Item: Flame Shock (#49233)"
-    { 7549235, 2686 }, // "Trainer Spell Item: Frost Shock (#49235)"
-    { 7549236, 2687 }, // "Trainer Spell Item: Frost Shock (#49236)"
-    { 7549237, 2723 }, // "Trainer Spell Item: Lightning Bolt (#49237)"
-    { 7549238, 2888 }, // "Trainer Spell Item: Lightning Bolt (#49238)"
-    { 7549270, 2894 }, // "Trainer Spell Item: Chain Lightning (#49270)"
-    { 7549271, 3012 }, // "Trainer Spell Item: Chain Lightning (#49271)"
-    { 7549272, 3013 }, // "Trainer Spell Item: Healing Wave (#49272)"
-    { 7549273, 3087 }, // "Trainer Spell Item: Healing Wave (#49273)"
-    { 7549275, 3220 }, // "Trainer Spell Item: Lesser Healing Wave (#49275)"
-    { 7549276, 3382 }, // "Trainer Spell Item: Lesser Healing Wave (#49276)"
-    { 7549277, 3383 }, // "Trainer Spell Item: Ancestral Spirit (#49277)"
-    { 7549280, 3384 }, // "Trainer Spell Item: Lightning Shield (#49280)"
-    { 7549281, 3385 }, // "Trainer Spell Item: Lightning Shield (#49281)"
-    { 7549283, 3386 }, // "Trainer Spell Item: Earth Shield (#49283)"
-    { 7549284, 3387 }, // "Trainer Spell Item: Earth Shield (#49284)"
-    { 7549358, 3388 }, // "Trainer Spell Item: Teleport: Stonard (#49358)"
-    { 7549359, 3389 }, // "Trainer Spell Item: Teleport: Theramore (#49359)"
-    { 7549360, 3390 }, // "Trainer Spell Item: Portal: Theramore (#49360)"
-    { 7549361, 3391 }, // "Trainer Spell Item: Portal: Stonard (#49361)"
-    { 7549799, 3448 }, // "Trainer Spell Item: Rip (#49799)"
-    { 7549800, 3662 }, // "Trainer Spell Item: Rip (#49800)"
-    { 7549802, 3663 }, // "Trainer Spell Item: Maim (#49802)"
-    { 7549803, 3664 }, // "Trainer Spell Item: Pounce (#49803)"
-    { 7549892, 3665 }, // "Trainer Spell Item: Death Coil (#49892)"
-    { 7549893, 3666 }, // "Trainer Spell Item: Death Coil (#49893)"
-    { 7549894, 3703 }, // "Trainer Spell Item: Death Coil (#49894)"
-    { 7549895, 3726 }, // "Trainer Spell Item: Death Coil (#49895)"
-    { 7549896, 3727 }, // "Trainer Spell Item: Icy Touch (#49896)"
-    { 7549903, 3728 }, // "Trainer Spell Item: Icy Touch (#49903)"
-    { 7549904, 3729 }, // "Trainer Spell Item: Icy Touch (#49904)"
-    { 7549909, 3770 }, // "Trainer Spell Item: Icy Touch (#49909)"
-    { 7549917, 3771 }, // "Trainer Spell Item: Plague Strike (#49917)"
-    { 7549918, 3772 }, // "Trainer Spell Item: Plague Strike (#49918)"
-    { 7549919, 3823 }, // "Trainer Spell Item: Plague Strike (#49919)"
-    { 7549920, 3825 }, // "Trainer Spell Item: Plague Strike (#49920)"
-    { 7549921, 3826 }, // "Trainer Spell Item: Plague Strike (#49921)"
-    { 7549923, 3827 }, // "Trainer Spell Item: Death Strike (#49923)"
-    { 7549924, 3828 }, // "Trainer Spell Item: Death Strike (#49924)"
-    { 7549926, 3927 }, // "Trainer Spell Item: Blood Strike (#49926)"
-    { 7549927, 3928 }, // "Trainer Spell Item: Blood Strike (#49927)"
-    { 7549928, 4418 }, // "Trainer Spell Item: Blood Strike (#49928)"
-    { 7549929, 4419 }, // "Trainer Spell Item: Blood Strike (#49929)"
-    { 7549930, 4421 }, // "Trainer Spell Item: Blood Strike (#49930)"
-    { 7549936, 4422 }, // "Trainer Spell Item: Death and Decay (#49936)"
-    { 7549937, 4424 }, // "Trainer Spell Item: Death and Decay (#49937)"
-    { 7549938, 4425 }, // "Trainer Spell Item: Death and Decay (#49938)"
-    { 7549939, 4426 }, // "Trainer Spell Item: Blood Boil (#49939)"
-    { 7549940, 4457 }, // "Trainer Spell Item: Blood Boil (#49940)"
-    { 7549941, 4536 }, // "Trainer Spell Item: Blood Boil (#49941)"
-    { 7549998, 4537 }, // "Trainer Spell Item: Death Strike (#49998)"
-    { 7549999, 4538 }, // "Trainer Spell Item: Death Strike (#49999)"
-    { 7550212, 4539 }, // "Trainer Spell Item: Tiger's Fury (#50212)"
-    { 7550213, 4540 }, // "Trainer Spell Item: Tiger's Fury (#50213)"
-    { 7550464, 4541 }, // "Trainer Spell Item: Nourish (#50464)"
-    { 7550511, 4542 }, // "Trainer Spell Item: Curse of Weakness (#50511)"
-    { 7550763, 4544 }, // "Trainer Spell Item: Revive (#50763)"
-    { 7550764, 4592 }, // "Trainer Spell Item: Revive (#50764)"
-    { 7550765, 4593 }, // "Trainer Spell Item: Revive (#50765)"
-    { 7550766, 4594 }, // "Trainer Spell Item: Revive (#50766)"
-    { 7550767, 4595 }, // "Trainer Spell Item: Revive (#50767)"
-    { 7550768, 4596 }, // "Trainer Spell Item: Revive (#50768)"
-    { 7550769, 4599 }, // "Trainer Spell Item: Revive (#50769)"
-    { 7550842, 4600 }, // "Trainer Spell Item: Pestilence (#50842)"
-    { 7551325, 4601 }, // "Trainer Spell Item: Corpse Explosion (#51325)"
-    { 7551326, 4602 }, // "Trainer Spell Item: Corpse Explosion (#51326)"
-    { 7551327, 4604 }, // "Trainer Spell Item: Corpse Explosion (#51327)"
-    { 7551328, 4605 }, // "Trainer Spell Item: Corpse Explosion (#51328)"
-    { 7551409, 4606 }, // "Trainer Spell Item: Howling Blast (#51409)"
-    { 7551410, 4607 }, // "Trainer Spell Item: Howling Blast (#51410)"
-    { 7551411, 4608 }, // "Trainer Spell Item: Howling Blast (#51411)"
-    { 7551416, 4623 }, // "Trainer Spell Item: Frost Strike (#51416)"
-    { 7551417, 4656 }, // "Trainer Spell Item: Frost Strike (#51417)"
-    { 7551418, 4791 }, // "Trainer Spell Item: Frost Strike (#51418)"
-    { 7551419, 5057 }, // "Trainer Spell Item: Frost Strike (#51419)"
-    { 7551423, 5066 }, // "Trainer Spell Item: Obliterate (#51423)"
-    { 7551424, 5095 }, // "Trainer Spell Item: Obliterate (#51424)"
-    { 7551425, 5265 }, // "Trainer Spell Item: Obliterate (#51425)"
-    { 7551505, 5342 }, // "Trainer Spell Item: Lava Burst (#51505)"
-    { 7551514, 5349 }, // "Trainer Spell Item: Hex (#51514)"
-    { 7551722, 5350 }, // "Trainer Spell Item: Dismantle (#51722)"
-    { 7551723, 5472 }, // "Trainer Spell Item: Fan of Knives (#51723)"
-    { 7551724, 5473 }, // "Trainer Spell Item: Sap (#51724)"
-    { 7551730, 5474 }, // "Trainer Spell Item: Earthliving Weapon (#51730)"
-    { 7551988, 5476 }, // "Trainer Spell Item: Earthliving Weapon (#51988)"
-    { 7551991, 5477 }, // "Trainer Spell Item: Earthliving Weapon (#51991)"
-    { 7551992, 5478 }, // "Trainer Spell Item: Earthliving Weapon (#51992)"
-    { 7551993, 5479 }, // "Trainer Spell Item: Earthliving Weapon (#51993)"
-    { 7551994, 5480 }, // "Trainer Spell Item: Earthliving Weapon (#51994)"
-    { 7552127, 5525 }, // "Trainer Spell Item: Water Shield (#52127)"
-    { 7552129, 5526 }, // "Trainer Spell Item: Water Shield (#52129)"
-    { 7552131, 5527 }, // "Trainer Spell Item: Water Shield (#52131)"
-    { 7552134, 5631 }, // "Trainer Spell Item: Water Shield (#52134)"
-    { 7552136, 5632 }, // "Trainer Spell Item: Water Shield (#52136)"
-    { 7552138, 5633 }, // "Trainer Spell Item: Water Shield (#52138)"
-    { 7552610, 5634 }, // "Trainer Spell Item: Savage Roar (#52610)"
-    { 7553005, 5816 }, // "Trainer Spell Item: Penance (#53005)"
-    { 7553006, 5996 }, // "Trainer Spell Item: Penance (#53006)"
-    { 7553007, 5997 }, // "Trainer Spell Item: Penance (#53007)"
-    { 7553023, 6038 }, // "Trainer Spell Item: Mind Sear (#53023)"
-    { 7553140, 6048 }, // "Trainer Spell Item: Teleport: Dalaran (#53140)"
-    { 7553142, 6049 }, // "Trainer Spell Item: Portal: Dalaran (#53142)"
-    { 7553199, 6050 }, // "Trainer Spell Item: Starfall (#53199)"
-    { 7553200, 6051 }, // "Trainer Spell Item: Starfall (#53200)"
-    { 7553201, 6052 }, // "Trainer Spell Item: Starfall (#53201)"
-    { 7553223, 6149 }, // "Trainer Spell Item: Typhoon (#53223)"
-    { 7553225, 6290 }, // "Trainer Spell Item: Typhoon (#53225)"
-    { 7553226, 6299 }, // "Trainer Spell Item: Typhoon (#53226)"
-    { 7553248, 6316 }, // "Trainer Spell Item: Wild Growth (#53248)"
-    { 7553249, 6372 }, // "Trainer Spell Item: Wild Growth (#53249)"
-    { 7553251, 6373 }, // "Trainer Spell Item: Wild Growth (#53251)"
-    { 7553271, 6522 }, // "Trainer Spell Item: Master's Call (#53271)"
-    { 7553307, 6657 }, // "Trainer Spell Item: Thorns (#53307)"
-    { 7553308, 6662 }, // "Trainer Spell Item: Entangling Roots (#53308)"
-    { 7553312, 6807 }, // "Trainer Spell Item: Nature's Grasp (#53312)"
-    { 7553323, 6887 }, // "Trainer Spell Item: Rune of Swordshattering (#53323)"
-    { 7553331, 6888 }, // "Trainer Spell Item: Rune of Lichbane (#53331)"
-    { 7553338, 6890 }, // "Trainer Spell Item: Hunter's Mark (#53338)"
-    { 7553339, 7097 }, // "Trainer Spell Item: Mongoose Bite (#53339)"
-    { 7553341, 7228 }, // "Trainer Spell Item: Rune of Cinderglacier (#53341)"
-    { 7553342, 7676 }, // "Trainer Spell Item: Rune of Spellshattering (#53342)"
-    { 7553343, 7806 }, // "Trainer Spell Item: Rune of Razorice (#53343)"
-    { 7553344, 7807 }, // "Trainer Spell Item: Rune of the Fallen Crusader (#53344)"
-    { 7553351, 7808 }, // "Trainer Spell Item: Kill Shot (#53351)"
-    { 7553407, 8075 }, // "Trainer Spell Item: Judgement of Justice (#53407)"
-    { 7553408, 8076 }, // "Trainer Spell Item: Judgement of Wisdom (#53408)"
-    { 7553600, 8077 }, // "Trainer Spell Item: Shield of Righteousness (#53600)"
-    { 7553601, 8078 }, // "Trainer Spell Item: Sacred Shield (#53601)"
-    { 7553736, 8079 }, // "Trainer Spell Item: Seal of Corruption (#53736)"
-    { 7554043, 8243 }, // "Trainer Spell Item: Retribution Aura (#54043)"
-    { 7554428, 8364 }, // "Trainer Spell Item: Divine Plea (#54428)"
-    { 7554446, 8529 }, // "Trainer Spell Item: Rune of Swordbreaking (#54446)"
-    { 7554447, 8543 }, // "Trainer Spell Item: Rune of Spellbreaking (#54447)"
-    { 7555258, 8766 }, // "Trainer Spell Item: Heart Strike (#55258)"
-    { 7555259, 8827 }, // "Trainer Spell Item: Heart Strike (#55259)"
-    { 7555260, 8932 }, // "Trainer Spell Item: Heart Strike (#55260)"
-    { 7555261, 8948 }, // "Trainer Spell Item: Heart Strike (#55261)"
-    { 7555262, 8949 }, // "Trainer Spell Item: Heart Strike (#55262)"
-    { 7555265, 8950 }, // "Trainer Spell Item: Scourge Strike (#55265)"
-    { 7555268, 8951 }, // "Trainer Spell Item: Frost Strike (#55268)"
-    { 7555270, 8952 }, // "Trainer Spell Item: Scourge Strike (#55270)"
-    { 7555271, 8953 }, // "Trainer Spell Item: Scourge Strike (#55271)"
-    { 7555342, 8957 }, // "Trainer Spell Item: Mirror Image (#55342)"
-    { 7555359, 9030 }, // "Trainer Spell Item: Living Bomb (#55359)"
-    { 7555360, 9036 }, // "Trainer Spell Item: Living Bomb (#55360)"
-    { 7555458, 9088 }, // "Trainer Spell Item: Chain Heal (#55458)"
-    { 7555459, 9144 }, // "Trainer Spell Item: Chain Heal (#55459)"
-    { 7555694, 9154 }, // "Trainer Spell Item: Enraged Regeneration (#55694)"
-    { 7556222, 9155 }, // "Trainer Spell Item: Dark Command (#56222)"
-    { 7556641, 9172 }, // "Trainer Spell Item: Steady Shot (#56641)"
-    { 7556815, 9179 }, // "Trainer Spell Item: Rune Strike (#56815)"
-    { 7557330, 9187 }, // "Trainer Spell Item: Horn of Winter (#57330)"
-    { 7557622, 9197 }, // "Trainer Spell Item: Strength of Earth Totem (#57622)"
-    { 7557623, 9206 }, // "Trainer Spell Item: Horn of Winter (#57623)"
-    { 7557720, 9224 }, // "Trainer Spell Item: Totem of Wrath (#57720)"
-    { 7557721, 9233 }, // "Trainer Spell Item: Totem of Wrath (#57721)"
-    { 7557722, 9260 }, // "Trainer Spell Item: Totem of Wrath (#57722)"
-    { 7557755, 9264 }, // "Trainer Spell Item: Heroic Throw (#57755)"
-    { 7557823, 9360 }, // "Trainer Spell Item: Revenge (#57823)"
-    { 7557934, 9361 }, // "Trainer Spell Item: Tricks of the Trade (#57934)"
-    { 7557946, 9451 }, // "Trainer Spell Item: Life Tap (#57946)"
-    { 7557960, 9681 }, // "Trainer Spell Item: Water Shield (#57960)"
-    { 7557992, 10305 }, // "Trainer Spell Item: Envenom (#57992)"
-    { 7557993, 10306 }, // "Trainer Spell Item: Envenom (#57993)"
-    { 7557994, 10307 }, // "Trainer Spell Item: Wind Shear (#57994)"
-    { 7558431, 10308 }, // "Trainer Spell Item: Volley (#58431)"
-    { 7558434, 10309 }, // "Trainer Spell Item: Volley (#58434)"
-    { 7558580, 10310 }, // "Trainer Spell Item: Stoneclaw Totem (#58580)"
-    { 7558581, 10592 }, // "Trainer Spell Item: Stoneclaw Totem (#58581)"
-    { 7558582, 10841 }, // "Trainer Spell Item: Stoneclaw Totem (#58582)"
-    { 7558643, 11109 }, // "Trainer Spell Item: Strength of Earth Totem (#58643)"
-    { 7558649, 11415 }, // "Trainer Spell Item: Flametongue Totem (#58649)"
-    { 7558652, 11444 }, // "Trainer Spell Item: Flametongue Totem (#58652)"
-    { 7558656, 11584 }, // "Trainer Spell Item: Flametongue Totem (#58656)"
-    { 7558659, 11846 }, // "Trainer Spell Item: Ritual of Refreshment (#58659)"
-    { 7558699, 11951 }, // "Trainer Spell Item: Searing Totem (#58699)"
-    { 7558703, 12003 }, // "Trainer Spell Item: Searing Totem (#58703)"
-    { 7558704, 12190 }, // "Trainer Spell Item: Searing Totem (#58704)"
-    { 7558731, 12209 }, // "Trainer Spell Item: Magma Totem (#58731)"
-    { 7558734, 12210 }, // "Trainer Spell Item: Magma Totem (#58734)"
-    { 7558737, 12211 }, // "Trainer Spell Item: Fire Resistance Totem (#58737)"
-    { 7558739, 12212 }, // "Trainer Spell Item: Fire Resistance Totem (#58739)"
-    { 7558741, 12213 }, // "Trainer Spell Item: Frost Resistance Totem (#58741)"
-    { 7558745, 12214 }, // "Trainer Spell Item: Frost Resistance Totem (#58745)"
-    { 7558746, 12215 }, // "Trainer Spell Item: Nature Resistance Totem (#58746)"
-    { 7558749, 12216 }, // "Trainer Spell Item: Nature Resistance Totem (#58749)"
-    { 7558751, 12217 }, // "Trainer Spell Item: Stoneskin Totem (#58751)"
-    { 7558753, 12218 }, // "Trainer Spell Item: Stoneskin Totem (#58753)"
-    { 7558755, 12224 }, // "Trainer Spell Item: Healing Stream Totem (#58755)"
-    { 7558756, 12238 }, // "Trainer Spell Item: Healing Stream Totem (#58756)"
-    { 7558757, 12763 }, // "Trainer Spell Item: Healing Stream Totem (#58757)"
-    { 7558771, 12820 }, // "Trainer Spell Item: Mana Spring Totem (#58771)"
-    { 7558773, 13442 }, // "Trainer Spell Item: Mana Spring Totem (#58773)"
-    { 7558774, 13443 }, // "Trainer Spell Item: Mana Spring Totem (#58774)"
-    { 7558785, 13444 }, // "Trainer Spell Item: Flametongue Weapon (#58785)"
-    { 7558789, 13445 }, // "Trainer Spell Item: Flametongue Weapon (#58789)"
-    { 7558790, 13446 }, // "Trainer Spell Item: Flametongue Weapon (#58790)"
-    { 7558794, 13447 }, // "Trainer Spell Item: Frostbrand Weapon (#58794)"
-    { 7558795, 13452 }, // "Trainer Spell Item: Frostbrand Weapon (#58795)"
-    { 7558796, 13453 }, // "Trainer Spell Item: Frostbrand Weapon (#58796)"
-    { 7558801, 13454 }, // "Trainer Spell Item: Windfury Weapon (#58801)"
-    { 7558803, 13455 }, // "Trainer Spell Item: Windfury Weapon (#58803)"
-    { 7558804, 13456 }, // "Trainer Spell Item: Windfury Weapon (#58804)"
-    { 7558887, 13457 }, // "Trainer Spell Item: Ritual of Souls (#58887)"
-    { 7559092, 13458 }, // "Trainer Spell Item: Dark Pact (#59092)"
-    { 7559156, 13459 }, // "Trainer Spell Item: Thunderstorm (#59156)"
-    { 7559158, 13460 }, // "Trainer Spell Item: Thunderstorm (#59158)"
-    { 7559159, 13461 }, // "Trainer Spell Item: Thunderstorm (#59159)"
-    { 7559161, 13462 }, // "Trainer Spell Item: Haunt (#59161)"
-    { 7559163, 13506 }, // "Trainer Spell Item: Haunt (#59163)"
-    { 7559164, 13510 }, // "Trainer Spell Item: Haunt (#59164)"
-    { 7559170, 13511 }, // "Trainer Spell Item: Chaos Bolt (#59170)"
-    { 7559171, 13512 }, // "Trainer Spell Item: Chaos Bolt (#59171)"
-    { 7559172, 13513 }, // "Trainer Spell Item: Chaos Bolt (#59172)"
-    { 7560043, 13546 }, // "Trainer Spell Item: Lava Burst (#60043)"
-    { 7560051, 13724 }, // "Trainer Spell Item: Explosive Shot (#60051)"
-    { 7560052, 13755 }, // "Trainer Spell Item: Explosive Shot (#60052)"
-    { 7560053, 13810 }, // "Trainer Spell Item: Explosive Shot (#60053)"
-    { 7560192, 13851 }, // "Trainer Spell Item: Freezing Arrow (#60192)"
-    { 7560219, 13893 }, // "Trainer Spell Item: Create Firestone (#60219)"
-    { 7560220, 13927 }, // "Trainer Spell Item: Create Firestone (#60220)"
-    { 7561005, 13928 }, // "Trainer Spell Item: Kill Shot (#61005)"
-    { 7561006, 13929 }, // "Trainer Spell Item: Kill Shot (#61006)"
-    { 7561191, 13930 }, // "Trainer Spell Item: Enslave Demon (#61191)"
-    { 7561290, 13931 }, // "Trainer Spell Item: Shadowflame (#61290)"
-    { 7561299, 13932 }, // "Trainer Spell Item: Riptide (#61299)"
-    { 7561300, 13933 }, // "Trainer Spell Item: Riptide (#61300)"
-    { 7561301, 13934 }, // "Trainer Spell Item: Riptide (#61301)"
-    { 7561384, 13935 }, // "Trainer Spell Item: Typhoon (#61384)"
-    { 7561411, 16166 }, // "Trainer Spell Item: Shield of Righteousness (#61411)"
-    { 7561649, 16167 }, // "Trainer Spell Item: Fire Nova (#61649)"
-    { 7561657, 16168 }, // "Trainer Spell Item: Fire Nova (#61657)"
-    { 7561846, 16169 }, // "Trainer Spell Item: Aspect of the Dragonhawk (#61846)"
-    { 7561847, 16170 }, // "Trainer Spell Item: Aspect of the Dragonhawk (#61847)"
-    { 7561999, 16171 }, // "Trainer Spell Item: Raise Ally (#61999)"
-    { 7562078, 16766 }, // "Trainer Spell Item: Swipe (Cat) (#62078)"
-    { 7562124, 16971 }, // "Trainer Spell Item: Hand of Reckoning (#62124)"
-    { 7562158, 17119 }, // "Trainer Spell Item: Rune of the Stoneskin Gargoyle (#62158)"
-    { 7562600, 17196 }, // "Trainer Spell Item: Savage Defense (#62600)"
-    { 7562757, 17197 }, // "Trainer Spell Item: Call Stabled Pet (#62757)"
-    { 7563668, 17198 }, // "Trainer Spell Item: Black Arrow (#63668)"
-    { 7563669, 17199 }, // "Trainer Spell Item: Black Arrow (#63669)"
-    { 7563670, 17222 }, // "Trainer Spell Item: Black Arrow (#63670)"
-    { 7563671, 17344 }, // "Trainer Spell Item: Black Arrow (#63671)"
-    { 7563672, 17348 }, // "Trainer Spell Item: Black Arrow (#63672)"
-    { 7564382, 17349 }, // "Trainer Spell Item: Shattering Throw (#64382)"
-    { 7564843, 17351 }, // "Trainer Spell Item: Divine Hymn (#64843)"
-    { 7564901, 17352 }, // "Trainer Spell Item: Hymn of Hope (#64901)"
-    { 7566842, 17402 }, // "Trainer Spell Item: Call of the Elements (#66842)"
-    { 7566843, 17403 }, // "Trainer Spell Item: Call of the Ancestors (#66843)"
-    { 7566844, 17404 }, // "Trainer Spell Item: Call of the Spirits (#66844)"
-    { 7570164, 17406 }, // "Trainer Spell Item: Rune of the Nerubian Carapace (#70164)"
+    { 7500066, 13546 }, // "Trainer Spell Item: Invisibility (#66)"
+    { 7500072, 13724 }, // "Trainer Spell Item: Shield Bash (#72)"
+    { 7500126, 13755 }, // "Trainer Spell Item: Eye of Kilrogg (#126)"
+    { 7500130, 13810 }, // "Trainer Spell Item: Slow Fall (#130)"
+    { 7500131, 13851 }, // "Trainer Spell Item: Water Breathing (#131)"
+    { 7500132, 13893 }, // "Trainer Spell Item: Detect Invisibility (#132)"
+    { 7500453, 13927 }, // "Trainer Spell Item: Mind Soothe (#453)"
+    { 7500475, 13928 }, // "Trainer Spell Item: Remove Curse (#475)"
+    { 7500498, 13929 }, // "Trainer Spell Item: Divine Protection (#498)"
+    { 7500526, 13930 }, // "Trainer Spell Item: Cure Toxins (#526)"
+    { 7500528, 13931 }, // "Trainer Spell Item: Cure Disease (#528)"
+    { 7500546, 13932 }, // "Trainer Spell Item: Water Walking (#546)"
+    { 7500552, 13933 }, // "Trainer Spell Item: Abolish Disease (#552)"
+    { 7500556, 13934 }, // "Trainer Spell Item: Astral Recall (#556)"
+    { 7500586, 13935 }, // "Trainer Spell Item: Fade (#586)"
+    { 7500605, 16166 }, // "Trainer Spell Item: Mind Control (#605)"
+    { 7500642, 16167 }, // "Trainer Spell Item: Divine Shield (#642)"
+    { 7500674, 16168 }, // "Trainer Spell Item: Dual Wield (#674)"
+    { 7500676, 16169 }, // "Trainer Spell Item: Disarm (#676)"
+    { 7500688, 16170 }, // "Trainer Spell Item: Summon Imp (#688)"
+    { 7500694, 16171 }, // "Trainer Spell Item: Mocking Blow (#694)"
+    { 7500698, 16766 }, // "Trainer Spell Item: Ritual of Summoning (#698)"
+    { 7500750, 16971 }, // "Trainer Spell Item: Plate Mail (#750)"
+    { 7500768, 17119 }, // "Trainer Spell Item: Cat Form (#768)"
+    { 7500770, 17196 }, // "Trainer Spell Item: Faerie Fire (#770)"
+    { 7500781, 17197 }, // "Trainer Spell Item: Disengage (#781)"
+    { 7500783, 17198 }, // "Trainer Spell Item: Travel Form (#783)"
+    { 7500871, 17199 }, // "Trainer Spell Item: Shield Wall (#871)"
+    { 7500921, 17222 }, // "Trainer Spell Item: Pick Pocket (#921)"
+    { 7501002, 17344 }, // "Trainer Spell Item: Eyes of the Beast (#1002)"
+    { 7501038, 17348 }, // "Trainer Spell Item: Hand of Salvation (#1038)"
+    { 7501044, 17349 }, // "Trainer Spell Item: Hand of Freedom (#1044)"
+    { 7501066, 17351 }, // "Trainer Spell Item: Aquatic Form (#1066)"
+    { 7501152, 17352 }, // "Trainer Spell Item: Purify (#1152)"
+    { 7501161, 17402 }, // "Trainer Spell Item: Challenging Shout (#1161)"
+    { 7501462, 17403 }, // "Trainer Spell Item: Beast Lore (#1462)"
+    { 7501494, 17404 }, // "Trainer Spell Item: Track Beasts (#1494)"
+    { 7501543, 17406 }, // "Trainer Spell Item: Flare (#1543)"
+    { 7501680, 17407 }, // "Trainer Spell Item: Whirlwind (#1680)"
+    { 7501706, 17408 }, // "Trainer Spell Item: Levitate (#1706)"
+    { 7501710, 17708 }, // "Trainer Spell Item: Summon Felsteed (#1710)"
+    { 7501715, 18045 }, // "Trainer Spell Item: Hamstring (#1715)"
+    { 7501719, 18253 }, // "Trainer Spell Item: Recklessness (#1719)"
+    { 7501725, 18254 }, // "Trainer Spell Item: Distract (#1725)"
+    { 7501766, 18255 }, // "Trainer Spell Item: Kick (#1766)"
+    { 7501776, 18287 }, // "Trainer Spell Item: Gouge (#1776)"
+    { 7501784, 18288 }, // "Trainer Spell Item: Stealth (#1784)"
+    { 7501804, 18294 }, // "Trainer Spell Item: Pick Lock (#1804)"
+    { 7501833, 18300 }, // "Trainer Spell Item: Cheap Shot (#1833)"
+    { 7501842, 18632 }, // "Trainer Spell Item: Disarm Trap (#1842)"
+    { 7501860, 18633 }, // "Trainer Spell Item: Safe Fall (#1860)"
+    { 7501953, 18635 }, // "Trainer Spell Item: Blink (#1953)"
+    { 7502062, 18839 }, // "Trainer Spell Item: Earth Elemental Totem (#2062)"
+    { 7502094, 18841 }, // "Trainer Spell Item: Blind (#2094)"
+    { 7502139, 19221 }, // "Trainer Spell Item: Counterspell (#2139)"
+    { 7502484, 19222 }, // "Trainer Spell Item: Earthbind Totem (#2484)"
+    { 7502565, 19223 }, // "Trainer Spell Item: Shield Block (#2565)"
+    { 7502645, 19224 }, // "Trainer Spell Item: Ghost Wolf (#2645)"
+    { 7502687, 19225 }, // "Trainer Spell Item: Bloodrage (#2687)"
+    { 7502782, 19299 }, // "Trainer Spell Item: Remove Curse (#2782)"
+    { 7502825, 19300 }, // "Trainer Spell Item: Bloodlust (#2825)"
+    { 7502836, 19301 }, // "Trainer Spell Item: Detect Traps (#2836)"
+    { 7502893, 19304 }, // "Trainer Spell Item: Abolish Poison (#2893)"
+    { 7502894, 19305 }, // "Trainer Spell Item: Fire Elemental Totem (#2894)"
+    { 7502974, 19306 }, // "Trainer Spell Item: Wing Clip (#2974)"
+    { 7503034, 19696 }, // "Trainer Spell Item: Viper Sting (#3034)"
+    { 7503043, 19994 }, // "Trainer Spell Item: Scorpid Sting (#3043)"
+    { 7503045, 19995 }, // "Trainer Spell Item: Rapid Fire (#3045)"
+    { 7503127, 19996 }, // "Trainer Spell Item: Parry (#3127)"
+    { 7503411, 20002 }, // "Trainer Spell Item: Intervene (#3411)"
+    { 7503561, 20004 }, // "Trainer Spell Item: Teleport: Stormwind (#3561)"
+    { 7503562, 20007 }, // "Trainer Spell Item: Teleport: Ironforge (#3562)"
+    { 7503563, 20008 }, // "Trainer Spell Item: Teleport: Undercity (#3563)"
+    { 7503565, 20031 }, // "Trainer Spell Item: Teleport: Darnassus (#3565)"
+    { 7503566, 20074 }, // "Trainer Spell Item: Teleport: Thunder Bluff (#3566)"
+    { 7503567, 20452 }, // "Trainer Spell Item: Teleport: Orgrimmar (#3567)"
+    { 7503714, 20516 }, // "Trainer Spell Item: Path of Frost (#3714)"
+    { 7503738, 20709 }, // "Trainer Spell Item: Wrath of Air Totem (#3738)"
+    { 7504987, 20857 }, // "Trainer Spell Item: Cleanse (#4987)"
+    { 7505116, 21023 }, // "Trainer Spell Item: Concussive Shot (#5116)"
+    { 7505118, 21030 }, // "Trainer Spell Item: Aspect of the Cheetah (#5118)"
+    { 7505138, 21031 }, // "Trainer Spell Item: Drain Mana (#5138)"
+    { 7505209, 21033 }, // "Trainer Spell Item: Challenging Roar (#5209)"
+    { 7505215, 21072 }, // "Trainer Spell Item: Prowl (#5215)"
+    { 7505225, 21114 }, // "Trainer Spell Item: Track Humanoids (#5225)"
+    { 7505229, 21151 }, // "Trainer Spell Item: Enrage (#5229)"
+    { 7505246, 21215 }, // "Trainer Spell Item: Intimidating Shout (#5246)"
+    { 7505384, 21217 }, // "Trainer Spell Item: Feign Death (#5384)"
+    { 7505500, 21235 }, // "Trainer Spell Item: Sense Demons (#5500)"
+    { 7505502, 21236 }, // "Trainer Spell Item: Sense Undead (#5502)"
+    { 7505697, 21240 }, // "Trainer Spell Item: Unending Breath (#5697)"
+    { 7505938, 21254 }, // "Trainer Spell Item: Shiv (#5938)"
+    { 7506196, 21546 }, // "Trainer Spell Item: Far Sight (#6196)"
+    { 7506197, 21552 }, // "Trainer Spell Item: Eagle Eye (#6197)"
+    { 7506346, 21721 }, // "Trainer Spell Item: Fear Ward (#6346)"
+    { 7506495, 22018 }, // "Trainer Spell Item: Sentry Totem (#6495)"
+    { 7506552, 22019 }, // "Trainer Spell Item: Pummel (#6552)"
+    { 7506940, 22324 }, // "Trainer Spell Item: Hand of Sacrifice (#6940)"
+    { 7507384, 22645 }, // "Trainer Spell Item: Overpower (#7384)"
+    { 7508129, 22823 }, // "Trainer Spell Item: Mana Burn (#8129)"
+    { 7508143, 22824 }, // "Trainer Spell Item: Tremor Totem (#8143)"
+    { 7508170, 22825 }, // "Trainer Spell Item: Cleansing Totem (#8170)"
+    { 7508177, 22826 }, // "Trainer Spell Item: Grounding Totem (#8177)"
+    { 7508512, 22827 }, // "Trainer Spell Item: Windfury Totem (#8512)"
+    { 7508647, 22828 }, // "Trainer Spell Item: Expose Armor (#8647)"
+    { 7508737, 22829 }, // "Trainer Spell Item: Mail (#8737)"
+    { 7510059, 22830 }, // "Trainer Spell Item: Portal: Stormwind (#10059)"
+    { 7510321, 22831 }, // "Trainer Spell Item: Judgement (#10321)"
+    { 7510326, 22832 }, // "Trainer Spell Item: Turn Evil (#10326)"
+    { 7511416, 22833 }, // "Trainer Spell Item: Portal: Ironforge (#11416)"
+    { 7511417, 22834 }, // "Trainer Spell Item: Portal: Orgrimmar (#11417)"
+    { 7511418, 22835 }, // "Trainer Spell Item: Portal: Undercity (#11418)"
+    { 7511419, 22836 }, // "Trainer Spell Item: Portal: Darnassus (#11419)"
+    { 7511420, 22837 }, // "Trainer Spell Item: Portal: Thunder Bluff (#11420)"
+    { 7512051, 22838 }, // "Trainer Spell Item: Evocation (#12051)"
+    { 7512678, 22839 }, // "Trainer Spell Item: Stance Mastery (#12678)"
+    { 7513159, 22840 }, // "Trainer Spell Item: Aspect of the Pack (#13159)"
+    { 7513161, 22841 }, // "Trainer Spell Item: Aspect of the Beast (#13161)"
+    { 7513163, 22842 }, // "Trainer Spell Item: Aspect of the Monkey (#13163)"
+    { 7513809, 22844 }, // "Trainer Spell Item: Frost Trap (#13809)"
+    { 7513820, 22845 }, // "Trainer Spell Item: Summon Warhorse (#13820)"
+    { 7516857, 22846 }, // "Trainer Spell Item: Faerie Fire (Feral) (#16857)"
+    { 7518499, 22847 }, // "Trainer Spell Item: Berserker Rage (#18499)"
+    { 7519263, 22848 }, // "Trainer Spell Item: Deterrence (#19263)"
+    { 7519746, 22849 }, // "Trainer Spell Item: Concentration Aura (#19746)"
+    { 7519752, 22850 }, // "Trainer Spell Item: Divine Intervention (#19752)"
+    { 7519878, 22851 }, // "Trainer Spell Item: Track Demons (#19878)"
+    { 7519879, 22853 }, // "Trainer Spell Item: Track Dragonkin (#19879)"
+    { 7519880, 22854 }, // "Trainer Spell Item: Track Elementals (#19880)"
+    { 7519882, 22861 }, // "Trainer Spell Item: Track Giants (#19882)"
+    { 7519883, 22866 }, // "Trainer Spell Item: Track Humanoids (#19883)"
+    { 7519884, 22871 }, // "Trainer Spell Item: Track Undead (#19884)"
+    { 7519885, 22895 }, // "Trainer Spell Item: Track Hidden (#19885)"
+    { 7520164, 23160 }, // "Trainer Spell Item: Seal of Justice (#20164)"
+    { 7520165, 23172 }, // "Trainer Spell Item: Seal of Light (#20165)"
+    { 7520166, 23444 }, // "Trainer Spell Item: Seal of Wisdom (#20166)"
+    { 7520217, 23495 }, // "Trainer Spell Item: Blessing of Kings (#20217)"
+    { 7520230, 23578 }, // "Trainer Spell Item: Retaliation (#20230)"
+    { 7520252, 23579 }, // "Trainer Spell Item: Intercept (#20252)"
+    { 7520608, 23683 }, // "Trainer Spell Item: Reincarnation (#20608)"
+    { 7520719, 23696 }, // "Trainer Spell Item: Feline Grace (#20719)"
+    { 7520736, 23698 }, // "Trainer Spell Item: Distracting Shot (#20736)"
+    { 7522812, 23704 }, // "Trainer Spell Item: Barkskin (#22812)"
+    { 7522842, 23756 }, // "Trainer Spell Item: Frenzied Regeneration (#22842)"
+    { 7523161, 23822 }, // "Trainer Spell Item: Dreadsteed (#23161)"
+    { 7523214, 23823 }, // "Trainer Spell Item: Charger (#23214)"
+    { 7523920, 23848 }, // "Trainer Spell Item: Spell Reflection (#23920)"
+    { 7525780, 23871 }, // "Trainer Spell Item: Righteous Fury (#25780)"
+    { 7525898, 24008 }, // "Trainer Spell Item: Greater Blessing of Kings (#25898)"
+    { 7525899, 24009 }, // "Trainer Spell Item: Greater Blessing of Sanctuary (#25899)"
+    { 7529166, 24072 }, // "Trainer Spell Item: Innervate (#29166)"
+    { 7529858, 24105 }, // "Trainer Spell Item: Soulshatter (#29858)"
+    { 7530449, 24338 }, // "Trainer Spell Item: Spellsteal (#30449)"
+    { 7531224, 24539 }, // "Trainer Spell Item: Cloak of Shadows (#31224)"
+    { 7531789, 25539 }, // "Trainer Spell Item: Righteous Defense (#31789)"
+    { 7531801, 27498 }, // "Trainer Spell Item: Seal of Vengeance (#31801)"
+    { 7531884, 27499 }, // "Trainer Spell Item: Avenging Wrath (#31884)"
+    { 7532182, 27500 }, // "Trainer Spell Item: Heroism (#32182)"
+    { 7532223, 27501 }, // "Trainer Spell Item: Crusader Aura (#32223)"
+    { 7532266, 27502 }, // "Trainer Spell Item: Portal: Exodar (#32266)"
+    { 7532267, 27503 }, // "Trainer Spell Item: Portal: Silvermoon (#32267)"
+    { 7532271, 27635 }, // "Trainer Spell Item: Teleport: Exodar (#32271)"
+    { 7532272, 27636 }, // "Trainer Spell Item: Teleport: Silvermoon (#32272)"
+    { 7532375, 27651 }, // "Trainer Spell Item: Mass Dispel (#32375)"
+    { 7533690, 27655 }, // "Trainer Spell Item: Teleport: Shattrath (#33690)"
+    { 7533691, 27656 }, // "Trainer Spell Item: Portal: Shattrath (#33691)"
+    { 7533786, 27657 }, // "Trainer Spell Item: Cyclone (#33786)"
+    { 7533950, 27658 }, // "Trainer Spell Item: Flight Form (#33950)"
+    { 7534026, 27659 }, // "Trainer Spell Item: Kill Command (#34026)"
+    { 7534074, 27660 }, // "Trainer Spell Item: Aspect of the Viper (#34074)"
+    { 7534428, 27661 }, // "Trainer Spell Item: Victory Rush (#34428)"
+    { 7534433, 27662 }, // "Trainer Spell Item: Shadowfiend (#34433)"
+    { 7534477, 27663 }, // "Trainer Spell Item: Misdirection (#34477)"
+    { 7534600, 27664 }, // "Trainer Spell Item: Snake Trap (#34600)"
+    { 7534767, 27665 }, // "Trainer Spell Item: Summon Charger (#34767)"
+    { 7534768, 27666 }, // "Trainer Spell Item: Summon Warhorse (#34768)"
+    { 7535715, 27667 }, // "Trainer Spell Item: Teleport: Shattrath (#35715)"
+    { 7535717, 27854 }, // "Trainer Spell Item: Portal: Shattrath (#35717)"
+    { 7536936, 27855 }, // "Trainer Spell Item: Totemic Recall (#36936)"
+    { 7542650, 27856 }, // "Trainer Spell Item: Army of the Dead (#42650)"
+    { 7545438, 27857 }, // "Trainer Spell Item: Ice Block (#45438)"
+    { 7545524, 27858 }, // "Trainer Spell Item: Chains of Ice (#45524)"
+    { 7545529, 27859 }, // "Trainer Spell Item: Blood Tap (#45529)"
+    { 7546584, 27860 }, // "Trainer Spell Item: Raise Dead (#46584)"
+    { 7547476, 28100 }, // "Trainer Spell Item: Strangulate (#47476)"
+    { 7547528, 28101 }, // "Trainer Spell Item: Mind Freeze (#47528)"
+    { 7547568, 28102 }, // "Trainer Spell Item: Empower Rune Weapon (#47568)"
+    { 7548018, 28103 }, // "Trainer Spell Item: Demonic Circle: Summon (#48018)"
+    { 7548020, 28104 }, // "Trainer Spell Item: Demonic Circle: Teleport (#48020)"
+    { 7548263, 28112 }, // "Trainer Spell Item: Frost Presence (#48263)"
+    { 7548265, 28284 }, // "Trainer Spell Item: Unholy Presence (#48265)"
+    { 7548707, 28399 }, // "Trainer Spell Item: Anti-Magic Shell (#48707)"
+    { 7548743, 28486 }, // "Trainer Spell Item: Death Pact (#48743)"
+    { 7548792, 28501 }, // "Trainer Spell Item: Icebound Fortitude (#48792)"
+    { 7549358, 29112 }, // "Trainer Spell Item: Teleport: Stonard (#49358)"
+    { 7549359, 29292 }, // "Trainer Spell Item: Teleport: Theramore (#49359)"
+    { 7549360, 29293 }, // "Trainer Spell Item: Portal: Theramore (#49360)"
+    { 7549361, 29393 }, // "Trainer Spell Item: Portal: Stonard (#49361)"
+    { 7550464, 29394 }, // "Trainer Spell Item: Nourish (#50464)"
+    { 7550842, 29395 }, // "Trainer Spell Item: Pestilence (#50842)"
+    { 7551514, 29401 }, // "Trainer Spell Item: Hex (#51514)"
+    { 7551722, 29402 }, // "Trainer Spell Item: Dismantle (#51722)"
+    { 7551723, 29412 }, // "Trainer Spell Item: Fan of Knives (#51723)"
+    { 7552610, 29448 }, // "Trainer Spell Item: Savage Roar (#52610)"
+    { 7553140, 29449 }, // "Trainer Spell Item: Teleport: Dalaran (#53140)"
+    { 7553142, 29450 }, // "Trainer Spell Item: Portal: Dalaran (#53142)"
+    { 7553271, 29451 }, // "Trainer Spell Item: Master's Call (#53271)"
+    { 7553323, 29452 }, // "Trainer Spell Item: Rune of Swordshattering (#53323)"
+    { 7553331, 29453 }, // "Trainer Spell Item: Rune of Lichbane (#53331)"
+    { 7553341, 29454 }, // "Trainer Spell Item: Rune of Cinderglacier (#53341)"
+    { 7553342, 30155 }, // "Trainer Spell Item: Rune of Spellshattering (#53342)"
+    { 7553343, 30355 }, // "Trainer Spell Item: Rune of Razorice (#53343)"
+    { 7553344, 30357 }, // "Trainer Spell Item: Rune of the Fallen Crusader (#53344)"
+    { 7553407, 30358 }, // "Trainer Spell Item: Judgement of Justice (#53407)"
+    { 7553408, 30359 }, // "Trainer Spell Item: Judgement of Wisdom (#53408)"
+    { 7553601, 30361 }, // "Trainer Spell Item: Sacred Shield (#53601)"
+    { 7553736, 30457 }, // "Trainer Spell Item: Seal of Corruption (#53736)"
+    { 7554428, 30458 }, // "Trainer Spell Item: Divine Plea (#54428)"
+    { 7554446, 30610 }, // "Trainer Spell Item: Rune of Swordbreaking (#54446)"
+    { 7554447, 30703 }, // "Trainer Spell Item: Rune of Spellbreaking (#54447)"
+    { 7555342, 30793 }, // "Trainer Spell Item: Mirror Image (#55342)"
+    { 7555694, 30816 }, // "Trainer Spell Item: Enraged Regeneration (#55694)"
+    { 7556222, 31672 }, // "Trainer Spell Item: Dark Command (#56222)"
+    { 7556815, 31673 }, // "Trainer Spell Item: Rune Strike (#56815)"
+    { 7557755, 31676 }, // "Trainer Spell Item: Heroic Throw (#57755)"
+    { 7557934, 31677 }, // "Trainer Spell Item: Tricks of the Trade (#57934)"
+    { 7557994, 31679 }, // "Trainer Spell Item: Wind Shear (#57994)"
+    { 7560192, 31838 }, // "Trainer Spell Item: Freezing Arrow (#60192)"
+    { 7561999, 31839 }, // "Trainer Spell Item: Raise Ally (#61999)"
+    { 7562078, 31840 }, // "Trainer Spell Item: Swipe (Cat) (#62078)"
+    { 7562124, 31841 }, // "Trainer Spell Item: Hand of Reckoning (#62124)"
+    { 7562158, 31852 }, // "Trainer Spell Item: Rune of the Stoneskin Gargoyle (#62158)"
+    { 7562600, 31853 }, // "Trainer Spell Item: Savage Defense (#62600)"
+    { 7562757, 31854 }, // "Trainer Spell Item: Call Stabled Pet (#62757)"
+    { 7564382, 31855 }, // "Trainer Spell Item: Shattering Throw (#64382)"
+    { 7564843, 32062 }, // "Trainer Spell Item: Divine Hymn (#64843)"
+    { 7564901, 32063 }, // "Trainer Spell Item: Hymn of Hope (#64901)"
+    { 7566842, 32067 }, // "Trainer Spell Item: Call of the Elements (#66842)"
+    { 7566843, 32068 }, // "Trainer Spell Item: Call of the Ancestors (#66843)"
+    { 7566844, 32453 }, // "Trainer Spell Item: Call of the Spirits (#66844)"
+    { 7570164, 32455 }, // "Trainer Spell Item: Rune of the Nerubian Carapace (#70164)"
 };
 inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
 {
@@ -7914,5 +4741,290 @@ inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
     return result;
 }
 inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();
-inline const std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};
+inline constexpr std::pair<uint32_t, std::initializer_list<uint32_t>> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {
+    { 7500010, { 10, 6141, 8427, 10185, 10186, 10187, 27085, 42939, 42940 } }, // "Progressive Blizzard"
+    { 7500017, { 17, 592, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 25217, 25218, 48065, 48066 } }, // "Progressive Power Word: Shield"
+    { 7500053, { 53, 2589, 2590, 2591, 8721, 11279, 11280, 11281, 26863, 48656, 48657 } }, // "Progressive Backstab"
+    { 7500078, { 284, 285, 1608, 11564, 11565, 11566, 11567, 29707, 30324, 47449, 47450 } }, // "Progressive Heroic Strike"
+    { 7500099, { 99, 1735, 9490, 9747, 9898, 26998, 48559, 48560 } }, // "Progressive Demoralizing Roar"
+    { 7500100, { 100, 6178, 11578 } }, // "Progressive Charge"
+    { 7500116, { 116, 205, 837, 7322, 8406, 8407, 8408, 10179, 10180, 10181, 27071, 27072, 38697, 42841, 42842 } }, // "Progressive Frostbolt"
+    { 7500118, { 118, 12824, 12825, 12826 } }, // "Progressive Polymorph"
+    { 7500120, { 120, 8492, 10159, 10160, 10161, 27087, 42930, 42931 } }, // "Progressive Cone of Cold"
+    { 7500122, { 122, 865, 6131, 10230, 27088, 42917 } }, // "Progressive Frost Nova"
+    { 7500133, { 143, 145, 3140, 8400, 8401, 8402, 10148, 10149, 10150, 10151, 27070, 38692, 42832, 42833 } }, // "Progressive Fireball"
+    { 7500136, { 136, 3111, 3661, 3662, 13542, 13543, 13544, 27046, 48989, 48990 } }, // "Progressive Mend Pet"
+    { 7500139, { 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25221, 25222, 48067, 48068 } }, // "Progressive Renew"
+    { 7500168, { 7300, 7301 } }, // "Progressive Frost Armor"
+    { 7500172, { 172, 6222, 6223, 7648, 11671, 11672, 27216, 47812, 47813 } }, // "Progressive Corruption"
+    { 7500324, { 324, 325, 905, 945, 8134, 10431, 10432, 25469, 25472, 49280, 49281 } }, // "Progressive Lightning Shield"
+    { 7500331, { 332, 547, 913, 939, 959, 8005, 10395, 10396, 25391, 25396, 49272, 49273 } }, // "Progressive Healing Wave"
+    { 7500339, { 339, 1062, 5195, 5196, 9852, 9853, 26989, 53308 } }, // "Progressive Entangling Roots"
+    { 7500348, { 348, 707, 2941, 11665, 11667, 11668, 27215, 47810, 47811 } }, // "Progressive Immolate"
+    { 7500370, { 370, 8012 } }, // "Progressive Purge"
+    { 7500403, { 529, 548, 915, 943, 6041, 10391, 10392, 15207, 15208, 25448, 25449, 49237, 49238 } }, // "Progressive Lightning Bolt"
+    { 7500408, { 408, 8643 } }, // "Progressive Kidney Shot"
+    { 7500421, { 421, 930, 2860, 10605, 25439, 25442, 49270, 49271 } }, // "Progressive Chain Lightning"
+    { 7500465, { 465, 10290, 643, 10291, 1032, 10292, 10293, 27149, 48941, 48942 } }, // "Progressive Devotion Aura"
+    { 7500467, { 467, 782, 1075, 8914, 9756, 9910, 26992, 53307 } }, // "Progressive Thorns"
+    { 7500469, { 469, 47439, 47440 } }, // "Progressive Commanding Shout"
+    { 7500527, { 527, 988 } }, // "Progressive Dispel Magic"
+    { 7500543, { 543, 8457, 8458, 10223, 10225, 27128, 43010 } }, // "Progressive Fire Ward"
+    { 7500585, { 591, 598, 984, 1004, 6060, 10933, 10934, 25363, 25364, 48122, 48123 } }, // "Progressive Smite"
+    { 7500587, { 587, 597, 990, 6129, 10144, 10145 } }, // "Progressive Conjure Food"
+    { 7500588, { 588, 7128, 602, 1006, 10951, 10952, 25431, 48040, 48168 } }, // "Progressive Inner Fire"
+    { 7500589, { 589, 594, 970, 992, 2767, 10892, 10893, 10894, 25367, 25368, 48124, 48125 } }, // "Progressive Shadow Word: Pain"
+    { 7500596, { 596, 996, 10960, 10961, 25308, 48072 } }, // "Progressive Prayer of Healing"
+    { 7500603, { 603, 30910, 47867 } }, // "Progressive Curse of Doom"
+    { 7500604, { 604, 8450, 8451, 10173, 10174, 33944, 43015 } }, // "Progressive Dampen Magic"
+    { 7500633, { 633, 2800, 10310, 27154, 48788 } }, // "Progressive Lay on Hands"
+    { 7500635, { 639, 647, 1026, 1042, 3472, 10328, 10329, 27135, 27136, 48781, 48782 } }, // "Progressive Holy Light"
+    { 7500686, { 695, 705, 1088, 1106, 7641, 11659, 11660, 11661, 27209, 47808, 47809 } }, // "Progressive Shadow Bolt"
+    { 7500687, { 696 } }, // "Progressive Demon Skin"
+    { 7500689, { 689, 699, 709, 7651, 11699, 11700, 27219, 27220, 47857 } }, // "Progressive Drain Life"
+    { 7500693, { 693, 20752, 20755, 20756, 20757, 27238, 47884 } }, // "Progressive Create Soulstone"
+    { 7500702, { 702, 1108, 6205, 7646, 11707, 11708, 27224, 30909, 50511 } }, // "Progressive Curse of Weakness"
+    { 7500703, { 703, 8631, 8632, 8633, 11289, 11290, 26839, 26884, 48675, 48676 } }, // "Progressive Garrote"
+    { 7500706, { 706, 1086, 11733, 11734, 11735, 27260, 47793, 47889 } }, // "Progressive Demon Armor"
+    { 7500710, { 710, 18647 } }, // "Progressive Banish"
+    { 7500724, { 27870, 27871, 28275, 48086, 48087 } }, // "Progressive Lightwell"
+    { 7500740, { 740, 8918, 9862, 9863, 26983, 48446, 48447 } }, // "Progressive Tranquility"
+    { 7500755, { 755, 3698, 3699, 3700, 11693, 11694, 11695, 27259, 47856 } }, // "Progressive Health Funnel"
+    { 7500759, { 759, 3552, 10053, 10054, 27101, 42985 } }, // "Progressive Conjure Mana Gem"
+    { 7500772, { 772, 6546, 6547, 6548, 11572, 11573, 11574, 25208, 46845, 47465 } }, // "Progressive Rend"
+    { 7500774, { 774, 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 26981, 26982, 48440, 48441 } }, // "Progressive Rejuvenation"
+    { 7500779, { 779, 780, 769, 9754, 9908, 26997, 48561, 48562 } }, // "Progressive Swipe (Bear)"
+    { 7500845, { 845, 7369, 11608, 11609, 20569, 25231, 47519, 47520 } }, // "Progressive Cleave"
+    { 7500853, { 853, 5588, 5589, 10308 } }, // "Progressive Hammer of Justice"
+    { 7500879, { 879, 5614, 5615, 10312, 10313, 10314, 27138, 48800, 48801 } }, // "Progressive Exorcism"
+    { 7500974, { 32593, 32594, 49283, 49284 } }, // "Progressive Earth Shield"
+    { 7500976, { 976, 10957, 10958, 25433, 48169 } }, // "Progressive Shadow Protection"
+    { 7500980, { 980, 1014, 6217, 11711, 11712, 11713, 27218, 47863, 47864 } }, // "Progressive Curse of Agony"
+    { 7501008, { 1008, 8455, 10169, 10170, 27130, 33946, 43017 } }, // "Progressive Amplify Magic"
+    { 7501022, { 1022, 5599, 10278 } }, // "Progressive Hand of Protection"
+    { 7501064, { 1064, 10622, 10623, 25422, 25423, 55458, 55459 } }, // "Progressive Chain Heal"
+    { 7501079, { 1079, 9492, 9493, 9752, 9894, 9896, 27008, 49799, 49800 } }, // "Progressive Rip"
+    { 7501082, { 1082, 3029, 5201, 9849, 9850, 27000, 48569, 48570 } }, // "Progressive Claw"
+    { 7501098, { 1098, 11725, 11726, 61191 } }, // "Progressive Enslave Demon"
+    { 7501120, { 1120, 8288, 8289, 11675, 27217, 47855 } }, // "Progressive Drain Soul"
+    { 7501126, { 1126, 5232, 6756, 5234, 8907, 9884, 9885, 26990, 48469 } }, // "Progressive Mark of the Wild"
+    { 7501130, { 1130, 14323, 14324, 14325, 53338 } }, // "Progressive Hunter's Mark"
+    { 7501160, { 1160, 6190, 11554, 11555, 11556, 25202, 25203, 47437 } }, // "Progressive Demoralizing Shout"
+    { 7501243, { 1243, 1244, 1245, 2791, 10937, 10938, 25389, 48161 } }, // "Progressive Power Word: Fortitude"
+    { 7501329, { 34411, 34412, 34413, 48663, 48666 } }, // "Progressive Mutilate"
+    { 7501449, { 1449, 8437, 8438, 8439, 10201, 10202, 27080, 27082, 42920, 42921 } }, // "Progressive Arcane Explosion"
+    { 7501454, { 1454, 1455, 1456, 11687, 11688, 11689, 27222, 57946 } }, // "Progressive Life Tap"
+    { 7501459, { 1459, 1460, 1461, 10156, 10157, 27126, 42995 } }, // "Progressive Arcane Intellect"
+    { 7501463, { 1463, 8494, 8495, 10191, 10192, 10193, 27131, 43019, 43020 } }, // "Progressive Mana Shield"
+    { 7501464, { 1464, 8820, 11604, 11605, 25241, 25242, 47474, 47475 } }, // "Progressive Slam"
+    { 7501490, { 1490, 11721, 11722, 27228, 47865 } }, // "Progressive Curse of the Elements"
+    { 7501495, { 1495, 14269, 14270, 14271, 36916, 53339 } }, // "Progressive Mongoose Bite"
+    { 7501499, { 1499, 14310, 14311 } }, // "Progressive Freezing Trap"
+    { 7501510, { 1510, 14294, 14295, 27022, 58431, 58434 } }, // "Progressive Volley"
+    { 7501513, { 1513, 14326, 14327 } }, // "Progressive Scare Beast"
+    { 7501535, { 1535, 8498, 8499, 11314, 11315, 25546, 25547, 61649, 61657 } }, // "Progressive Fire Nova"
+    { 7501714, { 1714, 11719 } }, // "Progressive Curse of Tongues"
+    { 7501752, { 1757, 1758, 1759, 1760, 8621, 11293, 11294, 26861, 26862, 48637, 48638 } }, // "Progressive Sinister Strike"
+    { 7501822, { 1822, 1823, 1824, 9904, 27003, 48573, 48574 } }, // "Progressive Rake"
+    { 7501850, { 1850, 9821, 33357 } }, // "Progressive Dash"
+    { 7501856, { 1856, 1857, 26889 } }, // "Progressive Vanish"
+    { 7501943, { 1943, 8639, 8640, 11273, 11274, 11275, 26867, 48671, 48672 } }, // "Progressive Rupture"
+    { 7501949, { 1949, 11683, 11684, 27213, 47823 } }, // "Progressive Hellfire"
+    { 7501966, { 1966, 6768, 8637, 11303, 27448, 48658, 48659 } }, // "Progressive Feint"
+    { 7501978, { 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 27016, 49000, 49001 } }, // "Progressive Serpent Sting"
+    { 7502006, { 2006, 2010, 10880, 10881, 20770, 25435, 48171 } }, // "Progressive Resurrection"
+    { 7502008, { 2008, 20609, 20610, 20776, 20777, 25590, 49277 } }, // "Progressive Ancestral Spirit"
+    { 7502050, { 2052, 2053 } }, // "Progressive Lesser Heal"
+    { 7502054, { 2054, 2055, 6064 } }, // "Progressive Heal"
+    { 7502060, { 2060, 10963, 10964, 10965, 25210, 25213, 48062, 48063 } }, // "Progressive Greater Heal"
+    { 7502061, { 2061, 9472, 9473, 9474, 10915, 10916, 10917, 25233, 25235, 48070, 48071 } }, // "Progressive Flash Heal"
+    { 7502096, { 2096, 10909 } }, // "Progressive Mind Vision"
+    { 7502098, { 6760, 6761, 6762, 8623, 8624, 11299, 11300, 26865, 48667, 48668 } }, // "Progressive Eviscerate"
+    { 7502120, { 2120, 2121, 8422, 8423, 10215, 10216, 27086, 42925, 42926 } }, // "Progressive Flamestrike"
+    { 7502136, { 2136, 2137, 2138, 8412, 8413, 10197, 10199, 27078, 27079, 42872, 42873 } }, // "Progressive Fire Blast"
+    { 7502362, { 2362, 17727, 17728, 28172, 47886, 47888 } }, // "Progressive Create Spellstone"
+    { 7502637, { 2637, 18657, 18658 } }, // "Progressive Hibernate"
+    { 7502643, { 2643, 14288, 14289, 14290, 27021, 49047, 49048 } }, // "Progressive Multi-Shot"
+    { 7502812, { 2812, 10318, 27139, 48816, 48817 } }, // "Progressive Holy Wrath"
+    { 7502908, { 2908, 8955, 9901, 26995 } }, // "Progressive Soothe Animal"
+    { 7502912, { 2912, 8949, 8950, 8951, 9875, 9876, 26986, 48464, 48465 } }, // "Progressive Starfire"
+    { 7502944, { 2944, 19276, 19277, 19278, 19279, 19280, 25467, 48299, 48300 } }, // "Progressive Devouring Plague"
+    { 7502948, { 2948, 8444, 8445, 8446, 10205, 10206, 10207, 27073, 27074, 42858, 42859 } }, // "Progressive Scorch"
+    { 7502973, { 14260, 14261, 14262, 14263, 14264, 14265, 14266, 27014, 48995, 48996 } }, // "Progressive Raptor Strike"
+    { 7502983, { 2983, 8696, 11305 } }, // "Progressive Sprint"
+    { 7503044, { 3044, 14281, 14282, 14283, 14284, 14285, 14286, 14287, 27019, 49044, 49045 } }, // "Progressive Arcane Shot"
+    { 7503599, { 6363, 6364, 6365, 10437, 10438, 25533, 58699, 58703, 58704 } }, // "Progressive Searing Totem"
+    { 7503674, { 63668, 63669, 63670, 63671, 63672 } }, // "Progressive Black Arrow"
+    { 7505143, { 5143, 5144, 5145, 8416, 8417, 10211, 10212, 27075, 38699, 38704, 42843, 42846 } }, // "Progressive Arcane Missiles"
+    { 7505171, { 5171, 6774 } }, // "Progressive Slice and Dice"
+    { 7505176, { 5177, 5178, 5179, 5180, 6780, 8905, 9912, 26984, 26985, 48459, 48461 } }, // "Progressive Wrath"
+    { 7505185, { 5186, 5187, 5188, 5189, 6778, 8903, 9758, 9888, 9889, 26978, 26979, 48377, 48378 } }, // "Progressive Healing Touch"
+    { 7505211, { 5211, 6798, 8983 } }, // "Progressive Bash"
+    { 7505217, { 5217, 6793, 9845, 9846, 50212, 50213 } }, // "Progressive Tiger's Fury"
+    { 7505221, { 5221, 6800, 8992, 9829, 9830, 27001, 27002, 48571, 48572 } }, // "Progressive Shred"
+    { 7505277, { 5277, 26669 } }, // "Progressive Evasion"
+    { 7505308, { 5308, 20658, 20660, 20661, 20662, 25234, 25236, 47470, 47471 } }, // "Progressive Execute"
+    { 7505394, { 6375, 6377, 10462, 10463, 25567, 58755, 58756, 58757 } }, // "Progressive Healing Stream Totem"
+    { 7505484, { 5484, 17928 } }, // "Progressive Howl of Terror"
+    { 7505487, { 9634 } }, // "Progressive Bear Form"
+    { 7505504, { 5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420 } }, // "Progressive Conjure Water"
+    { 7505570, { 24974, 24975, 24976, 24977, 27013, 48468 } }, // "Progressive Insect Swarm"
+    { 7505675, { 5675, 10495, 10496, 10497, 25570, 58771, 58773, 58774 } }, // "Progressive Mana Spring Totem"
+    { 7505676, { 5676, 17919, 17920, 17921, 17922, 17923, 27210, 30459, 47814, 47815 } }, // "Progressive Searing Pain"
+    { 7505730, { 5730, 6390, 6391, 6392, 10427, 10428, 25525, 58580, 58581, 58582 } }, // "Progressive Stoneclaw Totem"
+    { 7505740, { 5740, 6219, 11677, 11678, 27212, 47819, 47820 } }, // "Progressive Rain of Fire"
+    { 7505782, { 5782, 6213, 6215 } }, // "Progressive Fear"
+    { 7506117, { 6117, 22782, 22783, 27125, 43023, 43024 } }, // "Progressive Mage Armor"
+    { 7506143, { 6143, 8461, 8462, 10177, 32796, 43012 } }, // "Progressive Frost Ward"
+    { 7506201, { 6201, 6202, 5699, 11729, 11730, 27230, 47871, 47878 } }, // "Progressive Create Healthstone"
+    { 7506229, { 6229, 11739, 11740, 47890, 47891 } }, // "Progressive Shadow Ward"
+    { 7506343, { 6343, 8198, 8204, 8205, 11580, 11581, 25264, 47501, 47502 } }, // "Progressive Thunder Clap"
+    { 7506353, { 6353, 17924, 27211, 30545, 47824, 47825 } }, // "Progressive Soul Fire"
+    { 7506366, { 6366, 17951, 17952, 17953, 27250, 60219, 60220 } }, // "Progressive Create Firestone"
+    { 7506572, { 6572, 6574, 7379, 11600, 11601, 25269, 30357, 57823 } }, // "Progressive Revenge"
+    { 7506673, { 6673, 5242, 6192, 11549, 11550, 11551, 2048, 47436 } }, // "Progressive Battle Shout"
+    { 7506770, { 6770, 2070, 11297, 51724 } }, // "Progressive Sap"
+    { 7506785, { 6785, 6787, 9866, 9867, 27005, 48578, 48579 } }, // "Progressive Ravage"
+    { 7506789, { 6789, 17925, 17926, 27223, 47859, 47860 } }, // "Progressive Death Coil (Warlock)"
+    { 7506807, { 6808, 6809, 8972, 9745, 9880, 9881, 26996, 48479, 48480 } }, // "Progressive Maul"
+    { 7507294, { 7294, 10298, 10299, 10300, 10301, 27150, 54043 } }, // "Progressive Retribution Aura"
+    { 7507302, { 7302, 7320, 10219, 10220, 27124, 43008 } }, // "Progressive Ice Armor"
+    { 7507328, { 10322, 10324, 20772, 20773, 48949, 48950 } }, // "Progressive Redemption"
+    { 7508004, { 8004, 8008, 8010, 10466, 10467, 10468, 25420, 49275, 49276 } }, // "Progressive Lesser Healing Wave"
+    { 7508017, { 8017, 8018, 8019, 10399 } }, // "Progressive Rockbiter Weapon"
+    { 7508024, { 8024, 8027, 8030, 16339, 16341, 16342, 25489, 58785, 58789, 58790 } }, // "Progressive Flametongue Weapon"
+    { 7508033, { 8033, 8038, 10456, 16355, 16356, 25500, 58794, 58795, 58796 } }, // "Progressive Frostbrand Weapon"
+    { 7508042, { 8042, 8044, 8045, 8046, 10412, 10413, 10414, 25454, 49230, 49231 } }, // "Progressive Earth Shock"
+    { 7508050, { 8050, 8052, 8053, 10447, 10448, 25457, 49232, 49233 } }, // "Progressive Flame Shock"
+    { 7508056, { 8056, 8058, 10472, 10473, 25464, 49235, 49236 } }, // "Progressive Frost Shock"
+    { 7508071, { 8154, 8155, 10406, 10407, 10408, 25508, 25509, 58751, 58753 } }, // "Progressive Stoneskin Totem"
+    { 7508075, { 8075, 8160, 8161, 10442, 25528, 57622, 58643 } }, // "Progressive Strength of Earth Totem"
+    { 7508092, { 8092, 8102, 8103, 8104, 8105, 8106, 10945, 10946, 10947, 25372, 25375, 48126, 48127 } }, // "Progressive Mind Blast"
+    { 7508122, { 8122, 8124, 10888, 10890 } }, // "Progressive Psychic Scream"
+    { 7508181, { 8181, 10478, 10479, 25560, 58741, 58745 } }, // "Progressive Frost Resistance Totem"
+    { 7508184, { 8184, 10537, 10538, 25563, 58737, 58739 } }, // "Progressive Fire Resistance Totem"
+    { 7508190, { 8190, 10585, 10586, 10587, 25552, 58731, 58734 } }, // "Progressive Magma Totem"
+    { 7508227, { 8227, 8249, 10526, 16387, 25557, 58649, 58652, 58656 } }, // "Progressive Flametongue Totem"
+    { 7508232, { 8232, 8235, 10486, 16362, 25505, 58801, 58803, 58804 } }, // "Progressive Windfury Weapon"
+    { 7508676, { 8676, 8724, 8725, 11267, 11268, 11269, 27441, 48689, 48690, 48691 } }, // "Progressive Ambush"
+    { 7508921, { 8921, 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835, 26987, 26988, 48462, 48463 } }, // "Progressive Moonfire"
+    { 7508936, { 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858, 26980, 48442, 48443 } }, // "Progressive Regrowth"
+    { 7508998, { 8998, 9000, 9892, 27004, 48575 } }, // "Progressive Cower"
+    { 7509005, { 9005, 9823, 9827, 27006, 49803 } }, // "Progressive Pounce"
+    { 7509484, { 9484, 9485, 10955 } }, // "Progressive Shackle Undead"
+    { 7510595, { 10595, 10600, 10601, 25574, 58746, 58749 } }, // "Progressive Nature Resistance Totem"
+    { 7511113, { 13018, 13019, 13020, 13021, 27133, 33933, 42944, 42945 } }, // "Progressive Blast Wave"
+    { 7511366, { 12505, 12522, 12523, 12524, 12525, 12526, 18809, 27132, 33938, 42890, 42891 } }, // "Progressive Pyroblast"
+    { 7511426, { 13031, 13032, 13033, 27134, 33405, 43038, 43039 } }, // "Progressive Ice Barrier"
+    { 7512294, { 21551, 21552, 21553, 25248, 30330, 47485, 47486 } }, // "Progressive Mortal Strike"
+    { 7513165, { 13165, 14318, 14319, 14320, 14321, 14322, 27044 } }, // "Progressive Aspect of the Hawk"
+    { 7513795, { 13795, 14302, 14303, 14304, 14305, 27023, 49055, 49056 } }, // "Progressive Immolation Trap"
+    { 7513813, { 13813, 14316, 14317, 27025, 49066, 49067 } }, // "Progressive Explosive Trap"
+    { 7514752, { 14752, 14818, 14819, 27841, 25312, 48073 } }, // "Progressive Divine Spirit"
+    { 7514914, { 14914, 15262, 15263, 15264, 15265, 15266, 15267, 15261, 25384, 48134, 48135 } }, // "Progressive Holy Fire"
+    { 7515237, { 15237, 15430, 15431, 27799, 27800, 27801, 25331, 48077, 48078 } }, // "Progressive Holy Nova"
+    { 7515407, { 17311, 17312, 17313, 17314, 18807, 25387, 48155, 48156 } }, // "Progressive Mind Flay"
+    { 7516511, { 17347, 17348, 26864, 48660 } }, // "Progressive Hemorrhage"
+    { 7516689, { 16689, 16810, 16811, 16812, 16813, 17329, 27009, 53312 } }, // "Progressive Nature's Grasp"
+    { 7516914, { 16914, 17401, 17402, 27012, 48467 } }, // "Progressive Hurricane"
+    { 7517877, { 18867, 18868, 18869, 18870, 18871, 27263, 30546, 47826, 47827 } }, // "Progressive Shadowburn"
+    { 7518220, { 18937, 18938, 27265, 59092 } }, // "Progressive Dark Pact"
+    { 7519236, { 19238, 19240, 19241, 19242, 19243, 25437, 48172, 48173 } }, // "Progressive Desperate Prayer"
+    { 7519306, { 20909, 20910, 27067, 48998, 48999 } }, // "Progressive Counterattack"
+    { 7519386, { 24132, 24133, 27068, 49011, 49012 } }, // "Progressive Wyvern Sting"
+    { 7519434, { 20900, 20901, 20902, 20903, 20904, 27065, 49049, 49050 } }, // "Progressive Aimed Shot"
+    { 7519740, { 19740, 19834, 19835, 19836, 19837, 19838, 27140, 48931, 48932 } }, // "Progressive Blessing of Might"
+    { 7519742, { 19742, 19850, 19852, 19853, 19854, 27142, 48935, 48936 } }, // "Progressive Blessing of Wisdom"
+    { 7519750, { 19750, 19939, 19940, 19941, 19942, 19943, 27137, 48784, 48785 } }, // "Progressive Flash of Light"
+    { 7519876, { 19876, 19895, 19896, 27151, 48943 } }, // "Progressive Shadow Resistance Aura"
+    { 7519888, { 19888, 19897, 19898, 27152, 48945 } }, // "Progressive Frost Resistance Aura"
+    { 7519891, { 19891, 19899, 19900, 27153, 48947 } }, // "Progressive Fire Resistance Aura"
+    { 7520043, { 20043, 20190, 27045, 49071 } }, // "Progressive Aspect of the Wild"
+    { 7520243, { 30016, 30022, 47497, 47498 } }, // "Progressive Devastate"
+    { 7520473, { 20929, 20930, 27174, 33072, 48824, 48825 } }, // "Progressive Holy Shock"
+    { 7520484, { 20484, 20739, 20742, 20747, 20748, 26994, 48477 } }, // "Progressive Rebirth"
+    { 7520925, { 20927, 20928, 27179, 48951, 48952 } }, // "Progressive Holy Shield"
+    { 7521562, { 48162 } }, // "Progressive Prayer of Fortitude"
+    { 7521849, { 48470 } }, // "Progressive Gift of the Wild"
+    { 7522568, { 22568, 22827, 22828, 22829, 24248, 48576, 48577 } }, // "Progressive Ferocious Bite"
+    { 7522570, { 22570, 49802 } }, // "Progressive Maim"
+    { 7523028, { 43002 } }, // "Progressive Arcane Brilliance"
+    { 7523922, { 23922, 23923, 23924, 23925, 25258, 30356, 47487, 47488 } }, // "Progressive Shield Slam"
+    { 7524275, { 24275, 24274, 24239, 27180, 48805, 48806 } }, // "Progressive Hammer of Wrath"
+    { 7525782, { 25782, 25916, 27141, 48933, 48934 } }, // "Progressive Greater Blessing of Might"
+    { 7525894, { 25894, 25918, 27143, 48937, 48938 } }, // "Progressive Greater Blessing of Wisdom"
+    { 7526573, { 26573, 20116, 20922, 20923, 20924, 27173, 48818, 48819 } }, // "Progressive Consecration"
+    { 7526679, { 26679, 48673, 48674 } }, // "Progressive Deadly Throw"
+    { 7527243, { 27243, 47835, 47836 } }, // "Progressive Seed of Corruption"
+    { 7527681, { 27681, 32999, 48074 } }, // "Progressive Prayer of Spirit"
+    { 7527683, { 48170 } }, // "Progressive Prayer of Shadow Protection"
+    { 7528176, { 28176, 28189, 47892, 47893 } }, // "Progressive Fel Armor"
+    { 7529722, { 29722, 32231, 47837, 47838 } }, // "Progressive Incinerate"
+    { 7529893, { 29893, 58887 } }, // "Progressive Ritual of Souls"
+    { 7530108, { 30404, 30405, 47841, 47843 } }, // "Progressive Unstable Affliction"
+    { 7530283, { 30413, 30414, 47846, 47847 } }, // "Progressive Shadowfury"
+    { 7530451, { 30451, 42894, 42896, 42897 } }, // "Progressive Arcane Blast"
+    { 7530455, { 30455, 42913, 42914 } }, // "Progressive Ice Lance"
+    { 7530482, { 30482, 43045, 43046 } }, // "Progressive Molten Armor"
+    { 7530706, { 57720, 57721, 57722 } }, // "Progressive Totem of Wrath"
+    { 7531661, { 33041, 33042, 33043, 42949, 42950 } }, // "Progressive Dragon's Breath"
+    { 7531935, { 32699, 32700, 48826, 48827 } }, // "Progressive Avenger's Shield"
+    { 7532379, { 32379, 32996, 48157, 48158 } }, // "Progressive Shadow Word: Death"
+    { 7532546, { 32546, 48119, 48120 } }, // "Progressive Binding Heal"
+    { 7532645, { 32645, 32684, 57992, 57993 } }, // "Progressive Envenom"
+    { 7533076, { 33076, 48112, 48113 } }, // "Progressive Prayer of Mending"
+    { 7533745, { 33745, 48567, 48568 } }, // "Progressive Lacerate"
+    { 7533763, { 33763, 48450, 48451 } }, // "Progressive Lifebloom"
+    { 7533876, { 33982, 33983, 48565, 48566 } }, // "Progressive Mangle (Cat)"
+    { 7533878, { 33986, 33987, 48563, 48564 } }, // "Progressive Mangle (Bear)"
+    { 7533943, { 40120 } }, // "Progressive Flight Form"
+    { 7534861, { 34863, 34864, 34865, 34866, 48088, 48089 } }, // "Progressive Circle of Healing"
+    { 7534914, { 34916, 34917, 48159, 48160 } }, // "Progressive Vampiric Touch"
+    { 7542955, { 42955, 42956 } }, // "Progressive Conjure Refreshment"
+    { 7543265, { 43265, 49936, 49937, 49938 } }, // "Progressive Death and Decay"
+    { 7543987, { 43987, 58659 } }, // "Progressive Ritual of Refreshment"
+    { 7544425, { 44780, 44781 } }, // "Progressive Arcane Barrage"
+    { 7544457, { 55359, 55360 } }, // "Progressive Living Bomb"
+    { 7544614, { 44614, 47610 } }, // "Progressive Frostfire Bolt"
+    { 7545462, { 49917, 49918, 49919, 49920, 49921 } }, // "Progressive Plague Strike"
+    { 7545477, { 49896, 49903, 49904, 49909 } }, // "Progressive Icy Touch"
+    { 7545902, { 49926, 49927, 49928, 49929, 49930 } }, // "Progressive Blood Strike"
+    { 7547540, { 53005, 53006, 53007 } }, // "Progressive Penance"
+    { 7547541, { 49892, 49893, 49894, 49895 } }, // "Progressive Death Coil (Death Knight)"
+    { 7547897, { 47897, 61290 } }, // "Progressive Shadowflame"
+    { 7548045, { 48045, 53023 } }, // "Progressive Mind Sear"
+    { 7548181, { 59161, 59163, 59164 } }, // "Progressive Haunt"
+    { 7548438, { 53248, 53249, 53251 } }, // "Progressive Wild Growth"
+    { 7548505, { 53199, 53200, 53201 } }, // "Progressive Starfall"
+    { 7548721, { 48721, 49939, 49940, 49941 } }, // "Progressive Blood Boil"
+    { 7549020, { 49020, 51423, 51424, 51425 } }, // "Progressive Obliterate"
+    { 7549143, { 51416, 51417, 51418, 51419, 55268 } }, // "Progressive Frost Strike"
+    { 7549158, { 51325, 51326, 51327, 51328 } }, // "Progressive Corpse Explosion"
+    { 7549184, { 51409, 51410, 51411 } }, // "Progressive Howling Blast"
+    { 7549998, { 49998, 49999, 45463, 49923, 49924 } }, // "Progressive Death Strike"
+    { 7550516, { 53223, 53225, 53226, 61384 } }, // "Progressive Typhoon"
+    { 7550769, { 50769, 50768, 50767, 50766, 50765, 50764, 50763 } }, // "Progressive Revive"
+    { 7550796, { 59170, 59171, 59172 } }, // "Progressive Chaos Bolt"
+    { 7551490, { 59156, 59158, 59159 } }, // "Progressive Thunderstorm"
+    { 7551505, { 51505, 60043 } }, // "Progressive Lava Burst"
+    { 7551730, { 51730, 51988, 51991, 51992, 51993, 51994 } }, // "Progressive Earthliving Weapon"
+    { 7552127, { 52127, 52129, 52131, 52134, 52136, 52138, 24398, 33736, 57960 } }, // "Progressive Water Shield"
+    { 7553301, { 60051, 60052, 60053 } }, // "Progressive Explosive Shot"
+    { 7553351, { 53351, 61005, 61006 } }, // "Progressive Kill Shot"
+    { 7553600, { 53600, 61411 } }, // "Progressive Shield of Righteousness"
+    { 7555050, { 55258, 55259, 55260, 55261, 55262 } }, // "Progressive Heart Strike"
+    { 7555090, { 55265, 55270, 55271 } }, // "Progressive Scourge Strike"
+    { 7556641, { 56641, 34120, 49051, 49052 } }, // "Progressive Steady Shot"
+    { 7557330, { 57330, 57623 } }, // "Progressive Horn of Winter"
+    { 7561295, { 61299, 61300, 61301 } }, // "Progressive Riptide"
+    { 7561846, { 61846, 61847 } }, // "Progressive Aspect of the Dragonhawk"
+};
+inline std::unordered_map<uint32_t, std::vector<uint32_t>> BuildApItemIdToChainSpellIds()
+{
+    std::unordered_map<uint32_t, std::vector<uint32_t>> result;
+    for (auto const& row : AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW)
+        result.emplace(row.first, std::vector<uint32_t>(row.second));
+    return result;
+}
+inline const std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = BuildApItemIdToChainSpellIds();
 }

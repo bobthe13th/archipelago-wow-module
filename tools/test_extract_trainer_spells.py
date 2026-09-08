@@ -273,6 +273,44 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(result["items"][0]["delivery"]["kind"], "mail")
         self.assertIn(result["items"][0]["delivery"]["wow_item_entry"], {117, 2287})
 
+    @patch("extract_trainer_spells._load_spell_ranks")
+    @patch("extract_trainer_spells._query_consumable_items")
+    @patch("extract_trainer_spells.parse_spell_names")
+    @patch("extract_trainer_spells._load_trainer_expansions")
+    @patch("extract_trainer_spells._load_recipe_spell_ids")
+    @patch("extract_trainer_spells.load_exclusion_rules")
+    @patch("extract_trainer_spells.run_query")
+    def test_two_chains_sharing_a_display_name_get_disambiguated_by_class(
+        self, mock_run_query, mock_load_rules, mock_recipe_ids, mock_expansions, mock_names,
+        mock_consumables, mock_spell_ranks,
+    ) -> None:
+        # Real M4.11.6/Task 8 regeneration bug, reproduced with a minimal
+        # fixture: Death Knight's and Warlock's spells are BOTH named
+        # "Death Coil" in spell.dbc (distinct chains) -- undisambiguated,
+        # this produced two items both named "Progressive Death Coil",
+        # which generate_content.py's own _validate_unique_names correctly
+        # rejects. Also exercises the chain-300 case where the chain's own
+        # first_spell_id (300, rank 1) is NOT itself taught by any class
+        # trainer (absent from the mocked run_query rows below) -- the
+        # disambiguation lookup must use the lowest TAUGHT rank (301)
+        # instead of first_spell_id itself, or it would KeyError.
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_recipe_ids.return_value = frozenset()
+        mock_expansions.return_value = {1: "vanilla"}
+        mock_names.return_value = {300: "Death Coil", 301: "Death Coil", 400: "Death Coil", 401: "Death Coil"}
+        mock_run_query.return_value = [
+            ("301", "6", "1", "10"),  # Death Knight (class id 6) -- rank 2 only; rank 1 (300) untaught
+            ("400", "9", "1", "4"),   # Warlock (class id 9) -- rank 1
+            ("401", "9", "1", "10"),  # Warlock -- rank 2
+        ]
+        mock_consumables.return_value = self._CONSUMABLE_FIXTURE
+        mock_spell_ranks.return_value = {301: (300, 2), 400: (400, 1), 401: (400, 2)}
+        result = extract()
+        names = {it["name"] for it in result["items"]}
+        self.assertIn("Progressive Death Coil (Death Knight)", names)
+        self.assertIn("Progressive Death Coil (Warlock)", names)
+        self.assertNotIn("Progressive Death Coil", names)
+
 
 class TestAssignConsumableItem(unittest.TestCase):
     def test_cycles_through_candidates_in_order(self) -> None:

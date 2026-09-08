@@ -14,6 +14,8 @@ from generate_content import (
     emit_cpp_generic,
     validate_family,
     _emit_cpp_trigger_lookup,
+    _emit_cpp_trigger_lookup_one_kind,
+    _emit_cpp_trigger_lookup_learn_spell,
     _validate_recipe_craft_rows,
     _validate_gameobject_loot_rows,
     _emit_cpp_trigger_lookup_recipe_craft,
@@ -766,6 +768,50 @@ class TestLearnSpellTriggerLookup(unittest.TestCase):
         ]
         with self.assertRaises(generate_content.ValidationError):
             generate_content._validate_learn_spell_rows(locations, pathlib.Path("test.yaml"))
+
+
+class TestTrainerPurchaseAttemptTriggerLookup(unittest.TestCase):
+    """M4.11.5.6 (Task 4) introduced trainer_spells' own trigger.kind,
+    "trainer_purchase_attempt", replacing "learn_spell" for this family
+    only -- but left _emit_cpp_trigger_lookup_one_kind (Task 8's bundled
+    prerequisite fix) without a dispatch branch for it, which would make
+    generate_content.py raise ValidationError (see its own
+    "add a branch for it" message) the moment it's run against real
+    trainer_spells.yaml content. The trigger dict's fields are unchanged
+    (still spell_id/min_level), so the fix reuses
+    _emit_cpp_trigger_lookup_learn_spell verbatim rather than duplicating
+    it -- these tests confirm both the dispatch and the reuse."""
+
+    def test_emits_spell_id_to_location_id_map_for_trainer_purchase_attempt(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        lines = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        cpp = "\n".join(lines)
+        self.assertIn("SPELL_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("{ 116, 7000001 }", cpp)
+
+    def test_reuses_learn_spell_emission_function_rather_than_duplicating_it(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        via_dispatch = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        via_direct_call = _emit_cpp_trigger_lookup_learn_spell(locations)
+        self.assertEqual(via_dispatch, via_direct_call)
+
+    def test_unregistered_trigger_kind_still_raises(self) -> None:
+        # Guards against the fix accidentally becoming a catch-all: an
+        # actually-unregistered kind must still hit the ValidationError at
+        # the bottom of _emit_cpp_trigger_lookup_one_kind.
+        locations = [{"name": "x", "location_id": 1, "trigger": {"kind": "not_a_real_kind"}}]
+        with self.assertRaises(ValidationError):
+            _emit_cpp_trigger_lookup_one_kind({"family": "trainer_spells"}, "not_a_real_kind", locations)
 
 
 class TestEmitCppItemDeliveryLookup(unittest.TestCase):

@@ -1919,6 +1919,17 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
     if kind == "learn_spell":
         return _emit_cpp_trigger_lookup_learn_spell(locations)
 
+    if kind == "trainer_purchase_attempt":
+        # M4.11.5.6 (Task 4): trainer_spells' own trigger.kind, replacing
+        # "learn_spell" for this family only (recipes still uses
+        # "learn_spell" for its own class-trainer-independent rows). The
+        # trigger dict's fields didn't change -- still spell_id/min_level --
+        # so this reuses _emit_cpp_trigger_lookup_learn_spell verbatim
+        # rather than duplicating it; ArchipelagoTrainerPurchaseScript
+        # (Task 3) already reads the result by its SPELL_ID_TO_LOCATION_ID
+        # name regardless of which trigger.kind produced it.
+        return _emit_cpp_trigger_lookup_learn_spell(locations)
+
     if kind == "item_first_held":
         return _emit_cpp_trigger_lookup_item_first_held(locations)
 

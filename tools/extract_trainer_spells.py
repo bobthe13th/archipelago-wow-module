@@ -7,6 +7,7 @@ this plan's Global Constraints on cross-family spell_id collisions)."""
 from __future__ import annotations
 
 import pathlib
+from collections import Counter
 
 import yaml
 
@@ -266,10 +267,40 @@ def extract() -> dict:
     # standalone mail item per genuine single-rank spell -- same
     # _assign_consumable_item cycling as before, just applied after the
     # chain items so the whole item universe is cycled evenly.
+    # Two different chains can share a display name -- confirmed against
+    # real live-DB data (regenerating this file, M4.11.6/Task 8): Death
+    # Knight's and Warlock's spells are BOTH named "Death Coil" in
+    # spell.dbc, distinct chains (first_spell_id 49892 vs 6789). Undetected,
+    # this produces two items both named "Progressive Death Coil", which
+    # generate_content.py's own _validate_unique_names correctly rejects as
+    # a cross-item name collision. Computed as a first pass so every
+    # colliding chain (not just the second one encountered) gets
+    # disambiguated identically.
+    chain_names: dict[int, str] = {
+        first_spell_id: spell_names.get(
+            first_spell_id, spell_names.get(sorted(chains[first_spell_id])[0][1], "")
+        )
+        for first_spell_id in chains
+    }
+    name_counts = Counter(chain_names.values())
+
     items = []
     for first_spell_id in sorted(chains):
         ordered = [spell_id for _rank, spell_id in sorted(chains[first_spell_id])]
-        chain_name = spell_names.get(first_spell_id, spell_names.get(ordered[0], ""))
+        chain_name = chain_names[first_spell_id]
+        if name_counts[chain_name] > 1:
+            # Disambiguate with the teaching class(es). first_spell_id
+            # itself is NOT guaranteed to be in by_spell (a chain's rank 1
+            # is sometimes not directly taught by any class trainer --
+            # confirmed against real data, e.g. first_spell_id 47541); use
+            # ordered[0] instead -- the lowest-ranked spell_id that IS
+            # actually taught, guaranteed present in by_spell because
+            # chains is only ever populated from `for spell_id in
+            # sorted(by_spell)` above. Same snake_case -> Title Case
+            # convention extract_gathersanity.py's tier_label already uses.
+            classes = sorted(by_spell[ordered[0]]["classes"])
+            class_label = "/".join(c.replace("_", " ").title() for c in classes)
+            chain_name = f"{chain_name} ({class_label})"
         items.append({
             "name": f"Progressive {chain_name}",
             "item_id": _ITEM_ID_BASE + first_spell_id,
