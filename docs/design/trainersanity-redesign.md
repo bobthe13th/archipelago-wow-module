@@ -70,14 +70,17 @@ Given only 3 of 10 classes (Warrior/Rogue/DK) are the actual incompatible cases 
 
 **Recommendation: Option 1.** It's the only option with zero new C++ surface area and zero new balance risk, and it still delivers the core fun of the ask (mana-class cross-pollination, which is 7/10 classes and the more interesting combinations anyway — a Rogue casting Fireball was always going to be the least balanced part of this idea). Again, your call.
 
-## 5. What's ready to plan now vs. blocked on your answer
+## 5. Decisions made (2026-09-08)
 
-Once Decision 1 and Decision 2 are made, a full bite-sized implementation plan
-(file-by-file, TDD steps, per `superpowers:writing-plans`) can be written for:
+- **Decision 1: patch `Trainer::TeachSpell` directly** (`Entities/Creature/Trainer.cpp:80`). This is azerothcore-wotlk core's own first-ever direct patch from this project — track it explicitly as a diff that needs manual reconciliation on future upstream AzerothCore syncs (no mechanism for that currently exists in this repo; worth a follow-up note of its own once this lands).
+- **Decision 2: restrict pooling by resource compatibility.** Mana-cost spell chains (Paladin/Hunter/Priest/Shaman/Mage/Warlock/Druid) cross-pollinate freely among those 7 classes in the apworld's pool logic; Warrior/Rogue/Death Knight spell chains stay restricted to those three (or standalone), never mixed with a mana class in either direction.
 
-- **Sub-project B**: the new "trainer purchase attempted" trigger kind, the revert-or-patch mechanism from Decision 1, and updating `extract_trainer_spells.py`'s trigger schema away from `learn_spell`.
-- **Sub-project A**: `SpellChainNode`-driven grouping of trainer-spell locations into `Progressive <Spell Name>` items, following `GATHERING_SKILL_PROGRESSION_ITEMS`'s exact shape, wired to `APSpellGrant::GrantOrQueue` (already generic enough to reuse as-is) instead of the current mail-shaped filler-item delivery.
-- **Sub-project C**: pool-eligibility filtering in the apworld, gated by Decision 2.
+## 6. What's ready to plan now
 
-Nothing above requires new research — the plan can be written directly once
-you pick.
+With both decisions made, a full bite-sized implementation plan (file-by-file,
+TDD steps, per `superpowers:writing-plans`) can be written for:
+
+- **Sub-project B+A** (combined — A structurally depends on B, per §2): the new "trainer purchase attempted" trigger kind, the `Trainer::TeachSpell` patch from Decision 1, updating `extract_trainer_spells.py`'s trigger schema away from `learn_spell`, and `SpellChainNode`-driven grouping of trainer-spell locations into `Progressive <Spell Name>` items (following `GATHERING_SKILL_PROGRESSION_ITEMS`'s exact shape), wired to `APSpellGrant::GrantOrQueue` (already generic enough to reuse as-is) instead of the current mail-shaped filler-item delivery.
+- **Sub-project C**: pool-eligibility filtering in the apworld per Decision 2 — independent of B/A's C++ work, can be planned/implemented in parallel.
+
+Nothing above requires new research — the plan can be written directly.
