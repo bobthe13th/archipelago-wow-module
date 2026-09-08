@@ -1617,6 +1617,13 @@ class TestLearnNextChainRankDelivery(unittest.TestCase):
             _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
 
     def test_emits_chain_spell_ids_map_for_real_chain_rows(self) -> None:
+        # M4.11.6 post-Task-8 crash fix: the raw array is flattened to one
+        # `std::pair<uint32_t, uint32_t>` row per (item_id, single rank
+        # spell_id) instead of nesting a std::initializer_list<uint32_t> as
+        # the row's value -- storing an initializer_list as a value inside a
+        # constexpr static-duration array doesn't keep its backing storage
+        # alive, which crashed worldserver.exe (and this module's own
+        # doctest binary) at static-init time before main() ever ran.
         from generate_content import _emit_cpp_item_delivery_lookup
         items = [
             {"item_id": 7500116, "name": "Progressive Frostbolt",
@@ -1626,9 +1633,55 @@ class TestLearnNextChainRankDelivery(unittest.TestCase):
         lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
         self.assertIn("ApItemIdToChainSpellIds", lines)
         self.assertIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
-        self.assertIn("{ 7500116, { 116, 205, 837 } }", lines)
+        self.assertNotIn("initializer_list", lines)
+        self.assertIn(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {",
+            lines,
+        )
+        self.assertIn("{ 7500116, 116 }, // \"Progressive Frostbolt\" rank 1", lines)
+        self.assertIn("{ 7500116, 205 }, // \"Progressive Frostbolt\" rank 2", lines)
+        self.assertIn("{ 7500116, 837 }, // \"Progressive Frostbolt\" rank 3", lines)
+        self.assertIn("result[row.first].push_back(row.second);", lines)
         self.assertIn("ApItemIdToWowItemEntry", lines)
         self.assertIn("{ 7500999, 42 }", lines)
+
+    def test_multi_rank_chain_rows_flatten_in_rank_order_and_regroup_by_item_id(self) -> None:
+        # Sibling coverage focused specifically on the flattening/regrouping
+        # mechanism for MULTIPLE chains: each chain's rank spell_ids must
+        # appear as separate rows in ascending rank order, interleaved
+        # correctly across chains, since the C++ builder relies on
+        # `result[row.first].push_back(row.second)` (ordered append, not
+        # emplace) to regroup the flat rows back into one ordered vector per
+        # item_id -- this only works if emission preserves rank order.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 100, "name": "Progressive Death Coil (Death Knight)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [47541, 49895]}},
+            {"item_id": 200, "name": "Progressive Death Coil (Warlock)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [6789, 17925, 27223]}},
+        ]
+        lines_list = _emit_cpp_item_delivery_lookup(items, {"learn_next_chain_rank"})
+        lines = "\n".join(lines_list)
+
+        # Extract just the raw-array row lines (between the array's opening
+        # and closing braces) to check relative order precisely.
+        start = lines_list.index(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {"
+        )
+        end = lines_list.index("};", start)
+        row_lines = lines_list[start + 1:end]
+
+        self.assertEqual(
+            row_lines,
+            [
+                '    { 100, 47541 }, // "Progressive Death Coil (Death Knight)" rank 1',
+                '    { 100, 49895 }, // "Progressive Death Coil (Death Knight)" rank 2',
+                '    { 200, 6789 }, // "Progressive Death Coil (Warlock)" rank 1',
+                '    { 200, 17925 }, // "Progressive Death Coil (Warlock)" rank 2',
+                '    { 200, 27223 }, // "Progressive Death Coil (Warlock)" rank 3',
+            ],
+        )
+        self.assertIn("result[row.first].push_back(row.second);", lines)
 
     def test_learn_next_chain_rank_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
         # trainer_spells' real shape today (Task 8 regenerates the actual

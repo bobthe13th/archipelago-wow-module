@@ -1427,13 +1427,6 @@ def emit_cpp_generic(data: dict) -> str:
         "#pragma once",
         "",
         "#include <cstdint>",
-        # M4.11.5.7 (Task 7): unconditional, same discipline as the
-        # unconditional <vector> include below -- trainer_spells'
-        # AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW (_emit_cpp_item_delivery_lookup)
-        # spells std::initializer_list<uint32_t> as a real named type, not
-        # just brace-init syntax, so it must not rely on getting pulled in
-        # transitively via <vector>/<utility>.
-        "#include <initializer_list>",
         "#include <map>",
         "#include <string>",
         "#include <unordered_map>",
@@ -1986,11 +1979,19 @@ def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> li
     the M4.7.1 stack-overflow threshold a bare aggregate initializer proved
     unsafe at, twice, before this project learned that lesson -- see
     _emit_cpp_trigger_lookup's own docstring). The chain map's raw array
-    holds a `std::pair<uint32_t, std::initializer_list<uint32_t>>` per row
-    (item_id, ordered rank spell_ids) instead of a flat pair -- the builder
-    copies each initializer_list into a real std::vector<uint32_t> since an
-    initializer_list's backing storage is not guaranteed to outlive the
-    static array element that referenced it into an unordered_map value."""
+    holds one flat `std::pair<uint32_t, uint32_t>` row per (item_id, single
+    rank spell_id) pair -- same flattened-row shape
+    _emit_cpp_trigger_lookup_zone_pool_credit's ZONE_POOL_CREDIT_CANDIDATES_RAW
+    already uses for its own vector-valued map -- instead of nesting the
+    ordered rank spell_ids inside each row. This was fixed from an earlier
+    version that nested `std::initializer_list<uint32_t>` as the row's value
+    type: storing an initializer_list as a VALUE inside a constexpr static-
+    duration array does not keep its backing storage alive, so the builder's
+    copy into a real std::vector ran over already-invalid memory, corrupting
+    the process before main() ever ran (M4.11.6 post-Task-8 crash fix). The
+    flattened builder instead appends each row's single spell_id onto the
+    result map's vector for that item_id via `operator[]`, relying on rows
+    for the same item_id being emitted/iterated in rank-ascending order."""
     mail_items = [item for item in items if item["delivery"]["kind"] == "mail"]
     spell_items = [item for item in items if item["delivery"]["kind"] == "learn_spell"]
     chain_items = [item for item in items if item["delivery"]["kind"] == "learn_next_chain_rank"]
@@ -2031,16 +2032,16 @@ def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> li
         # the raw-array-plus-builder pattern the non-empty case above uses.
         lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};")
     if chain_items:
-        lines.append("inline constexpr std::pair<uint32_t, std::initializer_list<uint32_t>> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {")
+        lines.append("inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {")
         for item in chain_items:
-            spell_ids_literal = ", ".join(str(spell_id) for spell_id in item["delivery"]["spell_ids"])
-            lines.append(f'    {{ {item["item_id"]}, {{ {spell_ids_literal} }} }}, // {_string_literal(item["name"])}')
+            for rank, spell_id in enumerate(item["delivery"]["spell_ids"], start=1):
+                lines.append(f'    {{ {item["item_id"]}, {spell_id} }}, // {_string_literal(item["name"])} rank {rank}')
         lines.append("};")
         lines.append("inline std::unordered_map<uint32_t, std::vector<uint32_t>> BuildApItemIdToChainSpellIds()")
         lines.append("{")
         lines.append("    std::unordered_map<uint32_t, std::vector<uint32_t>> result;")
         lines.append("    for (auto const& row : AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW)")
-        lines.append("        result.emplace(row.first, std::vector<uint32_t>(row.second));")
+        lines.append("        result[row.first].push_back(row.second);")
         lines.append("    return result;")
         lines.append("}")
         lines.append("inline const std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = BuildApItemIdToChainSpellIds();")

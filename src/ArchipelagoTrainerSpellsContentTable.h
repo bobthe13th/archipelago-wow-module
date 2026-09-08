@@ -3,7 +3,6 @@
 #pragma once
 
 #include <cstdint>
-#include <initializer_list>
 #include <map>
 #include <string>
 #include <unordered_map>
@@ -4741,289 +4740,1738 @@ inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
     return result;
 }
 inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();
-inline constexpr std::pair<uint32_t, std::initializer_list<uint32_t>> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {
-    { 7500010, { 10, 6141, 8427, 10185, 10186, 10187, 27085, 42939, 42940 } }, // "Progressive Blizzard"
-    { 7500017, { 17, 592, 3747, 6065, 6066, 10898, 10899, 10900, 10901, 25217, 25218, 48065, 48066 } }, // "Progressive Power Word: Shield"
-    { 7500053, { 53, 2589, 2590, 2591, 8721, 11279, 11280, 11281, 26863, 48656, 48657 } }, // "Progressive Backstab"
-    { 7500078, { 284, 285, 1608, 11564, 11565, 11566, 11567, 29707, 30324, 47449, 47450 } }, // "Progressive Heroic Strike"
-    { 7500099, { 99, 1735, 9490, 9747, 9898, 26998, 48559, 48560 } }, // "Progressive Demoralizing Roar"
-    { 7500100, { 100, 6178, 11578 } }, // "Progressive Charge"
-    { 7500116, { 116, 205, 837, 7322, 8406, 8407, 8408, 10179, 10180, 10181, 27071, 27072, 38697, 42841, 42842 } }, // "Progressive Frostbolt"
-    { 7500118, { 118, 12824, 12825, 12826 } }, // "Progressive Polymorph"
-    { 7500120, { 120, 8492, 10159, 10160, 10161, 27087, 42930, 42931 } }, // "Progressive Cone of Cold"
-    { 7500122, { 122, 865, 6131, 10230, 27088, 42917 } }, // "Progressive Frost Nova"
-    { 7500133, { 143, 145, 3140, 8400, 8401, 8402, 10148, 10149, 10150, 10151, 27070, 38692, 42832, 42833 } }, // "Progressive Fireball"
-    { 7500136, { 136, 3111, 3661, 3662, 13542, 13543, 13544, 27046, 48989, 48990 } }, // "Progressive Mend Pet"
-    { 7500139, { 139, 6074, 6075, 6076, 6077, 6078, 10927, 10928, 10929, 25221, 25222, 48067, 48068 } }, // "Progressive Renew"
-    { 7500168, { 7300, 7301 } }, // "Progressive Frost Armor"
-    { 7500172, { 172, 6222, 6223, 7648, 11671, 11672, 27216, 47812, 47813 } }, // "Progressive Corruption"
-    { 7500324, { 324, 325, 905, 945, 8134, 10431, 10432, 25469, 25472, 49280, 49281 } }, // "Progressive Lightning Shield"
-    { 7500331, { 332, 547, 913, 939, 959, 8005, 10395, 10396, 25391, 25396, 49272, 49273 } }, // "Progressive Healing Wave"
-    { 7500339, { 339, 1062, 5195, 5196, 9852, 9853, 26989, 53308 } }, // "Progressive Entangling Roots"
-    { 7500348, { 348, 707, 2941, 11665, 11667, 11668, 27215, 47810, 47811 } }, // "Progressive Immolate"
-    { 7500370, { 370, 8012 } }, // "Progressive Purge"
-    { 7500403, { 529, 548, 915, 943, 6041, 10391, 10392, 15207, 15208, 25448, 25449, 49237, 49238 } }, // "Progressive Lightning Bolt"
-    { 7500408, { 408, 8643 } }, // "Progressive Kidney Shot"
-    { 7500421, { 421, 930, 2860, 10605, 25439, 25442, 49270, 49271 } }, // "Progressive Chain Lightning"
-    { 7500465, { 465, 10290, 643, 10291, 1032, 10292, 10293, 27149, 48941, 48942 } }, // "Progressive Devotion Aura"
-    { 7500467, { 467, 782, 1075, 8914, 9756, 9910, 26992, 53307 } }, // "Progressive Thorns"
-    { 7500469, { 469, 47439, 47440 } }, // "Progressive Commanding Shout"
-    { 7500527, { 527, 988 } }, // "Progressive Dispel Magic"
-    { 7500543, { 543, 8457, 8458, 10223, 10225, 27128, 43010 } }, // "Progressive Fire Ward"
-    { 7500585, { 591, 598, 984, 1004, 6060, 10933, 10934, 25363, 25364, 48122, 48123 } }, // "Progressive Smite"
-    { 7500587, { 587, 597, 990, 6129, 10144, 10145 } }, // "Progressive Conjure Food"
-    { 7500588, { 588, 7128, 602, 1006, 10951, 10952, 25431, 48040, 48168 } }, // "Progressive Inner Fire"
-    { 7500589, { 589, 594, 970, 992, 2767, 10892, 10893, 10894, 25367, 25368, 48124, 48125 } }, // "Progressive Shadow Word: Pain"
-    { 7500596, { 596, 996, 10960, 10961, 25308, 48072 } }, // "Progressive Prayer of Healing"
-    { 7500603, { 603, 30910, 47867 } }, // "Progressive Curse of Doom"
-    { 7500604, { 604, 8450, 8451, 10173, 10174, 33944, 43015 } }, // "Progressive Dampen Magic"
-    { 7500633, { 633, 2800, 10310, 27154, 48788 } }, // "Progressive Lay on Hands"
-    { 7500635, { 639, 647, 1026, 1042, 3472, 10328, 10329, 27135, 27136, 48781, 48782 } }, // "Progressive Holy Light"
-    { 7500686, { 695, 705, 1088, 1106, 7641, 11659, 11660, 11661, 27209, 47808, 47809 } }, // "Progressive Shadow Bolt"
-    { 7500687, { 696 } }, // "Progressive Demon Skin"
-    { 7500689, { 689, 699, 709, 7651, 11699, 11700, 27219, 27220, 47857 } }, // "Progressive Drain Life"
-    { 7500693, { 693, 20752, 20755, 20756, 20757, 27238, 47884 } }, // "Progressive Create Soulstone"
-    { 7500702, { 702, 1108, 6205, 7646, 11707, 11708, 27224, 30909, 50511 } }, // "Progressive Curse of Weakness"
-    { 7500703, { 703, 8631, 8632, 8633, 11289, 11290, 26839, 26884, 48675, 48676 } }, // "Progressive Garrote"
-    { 7500706, { 706, 1086, 11733, 11734, 11735, 27260, 47793, 47889 } }, // "Progressive Demon Armor"
-    { 7500710, { 710, 18647 } }, // "Progressive Banish"
-    { 7500724, { 27870, 27871, 28275, 48086, 48087 } }, // "Progressive Lightwell"
-    { 7500740, { 740, 8918, 9862, 9863, 26983, 48446, 48447 } }, // "Progressive Tranquility"
-    { 7500755, { 755, 3698, 3699, 3700, 11693, 11694, 11695, 27259, 47856 } }, // "Progressive Health Funnel"
-    { 7500759, { 759, 3552, 10053, 10054, 27101, 42985 } }, // "Progressive Conjure Mana Gem"
-    { 7500772, { 772, 6546, 6547, 6548, 11572, 11573, 11574, 25208, 46845, 47465 } }, // "Progressive Rend"
-    { 7500774, { 774, 1058, 1430, 2090, 2091, 3627, 8910, 9839, 9840, 9841, 26981, 26982, 48440, 48441 } }, // "Progressive Rejuvenation"
-    { 7500779, { 779, 780, 769, 9754, 9908, 26997, 48561, 48562 } }, // "Progressive Swipe (Bear)"
-    { 7500845, { 845, 7369, 11608, 11609, 20569, 25231, 47519, 47520 } }, // "Progressive Cleave"
-    { 7500853, { 853, 5588, 5589, 10308 } }, // "Progressive Hammer of Justice"
-    { 7500879, { 879, 5614, 5615, 10312, 10313, 10314, 27138, 48800, 48801 } }, // "Progressive Exorcism"
-    { 7500974, { 32593, 32594, 49283, 49284 } }, // "Progressive Earth Shield"
-    { 7500976, { 976, 10957, 10958, 25433, 48169 } }, // "Progressive Shadow Protection"
-    { 7500980, { 980, 1014, 6217, 11711, 11712, 11713, 27218, 47863, 47864 } }, // "Progressive Curse of Agony"
-    { 7501008, { 1008, 8455, 10169, 10170, 27130, 33946, 43017 } }, // "Progressive Amplify Magic"
-    { 7501022, { 1022, 5599, 10278 } }, // "Progressive Hand of Protection"
-    { 7501064, { 1064, 10622, 10623, 25422, 25423, 55458, 55459 } }, // "Progressive Chain Heal"
-    { 7501079, { 1079, 9492, 9493, 9752, 9894, 9896, 27008, 49799, 49800 } }, // "Progressive Rip"
-    { 7501082, { 1082, 3029, 5201, 9849, 9850, 27000, 48569, 48570 } }, // "Progressive Claw"
-    { 7501098, { 1098, 11725, 11726, 61191 } }, // "Progressive Enslave Demon"
-    { 7501120, { 1120, 8288, 8289, 11675, 27217, 47855 } }, // "Progressive Drain Soul"
-    { 7501126, { 1126, 5232, 6756, 5234, 8907, 9884, 9885, 26990, 48469 } }, // "Progressive Mark of the Wild"
-    { 7501130, { 1130, 14323, 14324, 14325, 53338 } }, // "Progressive Hunter's Mark"
-    { 7501160, { 1160, 6190, 11554, 11555, 11556, 25202, 25203, 47437 } }, // "Progressive Demoralizing Shout"
-    { 7501243, { 1243, 1244, 1245, 2791, 10937, 10938, 25389, 48161 } }, // "Progressive Power Word: Fortitude"
-    { 7501329, { 34411, 34412, 34413, 48663, 48666 } }, // "Progressive Mutilate"
-    { 7501449, { 1449, 8437, 8438, 8439, 10201, 10202, 27080, 27082, 42920, 42921 } }, // "Progressive Arcane Explosion"
-    { 7501454, { 1454, 1455, 1456, 11687, 11688, 11689, 27222, 57946 } }, // "Progressive Life Tap"
-    { 7501459, { 1459, 1460, 1461, 10156, 10157, 27126, 42995 } }, // "Progressive Arcane Intellect"
-    { 7501463, { 1463, 8494, 8495, 10191, 10192, 10193, 27131, 43019, 43020 } }, // "Progressive Mana Shield"
-    { 7501464, { 1464, 8820, 11604, 11605, 25241, 25242, 47474, 47475 } }, // "Progressive Slam"
-    { 7501490, { 1490, 11721, 11722, 27228, 47865 } }, // "Progressive Curse of the Elements"
-    { 7501495, { 1495, 14269, 14270, 14271, 36916, 53339 } }, // "Progressive Mongoose Bite"
-    { 7501499, { 1499, 14310, 14311 } }, // "Progressive Freezing Trap"
-    { 7501510, { 1510, 14294, 14295, 27022, 58431, 58434 } }, // "Progressive Volley"
-    { 7501513, { 1513, 14326, 14327 } }, // "Progressive Scare Beast"
-    { 7501535, { 1535, 8498, 8499, 11314, 11315, 25546, 25547, 61649, 61657 } }, // "Progressive Fire Nova"
-    { 7501714, { 1714, 11719 } }, // "Progressive Curse of Tongues"
-    { 7501752, { 1757, 1758, 1759, 1760, 8621, 11293, 11294, 26861, 26862, 48637, 48638 } }, // "Progressive Sinister Strike"
-    { 7501822, { 1822, 1823, 1824, 9904, 27003, 48573, 48574 } }, // "Progressive Rake"
-    { 7501850, { 1850, 9821, 33357 } }, // "Progressive Dash"
-    { 7501856, { 1856, 1857, 26889 } }, // "Progressive Vanish"
-    { 7501943, { 1943, 8639, 8640, 11273, 11274, 11275, 26867, 48671, 48672 } }, // "Progressive Rupture"
-    { 7501949, { 1949, 11683, 11684, 27213, 47823 } }, // "Progressive Hellfire"
-    { 7501966, { 1966, 6768, 8637, 11303, 27448, 48658, 48659 } }, // "Progressive Feint"
-    { 7501978, { 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 27016, 49000, 49001 } }, // "Progressive Serpent Sting"
-    { 7502006, { 2006, 2010, 10880, 10881, 20770, 25435, 48171 } }, // "Progressive Resurrection"
-    { 7502008, { 2008, 20609, 20610, 20776, 20777, 25590, 49277 } }, // "Progressive Ancestral Spirit"
-    { 7502050, { 2052, 2053 } }, // "Progressive Lesser Heal"
-    { 7502054, { 2054, 2055, 6064 } }, // "Progressive Heal"
-    { 7502060, { 2060, 10963, 10964, 10965, 25210, 25213, 48062, 48063 } }, // "Progressive Greater Heal"
-    { 7502061, { 2061, 9472, 9473, 9474, 10915, 10916, 10917, 25233, 25235, 48070, 48071 } }, // "Progressive Flash Heal"
-    { 7502096, { 2096, 10909 } }, // "Progressive Mind Vision"
-    { 7502098, { 6760, 6761, 6762, 8623, 8624, 11299, 11300, 26865, 48667, 48668 } }, // "Progressive Eviscerate"
-    { 7502120, { 2120, 2121, 8422, 8423, 10215, 10216, 27086, 42925, 42926 } }, // "Progressive Flamestrike"
-    { 7502136, { 2136, 2137, 2138, 8412, 8413, 10197, 10199, 27078, 27079, 42872, 42873 } }, // "Progressive Fire Blast"
-    { 7502362, { 2362, 17727, 17728, 28172, 47886, 47888 } }, // "Progressive Create Spellstone"
-    { 7502637, { 2637, 18657, 18658 } }, // "Progressive Hibernate"
-    { 7502643, { 2643, 14288, 14289, 14290, 27021, 49047, 49048 } }, // "Progressive Multi-Shot"
-    { 7502812, { 2812, 10318, 27139, 48816, 48817 } }, // "Progressive Holy Wrath"
-    { 7502908, { 2908, 8955, 9901, 26995 } }, // "Progressive Soothe Animal"
-    { 7502912, { 2912, 8949, 8950, 8951, 9875, 9876, 26986, 48464, 48465 } }, // "Progressive Starfire"
-    { 7502944, { 2944, 19276, 19277, 19278, 19279, 19280, 25467, 48299, 48300 } }, // "Progressive Devouring Plague"
-    { 7502948, { 2948, 8444, 8445, 8446, 10205, 10206, 10207, 27073, 27074, 42858, 42859 } }, // "Progressive Scorch"
-    { 7502973, { 14260, 14261, 14262, 14263, 14264, 14265, 14266, 27014, 48995, 48996 } }, // "Progressive Raptor Strike"
-    { 7502983, { 2983, 8696, 11305 } }, // "Progressive Sprint"
-    { 7503044, { 3044, 14281, 14282, 14283, 14284, 14285, 14286, 14287, 27019, 49044, 49045 } }, // "Progressive Arcane Shot"
-    { 7503599, { 6363, 6364, 6365, 10437, 10438, 25533, 58699, 58703, 58704 } }, // "Progressive Searing Totem"
-    { 7503674, { 63668, 63669, 63670, 63671, 63672 } }, // "Progressive Black Arrow"
-    { 7505143, { 5143, 5144, 5145, 8416, 8417, 10211, 10212, 27075, 38699, 38704, 42843, 42846 } }, // "Progressive Arcane Missiles"
-    { 7505171, { 5171, 6774 } }, // "Progressive Slice and Dice"
-    { 7505176, { 5177, 5178, 5179, 5180, 6780, 8905, 9912, 26984, 26985, 48459, 48461 } }, // "Progressive Wrath"
-    { 7505185, { 5186, 5187, 5188, 5189, 6778, 8903, 9758, 9888, 9889, 26978, 26979, 48377, 48378 } }, // "Progressive Healing Touch"
-    { 7505211, { 5211, 6798, 8983 } }, // "Progressive Bash"
-    { 7505217, { 5217, 6793, 9845, 9846, 50212, 50213 } }, // "Progressive Tiger's Fury"
-    { 7505221, { 5221, 6800, 8992, 9829, 9830, 27001, 27002, 48571, 48572 } }, // "Progressive Shred"
-    { 7505277, { 5277, 26669 } }, // "Progressive Evasion"
-    { 7505308, { 5308, 20658, 20660, 20661, 20662, 25234, 25236, 47470, 47471 } }, // "Progressive Execute"
-    { 7505394, { 6375, 6377, 10462, 10463, 25567, 58755, 58756, 58757 } }, // "Progressive Healing Stream Totem"
-    { 7505484, { 5484, 17928 } }, // "Progressive Howl of Terror"
-    { 7505487, { 9634 } }, // "Progressive Bear Form"
-    { 7505504, { 5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420 } }, // "Progressive Conjure Water"
-    { 7505570, { 24974, 24975, 24976, 24977, 27013, 48468 } }, // "Progressive Insect Swarm"
-    { 7505675, { 5675, 10495, 10496, 10497, 25570, 58771, 58773, 58774 } }, // "Progressive Mana Spring Totem"
-    { 7505676, { 5676, 17919, 17920, 17921, 17922, 17923, 27210, 30459, 47814, 47815 } }, // "Progressive Searing Pain"
-    { 7505730, { 5730, 6390, 6391, 6392, 10427, 10428, 25525, 58580, 58581, 58582 } }, // "Progressive Stoneclaw Totem"
-    { 7505740, { 5740, 6219, 11677, 11678, 27212, 47819, 47820 } }, // "Progressive Rain of Fire"
-    { 7505782, { 5782, 6213, 6215 } }, // "Progressive Fear"
-    { 7506117, { 6117, 22782, 22783, 27125, 43023, 43024 } }, // "Progressive Mage Armor"
-    { 7506143, { 6143, 8461, 8462, 10177, 32796, 43012 } }, // "Progressive Frost Ward"
-    { 7506201, { 6201, 6202, 5699, 11729, 11730, 27230, 47871, 47878 } }, // "Progressive Create Healthstone"
-    { 7506229, { 6229, 11739, 11740, 47890, 47891 } }, // "Progressive Shadow Ward"
-    { 7506343, { 6343, 8198, 8204, 8205, 11580, 11581, 25264, 47501, 47502 } }, // "Progressive Thunder Clap"
-    { 7506353, { 6353, 17924, 27211, 30545, 47824, 47825 } }, // "Progressive Soul Fire"
-    { 7506366, { 6366, 17951, 17952, 17953, 27250, 60219, 60220 } }, // "Progressive Create Firestone"
-    { 7506572, { 6572, 6574, 7379, 11600, 11601, 25269, 30357, 57823 } }, // "Progressive Revenge"
-    { 7506673, { 6673, 5242, 6192, 11549, 11550, 11551, 2048, 47436 } }, // "Progressive Battle Shout"
-    { 7506770, { 6770, 2070, 11297, 51724 } }, // "Progressive Sap"
-    { 7506785, { 6785, 6787, 9866, 9867, 27005, 48578, 48579 } }, // "Progressive Ravage"
-    { 7506789, { 6789, 17925, 17926, 27223, 47859, 47860 } }, // "Progressive Death Coil (Warlock)"
-    { 7506807, { 6808, 6809, 8972, 9745, 9880, 9881, 26996, 48479, 48480 } }, // "Progressive Maul"
-    { 7507294, { 7294, 10298, 10299, 10300, 10301, 27150, 54043 } }, // "Progressive Retribution Aura"
-    { 7507302, { 7302, 7320, 10219, 10220, 27124, 43008 } }, // "Progressive Ice Armor"
-    { 7507328, { 10322, 10324, 20772, 20773, 48949, 48950 } }, // "Progressive Redemption"
-    { 7508004, { 8004, 8008, 8010, 10466, 10467, 10468, 25420, 49275, 49276 } }, // "Progressive Lesser Healing Wave"
-    { 7508017, { 8017, 8018, 8019, 10399 } }, // "Progressive Rockbiter Weapon"
-    { 7508024, { 8024, 8027, 8030, 16339, 16341, 16342, 25489, 58785, 58789, 58790 } }, // "Progressive Flametongue Weapon"
-    { 7508033, { 8033, 8038, 10456, 16355, 16356, 25500, 58794, 58795, 58796 } }, // "Progressive Frostbrand Weapon"
-    { 7508042, { 8042, 8044, 8045, 8046, 10412, 10413, 10414, 25454, 49230, 49231 } }, // "Progressive Earth Shock"
-    { 7508050, { 8050, 8052, 8053, 10447, 10448, 25457, 49232, 49233 } }, // "Progressive Flame Shock"
-    { 7508056, { 8056, 8058, 10472, 10473, 25464, 49235, 49236 } }, // "Progressive Frost Shock"
-    { 7508071, { 8154, 8155, 10406, 10407, 10408, 25508, 25509, 58751, 58753 } }, // "Progressive Stoneskin Totem"
-    { 7508075, { 8075, 8160, 8161, 10442, 25528, 57622, 58643 } }, // "Progressive Strength of Earth Totem"
-    { 7508092, { 8092, 8102, 8103, 8104, 8105, 8106, 10945, 10946, 10947, 25372, 25375, 48126, 48127 } }, // "Progressive Mind Blast"
-    { 7508122, { 8122, 8124, 10888, 10890 } }, // "Progressive Psychic Scream"
-    { 7508181, { 8181, 10478, 10479, 25560, 58741, 58745 } }, // "Progressive Frost Resistance Totem"
-    { 7508184, { 8184, 10537, 10538, 25563, 58737, 58739 } }, // "Progressive Fire Resistance Totem"
-    { 7508190, { 8190, 10585, 10586, 10587, 25552, 58731, 58734 } }, // "Progressive Magma Totem"
-    { 7508227, { 8227, 8249, 10526, 16387, 25557, 58649, 58652, 58656 } }, // "Progressive Flametongue Totem"
-    { 7508232, { 8232, 8235, 10486, 16362, 25505, 58801, 58803, 58804 } }, // "Progressive Windfury Weapon"
-    { 7508676, { 8676, 8724, 8725, 11267, 11268, 11269, 27441, 48689, 48690, 48691 } }, // "Progressive Ambush"
-    { 7508921, { 8921, 8924, 8925, 8926, 8927, 8928, 8929, 9833, 9834, 9835, 26987, 26988, 48462, 48463 } }, // "Progressive Moonfire"
-    { 7508936, { 8936, 8938, 8939, 8940, 8941, 9750, 9856, 9857, 9858, 26980, 48442, 48443 } }, // "Progressive Regrowth"
-    { 7508998, { 8998, 9000, 9892, 27004, 48575 } }, // "Progressive Cower"
-    { 7509005, { 9005, 9823, 9827, 27006, 49803 } }, // "Progressive Pounce"
-    { 7509484, { 9484, 9485, 10955 } }, // "Progressive Shackle Undead"
-    { 7510595, { 10595, 10600, 10601, 25574, 58746, 58749 } }, // "Progressive Nature Resistance Totem"
-    { 7511113, { 13018, 13019, 13020, 13021, 27133, 33933, 42944, 42945 } }, // "Progressive Blast Wave"
-    { 7511366, { 12505, 12522, 12523, 12524, 12525, 12526, 18809, 27132, 33938, 42890, 42891 } }, // "Progressive Pyroblast"
-    { 7511426, { 13031, 13032, 13033, 27134, 33405, 43038, 43039 } }, // "Progressive Ice Barrier"
-    { 7512294, { 21551, 21552, 21553, 25248, 30330, 47485, 47486 } }, // "Progressive Mortal Strike"
-    { 7513165, { 13165, 14318, 14319, 14320, 14321, 14322, 27044 } }, // "Progressive Aspect of the Hawk"
-    { 7513795, { 13795, 14302, 14303, 14304, 14305, 27023, 49055, 49056 } }, // "Progressive Immolation Trap"
-    { 7513813, { 13813, 14316, 14317, 27025, 49066, 49067 } }, // "Progressive Explosive Trap"
-    { 7514752, { 14752, 14818, 14819, 27841, 25312, 48073 } }, // "Progressive Divine Spirit"
-    { 7514914, { 14914, 15262, 15263, 15264, 15265, 15266, 15267, 15261, 25384, 48134, 48135 } }, // "Progressive Holy Fire"
-    { 7515237, { 15237, 15430, 15431, 27799, 27800, 27801, 25331, 48077, 48078 } }, // "Progressive Holy Nova"
-    { 7515407, { 17311, 17312, 17313, 17314, 18807, 25387, 48155, 48156 } }, // "Progressive Mind Flay"
-    { 7516511, { 17347, 17348, 26864, 48660 } }, // "Progressive Hemorrhage"
-    { 7516689, { 16689, 16810, 16811, 16812, 16813, 17329, 27009, 53312 } }, // "Progressive Nature's Grasp"
-    { 7516914, { 16914, 17401, 17402, 27012, 48467 } }, // "Progressive Hurricane"
-    { 7517877, { 18867, 18868, 18869, 18870, 18871, 27263, 30546, 47826, 47827 } }, // "Progressive Shadowburn"
-    { 7518220, { 18937, 18938, 27265, 59092 } }, // "Progressive Dark Pact"
-    { 7519236, { 19238, 19240, 19241, 19242, 19243, 25437, 48172, 48173 } }, // "Progressive Desperate Prayer"
-    { 7519306, { 20909, 20910, 27067, 48998, 48999 } }, // "Progressive Counterattack"
-    { 7519386, { 24132, 24133, 27068, 49011, 49012 } }, // "Progressive Wyvern Sting"
-    { 7519434, { 20900, 20901, 20902, 20903, 20904, 27065, 49049, 49050 } }, // "Progressive Aimed Shot"
-    { 7519740, { 19740, 19834, 19835, 19836, 19837, 19838, 27140, 48931, 48932 } }, // "Progressive Blessing of Might"
-    { 7519742, { 19742, 19850, 19852, 19853, 19854, 27142, 48935, 48936 } }, // "Progressive Blessing of Wisdom"
-    { 7519750, { 19750, 19939, 19940, 19941, 19942, 19943, 27137, 48784, 48785 } }, // "Progressive Flash of Light"
-    { 7519876, { 19876, 19895, 19896, 27151, 48943 } }, // "Progressive Shadow Resistance Aura"
-    { 7519888, { 19888, 19897, 19898, 27152, 48945 } }, // "Progressive Frost Resistance Aura"
-    { 7519891, { 19891, 19899, 19900, 27153, 48947 } }, // "Progressive Fire Resistance Aura"
-    { 7520043, { 20043, 20190, 27045, 49071 } }, // "Progressive Aspect of the Wild"
-    { 7520243, { 30016, 30022, 47497, 47498 } }, // "Progressive Devastate"
-    { 7520473, { 20929, 20930, 27174, 33072, 48824, 48825 } }, // "Progressive Holy Shock"
-    { 7520484, { 20484, 20739, 20742, 20747, 20748, 26994, 48477 } }, // "Progressive Rebirth"
-    { 7520925, { 20927, 20928, 27179, 48951, 48952 } }, // "Progressive Holy Shield"
-    { 7521562, { 48162 } }, // "Progressive Prayer of Fortitude"
-    { 7521849, { 48470 } }, // "Progressive Gift of the Wild"
-    { 7522568, { 22568, 22827, 22828, 22829, 24248, 48576, 48577 } }, // "Progressive Ferocious Bite"
-    { 7522570, { 22570, 49802 } }, // "Progressive Maim"
-    { 7523028, { 43002 } }, // "Progressive Arcane Brilliance"
-    { 7523922, { 23922, 23923, 23924, 23925, 25258, 30356, 47487, 47488 } }, // "Progressive Shield Slam"
-    { 7524275, { 24275, 24274, 24239, 27180, 48805, 48806 } }, // "Progressive Hammer of Wrath"
-    { 7525782, { 25782, 25916, 27141, 48933, 48934 } }, // "Progressive Greater Blessing of Might"
-    { 7525894, { 25894, 25918, 27143, 48937, 48938 } }, // "Progressive Greater Blessing of Wisdom"
-    { 7526573, { 26573, 20116, 20922, 20923, 20924, 27173, 48818, 48819 } }, // "Progressive Consecration"
-    { 7526679, { 26679, 48673, 48674 } }, // "Progressive Deadly Throw"
-    { 7527243, { 27243, 47835, 47836 } }, // "Progressive Seed of Corruption"
-    { 7527681, { 27681, 32999, 48074 } }, // "Progressive Prayer of Spirit"
-    { 7527683, { 48170 } }, // "Progressive Prayer of Shadow Protection"
-    { 7528176, { 28176, 28189, 47892, 47893 } }, // "Progressive Fel Armor"
-    { 7529722, { 29722, 32231, 47837, 47838 } }, // "Progressive Incinerate"
-    { 7529893, { 29893, 58887 } }, // "Progressive Ritual of Souls"
-    { 7530108, { 30404, 30405, 47841, 47843 } }, // "Progressive Unstable Affliction"
-    { 7530283, { 30413, 30414, 47846, 47847 } }, // "Progressive Shadowfury"
-    { 7530451, { 30451, 42894, 42896, 42897 } }, // "Progressive Arcane Blast"
-    { 7530455, { 30455, 42913, 42914 } }, // "Progressive Ice Lance"
-    { 7530482, { 30482, 43045, 43046 } }, // "Progressive Molten Armor"
-    { 7530706, { 57720, 57721, 57722 } }, // "Progressive Totem of Wrath"
-    { 7531661, { 33041, 33042, 33043, 42949, 42950 } }, // "Progressive Dragon's Breath"
-    { 7531935, { 32699, 32700, 48826, 48827 } }, // "Progressive Avenger's Shield"
-    { 7532379, { 32379, 32996, 48157, 48158 } }, // "Progressive Shadow Word: Death"
-    { 7532546, { 32546, 48119, 48120 } }, // "Progressive Binding Heal"
-    { 7532645, { 32645, 32684, 57992, 57993 } }, // "Progressive Envenom"
-    { 7533076, { 33076, 48112, 48113 } }, // "Progressive Prayer of Mending"
-    { 7533745, { 33745, 48567, 48568 } }, // "Progressive Lacerate"
-    { 7533763, { 33763, 48450, 48451 } }, // "Progressive Lifebloom"
-    { 7533876, { 33982, 33983, 48565, 48566 } }, // "Progressive Mangle (Cat)"
-    { 7533878, { 33986, 33987, 48563, 48564 } }, // "Progressive Mangle (Bear)"
-    { 7533943, { 40120 } }, // "Progressive Flight Form"
-    { 7534861, { 34863, 34864, 34865, 34866, 48088, 48089 } }, // "Progressive Circle of Healing"
-    { 7534914, { 34916, 34917, 48159, 48160 } }, // "Progressive Vampiric Touch"
-    { 7542955, { 42955, 42956 } }, // "Progressive Conjure Refreshment"
-    { 7543265, { 43265, 49936, 49937, 49938 } }, // "Progressive Death and Decay"
-    { 7543987, { 43987, 58659 } }, // "Progressive Ritual of Refreshment"
-    { 7544425, { 44780, 44781 } }, // "Progressive Arcane Barrage"
-    { 7544457, { 55359, 55360 } }, // "Progressive Living Bomb"
-    { 7544614, { 44614, 47610 } }, // "Progressive Frostfire Bolt"
-    { 7545462, { 49917, 49918, 49919, 49920, 49921 } }, // "Progressive Plague Strike"
-    { 7545477, { 49896, 49903, 49904, 49909 } }, // "Progressive Icy Touch"
-    { 7545902, { 49926, 49927, 49928, 49929, 49930 } }, // "Progressive Blood Strike"
-    { 7547540, { 53005, 53006, 53007 } }, // "Progressive Penance"
-    { 7547541, { 49892, 49893, 49894, 49895 } }, // "Progressive Death Coil (Death Knight)"
-    { 7547897, { 47897, 61290 } }, // "Progressive Shadowflame"
-    { 7548045, { 48045, 53023 } }, // "Progressive Mind Sear"
-    { 7548181, { 59161, 59163, 59164 } }, // "Progressive Haunt"
-    { 7548438, { 53248, 53249, 53251 } }, // "Progressive Wild Growth"
-    { 7548505, { 53199, 53200, 53201 } }, // "Progressive Starfall"
-    { 7548721, { 48721, 49939, 49940, 49941 } }, // "Progressive Blood Boil"
-    { 7549020, { 49020, 51423, 51424, 51425 } }, // "Progressive Obliterate"
-    { 7549143, { 51416, 51417, 51418, 51419, 55268 } }, // "Progressive Frost Strike"
-    { 7549158, { 51325, 51326, 51327, 51328 } }, // "Progressive Corpse Explosion"
-    { 7549184, { 51409, 51410, 51411 } }, // "Progressive Howling Blast"
-    { 7549998, { 49998, 49999, 45463, 49923, 49924 } }, // "Progressive Death Strike"
-    { 7550516, { 53223, 53225, 53226, 61384 } }, // "Progressive Typhoon"
-    { 7550769, { 50769, 50768, 50767, 50766, 50765, 50764, 50763 } }, // "Progressive Revive"
-    { 7550796, { 59170, 59171, 59172 } }, // "Progressive Chaos Bolt"
-    { 7551490, { 59156, 59158, 59159 } }, // "Progressive Thunderstorm"
-    { 7551505, { 51505, 60043 } }, // "Progressive Lava Burst"
-    { 7551730, { 51730, 51988, 51991, 51992, 51993, 51994 } }, // "Progressive Earthliving Weapon"
-    { 7552127, { 52127, 52129, 52131, 52134, 52136, 52138, 24398, 33736, 57960 } }, // "Progressive Water Shield"
-    { 7553301, { 60051, 60052, 60053 } }, // "Progressive Explosive Shot"
-    { 7553351, { 53351, 61005, 61006 } }, // "Progressive Kill Shot"
-    { 7553600, { 53600, 61411 } }, // "Progressive Shield of Righteousness"
-    { 7555050, { 55258, 55259, 55260, 55261, 55262 } }, // "Progressive Heart Strike"
-    { 7555090, { 55265, 55270, 55271 } }, // "Progressive Scourge Strike"
-    { 7556641, { 56641, 34120, 49051, 49052 } }, // "Progressive Steady Shot"
-    { 7557330, { 57330, 57623 } }, // "Progressive Horn of Winter"
-    { 7561295, { 61299, 61300, 61301 } }, // "Progressive Riptide"
-    { 7561846, { 61846, 61847 } }, // "Progressive Aspect of the Dragonhawk"
+inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {
+    { 7500010, 10 }, // "Progressive Blizzard" rank 1
+    { 7500010, 6141 }, // "Progressive Blizzard" rank 2
+    { 7500010, 8427 }, // "Progressive Blizzard" rank 3
+    { 7500010, 10185 }, // "Progressive Blizzard" rank 4
+    { 7500010, 10186 }, // "Progressive Blizzard" rank 5
+    { 7500010, 10187 }, // "Progressive Blizzard" rank 6
+    { 7500010, 27085 }, // "Progressive Blizzard" rank 7
+    { 7500010, 42939 }, // "Progressive Blizzard" rank 8
+    { 7500010, 42940 }, // "Progressive Blizzard" rank 9
+    { 7500017, 17 }, // "Progressive Power Word: Shield" rank 1
+    { 7500017, 592 }, // "Progressive Power Word: Shield" rank 2
+    { 7500017, 3747 }, // "Progressive Power Word: Shield" rank 3
+    { 7500017, 6065 }, // "Progressive Power Word: Shield" rank 4
+    { 7500017, 6066 }, // "Progressive Power Word: Shield" rank 5
+    { 7500017, 10898 }, // "Progressive Power Word: Shield" rank 6
+    { 7500017, 10899 }, // "Progressive Power Word: Shield" rank 7
+    { 7500017, 10900 }, // "Progressive Power Word: Shield" rank 8
+    { 7500017, 10901 }, // "Progressive Power Word: Shield" rank 9
+    { 7500017, 25217 }, // "Progressive Power Word: Shield" rank 10
+    { 7500017, 25218 }, // "Progressive Power Word: Shield" rank 11
+    { 7500017, 48065 }, // "Progressive Power Word: Shield" rank 12
+    { 7500017, 48066 }, // "Progressive Power Word: Shield" rank 13
+    { 7500053, 53 }, // "Progressive Backstab" rank 1
+    { 7500053, 2589 }, // "Progressive Backstab" rank 2
+    { 7500053, 2590 }, // "Progressive Backstab" rank 3
+    { 7500053, 2591 }, // "Progressive Backstab" rank 4
+    { 7500053, 8721 }, // "Progressive Backstab" rank 5
+    { 7500053, 11279 }, // "Progressive Backstab" rank 6
+    { 7500053, 11280 }, // "Progressive Backstab" rank 7
+    { 7500053, 11281 }, // "Progressive Backstab" rank 8
+    { 7500053, 26863 }, // "Progressive Backstab" rank 9
+    { 7500053, 48656 }, // "Progressive Backstab" rank 10
+    { 7500053, 48657 }, // "Progressive Backstab" rank 11
+    { 7500078, 284 }, // "Progressive Heroic Strike" rank 1
+    { 7500078, 285 }, // "Progressive Heroic Strike" rank 2
+    { 7500078, 1608 }, // "Progressive Heroic Strike" rank 3
+    { 7500078, 11564 }, // "Progressive Heroic Strike" rank 4
+    { 7500078, 11565 }, // "Progressive Heroic Strike" rank 5
+    { 7500078, 11566 }, // "Progressive Heroic Strike" rank 6
+    { 7500078, 11567 }, // "Progressive Heroic Strike" rank 7
+    { 7500078, 29707 }, // "Progressive Heroic Strike" rank 8
+    { 7500078, 30324 }, // "Progressive Heroic Strike" rank 9
+    { 7500078, 47449 }, // "Progressive Heroic Strike" rank 10
+    { 7500078, 47450 }, // "Progressive Heroic Strike" rank 11
+    { 7500099, 99 }, // "Progressive Demoralizing Roar" rank 1
+    { 7500099, 1735 }, // "Progressive Demoralizing Roar" rank 2
+    { 7500099, 9490 }, // "Progressive Demoralizing Roar" rank 3
+    { 7500099, 9747 }, // "Progressive Demoralizing Roar" rank 4
+    { 7500099, 9898 }, // "Progressive Demoralizing Roar" rank 5
+    { 7500099, 26998 }, // "Progressive Demoralizing Roar" rank 6
+    { 7500099, 48559 }, // "Progressive Demoralizing Roar" rank 7
+    { 7500099, 48560 }, // "Progressive Demoralizing Roar" rank 8
+    { 7500100, 100 }, // "Progressive Charge" rank 1
+    { 7500100, 6178 }, // "Progressive Charge" rank 2
+    { 7500100, 11578 }, // "Progressive Charge" rank 3
+    { 7500116, 116 }, // "Progressive Frostbolt" rank 1
+    { 7500116, 205 }, // "Progressive Frostbolt" rank 2
+    { 7500116, 837 }, // "Progressive Frostbolt" rank 3
+    { 7500116, 7322 }, // "Progressive Frostbolt" rank 4
+    { 7500116, 8406 }, // "Progressive Frostbolt" rank 5
+    { 7500116, 8407 }, // "Progressive Frostbolt" rank 6
+    { 7500116, 8408 }, // "Progressive Frostbolt" rank 7
+    { 7500116, 10179 }, // "Progressive Frostbolt" rank 8
+    { 7500116, 10180 }, // "Progressive Frostbolt" rank 9
+    { 7500116, 10181 }, // "Progressive Frostbolt" rank 10
+    { 7500116, 27071 }, // "Progressive Frostbolt" rank 11
+    { 7500116, 27072 }, // "Progressive Frostbolt" rank 12
+    { 7500116, 38697 }, // "Progressive Frostbolt" rank 13
+    { 7500116, 42841 }, // "Progressive Frostbolt" rank 14
+    { 7500116, 42842 }, // "Progressive Frostbolt" rank 15
+    { 7500118, 118 }, // "Progressive Polymorph" rank 1
+    { 7500118, 12824 }, // "Progressive Polymorph" rank 2
+    { 7500118, 12825 }, // "Progressive Polymorph" rank 3
+    { 7500118, 12826 }, // "Progressive Polymorph" rank 4
+    { 7500120, 120 }, // "Progressive Cone of Cold" rank 1
+    { 7500120, 8492 }, // "Progressive Cone of Cold" rank 2
+    { 7500120, 10159 }, // "Progressive Cone of Cold" rank 3
+    { 7500120, 10160 }, // "Progressive Cone of Cold" rank 4
+    { 7500120, 10161 }, // "Progressive Cone of Cold" rank 5
+    { 7500120, 27087 }, // "Progressive Cone of Cold" rank 6
+    { 7500120, 42930 }, // "Progressive Cone of Cold" rank 7
+    { 7500120, 42931 }, // "Progressive Cone of Cold" rank 8
+    { 7500122, 122 }, // "Progressive Frost Nova" rank 1
+    { 7500122, 865 }, // "Progressive Frost Nova" rank 2
+    { 7500122, 6131 }, // "Progressive Frost Nova" rank 3
+    { 7500122, 10230 }, // "Progressive Frost Nova" rank 4
+    { 7500122, 27088 }, // "Progressive Frost Nova" rank 5
+    { 7500122, 42917 }, // "Progressive Frost Nova" rank 6
+    { 7500133, 143 }, // "Progressive Fireball" rank 1
+    { 7500133, 145 }, // "Progressive Fireball" rank 2
+    { 7500133, 3140 }, // "Progressive Fireball" rank 3
+    { 7500133, 8400 }, // "Progressive Fireball" rank 4
+    { 7500133, 8401 }, // "Progressive Fireball" rank 5
+    { 7500133, 8402 }, // "Progressive Fireball" rank 6
+    { 7500133, 10148 }, // "Progressive Fireball" rank 7
+    { 7500133, 10149 }, // "Progressive Fireball" rank 8
+    { 7500133, 10150 }, // "Progressive Fireball" rank 9
+    { 7500133, 10151 }, // "Progressive Fireball" rank 10
+    { 7500133, 27070 }, // "Progressive Fireball" rank 11
+    { 7500133, 38692 }, // "Progressive Fireball" rank 12
+    { 7500133, 42832 }, // "Progressive Fireball" rank 13
+    { 7500133, 42833 }, // "Progressive Fireball" rank 14
+    { 7500136, 136 }, // "Progressive Mend Pet" rank 1
+    { 7500136, 3111 }, // "Progressive Mend Pet" rank 2
+    { 7500136, 3661 }, // "Progressive Mend Pet" rank 3
+    { 7500136, 3662 }, // "Progressive Mend Pet" rank 4
+    { 7500136, 13542 }, // "Progressive Mend Pet" rank 5
+    { 7500136, 13543 }, // "Progressive Mend Pet" rank 6
+    { 7500136, 13544 }, // "Progressive Mend Pet" rank 7
+    { 7500136, 27046 }, // "Progressive Mend Pet" rank 8
+    { 7500136, 48989 }, // "Progressive Mend Pet" rank 9
+    { 7500136, 48990 }, // "Progressive Mend Pet" rank 10
+    { 7500139, 139 }, // "Progressive Renew" rank 1
+    { 7500139, 6074 }, // "Progressive Renew" rank 2
+    { 7500139, 6075 }, // "Progressive Renew" rank 3
+    { 7500139, 6076 }, // "Progressive Renew" rank 4
+    { 7500139, 6077 }, // "Progressive Renew" rank 5
+    { 7500139, 6078 }, // "Progressive Renew" rank 6
+    { 7500139, 10927 }, // "Progressive Renew" rank 7
+    { 7500139, 10928 }, // "Progressive Renew" rank 8
+    { 7500139, 10929 }, // "Progressive Renew" rank 9
+    { 7500139, 25221 }, // "Progressive Renew" rank 10
+    { 7500139, 25222 }, // "Progressive Renew" rank 11
+    { 7500139, 48067 }, // "Progressive Renew" rank 12
+    { 7500139, 48068 }, // "Progressive Renew" rank 13
+    { 7500168, 7300 }, // "Progressive Frost Armor" rank 1
+    { 7500168, 7301 }, // "Progressive Frost Armor" rank 2
+    { 7500172, 172 }, // "Progressive Corruption" rank 1
+    { 7500172, 6222 }, // "Progressive Corruption" rank 2
+    { 7500172, 6223 }, // "Progressive Corruption" rank 3
+    { 7500172, 7648 }, // "Progressive Corruption" rank 4
+    { 7500172, 11671 }, // "Progressive Corruption" rank 5
+    { 7500172, 11672 }, // "Progressive Corruption" rank 6
+    { 7500172, 27216 }, // "Progressive Corruption" rank 7
+    { 7500172, 47812 }, // "Progressive Corruption" rank 8
+    { 7500172, 47813 }, // "Progressive Corruption" rank 9
+    { 7500324, 324 }, // "Progressive Lightning Shield" rank 1
+    { 7500324, 325 }, // "Progressive Lightning Shield" rank 2
+    { 7500324, 905 }, // "Progressive Lightning Shield" rank 3
+    { 7500324, 945 }, // "Progressive Lightning Shield" rank 4
+    { 7500324, 8134 }, // "Progressive Lightning Shield" rank 5
+    { 7500324, 10431 }, // "Progressive Lightning Shield" rank 6
+    { 7500324, 10432 }, // "Progressive Lightning Shield" rank 7
+    { 7500324, 25469 }, // "Progressive Lightning Shield" rank 8
+    { 7500324, 25472 }, // "Progressive Lightning Shield" rank 9
+    { 7500324, 49280 }, // "Progressive Lightning Shield" rank 10
+    { 7500324, 49281 }, // "Progressive Lightning Shield" rank 11
+    { 7500331, 332 }, // "Progressive Healing Wave" rank 1
+    { 7500331, 547 }, // "Progressive Healing Wave" rank 2
+    { 7500331, 913 }, // "Progressive Healing Wave" rank 3
+    { 7500331, 939 }, // "Progressive Healing Wave" rank 4
+    { 7500331, 959 }, // "Progressive Healing Wave" rank 5
+    { 7500331, 8005 }, // "Progressive Healing Wave" rank 6
+    { 7500331, 10395 }, // "Progressive Healing Wave" rank 7
+    { 7500331, 10396 }, // "Progressive Healing Wave" rank 8
+    { 7500331, 25391 }, // "Progressive Healing Wave" rank 9
+    { 7500331, 25396 }, // "Progressive Healing Wave" rank 10
+    { 7500331, 49272 }, // "Progressive Healing Wave" rank 11
+    { 7500331, 49273 }, // "Progressive Healing Wave" rank 12
+    { 7500339, 339 }, // "Progressive Entangling Roots" rank 1
+    { 7500339, 1062 }, // "Progressive Entangling Roots" rank 2
+    { 7500339, 5195 }, // "Progressive Entangling Roots" rank 3
+    { 7500339, 5196 }, // "Progressive Entangling Roots" rank 4
+    { 7500339, 9852 }, // "Progressive Entangling Roots" rank 5
+    { 7500339, 9853 }, // "Progressive Entangling Roots" rank 6
+    { 7500339, 26989 }, // "Progressive Entangling Roots" rank 7
+    { 7500339, 53308 }, // "Progressive Entangling Roots" rank 8
+    { 7500348, 348 }, // "Progressive Immolate" rank 1
+    { 7500348, 707 }, // "Progressive Immolate" rank 2
+    { 7500348, 2941 }, // "Progressive Immolate" rank 3
+    { 7500348, 11665 }, // "Progressive Immolate" rank 4
+    { 7500348, 11667 }, // "Progressive Immolate" rank 5
+    { 7500348, 11668 }, // "Progressive Immolate" rank 6
+    { 7500348, 27215 }, // "Progressive Immolate" rank 7
+    { 7500348, 47810 }, // "Progressive Immolate" rank 8
+    { 7500348, 47811 }, // "Progressive Immolate" rank 9
+    { 7500370, 370 }, // "Progressive Purge" rank 1
+    { 7500370, 8012 }, // "Progressive Purge" rank 2
+    { 7500403, 529 }, // "Progressive Lightning Bolt" rank 1
+    { 7500403, 548 }, // "Progressive Lightning Bolt" rank 2
+    { 7500403, 915 }, // "Progressive Lightning Bolt" rank 3
+    { 7500403, 943 }, // "Progressive Lightning Bolt" rank 4
+    { 7500403, 6041 }, // "Progressive Lightning Bolt" rank 5
+    { 7500403, 10391 }, // "Progressive Lightning Bolt" rank 6
+    { 7500403, 10392 }, // "Progressive Lightning Bolt" rank 7
+    { 7500403, 15207 }, // "Progressive Lightning Bolt" rank 8
+    { 7500403, 15208 }, // "Progressive Lightning Bolt" rank 9
+    { 7500403, 25448 }, // "Progressive Lightning Bolt" rank 10
+    { 7500403, 25449 }, // "Progressive Lightning Bolt" rank 11
+    { 7500403, 49237 }, // "Progressive Lightning Bolt" rank 12
+    { 7500403, 49238 }, // "Progressive Lightning Bolt" rank 13
+    { 7500408, 408 }, // "Progressive Kidney Shot" rank 1
+    { 7500408, 8643 }, // "Progressive Kidney Shot" rank 2
+    { 7500421, 421 }, // "Progressive Chain Lightning" rank 1
+    { 7500421, 930 }, // "Progressive Chain Lightning" rank 2
+    { 7500421, 2860 }, // "Progressive Chain Lightning" rank 3
+    { 7500421, 10605 }, // "Progressive Chain Lightning" rank 4
+    { 7500421, 25439 }, // "Progressive Chain Lightning" rank 5
+    { 7500421, 25442 }, // "Progressive Chain Lightning" rank 6
+    { 7500421, 49270 }, // "Progressive Chain Lightning" rank 7
+    { 7500421, 49271 }, // "Progressive Chain Lightning" rank 8
+    { 7500465, 465 }, // "Progressive Devotion Aura" rank 1
+    { 7500465, 10290 }, // "Progressive Devotion Aura" rank 2
+    { 7500465, 643 }, // "Progressive Devotion Aura" rank 3
+    { 7500465, 10291 }, // "Progressive Devotion Aura" rank 4
+    { 7500465, 1032 }, // "Progressive Devotion Aura" rank 5
+    { 7500465, 10292 }, // "Progressive Devotion Aura" rank 6
+    { 7500465, 10293 }, // "Progressive Devotion Aura" rank 7
+    { 7500465, 27149 }, // "Progressive Devotion Aura" rank 8
+    { 7500465, 48941 }, // "Progressive Devotion Aura" rank 9
+    { 7500465, 48942 }, // "Progressive Devotion Aura" rank 10
+    { 7500467, 467 }, // "Progressive Thorns" rank 1
+    { 7500467, 782 }, // "Progressive Thorns" rank 2
+    { 7500467, 1075 }, // "Progressive Thorns" rank 3
+    { 7500467, 8914 }, // "Progressive Thorns" rank 4
+    { 7500467, 9756 }, // "Progressive Thorns" rank 5
+    { 7500467, 9910 }, // "Progressive Thorns" rank 6
+    { 7500467, 26992 }, // "Progressive Thorns" rank 7
+    { 7500467, 53307 }, // "Progressive Thorns" rank 8
+    { 7500469, 469 }, // "Progressive Commanding Shout" rank 1
+    { 7500469, 47439 }, // "Progressive Commanding Shout" rank 2
+    { 7500469, 47440 }, // "Progressive Commanding Shout" rank 3
+    { 7500527, 527 }, // "Progressive Dispel Magic" rank 1
+    { 7500527, 988 }, // "Progressive Dispel Magic" rank 2
+    { 7500543, 543 }, // "Progressive Fire Ward" rank 1
+    { 7500543, 8457 }, // "Progressive Fire Ward" rank 2
+    { 7500543, 8458 }, // "Progressive Fire Ward" rank 3
+    { 7500543, 10223 }, // "Progressive Fire Ward" rank 4
+    { 7500543, 10225 }, // "Progressive Fire Ward" rank 5
+    { 7500543, 27128 }, // "Progressive Fire Ward" rank 6
+    { 7500543, 43010 }, // "Progressive Fire Ward" rank 7
+    { 7500585, 591 }, // "Progressive Smite" rank 1
+    { 7500585, 598 }, // "Progressive Smite" rank 2
+    { 7500585, 984 }, // "Progressive Smite" rank 3
+    { 7500585, 1004 }, // "Progressive Smite" rank 4
+    { 7500585, 6060 }, // "Progressive Smite" rank 5
+    { 7500585, 10933 }, // "Progressive Smite" rank 6
+    { 7500585, 10934 }, // "Progressive Smite" rank 7
+    { 7500585, 25363 }, // "Progressive Smite" rank 8
+    { 7500585, 25364 }, // "Progressive Smite" rank 9
+    { 7500585, 48122 }, // "Progressive Smite" rank 10
+    { 7500585, 48123 }, // "Progressive Smite" rank 11
+    { 7500587, 587 }, // "Progressive Conjure Food" rank 1
+    { 7500587, 597 }, // "Progressive Conjure Food" rank 2
+    { 7500587, 990 }, // "Progressive Conjure Food" rank 3
+    { 7500587, 6129 }, // "Progressive Conjure Food" rank 4
+    { 7500587, 10144 }, // "Progressive Conjure Food" rank 5
+    { 7500587, 10145 }, // "Progressive Conjure Food" rank 6
+    { 7500588, 588 }, // "Progressive Inner Fire" rank 1
+    { 7500588, 7128 }, // "Progressive Inner Fire" rank 2
+    { 7500588, 602 }, // "Progressive Inner Fire" rank 3
+    { 7500588, 1006 }, // "Progressive Inner Fire" rank 4
+    { 7500588, 10951 }, // "Progressive Inner Fire" rank 5
+    { 7500588, 10952 }, // "Progressive Inner Fire" rank 6
+    { 7500588, 25431 }, // "Progressive Inner Fire" rank 7
+    { 7500588, 48040 }, // "Progressive Inner Fire" rank 8
+    { 7500588, 48168 }, // "Progressive Inner Fire" rank 9
+    { 7500589, 589 }, // "Progressive Shadow Word: Pain" rank 1
+    { 7500589, 594 }, // "Progressive Shadow Word: Pain" rank 2
+    { 7500589, 970 }, // "Progressive Shadow Word: Pain" rank 3
+    { 7500589, 992 }, // "Progressive Shadow Word: Pain" rank 4
+    { 7500589, 2767 }, // "Progressive Shadow Word: Pain" rank 5
+    { 7500589, 10892 }, // "Progressive Shadow Word: Pain" rank 6
+    { 7500589, 10893 }, // "Progressive Shadow Word: Pain" rank 7
+    { 7500589, 10894 }, // "Progressive Shadow Word: Pain" rank 8
+    { 7500589, 25367 }, // "Progressive Shadow Word: Pain" rank 9
+    { 7500589, 25368 }, // "Progressive Shadow Word: Pain" rank 10
+    { 7500589, 48124 }, // "Progressive Shadow Word: Pain" rank 11
+    { 7500589, 48125 }, // "Progressive Shadow Word: Pain" rank 12
+    { 7500596, 596 }, // "Progressive Prayer of Healing" rank 1
+    { 7500596, 996 }, // "Progressive Prayer of Healing" rank 2
+    { 7500596, 10960 }, // "Progressive Prayer of Healing" rank 3
+    { 7500596, 10961 }, // "Progressive Prayer of Healing" rank 4
+    { 7500596, 25308 }, // "Progressive Prayer of Healing" rank 5
+    { 7500596, 48072 }, // "Progressive Prayer of Healing" rank 6
+    { 7500603, 603 }, // "Progressive Curse of Doom" rank 1
+    { 7500603, 30910 }, // "Progressive Curse of Doom" rank 2
+    { 7500603, 47867 }, // "Progressive Curse of Doom" rank 3
+    { 7500604, 604 }, // "Progressive Dampen Magic" rank 1
+    { 7500604, 8450 }, // "Progressive Dampen Magic" rank 2
+    { 7500604, 8451 }, // "Progressive Dampen Magic" rank 3
+    { 7500604, 10173 }, // "Progressive Dampen Magic" rank 4
+    { 7500604, 10174 }, // "Progressive Dampen Magic" rank 5
+    { 7500604, 33944 }, // "Progressive Dampen Magic" rank 6
+    { 7500604, 43015 }, // "Progressive Dampen Magic" rank 7
+    { 7500633, 633 }, // "Progressive Lay on Hands" rank 1
+    { 7500633, 2800 }, // "Progressive Lay on Hands" rank 2
+    { 7500633, 10310 }, // "Progressive Lay on Hands" rank 3
+    { 7500633, 27154 }, // "Progressive Lay on Hands" rank 4
+    { 7500633, 48788 }, // "Progressive Lay on Hands" rank 5
+    { 7500635, 639 }, // "Progressive Holy Light" rank 1
+    { 7500635, 647 }, // "Progressive Holy Light" rank 2
+    { 7500635, 1026 }, // "Progressive Holy Light" rank 3
+    { 7500635, 1042 }, // "Progressive Holy Light" rank 4
+    { 7500635, 3472 }, // "Progressive Holy Light" rank 5
+    { 7500635, 10328 }, // "Progressive Holy Light" rank 6
+    { 7500635, 10329 }, // "Progressive Holy Light" rank 7
+    { 7500635, 27135 }, // "Progressive Holy Light" rank 8
+    { 7500635, 27136 }, // "Progressive Holy Light" rank 9
+    { 7500635, 48781 }, // "Progressive Holy Light" rank 10
+    { 7500635, 48782 }, // "Progressive Holy Light" rank 11
+    { 7500686, 695 }, // "Progressive Shadow Bolt" rank 1
+    { 7500686, 705 }, // "Progressive Shadow Bolt" rank 2
+    { 7500686, 1088 }, // "Progressive Shadow Bolt" rank 3
+    { 7500686, 1106 }, // "Progressive Shadow Bolt" rank 4
+    { 7500686, 7641 }, // "Progressive Shadow Bolt" rank 5
+    { 7500686, 11659 }, // "Progressive Shadow Bolt" rank 6
+    { 7500686, 11660 }, // "Progressive Shadow Bolt" rank 7
+    { 7500686, 11661 }, // "Progressive Shadow Bolt" rank 8
+    { 7500686, 27209 }, // "Progressive Shadow Bolt" rank 9
+    { 7500686, 47808 }, // "Progressive Shadow Bolt" rank 10
+    { 7500686, 47809 }, // "Progressive Shadow Bolt" rank 11
+    { 7500687, 696 }, // "Progressive Demon Skin" rank 1
+    { 7500689, 689 }, // "Progressive Drain Life" rank 1
+    { 7500689, 699 }, // "Progressive Drain Life" rank 2
+    { 7500689, 709 }, // "Progressive Drain Life" rank 3
+    { 7500689, 7651 }, // "Progressive Drain Life" rank 4
+    { 7500689, 11699 }, // "Progressive Drain Life" rank 5
+    { 7500689, 11700 }, // "Progressive Drain Life" rank 6
+    { 7500689, 27219 }, // "Progressive Drain Life" rank 7
+    { 7500689, 27220 }, // "Progressive Drain Life" rank 8
+    { 7500689, 47857 }, // "Progressive Drain Life" rank 9
+    { 7500693, 693 }, // "Progressive Create Soulstone" rank 1
+    { 7500693, 20752 }, // "Progressive Create Soulstone" rank 2
+    { 7500693, 20755 }, // "Progressive Create Soulstone" rank 3
+    { 7500693, 20756 }, // "Progressive Create Soulstone" rank 4
+    { 7500693, 20757 }, // "Progressive Create Soulstone" rank 5
+    { 7500693, 27238 }, // "Progressive Create Soulstone" rank 6
+    { 7500693, 47884 }, // "Progressive Create Soulstone" rank 7
+    { 7500702, 702 }, // "Progressive Curse of Weakness" rank 1
+    { 7500702, 1108 }, // "Progressive Curse of Weakness" rank 2
+    { 7500702, 6205 }, // "Progressive Curse of Weakness" rank 3
+    { 7500702, 7646 }, // "Progressive Curse of Weakness" rank 4
+    { 7500702, 11707 }, // "Progressive Curse of Weakness" rank 5
+    { 7500702, 11708 }, // "Progressive Curse of Weakness" rank 6
+    { 7500702, 27224 }, // "Progressive Curse of Weakness" rank 7
+    { 7500702, 30909 }, // "Progressive Curse of Weakness" rank 8
+    { 7500702, 50511 }, // "Progressive Curse of Weakness" rank 9
+    { 7500703, 703 }, // "Progressive Garrote" rank 1
+    { 7500703, 8631 }, // "Progressive Garrote" rank 2
+    { 7500703, 8632 }, // "Progressive Garrote" rank 3
+    { 7500703, 8633 }, // "Progressive Garrote" rank 4
+    { 7500703, 11289 }, // "Progressive Garrote" rank 5
+    { 7500703, 11290 }, // "Progressive Garrote" rank 6
+    { 7500703, 26839 }, // "Progressive Garrote" rank 7
+    { 7500703, 26884 }, // "Progressive Garrote" rank 8
+    { 7500703, 48675 }, // "Progressive Garrote" rank 9
+    { 7500703, 48676 }, // "Progressive Garrote" rank 10
+    { 7500706, 706 }, // "Progressive Demon Armor" rank 1
+    { 7500706, 1086 }, // "Progressive Demon Armor" rank 2
+    { 7500706, 11733 }, // "Progressive Demon Armor" rank 3
+    { 7500706, 11734 }, // "Progressive Demon Armor" rank 4
+    { 7500706, 11735 }, // "Progressive Demon Armor" rank 5
+    { 7500706, 27260 }, // "Progressive Demon Armor" rank 6
+    { 7500706, 47793 }, // "Progressive Demon Armor" rank 7
+    { 7500706, 47889 }, // "Progressive Demon Armor" rank 8
+    { 7500710, 710 }, // "Progressive Banish" rank 1
+    { 7500710, 18647 }, // "Progressive Banish" rank 2
+    { 7500724, 27870 }, // "Progressive Lightwell" rank 1
+    { 7500724, 27871 }, // "Progressive Lightwell" rank 2
+    { 7500724, 28275 }, // "Progressive Lightwell" rank 3
+    { 7500724, 48086 }, // "Progressive Lightwell" rank 4
+    { 7500724, 48087 }, // "Progressive Lightwell" rank 5
+    { 7500740, 740 }, // "Progressive Tranquility" rank 1
+    { 7500740, 8918 }, // "Progressive Tranquility" rank 2
+    { 7500740, 9862 }, // "Progressive Tranquility" rank 3
+    { 7500740, 9863 }, // "Progressive Tranquility" rank 4
+    { 7500740, 26983 }, // "Progressive Tranquility" rank 5
+    { 7500740, 48446 }, // "Progressive Tranquility" rank 6
+    { 7500740, 48447 }, // "Progressive Tranquility" rank 7
+    { 7500755, 755 }, // "Progressive Health Funnel" rank 1
+    { 7500755, 3698 }, // "Progressive Health Funnel" rank 2
+    { 7500755, 3699 }, // "Progressive Health Funnel" rank 3
+    { 7500755, 3700 }, // "Progressive Health Funnel" rank 4
+    { 7500755, 11693 }, // "Progressive Health Funnel" rank 5
+    { 7500755, 11694 }, // "Progressive Health Funnel" rank 6
+    { 7500755, 11695 }, // "Progressive Health Funnel" rank 7
+    { 7500755, 27259 }, // "Progressive Health Funnel" rank 8
+    { 7500755, 47856 }, // "Progressive Health Funnel" rank 9
+    { 7500759, 759 }, // "Progressive Conjure Mana Gem" rank 1
+    { 7500759, 3552 }, // "Progressive Conjure Mana Gem" rank 2
+    { 7500759, 10053 }, // "Progressive Conjure Mana Gem" rank 3
+    { 7500759, 10054 }, // "Progressive Conjure Mana Gem" rank 4
+    { 7500759, 27101 }, // "Progressive Conjure Mana Gem" rank 5
+    { 7500759, 42985 }, // "Progressive Conjure Mana Gem" rank 6
+    { 7500772, 772 }, // "Progressive Rend" rank 1
+    { 7500772, 6546 }, // "Progressive Rend" rank 2
+    { 7500772, 6547 }, // "Progressive Rend" rank 3
+    { 7500772, 6548 }, // "Progressive Rend" rank 4
+    { 7500772, 11572 }, // "Progressive Rend" rank 5
+    { 7500772, 11573 }, // "Progressive Rend" rank 6
+    { 7500772, 11574 }, // "Progressive Rend" rank 7
+    { 7500772, 25208 }, // "Progressive Rend" rank 8
+    { 7500772, 46845 }, // "Progressive Rend" rank 9
+    { 7500772, 47465 }, // "Progressive Rend" rank 10
+    { 7500774, 774 }, // "Progressive Rejuvenation" rank 1
+    { 7500774, 1058 }, // "Progressive Rejuvenation" rank 2
+    { 7500774, 1430 }, // "Progressive Rejuvenation" rank 3
+    { 7500774, 2090 }, // "Progressive Rejuvenation" rank 4
+    { 7500774, 2091 }, // "Progressive Rejuvenation" rank 5
+    { 7500774, 3627 }, // "Progressive Rejuvenation" rank 6
+    { 7500774, 8910 }, // "Progressive Rejuvenation" rank 7
+    { 7500774, 9839 }, // "Progressive Rejuvenation" rank 8
+    { 7500774, 9840 }, // "Progressive Rejuvenation" rank 9
+    { 7500774, 9841 }, // "Progressive Rejuvenation" rank 10
+    { 7500774, 26981 }, // "Progressive Rejuvenation" rank 11
+    { 7500774, 26982 }, // "Progressive Rejuvenation" rank 12
+    { 7500774, 48440 }, // "Progressive Rejuvenation" rank 13
+    { 7500774, 48441 }, // "Progressive Rejuvenation" rank 14
+    { 7500779, 779 }, // "Progressive Swipe (Bear)" rank 1
+    { 7500779, 780 }, // "Progressive Swipe (Bear)" rank 2
+    { 7500779, 769 }, // "Progressive Swipe (Bear)" rank 3
+    { 7500779, 9754 }, // "Progressive Swipe (Bear)" rank 4
+    { 7500779, 9908 }, // "Progressive Swipe (Bear)" rank 5
+    { 7500779, 26997 }, // "Progressive Swipe (Bear)" rank 6
+    { 7500779, 48561 }, // "Progressive Swipe (Bear)" rank 7
+    { 7500779, 48562 }, // "Progressive Swipe (Bear)" rank 8
+    { 7500845, 845 }, // "Progressive Cleave" rank 1
+    { 7500845, 7369 }, // "Progressive Cleave" rank 2
+    { 7500845, 11608 }, // "Progressive Cleave" rank 3
+    { 7500845, 11609 }, // "Progressive Cleave" rank 4
+    { 7500845, 20569 }, // "Progressive Cleave" rank 5
+    { 7500845, 25231 }, // "Progressive Cleave" rank 6
+    { 7500845, 47519 }, // "Progressive Cleave" rank 7
+    { 7500845, 47520 }, // "Progressive Cleave" rank 8
+    { 7500853, 853 }, // "Progressive Hammer of Justice" rank 1
+    { 7500853, 5588 }, // "Progressive Hammer of Justice" rank 2
+    { 7500853, 5589 }, // "Progressive Hammer of Justice" rank 3
+    { 7500853, 10308 }, // "Progressive Hammer of Justice" rank 4
+    { 7500879, 879 }, // "Progressive Exorcism" rank 1
+    { 7500879, 5614 }, // "Progressive Exorcism" rank 2
+    { 7500879, 5615 }, // "Progressive Exorcism" rank 3
+    { 7500879, 10312 }, // "Progressive Exorcism" rank 4
+    { 7500879, 10313 }, // "Progressive Exorcism" rank 5
+    { 7500879, 10314 }, // "Progressive Exorcism" rank 6
+    { 7500879, 27138 }, // "Progressive Exorcism" rank 7
+    { 7500879, 48800 }, // "Progressive Exorcism" rank 8
+    { 7500879, 48801 }, // "Progressive Exorcism" rank 9
+    { 7500974, 32593 }, // "Progressive Earth Shield" rank 1
+    { 7500974, 32594 }, // "Progressive Earth Shield" rank 2
+    { 7500974, 49283 }, // "Progressive Earth Shield" rank 3
+    { 7500974, 49284 }, // "Progressive Earth Shield" rank 4
+    { 7500976, 976 }, // "Progressive Shadow Protection" rank 1
+    { 7500976, 10957 }, // "Progressive Shadow Protection" rank 2
+    { 7500976, 10958 }, // "Progressive Shadow Protection" rank 3
+    { 7500976, 25433 }, // "Progressive Shadow Protection" rank 4
+    { 7500976, 48169 }, // "Progressive Shadow Protection" rank 5
+    { 7500980, 980 }, // "Progressive Curse of Agony" rank 1
+    { 7500980, 1014 }, // "Progressive Curse of Agony" rank 2
+    { 7500980, 6217 }, // "Progressive Curse of Agony" rank 3
+    { 7500980, 11711 }, // "Progressive Curse of Agony" rank 4
+    { 7500980, 11712 }, // "Progressive Curse of Agony" rank 5
+    { 7500980, 11713 }, // "Progressive Curse of Agony" rank 6
+    { 7500980, 27218 }, // "Progressive Curse of Agony" rank 7
+    { 7500980, 47863 }, // "Progressive Curse of Agony" rank 8
+    { 7500980, 47864 }, // "Progressive Curse of Agony" rank 9
+    { 7501008, 1008 }, // "Progressive Amplify Magic" rank 1
+    { 7501008, 8455 }, // "Progressive Amplify Magic" rank 2
+    { 7501008, 10169 }, // "Progressive Amplify Magic" rank 3
+    { 7501008, 10170 }, // "Progressive Amplify Magic" rank 4
+    { 7501008, 27130 }, // "Progressive Amplify Magic" rank 5
+    { 7501008, 33946 }, // "Progressive Amplify Magic" rank 6
+    { 7501008, 43017 }, // "Progressive Amplify Magic" rank 7
+    { 7501022, 1022 }, // "Progressive Hand of Protection" rank 1
+    { 7501022, 5599 }, // "Progressive Hand of Protection" rank 2
+    { 7501022, 10278 }, // "Progressive Hand of Protection" rank 3
+    { 7501064, 1064 }, // "Progressive Chain Heal" rank 1
+    { 7501064, 10622 }, // "Progressive Chain Heal" rank 2
+    { 7501064, 10623 }, // "Progressive Chain Heal" rank 3
+    { 7501064, 25422 }, // "Progressive Chain Heal" rank 4
+    { 7501064, 25423 }, // "Progressive Chain Heal" rank 5
+    { 7501064, 55458 }, // "Progressive Chain Heal" rank 6
+    { 7501064, 55459 }, // "Progressive Chain Heal" rank 7
+    { 7501079, 1079 }, // "Progressive Rip" rank 1
+    { 7501079, 9492 }, // "Progressive Rip" rank 2
+    { 7501079, 9493 }, // "Progressive Rip" rank 3
+    { 7501079, 9752 }, // "Progressive Rip" rank 4
+    { 7501079, 9894 }, // "Progressive Rip" rank 5
+    { 7501079, 9896 }, // "Progressive Rip" rank 6
+    { 7501079, 27008 }, // "Progressive Rip" rank 7
+    { 7501079, 49799 }, // "Progressive Rip" rank 8
+    { 7501079, 49800 }, // "Progressive Rip" rank 9
+    { 7501082, 1082 }, // "Progressive Claw" rank 1
+    { 7501082, 3029 }, // "Progressive Claw" rank 2
+    { 7501082, 5201 }, // "Progressive Claw" rank 3
+    { 7501082, 9849 }, // "Progressive Claw" rank 4
+    { 7501082, 9850 }, // "Progressive Claw" rank 5
+    { 7501082, 27000 }, // "Progressive Claw" rank 6
+    { 7501082, 48569 }, // "Progressive Claw" rank 7
+    { 7501082, 48570 }, // "Progressive Claw" rank 8
+    { 7501098, 1098 }, // "Progressive Enslave Demon" rank 1
+    { 7501098, 11725 }, // "Progressive Enslave Demon" rank 2
+    { 7501098, 11726 }, // "Progressive Enslave Demon" rank 3
+    { 7501098, 61191 }, // "Progressive Enslave Demon" rank 4
+    { 7501120, 1120 }, // "Progressive Drain Soul" rank 1
+    { 7501120, 8288 }, // "Progressive Drain Soul" rank 2
+    { 7501120, 8289 }, // "Progressive Drain Soul" rank 3
+    { 7501120, 11675 }, // "Progressive Drain Soul" rank 4
+    { 7501120, 27217 }, // "Progressive Drain Soul" rank 5
+    { 7501120, 47855 }, // "Progressive Drain Soul" rank 6
+    { 7501126, 1126 }, // "Progressive Mark of the Wild" rank 1
+    { 7501126, 5232 }, // "Progressive Mark of the Wild" rank 2
+    { 7501126, 6756 }, // "Progressive Mark of the Wild" rank 3
+    { 7501126, 5234 }, // "Progressive Mark of the Wild" rank 4
+    { 7501126, 8907 }, // "Progressive Mark of the Wild" rank 5
+    { 7501126, 9884 }, // "Progressive Mark of the Wild" rank 6
+    { 7501126, 9885 }, // "Progressive Mark of the Wild" rank 7
+    { 7501126, 26990 }, // "Progressive Mark of the Wild" rank 8
+    { 7501126, 48469 }, // "Progressive Mark of the Wild" rank 9
+    { 7501130, 1130 }, // "Progressive Hunter's Mark" rank 1
+    { 7501130, 14323 }, // "Progressive Hunter's Mark" rank 2
+    { 7501130, 14324 }, // "Progressive Hunter's Mark" rank 3
+    { 7501130, 14325 }, // "Progressive Hunter's Mark" rank 4
+    { 7501130, 53338 }, // "Progressive Hunter's Mark" rank 5
+    { 7501160, 1160 }, // "Progressive Demoralizing Shout" rank 1
+    { 7501160, 6190 }, // "Progressive Demoralizing Shout" rank 2
+    { 7501160, 11554 }, // "Progressive Demoralizing Shout" rank 3
+    { 7501160, 11555 }, // "Progressive Demoralizing Shout" rank 4
+    { 7501160, 11556 }, // "Progressive Demoralizing Shout" rank 5
+    { 7501160, 25202 }, // "Progressive Demoralizing Shout" rank 6
+    { 7501160, 25203 }, // "Progressive Demoralizing Shout" rank 7
+    { 7501160, 47437 }, // "Progressive Demoralizing Shout" rank 8
+    { 7501243, 1243 }, // "Progressive Power Word: Fortitude" rank 1
+    { 7501243, 1244 }, // "Progressive Power Word: Fortitude" rank 2
+    { 7501243, 1245 }, // "Progressive Power Word: Fortitude" rank 3
+    { 7501243, 2791 }, // "Progressive Power Word: Fortitude" rank 4
+    { 7501243, 10937 }, // "Progressive Power Word: Fortitude" rank 5
+    { 7501243, 10938 }, // "Progressive Power Word: Fortitude" rank 6
+    { 7501243, 25389 }, // "Progressive Power Word: Fortitude" rank 7
+    { 7501243, 48161 }, // "Progressive Power Word: Fortitude" rank 8
+    { 7501329, 34411 }, // "Progressive Mutilate" rank 1
+    { 7501329, 34412 }, // "Progressive Mutilate" rank 2
+    { 7501329, 34413 }, // "Progressive Mutilate" rank 3
+    { 7501329, 48663 }, // "Progressive Mutilate" rank 4
+    { 7501329, 48666 }, // "Progressive Mutilate" rank 5
+    { 7501449, 1449 }, // "Progressive Arcane Explosion" rank 1
+    { 7501449, 8437 }, // "Progressive Arcane Explosion" rank 2
+    { 7501449, 8438 }, // "Progressive Arcane Explosion" rank 3
+    { 7501449, 8439 }, // "Progressive Arcane Explosion" rank 4
+    { 7501449, 10201 }, // "Progressive Arcane Explosion" rank 5
+    { 7501449, 10202 }, // "Progressive Arcane Explosion" rank 6
+    { 7501449, 27080 }, // "Progressive Arcane Explosion" rank 7
+    { 7501449, 27082 }, // "Progressive Arcane Explosion" rank 8
+    { 7501449, 42920 }, // "Progressive Arcane Explosion" rank 9
+    { 7501449, 42921 }, // "Progressive Arcane Explosion" rank 10
+    { 7501454, 1454 }, // "Progressive Life Tap" rank 1
+    { 7501454, 1455 }, // "Progressive Life Tap" rank 2
+    { 7501454, 1456 }, // "Progressive Life Tap" rank 3
+    { 7501454, 11687 }, // "Progressive Life Tap" rank 4
+    { 7501454, 11688 }, // "Progressive Life Tap" rank 5
+    { 7501454, 11689 }, // "Progressive Life Tap" rank 6
+    { 7501454, 27222 }, // "Progressive Life Tap" rank 7
+    { 7501454, 57946 }, // "Progressive Life Tap" rank 8
+    { 7501459, 1459 }, // "Progressive Arcane Intellect" rank 1
+    { 7501459, 1460 }, // "Progressive Arcane Intellect" rank 2
+    { 7501459, 1461 }, // "Progressive Arcane Intellect" rank 3
+    { 7501459, 10156 }, // "Progressive Arcane Intellect" rank 4
+    { 7501459, 10157 }, // "Progressive Arcane Intellect" rank 5
+    { 7501459, 27126 }, // "Progressive Arcane Intellect" rank 6
+    { 7501459, 42995 }, // "Progressive Arcane Intellect" rank 7
+    { 7501463, 1463 }, // "Progressive Mana Shield" rank 1
+    { 7501463, 8494 }, // "Progressive Mana Shield" rank 2
+    { 7501463, 8495 }, // "Progressive Mana Shield" rank 3
+    { 7501463, 10191 }, // "Progressive Mana Shield" rank 4
+    { 7501463, 10192 }, // "Progressive Mana Shield" rank 5
+    { 7501463, 10193 }, // "Progressive Mana Shield" rank 6
+    { 7501463, 27131 }, // "Progressive Mana Shield" rank 7
+    { 7501463, 43019 }, // "Progressive Mana Shield" rank 8
+    { 7501463, 43020 }, // "Progressive Mana Shield" rank 9
+    { 7501464, 1464 }, // "Progressive Slam" rank 1
+    { 7501464, 8820 }, // "Progressive Slam" rank 2
+    { 7501464, 11604 }, // "Progressive Slam" rank 3
+    { 7501464, 11605 }, // "Progressive Slam" rank 4
+    { 7501464, 25241 }, // "Progressive Slam" rank 5
+    { 7501464, 25242 }, // "Progressive Slam" rank 6
+    { 7501464, 47474 }, // "Progressive Slam" rank 7
+    { 7501464, 47475 }, // "Progressive Slam" rank 8
+    { 7501490, 1490 }, // "Progressive Curse of the Elements" rank 1
+    { 7501490, 11721 }, // "Progressive Curse of the Elements" rank 2
+    { 7501490, 11722 }, // "Progressive Curse of the Elements" rank 3
+    { 7501490, 27228 }, // "Progressive Curse of the Elements" rank 4
+    { 7501490, 47865 }, // "Progressive Curse of the Elements" rank 5
+    { 7501495, 1495 }, // "Progressive Mongoose Bite" rank 1
+    { 7501495, 14269 }, // "Progressive Mongoose Bite" rank 2
+    { 7501495, 14270 }, // "Progressive Mongoose Bite" rank 3
+    { 7501495, 14271 }, // "Progressive Mongoose Bite" rank 4
+    { 7501495, 36916 }, // "Progressive Mongoose Bite" rank 5
+    { 7501495, 53339 }, // "Progressive Mongoose Bite" rank 6
+    { 7501499, 1499 }, // "Progressive Freezing Trap" rank 1
+    { 7501499, 14310 }, // "Progressive Freezing Trap" rank 2
+    { 7501499, 14311 }, // "Progressive Freezing Trap" rank 3
+    { 7501510, 1510 }, // "Progressive Volley" rank 1
+    { 7501510, 14294 }, // "Progressive Volley" rank 2
+    { 7501510, 14295 }, // "Progressive Volley" rank 3
+    { 7501510, 27022 }, // "Progressive Volley" rank 4
+    { 7501510, 58431 }, // "Progressive Volley" rank 5
+    { 7501510, 58434 }, // "Progressive Volley" rank 6
+    { 7501513, 1513 }, // "Progressive Scare Beast" rank 1
+    { 7501513, 14326 }, // "Progressive Scare Beast" rank 2
+    { 7501513, 14327 }, // "Progressive Scare Beast" rank 3
+    { 7501535, 1535 }, // "Progressive Fire Nova" rank 1
+    { 7501535, 8498 }, // "Progressive Fire Nova" rank 2
+    { 7501535, 8499 }, // "Progressive Fire Nova" rank 3
+    { 7501535, 11314 }, // "Progressive Fire Nova" rank 4
+    { 7501535, 11315 }, // "Progressive Fire Nova" rank 5
+    { 7501535, 25546 }, // "Progressive Fire Nova" rank 6
+    { 7501535, 25547 }, // "Progressive Fire Nova" rank 7
+    { 7501535, 61649 }, // "Progressive Fire Nova" rank 8
+    { 7501535, 61657 }, // "Progressive Fire Nova" rank 9
+    { 7501714, 1714 }, // "Progressive Curse of Tongues" rank 1
+    { 7501714, 11719 }, // "Progressive Curse of Tongues" rank 2
+    { 7501752, 1757 }, // "Progressive Sinister Strike" rank 1
+    { 7501752, 1758 }, // "Progressive Sinister Strike" rank 2
+    { 7501752, 1759 }, // "Progressive Sinister Strike" rank 3
+    { 7501752, 1760 }, // "Progressive Sinister Strike" rank 4
+    { 7501752, 8621 }, // "Progressive Sinister Strike" rank 5
+    { 7501752, 11293 }, // "Progressive Sinister Strike" rank 6
+    { 7501752, 11294 }, // "Progressive Sinister Strike" rank 7
+    { 7501752, 26861 }, // "Progressive Sinister Strike" rank 8
+    { 7501752, 26862 }, // "Progressive Sinister Strike" rank 9
+    { 7501752, 48637 }, // "Progressive Sinister Strike" rank 10
+    { 7501752, 48638 }, // "Progressive Sinister Strike" rank 11
+    { 7501822, 1822 }, // "Progressive Rake" rank 1
+    { 7501822, 1823 }, // "Progressive Rake" rank 2
+    { 7501822, 1824 }, // "Progressive Rake" rank 3
+    { 7501822, 9904 }, // "Progressive Rake" rank 4
+    { 7501822, 27003 }, // "Progressive Rake" rank 5
+    { 7501822, 48573 }, // "Progressive Rake" rank 6
+    { 7501822, 48574 }, // "Progressive Rake" rank 7
+    { 7501850, 1850 }, // "Progressive Dash" rank 1
+    { 7501850, 9821 }, // "Progressive Dash" rank 2
+    { 7501850, 33357 }, // "Progressive Dash" rank 3
+    { 7501856, 1856 }, // "Progressive Vanish" rank 1
+    { 7501856, 1857 }, // "Progressive Vanish" rank 2
+    { 7501856, 26889 }, // "Progressive Vanish" rank 3
+    { 7501943, 1943 }, // "Progressive Rupture" rank 1
+    { 7501943, 8639 }, // "Progressive Rupture" rank 2
+    { 7501943, 8640 }, // "Progressive Rupture" rank 3
+    { 7501943, 11273 }, // "Progressive Rupture" rank 4
+    { 7501943, 11274 }, // "Progressive Rupture" rank 5
+    { 7501943, 11275 }, // "Progressive Rupture" rank 6
+    { 7501943, 26867 }, // "Progressive Rupture" rank 7
+    { 7501943, 48671 }, // "Progressive Rupture" rank 8
+    { 7501943, 48672 }, // "Progressive Rupture" rank 9
+    { 7501949, 1949 }, // "Progressive Hellfire" rank 1
+    { 7501949, 11683 }, // "Progressive Hellfire" rank 2
+    { 7501949, 11684 }, // "Progressive Hellfire" rank 3
+    { 7501949, 27213 }, // "Progressive Hellfire" rank 4
+    { 7501949, 47823 }, // "Progressive Hellfire" rank 5
+    { 7501966, 1966 }, // "Progressive Feint" rank 1
+    { 7501966, 6768 }, // "Progressive Feint" rank 2
+    { 7501966, 8637 }, // "Progressive Feint" rank 3
+    { 7501966, 11303 }, // "Progressive Feint" rank 4
+    { 7501966, 27448 }, // "Progressive Feint" rank 5
+    { 7501966, 48658 }, // "Progressive Feint" rank 6
+    { 7501966, 48659 }, // "Progressive Feint" rank 7
+    { 7501978, 1978 }, // "Progressive Serpent Sting" rank 1
+    { 7501978, 13549 }, // "Progressive Serpent Sting" rank 2
+    { 7501978, 13550 }, // "Progressive Serpent Sting" rank 3
+    { 7501978, 13551 }, // "Progressive Serpent Sting" rank 4
+    { 7501978, 13552 }, // "Progressive Serpent Sting" rank 5
+    { 7501978, 13553 }, // "Progressive Serpent Sting" rank 6
+    { 7501978, 13554 }, // "Progressive Serpent Sting" rank 7
+    { 7501978, 13555 }, // "Progressive Serpent Sting" rank 8
+    { 7501978, 27016 }, // "Progressive Serpent Sting" rank 9
+    { 7501978, 49000 }, // "Progressive Serpent Sting" rank 10
+    { 7501978, 49001 }, // "Progressive Serpent Sting" rank 11
+    { 7502006, 2006 }, // "Progressive Resurrection" rank 1
+    { 7502006, 2010 }, // "Progressive Resurrection" rank 2
+    { 7502006, 10880 }, // "Progressive Resurrection" rank 3
+    { 7502006, 10881 }, // "Progressive Resurrection" rank 4
+    { 7502006, 20770 }, // "Progressive Resurrection" rank 5
+    { 7502006, 25435 }, // "Progressive Resurrection" rank 6
+    { 7502006, 48171 }, // "Progressive Resurrection" rank 7
+    { 7502008, 2008 }, // "Progressive Ancestral Spirit" rank 1
+    { 7502008, 20609 }, // "Progressive Ancestral Spirit" rank 2
+    { 7502008, 20610 }, // "Progressive Ancestral Spirit" rank 3
+    { 7502008, 20776 }, // "Progressive Ancestral Spirit" rank 4
+    { 7502008, 20777 }, // "Progressive Ancestral Spirit" rank 5
+    { 7502008, 25590 }, // "Progressive Ancestral Spirit" rank 6
+    { 7502008, 49277 }, // "Progressive Ancestral Spirit" rank 7
+    { 7502050, 2052 }, // "Progressive Lesser Heal" rank 1
+    { 7502050, 2053 }, // "Progressive Lesser Heal" rank 2
+    { 7502054, 2054 }, // "Progressive Heal" rank 1
+    { 7502054, 2055 }, // "Progressive Heal" rank 2
+    { 7502054, 6064 }, // "Progressive Heal" rank 3
+    { 7502060, 2060 }, // "Progressive Greater Heal" rank 1
+    { 7502060, 10963 }, // "Progressive Greater Heal" rank 2
+    { 7502060, 10964 }, // "Progressive Greater Heal" rank 3
+    { 7502060, 10965 }, // "Progressive Greater Heal" rank 4
+    { 7502060, 25210 }, // "Progressive Greater Heal" rank 5
+    { 7502060, 25213 }, // "Progressive Greater Heal" rank 6
+    { 7502060, 48062 }, // "Progressive Greater Heal" rank 7
+    { 7502060, 48063 }, // "Progressive Greater Heal" rank 8
+    { 7502061, 2061 }, // "Progressive Flash Heal" rank 1
+    { 7502061, 9472 }, // "Progressive Flash Heal" rank 2
+    { 7502061, 9473 }, // "Progressive Flash Heal" rank 3
+    { 7502061, 9474 }, // "Progressive Flash Heal" rank 4
+    { 7502061, 10915 }, // "Progressive Flash Heal" rank 5
+    { 7502061, 10916 }, // "Progressive Flash Heal" rank 6
+    { 7502061, 10917 }, // "Progressive Flash Heal" rank 7
+    { 7502061, 25233 }, // "Progressive Flash Heal" rank 8
+    { 7502061, 25235 }, // "Progressive Flash Heal" rank 9
+    { 7502061, 48070 }, // "Progressive Flash Heal" rank 10
+    { 7502061, 48071 }, // "Progressive Flash Heal" rank 11
+    { 7502096, 2096 }, // "Progressive Mind Vision" rank 1
+    { 7502096, 10909 }, // "Progressive Mind Vision" rank 2
+    { 7502098, 6760 }, // "Progressive Eviscerate" rank 1
+    { 7502098, 6761 }, // "Progressive Eviscerate" rank 2
+    { 7502098, 6762 }, // "Progressive Eviscerate" rank 3
+    { 7502098, 8623 }, // "Progressive Eviscerate" rank 4
+    { 7502098, 8624 }, // "Progressive Eviscerate" rank 5
+    { 7502098, 11299 }, // "Progressive Eviscerate" rank 6
+    { 7502098, 11300 }, // "Progressive Eviscerate" rank 7
+    { 7502098, 26865 }, // "Progressive Eviscerate" rank 8
+    { 7502098, 48667 }, // "Progressive Eviscerate" rank 9
+    { 7502098, 48668 }, // "Progressive Eviscerate" rank 10
+    { 7502120, 2120 }, // "Progressive Flamestrike" rank 1
+    { 7502120, 2121 }, // "Progressive Flamestrike" rank 2
+    { 7502120, 8422 }, // "Progressive Flamestrike" rank 3
+    { 7502120, 8423 }, // "Progressive Flamestrike" rank 4
+    { 7502120, 10215 }, // "Progressive Flamestrike" rank 5
+    { 7502120, 10216 }, // "Progressive Flamestrike" rank 6
+    { 7502120, 27086 }, // "Progressive Flamestrike" rank 7
+    { 7502120, 42925 }, // "Progressive Flamestrike" rank 8
+    { 7502120, 42926 }, // "Progressive Flamestrike" rank 9
+    { 7502136, 2136 }, // "Progressive Fire Blast" rank 1
+    { 7502136, 2137 }, // "Progressive Fire Blast" rank 2
+    { 7502136, 2138 }, // "Progressive Fire Blast" rank 3
+    { 7502136, 8412 }, // "Progressive Fire Blast" rank 4
+    { 7502136, 8413 }, // "Progressive Fire Blast" rank 5
+    { 7502136, 10197 }, // "Progressive Fire Blast" rank 6
+    { 7502136, 10199 }, // "Progressive Fire Blast" rank 7
+    { 7502136, 27078 }, // "Progressive Fire Blast" rank 8
+    { 7502136, 27079 }, // "Progressive Fire Blast" rank 9
+    { 7502136, 42872 }, // "Progressive Fire Blast" rank 10
+    { 7502136, 42873 }, // "Progressive Fire Blast" rank 11
+    { 7502362, 2362 }, // "Progressive Create Spellstone" rank 1
+    { 7502362, 17727 }, // "Progressive Create Spellstone" rank 2
+    { 7502362, 17728 }, // "Progressive Create Spellstone" rank 3
+    { 7502362, 28172 }, // "Progressive Create Spellstone" rank 4
+    { 7502362, 47886 }, // "Progressive Create Spellstone" rank 5
+    { 7502362, 47888 }, // "Progressive Create Spellstone" rank 6
+    { 7502637, 2637 }, // "Progressive Hibernate" rank 1
+    { 7502637, 18657 }, // "Progressive Hibernate" rank 2
+    { 7502637, 18658 }, // "Progressive Hibernate" rank 3
+    { 7502643, 2643 }, // "Progressive Multi-Shot" rank 1
+    { 7502643, 14288 }, // "Progressive Multi-Shot" rank 2
+    { 7502643, 14289 }, // "Progressive Multi-Shot" rank 3
+    { 7502643, 14290 }, // "Progressive Multi-Shot" rank 4
+    { 7502643, 27021 }, // "Progressive Multi-Shot" rank 5
+    { 7502643, 49047 }, // "Progressive Multi-Shot" rank 6
+    { 7502643, 49048 }, // "Progressive Multi-Shot" rank 7
+    { 7502812, 2812 }, // "Progressive Holy Wrath" rank 1
+    { 7502812, 10318 }, // "Progressive Holy Wrath" rank 2
+    { 7502812, 27139 }, // "Progressive Holy Wrath" rank 3
+    { 7502812, 48816 }, // "Progressive Holy Wrath" rank 4
+    { 7502812, 48817 }, // "Progressive Holy Wrath" rank 5
+    { 7502908, 2908 }, // "Progressive Soothe Animal" rank 1
+    { 7502908, 8955 }, // "Progressive Soothe Animal" rank 2
+    { 7502908, 9901 }, // "Progressive Soothe Animal" rank 3
+    { 7502908, 26995 }, // "Progressive Soothe Animal" rank 4
+    { 7502912, 2912 }, // "Progressive Starfire" rank 1
+    { 7502912, 8949 }, // "Progressive Starfire" rank 2
+    { 7502912, 8950 }, // "Progressive Starfire" rank 3
+    { 7502912, 8951 }, // "Progressive Starfire" rank 4
+    { 7502912, 9875 }, // "Progressive Starfire" rank 5
+    { 7502912, 9876 }, // "Progressive Starfire" rank 6
+    { 7502912, 26986 }, // "Progressive Starfire" rank 7
+    { 7502912, 48464 }, // "Progressive Starfire" rank 8
+    { 7502912, 48465 }, // "Progressive Starfire" rank 9
+    { 7502944, 2944 }, // "Progressive Devouring Plague" rank 1
+    { 7502944, 19276 }, // "Progressive Devouring Plague" rank 2
+    { 7502944, 19277 }, // "Progressive Devouring Plague" rank 3
+    { 7502944, 19278 }, // "Progressive Devouring Plague" rank 4
+    { 7502944, 19279 }, // "Progressive Devouring Plague" rank 5
+    { 7502944, 19280 }, // "Progressive Devouring Plague" rank 6
+    { 7502944, 25467 }, // "Progressive Devouring Plague" rank 7
+    { 7502944, 48299 }, // "Progressive Devouring Plague" rank 8
+    { 7502944, 48300 }, // "Progressive Devouring Plague" rank 9
+    { 7502948, 2948 }, // "Progressive Scorch" rank 1
+    { 7502948, 8444 }, // "Progressive Scorch" rank 2
+    { 7502948, 8445 }, // "Progressive Scorch" rank 3
+    { 7502948, 8446 }, // "Progressive Scorch" rank 4
+    { 7502948, 10205 }, // "Progressive Scorch" rank 5
+    { 7502948, 10206 }, // "Progressive Scorch" rank 6
+    { 7502948, 10207 }, // "Progressive Scorch" rank 7
+    { 7502948, 27073 }, // "Progressive Scorch" rank 8
+    { 7502948, 27074 }, // "Progressive Scorch" rank 9
+    { 7502948, 42858 }, // "Progressive Scorch" rank 10
+    { 7502948, 42859 }, // "Progressive Scorch" rank 11
+    { 7502973, 14260 }, // "Progressive Raptor Strike" rank 1
+    { 7502973, 14261 }, // "Progressive Raptor Strike" rank 2
+    { 7502973, 14262 }, // "Progressive Raptor Strike" rank 3
+    { 7502973, 14263 }, // "Progressive Raptor Strike" rank 4
+    { 7502973, 14264 }, // "Progressive Raptor Strike" rank 5
+    { 7502973, 14265 }, // "Progressive Raptor Strike" rank 6
+    { 7502973, 14266 }, // "Progressive Raptor Strike" rank 7
+    { 7502973, 27014 }, // "Progressive Raptor Strike" rank 8
+    { 7502973, 48995 }, // "Progressive Raptor Strike" rank 9
+    { 7502973, 48996 }, // "Progressive Raptor Strike" rank 10
+    { 7502983, 2983 }, // "Progressive Sprint" rank 1
+    { 7502983, 8696 }, // "Progressive Sprint" rank 2
+    { 7502983, 11305 }, // "Progressive Sprint" rank 3
+    { 7503044, 3044 }, // "Progressive Arcane Shot" rank 1
+    { 7503044, 14281 }, // "Progressive Arcane Shot" rank 2
+    { 7503044, 14282 }, // "Progressive Arcane Shot" rank 3
+    { 7503044, 14283 }, // "Progressive Arcane Shot" rank 4
+    { 7503044, 14284 }, // "Progressive Arcane Shot" rank 5
+    { 7503044, 14285 }, // "Progressive Arcane Shot" rank 6
+    { 7503044, 14286 }, // "Progressive Arcane Shot" rank 7
+    { 7503044, 14287 }, // "Progressive Arcane Shot" rank 8
+    { 7503044, 27019 }, // "Progressive Arcane Shot" rank 9
+    { 7503044, 49044 }, // "Progressive Arcane Shot" rank 10
+    { 7503044, 49045 }, // "Progressive Arcane Shot" rank 11
+    { 7503599, 6363 }, // "Progressive Searing Totem" rank 1
+    { 7503599, 6364 }, // "Progressive Searing Totem" rank 2
+    { 7503599, 6365 }, // "Progressive Searing Totem" rank 3
+    { 7503599, 10437 }, // "Progressive Searing Totem" rank 4
+    { 7503599, 10438 }, // "Progressive Searing Totem" rank 5
+    { 7503599, 25533 }, // "Progressive Searing Totem" rank 6
+    { 7503599, 58699 }, // "Progressive Searing Totem" rank 7
+    { 7503599, 58703 }, // "Progressive Searing Totem" rank 8
+    { 7503599, 58704 }, // "Progressive Searing Totem" rank 9
+    { 7503674, 63668 }, // "Progressive Black Arrow" rank 1
+    { 7503674, 63669 }, // "Progressive Black Arrow" rank 2
+    { 7503674, 63670 }, // "Progressive Black Arrow" rank 3
+    { 7503674, 63671 }, // "Progressive Black Arrow" rank 4
+    { 7503674, 63672 }, // "Progressive Black Arrow" rank 5
+    { 7505143, 5143 }, // "Progressive Arcane Missiles" rank 1
+    { 7505143, 5144 }, // "Progressive Arcane Missiles" rank 2
+    { 7505143, 5145 }, // "Progressive Arcane Missiles" rank 3
+    { 7505143, 8416 }, // "Progressive Arcane Missiles" rank 4
+    { 7505143, 8417 }, // "Progressive Arcane Missiles" rank 5
+    { 7505143, 10211 }, // "Progressive Arcane Missiles" rank 6
+    { 7505143, 10212 }, // "Progressive Arcane Missiles" rank 7
+    { 7505143, 27075 }, // "Progressive Arcane Missiles" rank 8
+    { 7505143, 38699 }, // "Progressive Arcane Missiles" rank 9
+    { 7505143, 38704 }, // "Progressive Arcane Missiles" rank 10
+    { 7505143, 42843 }, // "Progressive Arcane Missiles" rank 11
+    { 7505143, 42846 }, // "Progressive Arcane Missiles" rank 12
+    { 7505171, 5171 }, // "Progressive Slice and Dice" rank 1
+    { 7505171, 6774 }, // "Progressive Slice and Dice" rank 2
+    { 7505176, 5177 }, // "Progressive Wrath" rank 1
+    { 7505176, 5178 }, // "Progressive Wrath" rank 2
+    { 7505176, 5179 }, // "Progressive Wrath" rank 3
+    { 7505176, 5180 }, // "Progressive Wrath" rank 4
+    { 7505176, 6780 }, // "Progressive Wrath" rank 5
+    { 7505176, 8905 }, // "Progressive Wrath" rank 6
+    { 7505176, 9912 }, // "Progressive Wrath" rank 7
+    { 7505176, 26984 }, // "Progressive Wrath" rank 8
+    { 7505176, 26985 }, // "Progressive Wrath" rank 9
+    { 7505176, 48459 }, // "Progressive Wrath" rank 10
+    { 7505176, 48461 }, // "Progressive Wrath" rank 11
+    { 7505185, 5186 }, // "Progressive Healing Touch" rank 1
+    { 7505185, 5187 }, // "Progressive Healing Touch" rank 2
+    { 7505185, 5188 }, // "Progressive Healing Touch" rank 3
+    { 7505185, 5189 }, // "Progressive Healing Touch" rank 4
+    { 7505185, 6778 }, // "Progressive Healing Touch" rank 5
+    { 7505185, 8903 }, // "Progressive Healing Touch" rank 6
+    { 7505185, 9758 }, // "Progressive Healing Touch" rank 7
+    { 7505185, 9888 }, // "Progressive Healing Touch" rank 8
+    { 7505185, 9889 }, // "Progressive Healing Touch" rank 9
+    { 7505185, 26978 }, // "Progressive Healing Touch" rank 10
+    { 7505185, 26979 }, // "Progressive Healing Touch" rank 11
+    { 7505185, 48377 }, // "Progressive Healing Touch" rank 12
+    { 7505185, 48378 }, // "Progressive Healing Touch" rank 13
+    { 7505211, 5211 }, // "Progressive Bash" rank 1
+    { 7505211, 6798 }, // "Progressive Bash" rank 2
+    { 7505211, 8983 }, // "Progressive Bash" rank 3
+    { 7505217, 5217 }, // "Progressive Tiger's Fury" rank 1
+    { 7505217, 6793 }, // "Progressive Tiger's Fury" rank 2
+    { 7505217, 9845 }, // "Progressive Tiger's Fury" rank 3
+    { 7505217, 9846 }, // "Progressive Tiger's Fury" rank 4
+    { 7505217, 50212 }, // "Progressive Tiger's Fury" rank 5
+    { 7505217, 50213 }, // "Progressive Tiger's Fury" rank 6
+    { 7505221, 5221 }, // "Progressive Shred" rank 1
+    { 7505221, 6800 }, // "Progressive Shred" rank 2
+    { 7505221, 8992 }, // "Progressive Shred" rank 3
+    { 7505221, 9829 }, // "Progressive Shred" rank 4
+    { 7505221, 9830 }, // "Progressive Shred" rank 5
+    { 7505221, 27001 }, // "Progressive Shred" rank 6
+    { 7505221, 27002 }, // "Progressive Shred" rank 7
+    { 7505221, 48571 }, // "Progressive Shred" rank 8
+    { 7505221, 48572 }, // "Progressive Shred" rank 9
+    { 7505277, 5277 }, // "Progressive Evasion" rank 1
+    { 7505277, 26669 }, // "Progressive Evasion" rank 2
+    { 7505308, 5308 }, // "Progressive Execute" rank 1
+    { 7505308, 20658 }, // "Progressive Execute" rank 2
+    { 7505308, 20660 }, // "Progressive Execute" rank 3
+    { 7505308, 20661 }, // "Progressive Execute" rank 4
+    { 7505308, 20662 }, // "Progressive Execute" rank 5
+    { 7505308, 25234 }, // "Progressive Execute" rank 6
+    { 7505308, 25236 }, // "Progressive Execute" rank 7
+    { 7505308, 47470 }, // "Progressive Execute" rank 8
+    { 7505308, 47471 }, // "Progressive Execute" rank 9
+    { 7505394, 6375 }, // "Progressive Healing Stream Totem" rank 1
+    { 7505394, 6377 }, // "Progressive Healing Stream Totem" rank 2
+    { 7505394, 10462 }, // "Progressive Healing Stream Totem" rank 3
+    { 7505394, 10463 }, // "Progressive Healing Stream Totem" rank 4
+    { 7505394, 25567 }, // "Progressive Healing Stream Totem" rank 5
+    { 7505394, 58755 }, // "Progressive Healing Stream Totem" rank 6
+    { 7505394, 58756 }, // "Progressive Healing Stream Totem" rank 7
+    { 7505394, 58757 }, // "Progressive Healing Stream Totem" rank 8
+    { 7505484, 5484 }, // "Progressive Howl of Terror" rank 1
+    { 7505484, 17928 }, // "Progressive Howl of Terror" rank 2
+    { 7505487, 9634 }, // "Progressive Bear Form" rank 1
+    { 7505504, 5504 }, // "Progressive Conjure Water" rank 1
+    { 7505504, 5505 }, // "Progressive Conjure Water" rank 2
+    { 7505504, 5506 }, // "Progressive Conjure Water" rank 3
+    { 7505504, 6127 }, // "Progressive Conjure Water" rank 4
+    { 7505504, 10138 }, // "Progressive Conjure Water" rank 5
+    { 7505504, 10139 }, // "Progressive Conjure Water" rank 6
+    { 7505504, 10140 }, // "Progressive Conjure Water" rank 7
+    { 7505504, 37420 }, // "Progressive Conjure Water" rank 8
+    { 7505570, 24974 }, // "Progressive Insect Swarm" rank 1
+    { 7505570, 24975 }, // "Progressive Insect Swarm" rank 2
+    { 7505570, 24976 }, // "Progressive Insect Swarm" rank 3
+    { 7505570, 24977 }, // "Progressive Insect Swarm" rank 4
+    { 7505570, 27013 }, // "Progressive Insect Swarm" rank 5
+    { 7505570, 48468 }, // "Progressive Insect Swarm" rank 6
+    { 7505675, 5675 }, // "Progressive Mana Spring Totem" rank 1
+    { 7505675, 10495 }, // "Progressive Mana Spring Totem" rank 2
+    { 7505675, 10496 }, // "Progressive Mana Spring Totem" rank 3
+    { 7505675, 10497 }, // "Progressive Mana Spring Totem" rank 4
+    { 7505675, 25570 }, // "Progressive Mana Spring Totem" rank 5
+    { 7505675, 58771 }, // "Progressive Mana Spring Totem" rank 6
+    { 7505675, 58773 }, // "Progressive Mana Spring Totem" rank 7
+    { 7505675, 58774 }, // "Progressive Mana Spring Totem" rank 8
+    { 7505676, 5676 }, // "Progressive Searing Pain" rank 1
+    { 7505676, 17919 }, // "Progressive Searing Pain" rank 2
+    { 7505676, 17920 }, // "Progressive Searing Pain" rank 3
+    { 7505676, 17921 }, // "Progressive Searing Pain" rank 4
+    { 7505676, 17922 }, // "Progressive Searing Pain" rank 5
+    { 7505676, 17923 }, // "Progressive Searing Pain" rank 6
+    { 7505676, 27210 }, // "Progressive Searing Pain" rank 7
+    { 7505676, 30459 }, // "Progressive Searing Pain" rank 8
+    { 7505676, 47814 }, // "Progressive Searing Pain" rank 9
+    { 7505676, 47815 }, // "Progressive Searing Pain" rank 10
+    { 7505730, 5730 }, // "Progressive Stoneclaw Totem" rank 1
+    { 7505730, 6390 }, // "Progressive Stoneclaw Totem" rank 2
+    { 7505730, 6391 }, // "Progressive Stoneclaw Totem" rank 3
+    { 7505730, 6392 }, // "Progressive Stoneclaw Totem" rank 4
+    { 7505730, 10427 }, // "Progressive Stoneclaw Totem" rank 5
+    { 7505730, 10428 }, // "Progressive Stoneclaw Totem" rank 6
+    { 7505730, 25525 }, // "Progressive Stoneclaw Totem" rank 7
+    { 7505730, 58580 }, // "Progressive Stoneclaw Totem" rank 8
+    { 7505730, 58581 }, // "Progressive Stoneclaw Totem" rank 9
+    { 7505730, 58582 }, // "Progressive Stoneclaw Totem" rank 10
+    { 7505740, 5740 }, // "Progressive Rain of Fire" rank 1
+    { 7505740, 6219 }, // "Progressive Rain of Fire" rank 2
+    { 7505740, 11677 }, // "Progressive Rain of Fire" rank 3
+    { 7505740, 11678 }, // "Progressive Rain of Fire" rank 4
+    { 7505740, 27212 }, // "Progressive Rain of Fire" rank 5
+    { 7505740, 47819 }, // "Progressive Rain of Fire" rank 6
+    { 7505740, 47820 }, // "Progressive Rain of Fire" rank 7
+    { 7505782, 5782 }, // "Progressive Fear" rank 1
+    { 7505782, 6213 }, // "Progressive Fear" rank 2
+    { 7505782, 6215 }, // "Progressive Fear" rank 3
+    { 7506117, 6117 }, // "Progressive Mage Armor" rank 1
+    { 7506117, 22782 }, // "Progressive Mage Armor" rank 2
+    { 7506117, 22783 }, // "Progressive Mage Armor" rank 3
+    { 7506117, 27125 }, // "Progressive Mage Armor" rank 4
+    { 7506117, 43023 }, // "Progressive Mage Armor" rank 5
+    { 7506117, 43024 }, // "Progressive Mage Armor" rank 6
+    { 7506143, 6143 }, // "Progressive Frost Ward" rank 1
+    { 7506143, 8461 }, // "Progressive Frost Ward" rank 2
+    { 7506143, 8462 }, // "Progressive Frost Ward" rank 3
+    { 7506143, 10177 }, // "Progressive Frost Ward" rank 4
+    { 7506143, 32796 }, // "Progressive Frost Ward" rank 5
+    { 7506143, 43012 }, // "Progressive Frost Ward" rank 6
+    { 7506201, 6201 }, // "Progressive Create Healthstone" rank 1
+    { 7506201, 6202 }, // "Progressive Create Healthstone" rank 2
+    { 7506201, 5699 }, // "Progressive Create Healthstone" rank 3
+    { 7506201, 11729 }, // "Progressive Create Healthstone" rank 4
+    { 7506201, 11730 }, // "Progressive Create Healthstone" rank 5
+    { 7506201, 27230 }, // "Progressive Create Healthstone" rank 6
+    { 7506201, 47871 }, // "Progressive Create Healthstone" rank 7
+    { 7506201, 47878 }, // "Progressive Create Healthstone" rank 8
+    { 7506229, 6229 }, // "Progressive Shadow Ward" rank 1
+    { 7506229, 11739 }, // "Progressive Shadow Ward" rank 2
+    { 7506229, 11740 }, // "Progressive Shadow Ward" rank 3
+    { 7506229, 47890 }, // "Progressive Shadow Ward" rank 4
+    { 7506229, 47891 }, // "Progressive Shadow Ward" rank 5
+    { 7506343, 6343 }, // "Progressive Thunder Clap" rank 1
+    { 7506343, 8198 }, // "Progressive Thunder Clap" rank 2
+    { 7506343, 8204 }, // "Progressive Thunder Clap" rank 3
+    { 7506343, 8205 }, // "Progressive Thunder Clap" rank 4
+    { 7506343, 11580 }, // "Progressive Thunder Clap" rank 5
+    { 7506343, 11581 }, // "Progressive Thunder Clap" rank 6
+    { 7506343, 25264 }, // "Progressive Thunder Clap" rank 7
+    { 7506343, 47501 }, // "Progressive Thunder Clap" rank 8
+    { 7506343, 47502 }, // "Progressive Thunder Clap" rank 9
+    { 7506353, 6353 }, // "Progressive Soul Fire" rank 1
+    { 7506353, 17924 }, // "Progressive Soul Fire" rank 2
+    { 7506353, 27211 }, // "Progressive Soul Fire" rank 3
+    { 7506353, 30545 }, // "Progressive Soul Fire" rank 4
+    { 7506353, 47824 }, // "Progressive Soul Fire" rank 5
+    { 7506353, 47825 }, // "Progressive Soul Fire" rank 6
+    { 7506366, 6366 }, // "Progressive Create Firestone" rank 1
+    { 7506366, 17951 }, // "Progressive Create Firestone" rank 2
+    { 7506366, 17952 }, // "Progressive Create Firestone" rank 3
+    { 7506366, 17953 }, // "Progressive Create Firestone" rank 4
+    { 7506366, 27250 }, // "Progressive Create Firestone" rank 5
+    { 7506366, 60219 }, // "Progressive Create Firestone" rank 6
+    { 7506366, 60220 }, // "Progressive Create Firestone" rank 7
+    { 7506572, 6572 }, // "Progressive Revenge" rank 1
+    { 7506572, 6574 }, // "Progressive Revenge" rank 2
+    { 7506572, 7379 }, // "Progressive Revenge" rank 3
+    { 7506572, 11600 }, // "Progressive Revenge" rank 4
+    { 7506572, 11601 }, // "Progressive Revenge" rank 5
+    { 7506572, 25269 }, // "Progressive Revenge" rank 6
+    { 7506572, 30357 }, // "Progressive Revenge" rank 7
+    { 7506572, 57823 }, // "Progressive Revenge" rank 8
+    { 7506673, 6673 }, // "Progressive Battle Shout" rank 1
+    { 7506673, 5242 }, // "Progressive Battle Shout" rank 2
+    { 7506673, 6192 }, // "Progressive Battle Shout" rank 3
+    { 7506673, 11549 }, // "Progressive Battle Shout" rank 4
+    { 7506673, 11550 }, // "Progressive Battle Shout" rank 5
+    { 7506673, 11551 }, // "Progressive Battle Shout" rank 6
+    { 7506673, 2048 }, // "Progressive Battle Shout" rank 7
+    { 7506673, 47436 }, // "Progressive Battle Shout" rank 8
+    { 7506770, 6770 }, // "Progressive Sap" rank 1
+    { 7506770, 2070 }, // "Progressive Sap" rank 2
+    { 7506770, 11297 }, // "Progressive Sap" rank 3
+    { 7506770, 51724 }, // "Progressive Sap" rank 4
+    { 7506785, 6785 }, // "Progressive Ravage" rank 1
+    { 7506785, 6787 }, // "Progressive Ravage" rank 2
+    { 7506785, 9866 }, // "Progressive Ravage" rank 3
+    { 7506785, 9867 }, // "Progressive Ravage" rank 4
+    { 7506785, 27005 }, // "Progressive Ravage" rank 5
+    { 7506785, 48578 }, // "Progressive Ravage" rank 6
+    { 7506785, 48579 }, // "Progressive Ravage" rank 7
+    { 7506789, 6789 }, // "Progressive Death Coil (Warlock)" rank 1
+    { 7506789, 17925 }, // "Progressive Death Coil (Warlock)" rank 2
+    { 7506789, 17926 }, // "Progressive Death Coil (Warlock)" rank 3
+    { 7506789, 27223 }, // "Progressive Death Coil (Warlock)" rank 4
+    { 7506789, 47859 }, // "Progressive Death Coil (Warlock)" rank 5
+    { 7506789, 47860 }, // "Progressive Death Coil (Warlock)" rank 6
+    { 7506807, 6808 }, // "Progressive Maul" rank 1
+    { 7506807, 6809 }, // "Progressive Maul" rank 2
+    { 7506807, 8972 }, // "Progressive Maul" rank 3
+    { 7506807, 9745 }, // "Progressive Maul" rank 4
+    { 7506807, 9880 }, // "Progressive Maul" rank 5
+    { 7506807, 9881 }, // "Progressive Maul" rank 6
+    { 7506807, 26996 }, // "Progressive Maul" rank 7
+    { 7506807, 48479 }, // "Progressive Maul" rank 8
+    { 7506807, 48480 }, // "Progressive Maul" rank 9
+    { 7507294, 7294 }, // "Progressive Retribution Aura" rank 1
+    { 7507294, 10298 }, // "Progressive Retribution Aura" rank 2
+    { 7507294, 10299 }, // "Progressive Retribution Aura" rank 3
+    { 7507294, 10300 }, // "Progressive Retribution Aura" rank 4
+    { 7507294, 10301 }, // "Progressive Retribution Aura" rank 5
+    { 7507294, 27150 }, // "Progressive Retribution Aura" rank 6
+    { 7507294, 54043 }, // "Progressive Retribution Aura" rank 7
+    { 7507302, 7302 }, // "Progressive Ice Armor" rank 1
+    { 7507302, 7320 }, // "Progressive Ice Armor" rank 2
+    { 7507302, 10219 }, // "Progressive Ice Armor" rank 3
+    { 7507302, 10220 }, // "Progressive Ice Armor" rank 4
+    { 7507302, 27124 }, // "Progressive Ice Armor" rank 5
+    { 7507302, 43008 }, // "Progressive Ice Armor" rank 6
+    { 7507328, 10322 }, // "Progressive Redemption" rank 1
+    { 7507328, 10324 }, // "Progressive Redemption" rank 2
+    { 7507328, 20772 }, // "Progressive Redemption" rank 3
+    { 7507328, 20773 }, // "Progressive Redemption" rank 4
+    { 7507328, 48949 }, // "Progressive Redemption" rank 5
+    { 7507328, 48950 }, // "Progressive Redemption" rank 6
+    { 7508004, 8004 }, // "Progressive Lesser Healing Wave" rank 1
+    { 7508004, 8008 }, // "Progressive Lesser Healing Wave" rank 2
+    { 7508004, 8010 }, // "Progressive Lesser Healing Wave" rank 3
+    { 7508004, 10466 }, // "Progressive Lesser Healing Wave" rank 4
+    { 7508004, 10467 }, // "Progressive Lesser Healing Wave" rank 5
+    { 7508004, 10468 }, // "Progressive Lesser Healing Wave" rank 6
+    { 7508004, 25420 }, // "Progressive Lesser Healing Wave" rank 7
+    { 7508004, 49275 }, // "Progressive Lesser Healing Wave" rank 8
+    { 7508004, 49276 }, // "Progressive Lesser Healing Wave" rank 9
+    { 7508017, 8017 }, // "Progressive Rockbiter Weapon" rank 1
+    { 7508017, 8018 }, // "Progressive Rockbiter Weapon" rank 2
+    { 7508017, 8019 }, // "Progressive Rockbiter Weapon" rank 3
+    { 7508017, 10399 }, // "Progressive Rockbiter Weapon" rank 4
+    { 7508024, 8024 }, // "Progressive Flametongue Weapon" rank 1
+    { 7508024, 8027 }, // "Progressive Flametongue Weapon" rank 2
+    { 7508024, 8030 }, // "Progressive Flametongue Weapon" rank 3
+    { 7508024, 16339 }, // "Progressive Flametongue Weapon" rank 4
+    { 7508024, 16341 }, // "Progressive Flametongue Weapon" rank 5
+    { 7508024, 16342 }, // "Progressive Flametongue Weapon" rank 6
+    { 7508024, 25489 }, // "Progressive Flametongue Weapon" rank 7
+    { 7508024, 58785 }, // "Progressive Flametongue Weapon" rank 8
+    { 7508024, 58789 }, // "Progressive Flametongue Weapon" rank 9
+    { 7508024, 58790 }, // "Progressive Flametongue Weapon" rank 10
+    { 7508033, 8033 }, // "Progressive Frostbrand Weapon" rank 1
+    { 7508033, 8038 }, // "Progressive Frostbrand Weapon" rank 2
+    { 7508033, 10456 }, // "Progressive Frostbrand Weapon" rank 3
+    { 7508033, 16355 }, // "Progressive Frostbrand Weapon" rank 4
+    { 7508033, 16356 }, // "Progressive Frostbrand Weapon" rank 5
+    { 7508033, 25500 }, // "Progressive Frostbrand Weapon" rank 6
+    { 7508033, 58794 }, // "Progressive Frostbrand Weapon" rank 7
+    { 7508033, 58795 }, // "Progressive Frostbrand Weapon" rank 8
+    { 7508033, 58796 }, // "Progressive Frostbrand Weapon" rank 9
+    { 7508042, 8042 }, // "Progressive Earth Shock" rank 1
+    { 7508042, 8044 }, // "Progressive Earth Shock" rank 2
+    { 7508042, 8045 }, // "Progressive Earth Shock" rank 3
+    { 7508042, 8046 }, // "Progressive Earth Shock" rank 4
+    { 7508042, 10412 }, // "Progressive Earth Shock" rank 5
+    { 7508042, 10413 }, // "Progressive Earth Shock" rank 6
+    { 7508042, 10414 }, // "Progressive Earth Shock" rank 7
+    { 7508042, 25454 }, // "Progressive Earth Shock" rank 8
+    { 7508042, 49230 }, // "Progressive Earth Shock" rank 9
+    { 7508042, 49231 }, // "Progressive Earth Shock" rank 10
+    { 7508050, 8050 }, // "Progressive Flame Shock" rank 1
+    { 7508050, 8052 }, // "Progressive Flame Shock" rank 2
+    { 7508050, 8053 }, // "Progressive Flame Shock" rank 3
+    { 7508050, 10447 }, // "Progressive Flame Shock" rank 4
+    { 7508050, 10448 }, // "Progressive Flame Shock" rank 5
+    { 7508050, 25457 }, // "Progressive Flame Shock" rank 6
+    { 7508050, 49232 }, // "Progressive Flame Shock" rank 7
+    { 7508050, 49233 }, // "Progressive Flame Shock" rank 8
+    { 7508056, 8056 }, // "Progressive Frost Shock" rank 1
+    { 7508056, 8058 }, // "Progressive Frost Shock" rank 2
+    { 7508056, 10472 }, // "Progressive Frost Shock" rank 3
+    { 7508056, 10473 }, // "Progressive Frost Shock" rank 4
+    { 7508056, 25464 }, // "Progressive Frost Shock" rank 5
+    { 7508056, 49235 }, // "Progressive Frost Shock" rank 6
+    { 7508056, 49236 }, // "Progressive Frost Shock" rank 7
+    { 7508071, 8154 }, // "Progressive Stoneskin Totem" rank 1
+    { 7508071, 8155 }, // "Progressive Stoneskin Totem" rank 2
+    { 7508071, 10406 }, // "Progressive Stoneskin Totem" rank 3
+    { 7508071, 10407 }, // "Progressive Stoneskin Totem" rank 4
+    { 7508071, 10408 }, // "Progressive Stoneskin Totem" rank 5
+    { 7508071, 25508 }, // "Progressive Stoneskin Totem" rank 6
+    { 7508071, 25509 }, // "Progressive Stoneskin Totem" rank 7
+    { 7508071, 58751 }, // "Progressive Stoneskin Totem" rank 8
+    { 7508071, 58753 }, // "Progressive Stoneskin Totem" rank 9
+    { 7508075, 8075 }, // "Progressive Strength of Earth Totem" rank 1
+    { 7508075, 8160 }, // "Progressive Strength of Earth Totem" rank 2
+    { 7508075, 8161 }, // "Progressive Strength of Earth Totem" rank 3
+    { 7508075, 10442 }, // "Progressive Strength of Earth Totem" rank 4
+    { 7508075, 25528 }, // "Progressive Strength of Earth Totem" rank 5
+    { 7508075, 57622 }, // "Progressive Strength of Earth Totem" rank 6
+    { 7508075, 58643 }, // "Progressive Strength of Earth Totem" rank 7
+    { 7508092, 8092 }, // "Progressive Mind Blast" rank 1
+    { 7508092, 8102 }, // "Progressive Mind Blast" rank 2
+    { 7508092, 8103 }, // "Progressive Mind Blast" rank 3
+    { 7508092, 8104 }, // "Progressive Mind Blast" rank 4
+    { 7508092, 8105 }, // "Progressive Mind Blast" rank 5
+    { 7508092, 8106 }, // "Progressive Mind Blast" rank 6
+    { 7508092, 10945 }, // "Progressive Mind Blast" rank 7
+    { 7508092, 10946 }, // "Progressive Mind Blast" rank 8
+    { 7508092, 10947 }, // "Progressive Mind Blast" rank 9
+    { 7508092, 25372 }, // "Progressive Mind Blast" rank 10
+    { 7508092, 25375 }, // "Progressive Mind Blast" rank 11
+    { 7508092, 48126 }, // "Progressive Mind Blast" rank 12
+    { 7508092, 48127 }, // "Progressive Mind Blast" rank 13
+    { 7508122, 8122 }, // "Progressive Psychic Scream" rank 1
+    { 7508122, 8124 }, // "Progressive Psychic Scream" rank 2
+    { 7508122, 10888 }, // "Progressive Psychic Scream" rank 3
+    { 7508122, 10890 }, // "Progressive Psychic Scream" rank 4
+    { 7508181, 8181 }, // "Progressive Frost Resistance Totem" rank 1
+    { 7508181, 10478 }, // "Progressive Frost Resistance Totem" rank 2
+    { 7508181, 10479 }, // "Progressive Frost Resistance Totem" rank 3
+    { 7508181, 25560 }, // "Progressive Frost Resistance Totem" rank 4
+    { 7508181, 58741 }, // "Progressive Frost Resistance Totem" rank 5
+    { 7508181, 58745 }, // "Progressive Frost Resistance Totem" rank 6
+    { 7508184, 8184 }, // "Progressive Fire Resistance Totem" rank 1
+    { 7508184, 10537 }, // "Progressive Fire Resistance Totem" rank 2
+    { 7508184, 10538 }, // "Progressive Fire Resistance Totem" rank 3
+    { 7508184, 25563 }, // "Progressive Fire Resistance Totem" rank 4
+    { 7508184, 58737 }, // "Progressive Fire Resistance Totem" rank 5
+    { 7508184, 58739 }, // "Progressive Fire Resistance Totem" rank 6
+    { 7508190, 8190 }, // "Progressive Magma Totem" rank 1
+    { 7508190, 10585 }, // "Progressive Magma Totem" rank 2
+    { 7508190, 10586 }, // "Progressive Magma Totem" rank 3
+    { 7508190, 10587 }, // "Progressive Magma Totem" rank 4
+    { 7508190, 25552 }, // "Progressive Magma Totem" rank 5
+    { 7508190, 58731 }, // "Progressive Magma Totem" rank 6
+    { 7508190, 58734 }, // "Progressive Magma Totem" rank 7
+    { 7508227, 8227 }, // "Progressive Flametongue Totem" rank 1
+    { 7508227, 8249 }, // "Progressive Flametongue Totem" rank 2
+    { 7508227, 10526 }, // "Progressive Flametongue Totem" rank 3
+    { 7508227, 16387 }, // "Progressive Flametongue Totem" rank 4
+    { 7508227, 25557 }, // "Progressive Flametongue Totem" rank 5
+    { 7508227, 58649 }, // "Progressive Flametongue Totem" rank 6
+    { 7508227, 58652 }, // "Progressive Flametongue Totem" rank 7
+    { 7508227, 58656 }, // "Progressive Flametongue Totem" rank 8
+    { 7508232, 8232 }, // "Progressive Windfury Weapon" rank 1
+    { 7508232, 8235 }, // "Progressive Windfury Weapon" rank 2
+    { 7508232, 10486 }, // "Progressive Windfury Weapon" rank 3
+    { 7508232, 16362 }, // "Progressive Windfury Weapon" rank 4
+    { 7508232, 25505 }, // "Progressive Windfury Weapon" rank 5
+    { 7508232, 58801 }, // "Progressive Windfury Weapon" rank 6
+    { 7508232, 58803 }, // "Progressive Windfury Weapon" rank 7
+    { 7508232, 58804 }, // "Progressive Windfury Weapon" rank 8
+    { 7508676, 8676 }, // "Progressive Ambush" rank 1
+    { 7508676, 8724 }, // "Progressive Ambush" rank 2
+    { 7508676, 8725 }, // "Progressive Ambush" rank 3
+    { 7508676, 11267 }, // "Progressive Ambush" rank 4
+    { 7508676, 11268 }, // "Progressive Ambush" rank 5
+    { 7508676, 11269 }, // "Progressive Ambush" rank 6
+    { 7508676, 27441 }, // "Progressive Ambush" rank 7
+    { 7508676, 48689 }, // "Progressive Ambush" rank 8
+    { 7508676, 48690 }, // "Progressive Ambush" rank 9
+    { 7508676, 48691 }, // "Progressive Ambush" rank 10
+    { 7508921, 8921 }, // "Progressive Moonfire" rank 1
+    { 7508921, 8924 }, // "Progressive Moonfire" rank 2
+    { 7508921, 8925 }, // "Progressive Moonfire" rank 3
+    { 7508921, 8926 }, // "Progressive Moonfire" rank 4
+    { 7508921, 8927 }, // "Progressive Moonfire" rank 5
+    { 7508921, 8928 }, // "Progressive Moonfire" rank 6
+    { 7508921, 8929 }, // "Progressive Moonfire" rank 7
+    { 7508921, 9833 }, // "Progressive Moonfire" rank 8
+    { 7508921, 9834 }, // "Progressive Moonfire" rank 9
+    { 7508921, 9835 }, // "Progressive Moonfire" rank 10
+    { 7508921, 26987 }, // "Progressive Moonfire" rank 11
+    { 7508921, 26988 }, // "Progressive Moonfire" rank 12
+    { 7508921, 48462 }, // "Progressive Moonfire" rank 13
+    { 7508921, 48463 }, // "Progressive Moonfire" rank 14
+    { 7508936, 8936 }, // "Progressive Regrowth" rank 1
+    { 7508936, 8938 }, // "Progressive Regrowth" rank 2
+    { 7508936, 8939 }, // "Progressive Regrowth" rank 3
+    { 7508936, 8940 }, // "Progressive Regrowth" rank 4
+    { 7508936, 8941 }, // "Progressive Regrowth" rank 5
+    { 7508936, 9750 }, // "Progressive Regrowth" rank 6
+    { 7508936, 9856 }, // "Progressive Regrowth" rank 7
+    { 7508936, 9857 }, // "Progressive Regrowth" rank 8
+    { 7508936, 9858 }, // "Progressive Regrowth" rank 9
+    { 7508936, 26980 }, // "Progressive Regrowth" rank 10
+    { 7508936, 48442 }, // "Progressive Regrowth" rank 11
+    { 7508936, 48443 }, // "Progressive Regrowth" rank 12
+    { 7508998, 8998 }, // "Progressive Cower" rank 1
+    { 7508998, 9000 }, // "Progressive Cower" rank 2
+    { 7508998, 9892 }, // "Progressive Cower" rank 3
+    { 7508998, 27004 }, // "Progressive Cower" rank 4
+    { 7508998, 48575 }, // "Progressive Cower" rank 5
+    { 7509005, 9005 }, // "Progressive Pounce" rank 1
+    { 7509005, 9823 }, // "Progressive Pounce" rank 2
+    { 7509005, 9827 }, // "Progressive Pounce" rank 3
+    { 7509005, 27006 }, // "Progressive Pounce" rank 4
+    { 7509005, 49803 }, // "Progressive Pounce" rank 5
+    { 7509484, 9484 }, // "Progressive Shackle Undead" rank 1
+    { 7509484, 9485 }, // "Progressive Shackle Undead" rank 2
+    { 7509484, 10955 }, // "Progressive Shackle Undead" rank 3
+    { 7510595, 10595 }, // "Progressive Nature Resistance Totem" rank 1
+    { 7510595, 10600 }, // "Progressive Nature Resistance Totem" rank 2
+    { 7510595, 10601 }, // "Progressive Nature Resistance Totem" rank 3
+    { 7510595, 25574 }, // "Progressive Nature Resistance Totem" rank 4
+    { 7510595, 58746 }, // "Progressive Nature Resistance Totem" rank 5
+    { 7510595, 58749 }, // "Progressive Nature Resistance Totem" rank 6
+    { 7511113, 13018 }, // "Progressive Blast Wave" rank 1
+    { 7511113, 13019 }, // "Progressive Blast Wave" rank 2
+    { 7511113, 13020 }, // "Progressive Blast Wave" rank 3
+    { 7511113, 13021 }, // "Progressive Blast Wave" rank 4
+    { 7511113, 27133 }, // "Progressive Blast Wave" rank 5
+    { 7511113, 33933 }, // "Progressive Blast Wave" rank 6
+    { 7511113, 42944 }, // "Progressive Blast Wave" rank 7
+    { 7511113, 42945 }, // "Progressive Blast Wave" rank 8
+    { 7511366, 12505 }, // "Progressive Pyroblast" rank 1
+    { 7511366, 12522 }, // "Progressive Pyroblast" rank 2
+    { 7511366, 12523 }, // "Progressive Pyroblast" rank 3
+    { 7511366, 12524 }, // "Progressive Pyroblast" rank 4
+    { 7511366, 12525 }, // "Progressive Pyroblast" rank 5
+    { 7511366, 12526 }, // "Progressive Pyroblast" rank 6
+    { 7511366, 18809 }, // "Progressive Pyroblast" rank 7
+    { 7511366, 27132 }, // "Progressive Pyroblast" rank 8
+    { 7511366, 33938 }, // "Progressive Pyroblast" rank 9
+    { 7511366, 42890 }, // "Progressive Pyroblast" rank 10
+    { 7511366, 42891 }, // "Progressive Pyroblast" rank 11
+    { 7511426, 13031 }, // "Progressive Ice Barrier" rank 1
+    { 7511426, 13032 }, // "Progressive Ice Barrier" rank 2
+    { 7511426, 13033 }, // "Progressive Ice Barrier" rank 3
+    { 7511426, 27134 }, // "Progressive Ice Barrier" rank 4
+    { 7511426, 33405 }, // "Progressive Ice Barrier" rank 5
+    { 7511426, 43038 }, // "Progressive Ice Barrier" rank 6
+    { 7511426, 43039 }, // "Progressive Ice Barrier" rank 7
+    { 7512294, 21551 }, // "Progressive Mortal Strike" rank 1
+    { 7512294, 21552 }, // "Progressive Mortal Strike" rank 2
+    { 7512294, 21553 }, // "Progressive Mortal Strike" rank 3
+    { 7512294, 25248 }, // "Progressive Mortal Strike" rank 4
+    { 7512294, 30330 }, // "Progressive Mortal Strike" rank 5
+    { 7512294, 47485 }, // "Progressive Mortal Strike" rank 6
+    { 7512294, 47486 }, // "Progressive Mortal Strike" rank 7
+    { 7513165, 13165 }, // "Progressive Aspect of the Hawk" rank 1
+    { 7513165, 14318 }, // "Progressive Aspect of the Hawk" rank 2
+    { 7513165, 14319 }, // "Progressive Aspect of the Hawk" rank 3
+    { 7513165, 14320 }, // "Progressive Aspect of the Hawk" rank 4
+    { 7513165, 14321 }, // "Progressive Aspect of the Hawk" rank 5
+    { 7513165, 14322 }, // "Progressive Aspect of the Hawk" rank 6
+    { 7513165, 27044 }, // "Progressive Aspect of the Hawk" rank 7
+    { 7513795, 13795 }, // "Progressive Immolation Trap" rank 1
+    { 7513795, 14302 }, // "Progressive Immolation Trap" rank 2
+    { 7513795, 14303 }, // "Progressive Immolation Trap" rank 3
+    { 7513795, 14304 }, // "Progressive Immolation Trap" rank 4
+    { 7513795, 14305 }, // "Progressive Immolation Trap" rank 5
+    { 7513795, 27023 }, // "Progressive Immolation Trap" rank 6
+    { 7513795, 49055 }, // "Progressive Immolation Trap" rank 7
+    { 7513795, 49056 }, // "Progressive Immolation Trap" rank 8
+    { 7513813, 13813 }, // "Progressive Explosive Trap" rank 1
+    { 7513813, 14316 }, // "Progressive Explosive Trap" rank 2
+    { 7513813, 14317 }, // "Progressive Explosive Trap" rank 3
+    { 7513813, 27025 }, // "Progressive Explosive Trap" rank 4
+    { 7513813, 49066 }, // "Progressive Explosive Trap" rank 5
+    { 7513813, 49067 }, // "Progressive Explosive Trap" rank 6
+    { 7514752, 14752 }, // "Progressive Divine Spirit" rank 1
+    { 7514752, 14818 }, // "Progressive Divine Spirit" rank 2
+    { 7514752, 14819 }, // "Progressive Divine Spirit" rank 3
+    { 7514752, 27841 }, // "Progressive Divine Spirit" rank 4
+    { 7514752, 25312 }, // "Progressive Divine Spirit" rank 5
+    { 7514752, 48073 }, // "Progressive Divine Spirit" rank 6
+    { 7514914, 14914 }, // "Progressive Holy Fire" rank 1
+    { 7514914, 15262 }, // "Progressive Holy Fire" rank 2
+    { 7514914, 15263 }, // "Progressive Holy Fire" rank 3
+    { 7514914, 15264 }, // "Progressive Holy Fire" rank 4
+    { 7514914, 15265 }, // "Progressive Holy Fire" rank 5
+    { 7514914, 15266 }, // "Progressive Holy Fire" rank 6
+    { 7514914, 15267 }, // "Progressive Holy Fire" rank 7
+    { 7514914, 15261 }, // "Progressive Holy Fire" rank 8
+    { 7514914, 25384 }, // "Progressive Holy Fire" rank 9
+    { 7514914, 48134 }, // "Progressive Holy Fire" rank 10
+    { 7514914, 48135 }, // "Progressive Holy Fire" rank 11
+    { 7515237, 15237 }, // "Progressive Holy Nova" rank 1
+    { 7515237, 15430 }, // "Progressive Holy Nova" rank 2
+    { 7515237, 15431 }, // "Progressive Holy Nova" rank 3
+    { 7515237, 27799 }, // "Progressive Holy Nova" rank 4
+    { 7515237, 27800 }, // "Progressive Holy Nova" rank 5
+    { 7515237, 27801 }, // "Progressive Holy Nova" rank 6
+    { 7515237, 25331 }, // "Progressive Holy Nova" rank 7
+    { 7515237, 48077 }, // "Progressive Holy Nova" rank 8
+    { 7515237, 48078 }, // "Progressive Holy Nova" rank 9
+    { 7515407, 17311 }, // "Progressive Mind Flay" rank 1
+    { 7515407, 17312 }, // "Progressive Mind Flay" rank 2
+    { 7515407, 17313 }, // "Progressive Mind Flay" rank 3
+    { 7515407, 17314 }, // "Progressive Mind Flay" rank 4
+    { 7515407, 18807 }, // "Progressive Mind Flay" rank 5
+    { 7515407, 25387 }, // "Progressive Mind Flay" rank 6
+    { 7515407, 48155 }, // "Progressive Mind Flay" rank 7
+    { 7515407, 48156 }, // "Progressive Mind Flay" rank 8
+    { 7516511, 17347 }, // "Progressive Hemorrhage" rank 1
+    { 7516511, 17348 }, // "Progressive Hemorrhage" rank 2
+    { 7516511, 26864 }, // "Progressive Hemorrhage" rank 3
+    { 7516511, 48660 }, // "Progressive Hemorrhage" rank 4
+    { 7516689, 16689 }, // "Progressive Nature's Grasp" rank 1
+    { 7516689, 16810 }, // "Progressive Nature's Grasp" rank 2
+    { 7516689, 16811 }, // "Progressive Nature's Grasp" rank 3
+    { 7516689, 16812 }, // "Progressive Nature's Grasp" rank 4
+    { 7516689, 16813 }, // "Progressive Nature's Grasp" rank 5
+    { 7516689, 17329 }, // "Progressive Nature's Grasp" rank 6
+    { 7516689, 27009 }, // "Progressive Nature's Grasp" rank 7
+    { 7516689, 53312 }, // "Progressive Nature's Grasp" rank 8
+    { 7516914, 16914 }, // "Progressive Hurricane" rank 1
+    { 7516914, 17401 }, // "Progressive Hurricane" rank 2
+    { 7516914, 17402 }, // "Progressive Hurricane" rank 3
+    { 7516914, 27012 }, // "Progressive Hurricane" rank 4
+    { 7516914, 48467 }, // "Progressive Hurricane" rank 5
+    { 7517877, 18867 }, // "Progressive Shadowburn" rank 1
+    { 7517877, 18868 }, // "Progressive Shadowburn" rank 2
+    { 7517877, 18869 }, // "Progressive Shadowburn" rank 3
+    { 7517877, 18870 }, // "Progressive Shadowburn" rank 4
+    { 7517877, 18871 }, // "Progressive Shadowburn" rank 5
+    { 7517877, 27263 }, // "Progressive Shadowburn" rank 6
+    { 7517877, 30546 }, // "Progressive Shadowburn" rank 7
+    { 7517877, 47826 }, // "Progressive Shadowburn" rank 8
+    { 7517877, 47827 }, // "Progressive Shadowburn" rank 9
+    { 7518220, 18937 }, // "Progressive Dark Pact" rank 1
+    { 7518220, 18938 }, // "Progressive Dark Pact" rank 2
+    { 7518220, 27265 }, // "Progressive Dark Pact" rank 3
+    { 7518220, 59092 }, // "Progressive Dark Pact" rank 4
+    { 7519236, 19238 }, // "Progressive Desperate Prayer" rank 1
+    { 7519236, 19240 }, // "Progressive Desperate Prayer" rank 2
+    { 7519236, 19241 }, // "Progressive Desperate Prayer" rank 3
+    { 7519236, 19242 }, // "Progressive Desperate Prayer" rank 4
+    { 7519236, 19243 }, // "Progressive Desperate Prayer" rank 5
+    { 7519236, 25437 }, // "Progressive Desperate Prayer" rank 6
+    { 7519236, 48172 }, // "Progressive Desperate Prayer" rank 7
+    { 7519236, 48173 }, // "Progressive Desperate Prayer" rank 8
+    { 7519306, 20909 }, // "Progressive Counterattack" rank 1
+    { 7519306, 20910 }, // "Progressive Counterattack" rank 2
+    { 7519306, 27067 }, // "Progressive Counterattack" rank 3
+    { 7519306, 48998 }, // "Progressive Counterattack" rank 4
+    { 7519306, 48999 }, // "Progressive Counterattack" rank 5
+    { 7519386, 24132 }, // "Progressive Wyvern Sting" rank 1
+    { 7519386, 24133 }, // "Progressive Wyvern Sting" rank 2
+    { 7519386, 27068 }, // "Progressive Wyvern Sting" rank 3
+    { 7519386, 49011 }, // "Progressive Wyvern Sting" rank 4
+    { 7519386, 49012 }, // "Progressive Wyvern Sting" rank 5
+    { 7519434, 20900 }, // "Progressive Aimed Shot" rank 1
+    { 7519434, 20901 }, // "Progressive Aimed Shot" rank 2
+    { 7519434, 20902 }, // "Progressive Aimed Shot" rank 3
+    { 7519434, 20903 }, // "Progressive Aimed Shot" rank 4
+    { 7519434, 20904 }, // "Progressive Aimed Shot" rank 5
+    { 7519434, 27065 }, // "Progressive Aimed Shot" rank 6
+    { 7519434, 49049 }, // "Progressive Aimed Shot" rank 7
+    { 7519434, 49050 }, // "Progressive Aimed Shot" rank 8
+    { 7519740, 19740 }, // "Progressive Blessing of Might" rank 1
+    { 7519740, 19834 }, // "Progressive Blessing of Might" rank 2
+    { 7519740, 19835 }, // "Progressive Blessing of Might" rank 3
+    { 7519740, 19836 }, // "Progressive Blessing of Might" rank 4
+    { 7519740, 19837 }, // "Progressive Blessing of Might" rank 5
+    { 7519740, 19838 }, // "Progressive Blessing of Might" rank 6
+    { 7519740, 27140 }, // "Progressive Blessing of Might" rank 7
+    { 7519740, 48931 }, // "Progressive Blessing of Might" rank 8
+    { 7519740, 48932 }, // "Progressive Blessing of Might" rank 9
+    { 7519742, 19742 }, // "Progressive Blessing of Wisdom" rank 1
+    { 7519742, 19850 }, // "Progressive Blessing of Wisdom" rank 2
+    { 7519742, 19852 }, // "Progressive Blessing of Wisdom" rank 3
+    { 7519742, 19853 }, // "Progressive Blessing of Wisdom" rank 4
+    { 7519742, 19854 }, // "Progressive Blessing of Wisdom" rank 5
+    { 7519742, 27142 }, // "Progressive Blessing of Wisdom" rank 6
+    { 7519742, 48935 }, // "Progressive Blessing of Wisdom" rank 7
+    { 7519742, 48936 }, // "Progressive Blessing of Wisdom" rank 8
+    { 7519750, 19750 }, // "Progressive Flash of Light" rank 1
+    { 7519750, 19939 }, // "Progressive Flash of Light" rank 2
+    { 7519750, 19940 }, // "Progressive Flash of Light" rank 3
+    { 7519750, 19941 }, // "Progressive Flash of Light" rank 4
+    { 7519750, 19942 }, // "Progressive Flash of Light" rank 5
+    { 7519750, 19943 }, // "Progressive Flash of Light" rank 6
+    { 7519750, 27137 }, // "Progressive Flash of Light" rank 7
+    { 7519750, 48784 }, // "Progressive Flash of Light" rank 8
+    { 7519750, 48785 }, // "Progressive Flash of Light" rank 9
+    { 7519876, 19876 }, // "Progressive Shadow Resistance Aura" rank 1
+    { 7519876, 19895 }, // "Progressive Shadow Resistance Aura" rank 2
+    { 7519876, 19896 }, // "Progressive Shadow Resistance Aura" rank 3
+    { 7519876, 27151 }, // "Progressive Shadow Resistance Aura" rank 4
+    { 7519876, 48943 }, // "Progressive Shadow Resistance Aura" rank 5
+    { 7519888, 19888 }, // "Progressive Frost Resistance Aura" rank 1
+    { 7519888, 19897 }, // "Progressive Frost Resistance Aura" rank 2
+    { 7519888, 19898 }, // "Progressive Frost Resistance Aura" rank 3
+    { 7519888, 27152 }, // "Progressive Frost Resistance Aura" rank 4
+    { 7519888, 48945 }, // "Progressive Frost Resistance Aura" rank 5
+    { 7519891, 19891 }, // "Progressive Fire Resistance Aura" rank 1
+    { 7519891, 19899 }, // "Progressive Fire Resistance Aura" rank 2
+    { 7519891, 19900 }, // "Progressive Fire Resistance Aura" rank 3
+    { 7519891, 27153 }, // "Progressive Fire Resistance Aura" rank 4
+    { 7519891, 48947 }, // "Progressive Fire Resistance Aura" rank 5
+    { 7520043, 20043 }, // "Progressive Aspect of the Wild" rank 1
+    { 7520043, 20190 }, // "Progressive Aspect of the Wild" rank 2
+    { 7520043, 27045 }, // "Progressive Aspect of the Wild" rank 3
+    { 7520043, 49071 }, // "Progressive Aspect of the Wild" rank 4
+    { 7520243, 30016 }, // "Progressive Devastate" rank 1
+    { 7520243, 30022 }, // "Progressive Devastate" rank 2
+    { 7520243, 47497 }, // "Progressive Devastate" rank 3
+    { 7520243, 47498 }, // "Progressive Devastate" rank 4
+    { 7520473, 20929 }, // "Progressive Holy Shock" rank 1
+    { 7520473, 20930 }, // "Progressive Holy Shock" rank 2
+    { 7520473, 27174 }, // "Progressive Holy Shock" rank 3
+    { 7520473, 33072 }, // "Progressive Holy Shock" rank 4
+    { 7520473, 48824 }, // "Progressive Holy Shock" rank 5
+    { 7520473, 48825 }, // "Progressive Holy Shock" rank 6
+    { 7520484, 20484 }, // "Progressive Rebirth" rank 1
+    { 7520484, 20739 }, // "Progressive Rebirth" rank 2
+    { 7520484, 20742 }, // "Progressive Rebirth" rank 3
+    { 7520484, 20747 }, // "Progressive Rebirth" rank 4
+    { 7520484, 20748 }, // "Progressive Rebirth" rank 5
+    { 7520484, 26994 }, // "Progressive Rebirth" rank 6
+    { 7520484, 48477 }, // "Progressive Rebirth" rank 7
+    { 7520925, 20927 }, // "Progressive Holy Shield" rank 1
+    { 7520925, 20928 }, // "Progressive Holy Shield" rank 2
+    { 7520925, 27179 }, // "Progressive Holy Shield" rank 3
+    { 7520925, 48951 }, // "Progressive Holy Shield" rank 4
+    { 7520925, 48952 }, // "Progressive Holy Shield" rank 5
+    { 7521562, 48162 }, // "Progressive Prayer of Fortitude" rank 1
+    { 7521849, 48470 }, // "Progressive Gift of the Wild" rank 1
+    { 7522568, 22568 }, // "Progressive Ferocious Bite" rank 1
+    { 7522568, 22827 }, // "Progressive Ferocious Bite" rank 2
+    { 7522568, 22828 }, // "Progressive Ferocious Bite" rank 3
+    { 7522568, 22829 }, // "Progressive Ferocious Bite" rank 4
+    { 7522568, 24248 }, // "Progressive Ferocious Bite" rank 5
+    { 7522568, 48576 }, // "Progressive Ferocious Bite" rank 6
+    { 7522568, 48577 }, // "Progressive Ferocious Bite" rank 7
+    { 7522570, 22570 }, // "Progressive Maim" rank 1
+    { 7522570, 49802 }, // "Progressive Maim" rank 2
+    { 7523028, 43002 }, // "Progressive Arcane Brilliance" rank 1
+    { 7523922, 23922 }, // "Progressive Shield Slam" rank 1
+    { 7523922, 23923 }, // "Progressive Shield Slam" rank 2
+    { 7523922, 23924 }, // "Progressive Shield Slam" rank 3
+    { 7523922, 23925 }, // "Progressive Shield Slam" rank 4
+    { 7523922, 25258 }, // "Progressive Shield Slam" rank 5
+    { 7523922, 30356 }, // "Progressive Shield Slam" rank 6
+    { 7523922, 47487 }, // "Progressive Shield Slam" rank 7
+    { 7523922, 47488 }, // "Progressive Shield Slam" rank 8
+    { 7524275, 24275 }, // "Progressive Hammer of Wrath" rank 1
+    { 7524275, 24274 }, // "Progressive Hammer of Wrath" rank 2
+    { 7524275, 24239 }, // "Progressive Hammer of Wrath" rank 3
+    { 7524275, 27180 }, // "Progressive Hammer of Wrath" rank 4
+    { 7524275, 48805 }, // "Progressive Hammer of Wrath" rank 5
+    { 7524275, 48806 }, // "Progressive Hammer of Wrath" rank 6
+    { 7525782, 25782 }, // "Progressive Greater Blessing of Might" rank 1
+    { 7525782, 25916 }, // "Progressive Greater Blessing of Might" rank 2
+    { 7525782, 27141 }, // "Progressive Greater Blessing of Might" rank 3
+    { 7525782, 48933 }, // "Progressive Greater Blessing of Might" rank 4
+    { 7525782, 48934 }, // "Progressive Greater Blessing of Might" rank 5
+    { 7525894, 25894 }, // "Progressive Greater Blessing of Wisdom" rank 1
+    { 7525894, 25918 }, // "Progressive Greater Blessing of Wisdom" rank 2
+    { 7525894, 27143 }, // "Progressive Greater Blessing of Wisdom" rank 3
+    { 7525894, 48937 }, // "Progressive Greater Blessing of Wisdom" rank 4
+    { 7525894, 48938 }, // "Progressive Greater Blessing of Wisdom" rank 5
+    { 7526573, 26573 }, // "Progressive Consecration" rank 1
+    { 7526573, 20116 }, // "Progressive Consecration" rank 2
+    { 7526573, 20922 }, // "Progressive Consecration" rank 3
+    { 7526573, 20923 }, // "Progressive Consecration" rank 4
+    { 7526573, 20924 }, // "Progressive Consecration" rank 5
+    { 7526573, 27173 }, // "Progressive Consecration" rank 6
+    { 7526573, 48818 }, // "Progressive Consecration" rank 7
+    { 7526573, 48819 }, // "Progressive Consecration" rank 8
+    { 7526679, 26679 }, // "Progressive Deadly Throw" rank 1
+    { 7526679, 48673 }, // "Progressive Deadly Throw" rank 2
+    { 7526679, 48674 }, // "Progressive Deadly Throw" rank 3
+    { 7527243, 27243 }, // "Progressive Seed of Corruption" rank 1
+    { 7527243, 47835 }, // "Progressive Seed of Corruption" rank 2
+    { 7527243, 47836 }, // "Progressive Seed of Corruption" rank 3
+    { 7527681, 27681 }, // "Progressive Prayer of Spirit" rank 1
+    { 7527681, 32999 }, // "Progressive Prayer of Spirit" rank 2
+    { 7527681, 48074 }, // "Progressive Prayer of Spirit" rank 3
+    { 7527683, 48170 }, // "Progressive Prayer of Shadow Protection" rank 1
+    { 7528176, 28176 }, // "Progressive Fel Armor" rank 1
+    { 7528176, 28189 }, // "Progressive Fel Armor" rank 2
+    { 7528176, 47892 }, // "Progressive Fel Armor" rank 3
+    { 7528176, 47893 }, // "Progressive Fel Armor" rank 4
+    { 7529722, 29722 }, // "Progressive Incinerate" rank 1
+    { 7529722, 32231 }, // "Progressive Incinerate" rank 2
+    { 7529722, 47837 }, // "Progressive Incinerate" rank 3
+    { 7529722, 47838 }, // "Progressive Incinerate" rank 4
+    { 7529893, 29893 }, // "Progressive Ritual of Souls" rank 1
+    { 7529893, 58887 }, // "Progressive Ritual of Souls" rank 2
+    { 7530108, 30404 }, // "Progressive Unstable Affliction" rank 1
+    { 7530108, 30405 }, // "Progressive Unstable Affliction" rank 2
+    { 7530108, 47841 }, // "Progressive Unstable Affliction" rank 3
+    { 7530108, 47843 }, // "Progressive Unstable Affliction" rank 4
+    { 7530283, 30413 }, // "Progressive Shadowfury" rank 1
+    { 7530283, 30414 }, // "Progressive Shadowfury" rank 2
+    { 7530283, 47846 }, // "Progressive Shadowfury" rank 3
+    { 7530283, 47847 }, // "Progressive Shadowfury" rank 4
+    { 7530451, 30451 }, // "Progressive Arcane Blast" rank 1
+    { 7530451, 42894 }, // "Progressive Arcane Blast" rank 2
+    { 7530451, 42896 }, // "Progressive Arcane Blast" rank 3
+    { 7530451, 42897 }, // "Progressive Arcane Blast" rank 4
+    { 7530455, 30455 }, // "Progressive Ice Lance" rank 1
+    { 7530455, 42913 }, // "Progressive Ice Lance" rank 2
+    { 7530455, 42914 }, // "Progressive Ice Lance" rank 3
+    { 7530482, 30482 }, // "Progressive Molten Armor" rank 1
+    { 7530482, 43045 }, // "Progressive Molten Armor" rank 2
+    { 7530482, 43046 }, // "Progressive Molten Armor" rank 3
+    { 7530706, 57720 }, // "Progressive Totem of Wrath" rank 1
+    { 7530706, 57721 }, // "Progressive Totem of Wrath" rank 2
+    { 7530706, 57722 }, // "Progressive Totem of Wrath" rank 3
+    { 7531661, 33041 }, // "Progressive Dragon's Breath" rank 1
+    { 7531661, 33042 }, // "Progressive Dragon's Breath" rank 2
+    { 7531661, 33043 }, // "Progressive Dragon's Breath" rank 3
+    { 7531661, 42949 }, // "Progressive Dragon's Breath" rank 4
+    { 7531661, 42950 }, // "Progressive Dragon's Breath" rank 5
+    { 7531935, 32699 }, // "Progressive Avenger's Shield" rank 1
+    { 7531935, 32700 }, // "Progressive Avenger's Shield" rank 2
+    { 7531935, 48826 }, // "Progressive Avenger's Shield" rank 3
+    { 7531935, 48827 }, // "Progressive Avenger's Shield" rank 4
+    { 7532379, 32379 }, // "Progressive Shadow Word: Death" rank 1
+    { 7532379, 32996 }, // "Progressive Shadow Word: Death" rank 2
+    { 7532379, 48157 }, // "Progressive Shadow Word: Death" rank 3
+    { 7532379, 48158 }, // "Progressive Shadow Word: Death" rank 4
+    { 7532546, 32546 }, // "Progressive Binding Heal" rank 1
+    { 7532546, 48119 }, // "Progressive Binding Heal" rank 2
+    { 7532546, 48120 }, // "Progressive Binding Heal" rank 3
+    { 7532645, 32645 }, // "Progressive Envenom" rank 1
+    { 7532645, 32684 }, // "Progressive Envenom" rank 2
+    { 7532645, 57992 }, // "Progressive Envenom" rank 3
+    { 7532645, 57993 }, // "Progressive Envenom" rank 4
+    { 7533076, 33076 }, // "Progressive Prayer of Mending" rank 1
+    { 7533076, 48112 }, // "Progressive Prayer of Mending" rank 2
+    { 7533076, 48113 }, // "Progressive Prayer of Mending" rank 3
+    { 7533745, 33745 }, // "Progressive Lacerate" rank 1
+    { 7533745, 48567 }, // "Progressive Lacerate" rank 2
+    { 7533745, 48568 }, // "Progressive Lacerate" rank 3
+    { 7533763, 33763 }, // "Progressive Lifebloom" rank 1
+    { 7533763, 48450 }, // "Progressive Lifebloom" rank 2
+    { 7533763, 48451 }, // "Progressive Lifebloom" rank 3
+    { 7533876, 33982 }, // "Progressive Mangle (Cat)" rank 1
+    { 7533876, 33983 }, // "Progressive Mangle (Cat)" rank 2
+    { 7533876, 48565 }, // "Progressive Mangle (Cat)" rank 3
+    { 7533876, 48566 }, // "Progressive Mangle (Cat)" rank 4
+    { 7533878, 33986 }, // "Progressive Mangle (Bear)" rank 1
+    { 7533878, 33987 }, // "Progressive Mangle (Bear)" rank 2
+    { 7533878, 48563 }, // "Progressive Mangle (Bear)" rank 3
+    { 7533878, 48564 }, // "Progressive Mangle (Bear)" rank 4
+    { 7533943, 40120 }, // "Progressive Flight Form" rank 1
+    { 7534861, 34863 }, // "Progressive Circle of Healing" rank 1
+    { 7534861, 34864 }, // "Progressive Circle of Healing" rank 2
+    { 7534861, 34865 }, // "Progressive Circle of Healing" rank 3
+    { 7534861, 34866 }, // "Progressive Circle of Healing" rank 4
+    { 7534861, 48088 }, // "Progressive Circle of Healing" rank 5
+    { 7534861, 48089 }, // "Progressive Circle of Healing" rank 6
+    { 7534914, 34916 }, // "Progressive Vampiric Touch" rank 1
+    { 7534914, 34917 }, // "Progressive Vampiric Touch" rank 2
+    { 7534914, 48159 }, // "Progressive Vampiric Touch" rank 3
+    { 7534914, 48160 }, // "Progressive Vampiric Touch" rank 4
+    { 7542955, 42955 }, // "Progressive Conjure Refreshment" rank 1
+    { 7542955, 42956 }, // "Progressive Conjure Refreshment" rank 2
+    { 7543265, 43265 }, // "Progressive Death and Decay" rank 1
+    { 7543265, 49936 }, // "Progressive Death and Decay" rank 2
+    { 7543265, 49937 }, // "Progressive Death and Decay" rank 3
+    { 7543265, 49938 }, // "Progressive Death and Decay" rank 4
+    { 7543987, 43987 }, // "Progressive Ritual of Refreshment" rank 1
+    { 7543987, 58659 }, // "Progressive Ritual of Refreshment" rank 2
+    { 7544425, 44780 }, // "Progressive Arcane Barrage" rank 1
+    { 7544425, 44781 }, // "Progressive Arcane Barrage" rank 2
+    { 7544457, 55359 }, // "Progressive Living Bomb" rank 1
+    { 7544457, 55360 }, // "Progressive Living Bomb" rank 2
+    { 7544614, 44614 }, // "Progressive Frostfire Bolt" rank 1
+    { 7544614, 47610 }, // "Progressive Frostfire Bolt" rank 2
+    { 7545462, 49917 }, // "Progressive Plague Strike" rank 1
+    { 7545462, 49918 }, // "Progressive Plague Strike" rank 2
+    { 7545462, 49919 }, // "Progressive Plague Strike" rank 3
+    { 7545462, 49920 }, // "Progressive Plague Strike" rank 4
+    { 7545462, 49921 }, // "Progressive Plague Strike" rank 5
+    { 7545477, 49896 }, // "Progressive Icy Touch" rank 1
+    { 7545477, 49903 }, // "Progressive Icy Touch" rank 2
+    { 7545477, 49904 }, // "Progressive Icy Touch" rank 3
+    { 7545477, 49909 }, // "Progressive Icy Touch" rank 4
+    { 7545902, 49926 }, // "Progressive Blood Strike" rank 1
+    { 7545902, 49927 }, // "Progressive Blood Strike" rank 2
+    { 7545902, 49928 }, // "Progressive Blood Strike" rank 3
+    { 7545902, 49929 }, // "Progressive Blood Strike" rank 4
+    { 7545902, 49930 }, // "Progressive Blood Strike" rank 5
+    { 7547540, 53005 }, // "Progressive Penance" rank 1
+    { 7547540, 53006 }, // "Progressive Penance" rank 2
+    { 7547540, 53007 }, // "Progressive Penance" rank 3
+    { 7547541, 49892 }, // "Progressive Death Coil (Death Knight)" rank 1
+    { 7547541, 49893 }, // "Progressive Death Coil (Death Knight)" rank 2
+    { 7547541, 49894 }, // "Progressive Death Coil (Death Knight)" rank 3
+    { 7547541, 49895 }, // "Progressive Death Coil (Death Knight)" rank 4
+    { 7547897, 47897 }, // "Progressive Shadowflame" rank 1
+    { 7547897, 61290 }, // "Progressive Shadowflame" rank 2
+    { 7548045, 48045 }, // "Progressive Mind Sear" rank 1
+    { 7548045, 53023 }, // "Progressive Mind Sear" rank 2
+    { 7548181, 59161 }, // "Progressive Haunt" rank 1
+    { 7548181, 59163 }, // "Progressive Haunt" rank 2
+    { 7548181, 59164 }, // "Progressive Haunt" rank 3
+    { 7548438, 53248 }, // "Progressive Wild Growth" rank 1
+    { 7548438, 53249 }, // "Progressive Wild Growth" rank 2
+    { 7548438, 53251 }, // "Progressive Wild Growth" rank 3
+    { 7548505, 53199 }, // "Progressive Starfall" rank 1
+    { 7548505, 53200 }, // "Progressive Starfall" rank 2
+    { 7548505, 53201 }, // "Progressive Starfall" rank 3
+    { 7548721, 48721 }, // "Progressive Blood Boil" rank 1
+    { 7548721, 49939 }, // "Progressive Blood Boil" rank 2
+    { 7548721, 49940 }, // "Progressive Blood Boil" rank 3
+    { 7548721, 49941 }, // "Progressive Blood Boil" rank 4
+    { 7549020, 49020 }, // "Progressive Obliterate" rank 1
+    { 7549020, 51423 }, // "Progressive Obliterate" rank 2
+    { 7549020, 51424 }, // "Progressive Obliterate" rank 3
+    { 7549020, 51425 }, // "Progressive Obliterate" rank 4
+    { 7549143, 51416 }, // "Progressive Frost Strike" rank 1
+    { 7549143, 51417 }, // "Progressive Frost Strike" rank 2
+    { 7549143, 51418 }, // "Progressive Frost Strike" rank 3
+    { 7549143, 51419 }, // "Progressive Frost Strike" rank 4
+    { 7549143, 55268 }, // "Progressive Frost Strike" rank 5
+    { 7549158, 51325 }, // "Progressive Corpse Explosion" rank 1
+    { 7549158, 51326 }, // "Progressive Corpse Explosion" rank 2
+    { 7549158, 51327 }, // "Progressive Corpse Explosion" rank 3
+    { 7549158, 51328 }, // "Progressive Corpse Explosion" rank 4
+    { 7549184, 51409 }, // "Progressive Howling Blast" rank 1
+    { 7549184, 51410 }, // "Progressive Howling Blast" rank 2
+    { 7549184, 51411 }, // "Progressive Howling Blast" rank 3
+    { 7549998, 49998 }, // "Progressive Death Strike" rank 1
+    { 7549998, 49999 }, // "Progressive Death Strike" rank 2
+    { 7549998, 45463 }, // "Progressive Death Strike" rank 3
+    { 7549998, 49923 }, // "Progressive Death Strike" rank 4
+    { 7549998, 49924 }, // "Progressive Death Strike" rank 5
+    { 7550516, 53223 }, // "Progressive Typhoon" rank 1
+    { 7550516, 53225 }, // "Progressive Typhoon" rank 2
+    { 7550516, 53226 }, // "Progressive Typhoon" rank 3
+    { 7550516, 61384 }, // "Progressive Typhoon" rank 4
+    { 7550769, 50769 }, // "Progressive Revive" rank 1
+    { 7550769, 50768 }, // "Progressive Revive" rank 2
+    { 7550769, 50767 }, // "Progressive Revive" rank 3
+    { 7550769, 50766 }, // "Progressive Revive" rank 4
+    { 7550769, 50765 }, // "Progressive Revive" rank 5
+    { 7550769, 50764 }, // "Progressive Revive" rank 6
+    { 7550769, 50763 }, // "Progressive Revive" rank 7
+    { 7550796, 59170 }, // "Progressive Chaos Bolt" rank 1
+    { 7550796, 59171 }, // "Progressive Chaos Bolt" rank 2
+    { 7550796, 59172 }, // "Progressive Chaos Bolt" rank 3
+    { 7551490, 59156 }, // "Progressive Thunderstorm" rank 1
+    { 7551490, 59158 }, // "Progressive Thunderstorm" rank 2
+    { 7551490, 59159 }, // "Progressive Thunderstorm" rank 3
+    { 7551505, 51505 }, // "Progressive Lava Burst" rank 1
+    { 7551505, 60043 }, // "Progressive Lava Burst" rank 2
+    { 7551730, 51730 }, // "Progressive Earthliving Weapon" rank 1
+    { 7551730, 51988 }, // "Progressive Earthliving Weapon" rank 2
+    { 7551730, 51991 }, // "Progressive Earthliving Weapon" rank 3
+    { 7551730, 51992 }, // "Progressive Earthliving Weapon" rank 4
+    { 7551730, 51993 }, // "Progressive Earthliving Weapon" rank 5
+    { 7551730, 51994 }, // "Progressive Earthliving Weapon" rank 6
+    { 7552127, 52127 }, // "Progressive Water Shield" rank 1
+    { 7552127, 52129 }, // "Progressive Water Shield" rank 2
+    { 7552127, 52131 }, // "Progressive Water Shield" rank 3
+    { 7552127, 52134 }, // "Progressive Water Shield" rank 4
+    { 7552127, 52136 }, // "Progressive Water Shield" rank 5
+    { 7552127, 52138 }, // "Progressive Water Shield" rank 6
+    { 7552127, 24398 }, // "Progressive Water Shield" rank 7
+    { 7552127, 33736 }, // "Progressive Water Shield" rank 8
+    { 7552127, 57960 }, // "Progressive Water Shield" rank 9
+    { 7553301, 60051 }, // "Progressive Explosive Shot" rank 1
+    { 7553301, 60052 }, // "Progressive Explosive Shot" rank 2
+    { 7553301, 60053 }, // "Progressive Explosive Shot" rank 3
+    { 7553351, 53351 }, // "Progressive Kill Shot" rank 1
+    { 7553351, 61005 }, // "Progressive Kill Shot" rank 2
+    { 7553351, 61006 }, // "Progressive Kill Shot" rank 3
+    { 7553600, 53600 }, // "Progressive Shield of Righteousness" rank 1
+    { 7553600, 61411 }, // "Progressive Shield of Righteousness" rank 2
+    { 7555050, 55258 }, // "Progressive Heart Strike" rank 1
+    { 7555050, 55259 }, // "Progressive Heart Strike" rank 2
+    { 7555050, 55260 }, // "Progressive Heart Strike" rank 3
+    { 7555050, 55261 }, // "Progressive Heart Strike" rank 4
+    { 7555050, 55262 }, // "Progressive Heart Strike" rank 5
+    { 7555090, 55265 }, // "Progressive Scourge Strike" rank 1
+    { 7555090, 55270 }, // "Progressive Scourge Strike" rank 2
+    { 7555090, 55271 }, // "Progressive Scourge Strike" rank 3
+    { 7556641, 56641 }, // "Progressive Steady Shot" rank 1
+    { 7556641, 34120 }, // "Progressive Steady Shot" rank 2
+    { 7556641, 49051 }, // "Progressive Steady Shot" rank 3
+    { 7556641, 49052 }, // "Progressive Steady Shot" rank 4
+    { 7557330, 57330 }, // "Progressive Horn of Winter" rank 1
+    { 7557330, 57623 }, // "Progressive Horn of Winter" rank 2
+    { 7561295, 61299 }, // "Progressive Riptide" rank 1
+    { 7561295, 61300 }, // "Progressive Riptide" rank 2
+    { 7561295, 61301 }, // "Progressive Riptide" rank 3
+    { 7561846, 61846 }, // "Progressive Aspect of the Dragonhawk" rank 1
+    { 7561846, 61847 }, // "Progressive Aspect of the Dragonhawk" rank 2
 };
 inline std::unordered_map<uint32_t, std::vector<uint32_t>> BuildApItemIdToChainSpellIds()
 {
     std::unordered_map<uint32_t, std::vector<uint32_t>> result;
     for (auto const& row : AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW)
-        result.emplace(row.first, std::vector<uint32_t>(row.second));
+        result[row.first].push_back(row.second);
     return result;
 }
 inline const std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = BuildApItemIdToChainSpellIds();
