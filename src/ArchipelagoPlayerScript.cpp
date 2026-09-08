@@ -375,23 +375,34 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.11.5.0.5: direct spell grant. deliveryCharacter is the same
-        // single named recipient every other SingleDeliveryCharacter-policy
-        // branch in this function targets -- Archipelago::SpellGrant::
-        // GrantOrQueue handles the online/offline split exactly like
-        // APDelivery::GiveOrMailItem does for physical items, just with no
-        // mail fallback (there is none for a spell). Currently unreachable
-        // against this checkout's real compiled data (the map is always
-        // empty -- see that family's own extraction plan for why), kept as
-        // real, correct dispatch code for the day it isn't.
-        auto trainerSpellSpellIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.find(received.item);
-        if (trainerSpellSpellIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.end())
+        // Progressive trainer-spell chain items (M-next): each chain's
+        // realm-wide "how many ranks granted so far" tier lives in the
+        // existing generic flag store under a per-chain key, same
+        // mechanism GetLevelCapCopiesReceived/GrantLevelCapCopy already
+        // use for Progressive Level Cap -- consistent with this realm's
+        // "one realm = one AP slot" model (ArchipelagoRealmState.h),
+        // which already collapses every delivery target to the single
+        // configured deliveryCharacter regardless of which real
+        // character eventually casts the spell.
+        auto trainerChainIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToChainSpellIds.find(received.item);
+        if (trainerChainIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToChainSpellIds.end())
         {
-            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
-            if (!receiverGuid.IsEmpty())
+            std::string flagKey = "trainer_chain_rank_" + std::to_string(received.item);
+            uint32_t tier = sArchipelagoRealmState->GetFlagTier(flagKey);
+            std::vector<uint32_t> const& ranks = trainerChainIt->second;
+            if (tier < ranks.size())
             {
-                Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
-                Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), trainerSpellSpellIt->second, trans);
+                ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+                if (!receiverGuid.IsEmpty())
+                {
+                    Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+                    Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), ranks[tier], trans);
+                }
+                sArchipelagoRealmState->SetFlagTier(flagKey, tier + 1);
+            }
+            else
+            {
+                LOG_ERROR("module.archipelago_wow", "Archipelago: received Progressive chain item {} but all {} ranks are already granted", received.item, ranks.size());
             }
             highestSeen = std::max(highestSeen, received.index);
             continue;
