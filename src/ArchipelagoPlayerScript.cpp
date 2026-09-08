@@ -30,6 +30,7 @@
 #include "ArchipelagoGoldenBoarStatuesContentTable.h"
 #include "ArchipelagoHOLIDAYSANITYContent.h"
 #include "ArchipelagoITEMSANITYContent.h"
+#include "ArchipelagoManager.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
@@ -392,11 +393,41 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             std::vector<uint32_t> const& ranks = trainerChainIt->second;
             if (tier < ranks.size())
             {
+                uint32_t rankSpellId = ranks[tier];
                 ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
                 if (!receiverGuid.IsEmpty())
                 {
+                    // Final-review fix (Finding 1): SPELL_ID_TO_LOCATION_ID
+                    // still keys ONE location per individual rank spell_id
+                    // (unchanged by this branch), and
+                    // ArchipelagoTrainerPurchaseScript::OnPlayerCanTrainerTeachSpell
+                    // -- the only other place that sends/attributes that
+                    // location's check -- is only reachable while
+                    // Trainer::CanTeachSpell still returns Available, which
+                    // flips to Known the instant the player has the spell.
+                    // Granting the rank directly here (as this block always
+                    // has) without also sending/attributing its own location
+                    // check first would make that rank's location
+                    // permanently unreachable for the rest of this
+                    // character's life. Mirror
+                    // OnPlayerCanTrainerTeachSpell's exact dedup-guarded
+                    // send/attribution pattern before granting;
+                    // HasSentLocationCheck's guard makes this safe even if
+                    // the player legitimately purchased this rank from the
+                    // trainer first (no double-send).
+                    auto locationIt = ArchipelagoTRAINER_SPELLSContent::SPELL_ID_TO_LOCATION_ID.find(rankSpellId);
+                    if (locationIt != ArchipelagoTRAINER_SPELLSContent::SPELL_ID_TO_LOCATION_ID.end())
+                    {
+                        uint64_t locationId = static_cast<uint64_t>(locationIt->second);
+                        if (!sArchipelagoRealmState->HasSentLocationCheck(locationId))
+                        {
+                            sArchipelagoMgr->SendLocationChecks({ locationIt->second });
+                            sArchipelagoRealmState->RecordLocationCheckAttribution(locationId, receiverGuid.GetCounter());
+                        }
+                    }
+
                     Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
-                    Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), ranks[tier], trans);
+                    Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), rankSpellId, trans);
                 }
                 sArchipelagoRealmState->SetFlagTier(flagKey, tier + 1);
             }
