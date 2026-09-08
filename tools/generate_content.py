@@ -703,7 +703,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "trainer_spells": FamilySchema(
-        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail", "learn_spell"},
+        valid_trigger_kinds={"trainer_purchase_attempt"}, valid_delivery_kinds={"mail", "learn_spell"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "filler_reward_items": FamilySchema(

@@ -59,6 +59,33 @@ class TestExtract(unittest.TestCase):
         self.assertIn(result["items"][0]["delivery"]["wow_item_entry"], {117, 2287})
 
     @patch("extract_trainer_spells._query_consumable_items")
+    @patch("extract_trainer_spells.parse_area_names")
+    @patch("extract_trainer_spells.parse_area_zone_ids")
+    @patch("extract_trainer_spells.parse_world_map_areas")
+    @patch("extract_trainer_spells._load_trainer_positions")
+    @patch("extract_trainer_spells.parse_spell_names")
+    @patch("extract_trainer_spells._load_trainer_expansions")
+    @patch("extract_trainer_spells._load_recipe_spell_ids")
+    @patch("extract_trainer_spells.load_exclusion_rules")
+    @patch("extract_trainer_spells.run_query")
+    def test_trigger_kind_is_trainer_purchase_attempt_not_learn_spell(
+        self, mock_run_query, mock_load_rules, mock_recipe_ids, mock_expansions, mock_names,
+        mock_positions, mock_world_map_areas, mock_area_zone_ids, mock_area_names, mock_consumables
+    ) -> None:
+        mock_load_rules.return_value = {"name_denylist": []}
+        mock_recipe_ids.return_value = frozenset()
+        mock_expansions.return_value = {1: "vanilla"}
+        mock_names.return_value = {72: "Shield Bash"}
+        mock_positions.return_value = {}
+        mock_world_map_areas.return_value = {}
+        mock_area_zone_ids.return_value = {}
+        mock_area_names.return_value = {}
+        mock_run_query.return_value = [("72", "1", "1", "12")]
+        mock_consumables.return_value = self._CONSUMABLE_FIXTURE
+        result = extract()
+        self.assertEqual(result["locations"][0]["trigger"]["kind"], "trainer_purchase_attempt")
+
+    @patch("extract_trainer_spells._query_consumable_items")
     @patch("extract_trainer_spells.resolve_area_tags_for_positions")
     @patch("extract_trainer_spells.parse_spell_names")
     @patch("extract_trainer_spells._load_trainer_expansions")

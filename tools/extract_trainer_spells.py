@@ -251,7 +251,7 @@ def extract() -> dict:
             # (generate_content.py's export_tags emission), TRIGGERS keeps the
             # raw trigger dict verbatim.
             "trigger": {
-                "kind": "learn_spell", "spell_id": spell_id,
+                "kind": "trainer_purchase_attempt", "spell_id": spell_id,
                 "min_level": info["req_level"],
             },
             "tags": tags,
