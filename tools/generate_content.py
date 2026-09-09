@@ -668,6 +668,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
     ),
     "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
+    "raidlogger": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"instant_level_set"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
     "traps": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"trap"}),
     "rares": FamilySchema(
@@ -924,6 +925,8 @@ def emit_python(data: dict) -> str:
         return _emit_python_core_loop(data)
     if family in ("gates", "holidaysanity"):
         return _emit_python_gates(data)
+    if family == "raidlogger":
+        return _emit_python_raidlogger(data)
     if family == "filler":
         return _emit_python_filler(data)
     if family == "traps":
@@ -1104,6 +1107,22 @@ def _emit_python_gates(data: dict) -> str:
     lines.append("FLAG_TIER_BY_ITEM_NAME: dict[str, int] = {")
     for item in data["items"]:
         lines.append(f'    "{item["name"]}": {item["delivery"]["tier"]},')
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_python_raidlogger(data: dict) -> str:
+    family = data["family"]
+    lines = [_GENERATED_HEADER_PY.format(source=f"content/{family}.yaml"), ""]
+    lines.append("ITEMS: dict[str, tuple[int, int]] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": ({item["item_id"]}, {item["count"]}),')
+    lines.append("}")
+    lines.append("")
+    lines.append("LEVEL_BY_ITEM_NAME: dict[str, int] = {")
+    for item in data["items"]:
+        lines.append(f'    "{item["name"]}": {item["delivery"]["level"]},')
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -2010,6 +2029,8 @@ def emit_cpp(data: dict) -> str:
         return _emit_cpp_collections(data)
     if family == "achievements":
         return _emit_cpp_achievements(data)
+    if family == "raidlogger":
+        return _emit_cpp_raidlogger(data)
     raise ValidationError(f"unknown family: {family!r}")
 
 
@@ -2174,6 +2195,29 @@ def _emit_cpp_gates(data: dict) -> str:
     for item in data["items"]:
         delivery = item["delivery"]
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
+    lines.append("    };")
+    lines.append("}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _emit_cpp_raidlogger(data: dict) -> str:
+    family = data["family"]
+    namespace = "Archipelago::" + family.title()
+    lines = [
+        _GENERATED_HEADER_CPP.format(source=f"content/{family}.yaml"),
+        "#pragma once", "",
+        "#include <cstdint>",
+        "#include <unordered_map>", "",
+        f"namespace {namespace}", "{",
+    ]
+    for item in data["items"]:
+        const_name = _cpp_const_name(item["name"])
+        lines.append(f'    inline constexpr int64_t {const_name} = {item["item_id"]};')
+    lines.append("")
+    lines.append("    inline std::unordered_map<int64_t, uint8_t> const ApItemToLevel = {")
+    for item in data["items"]:
+        lines.append(f'        {{ {item["item_id"]}, {item["delivery"]["level"]} }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
     lines.append("")
