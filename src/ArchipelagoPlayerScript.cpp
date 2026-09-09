@@ -107,8 +107,21 @@ namespace
         }
 
         uint32 chosen = unknownNodes[urand(0, unknownNodes.size() - 1)];
-        player->m_taxi.SetTaximaskNode(chosen);
-        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You've learned a new flight path.");
+        // M4.14.1 final review fix (I4): SetTaximaskNode alone updates server-side
+        // state but never notifies the connected client -- the in-game flight map
+        // wouldn't show the new node until the player relogged. WorldSession::
+        // SendDiscoverNewTaxiNode is the real core idiom every other in-game taxi
+        // node grant uses (see SpellEffects.cpp's SPELL_EFFECT_QUEST_COMPLETE
+        // handling): it sets the flag, sends SMSG_NEW_TAXI_PATH, and fires
+        // sScriptMgr->OnPlayerLearnTaxiNode, all in one call.
+        WorldSession* session = player->GetSession();
+        if (!session)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: {} has no active WorldSession, Random Flight Path Unlock could not notify the client", player->GetName());
+            return;
+        }
+        session->SendDiscoverNewTaxiNode(chosen);
+        ChatHandler(session).PSendSysMessage("Archipelago: You've learned a new flight path.");
     }
 }
 
@@ -267,8 +280,12 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             // fields, unlike every other gates-family flag_key -- apply the
             // grant to everyone already online now (OnPlayerLogin handles
             // anyone who logs in later, including characters who were
-            // offline for this exact delivery).
-            if (flagKey == "bank_bag_slots" || flagKey == "dual_spec")
+            // offline for this exact delivery). M4.14.1 final review fix
+            // (I3): xp_boost/speed_boost (Task 6) are the same per-character
+            // shape -- SyncCharacterUnlocksToPlayer also applies their auras
+            // -- so they need the same immediate resync, or an online
+            // recipient would see nothing until their next relog.
+            if (flagKey == "bank_bag_slots" || flagKey == "dual_spec" || flagKey == "xp_boost" || flagKey == "speed_boost")
             {
                 sWorldSessionMgr->DoForAllOnlinePlayers([](Player* onlinePlayer)
                 {
