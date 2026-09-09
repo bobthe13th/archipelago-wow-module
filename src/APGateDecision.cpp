@@ -83,4 +83,15 @@ namespace Archipelago::Gating
 
         return false;
     }
+
+    ZoneGateKickTarget ChooseZoneGateKickTarget(bool recallIsGatedAndLocked, bool homebindIsGatedAndLocked)
+    {
+        if (!recallIsGatedAndLocked)
+            return ZoneGateKickTarget::Recall;
+
+        if (!homebindIsGatedAndLocked)
+            return ZoneGateKickTarget::Homebind;
+
+        return ZoneGateKickTarget::RacialStart;
+    }
 }

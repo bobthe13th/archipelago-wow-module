@@ -76,3 +76,38 @@ TEST_CASE("IsZoneGatedAndLocked flags a recall position resolving into the same 
     uint32_t const recallZoneId = 3703; // player's saved recall position is ALSO inside Shattrath
     CHECK(IsZoneGatedAndLocked(recallZoneId, gates, 1) == true);
 }
+
+// M4.14.2 final review fix (I2, round 2): homebind is NOT an
+// unconditionally safe fallback either -- Dalaran and Shattrath City are
+// both real WotLK player-hub cities with functioning Inns, so a player
+// could genuinely have bound their hearthstone in one of them before
+// zone_gating was ever turned on, or before receiving that specific zone's
+// AP item. ChooseZoneGateKickTarget is the pure 3-tier decision this fix
+// adds on top of IsZoneGatedAndLocked: recall if safe, else homebind if
+// safe, else the player's real racial/class starting position (which by
+// game design can never be one of these 3 curated zones).
+TEST_CASE("ChooseZoneGateKickTarget prefers recall when it isn't gated-and-locked")
+{
+    using namespace Archipelago::Gating;
+
+    CHECK(ChooseZoneGateKickTarget(/*recallIsGatedAndLocked=*/false, /*homebindIsGatedAndLocked=*/false) == ZoneGateKickTarget::Recall);
+    CHECK(ChooseZoneGateKickTarget(/*recallIsGatedAndLocked=*/false, /*homebindIsGatedAndLocked=*/true) == ZoneGateKickTarget::Recall);
+}
+
+TEST_CASE("ChooseZoneGateKickTarget falls back to homebind when recall is gated-and-locked but homebind isn't")
+{
+    using namespace Archipelago::Gating;
+
+    CHECK(ChooseZoneGateKickTarget(/*recallIsGatedAndLocked=*/true, /*homebindIsGatedAndLocked=*/false) == ZoneGateKickTarget::Homebind);
+}
+
+TEST_CASE("ChooseZoneGateKickTarget falls back to the racial start position when both recall and homebind are gated-and-locked")
+{
+    using namespace Archipelago::Gating;
+
+    // Regression scenario for round 2 of this fix: e.g. a player's recall
+    // is inside Shattrath City and their hearthstone is bound in Dalaran,
+    // both still locked -- neither is safe, so the decision must reach the
+    // one guaranteed-safe tier.
+    CHECK(ChooseZoneGateKickTarget(/*recallIsGatedAndLocked=*/true, /*homebindIsGatedAndLocked=*/true) == ZoneGateKickTarget::RacialStart);
+}

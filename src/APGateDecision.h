@@ -143,4 +143,35 @@ namespace Archipelago::Gating
     // same locked zone, making the existing deferred kick-back a no-op
     // (it "kicks" them right back to where they already are).
     bool IsZoneGatedAndLocked(uint32_t zoneId, GatedZoneLockState const* gates, size_t count);
+
+    // M4.14.2 final review fix (I2, round 2): the 3-tier kick-back
+    // destination choice for ArchipelagoZoneAccessScript.cpp's deferred
+    // kick. Tier 1 (recall) is used if it isn't itself gated-and-locked
+    // (see IsZoneGatedAndLocked above). If it is, tier 2 (homebind) is
+    // used instead -- UNLESS homebind is also gated-and-locked, which is a
+    // real, plausible case and not just theoretical: Dalaran and Shattrath
+    // City are both real WotLK player-hub cities specifically designed
+    // with functioning Inns (Dalaran is the max-level hub precisely
+    // because it has full amenities including an inn; Shattrath City
+    // likewise), so a player could genuinely have bound their hearthstone
+    // in either one before zone_gating was ever turned on, or before
+    // receiving that specific zone's AP item. In that case, fall back to
+    // tier 3: the player's real racial/class starting position, which by
+    // game design can never be one of these 3 curated endgame-hub zones --
+    // no playable race starts in an endgame hub city. This is the exact
+    // same real, already-established "known-safe teleport target" this
+    // codebase's own Player::LoadFromDB already falls back to for invalid
+    // saved coordinates (confirmed real call site,
+    // src/server/game/Entities/Player/PlayerStorage.cpp, immediately after
+    // sMapMgr->CreateMap(mapId, this) fails: `PlayerInfo const* info =
+    // sObjectMgr->GetPlayerInfo(getRace(true), getClass());`), not
+    // something invented for this fix.
+    enum class ZoneGateKickTarget
+    {
+        Recall,
+        Homebind,
+        RacialStart,
+    };
+
+    ZoneGateKickTarget ChooseZoneGateKickTarget(bool recallIsGatedAndLocked, bool homebindIsGatedAndLocked);
 }

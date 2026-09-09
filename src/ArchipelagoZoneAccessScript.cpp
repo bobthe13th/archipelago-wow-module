@@ -136,33 +136,102 @@ public:
         // spot they're already standing at, leaving them fully free to play
         // inside the gated zone. Guard against that by resolving the recall
         // position's own real zone id and checking whether IT is also
-        // gated-and-locked; if so, distrust it and fall back to the
-        // player's real homebind instead. This can't change in the 0ms gap
+        // gated-and-locked. These resolutions can't change in the 0ms gap
         // before the deferred lambda runs (unlike the original zone's lock
         // state, which the lambda below still re-validates independently),
-        // so resolving it once here at snapshot time is sufficient.
+        // so resolving them once here at snapshot time is sufficient.
+        uint32 const homebindMap = player->m_homebindMapId;
+        float const homebindX = player->m_homebindX;
+        float const homebindY = player->m_homebindY;
+        float const homebindZ = player->m_homebindZ;
+
         Map* recallMapPtr = sMapMgr->CreateBaseMap(recallMap);
         uint32 const recallZoneId = recallMapPtr
             ? recallMapPtr->GetZoneId(PHASEMASK_NORMAL, recallX, recallY, recallZ)
             : 0;
 
+        // Round 2 (final review re-check): homebind is NOT an unconditionally
+        // safe fallback either -- Dalaran and Shattrath City are both real
+        // WotLK player-hub cities with functioning Inns, so a player could
+        // genuinely have bound their hearthstone in one of them before
+        // zone_gating was ever turned on, or before receiving that specific
+        // zone's AP item. Resolve homebind's real zone id the same way, so a
+        // gated-and-locked homebind is caught too instead of teleporting the
+        // player right back into a (possibly different) still-gated zone,
+        // which would just re-trigger this same hook.
+        Map* homebindMapPtr = sMapMgr->CreateBaseMap(homebindMap);
+        uint32 const homebindZoneId = homebindMapPtr
+            ? homebindMapPtr->GetZoneId(PHASEMASK_NORMAL, homebindX, homebindY, homebindZ)
+            : 0;
+
         std::vector<Archipelago::Gating::GatedZoneLockState> const gateLockStates = SnapshotGateLockStates();
 
-        // No usable map (shouldn't happen for a real recall position, but
+        // No usable map (shouldn't happen for a real saved position, but
         // treat it the same as "gated and locked" out of caution) or the
-        // recall position resolves into one of our own still-locked gates:
-        // don't trust it as a kick-back target.
-        bool const recallIsSafe = recallMapPtr
-            && !Archipelago::Gating::IsZoneGatedAndLocked(recallZoneId, gateLockStates.data(), gateLockStates.size());
+        // position resolves into one of our own still-locked gates: don't
+        // trust it as a kick-back target.
+        bool const recallIsGatedAndLocked = !recallMapPtr
+            || Archipelago::Gating::IsZoneGatedAndLocked(recallZoneId, gateLockStates.data(), gateLockStates.size());
+        bool const homebindIsGatedAndLocked = !homebindMapPtr
+            || Archipelago::Gating::IsZoneGatedAndLocked(homebindZoneId, gateLockStates.data(), gateLockStates.size());
 
-        uint32 const kickMap = recallIsSafe ? recallMap : player->m_homebindMapId;
-        float const kickX = recallIsSafe ? recallX : player->m_homebindX;
-        float const kickY = recallIsSafe ? recallY : player->m_homebindY;
-        float const kickZ = recallIsSafe ? recallZ : player->m_homebindZ;
-        // Homebind has no stored orientation field; 0.0f is fine here,
-        // matching how a hearthstone-style teleport doesn't care about
-        // landing orientation.
-        float const kickO = recallIsSafe ? recallO : 0.0f;
+        Archipelago::Gating::ZoneGateKickTarget const kickTarget =
+            Archipelago::Gating::ChooseZoneGateKickTarget(recallIsGatedAndLocked, homebindIsGatedAndLocked);
+
+        uint32 kickMap = recallMap;
+        float kickX = recallX;
+        float kickY = recallY;
+        float kickZ = recallZ;
+        // Homebind and the racial start position have no stored orientation
+        // field; 0.0f is fine for either, matching how a hearthstone-style
+        // teleport doesn't care about landing orientation.
+        float kickO = recallO;
+
+        if (kickTarget == Archipelago::Gating::ZoneGateKickTarget::Homebind)
+        {
+            kickMap = homebindMap;
+            kickX = homebindX;
+            kickY = homebindY;
+            kickZ = homebindZ;
+            kickO = 0.0f;
+        }
+        else if (kickTarget == Archipelago::Gating::ZoneGateKickTarget::RacialStart)
+        {
+            // Tier 3: the player's real racial/class starting position --
+            // by game design this can NEVER be one of the 3 curated
+            // endgame-hub zones (no playable race starts in one of them).
+            // This is the exact same real, established "known-safe
+            // teleport target" Player::LoadFromDB itself already falls
+            // back to for invalid saved coordinates
+            // (PlayerStorage.cpp, right after sMapMgr->CreateMap(mapId,
+            // this) fails), not something invented for this fix.
+            if (PlayerInfo const* info = sObjectMgr->GetPlayerInfo(player->getRace(true), player->getClass()))
+            {
+                kickMap = info->mapId;
+                kickX = info->positionX;
+                kickY = info->positionY;
+                kickZ = info->positionZ;
+                kickO = 0.0f;
+            }
+            else
+            {
+                // GetPlayerInfo returning nullptr here would mean the
+                // player's own race/class has no known starting location
+                // at all, which can't happen for a real logged-in
+                // character (the same race/class was already validated at
+                // character creation) -- fall back to homebind's own
+                // coordinates as the best remaining option (still
+                // gated-and-locked, per this branch's own condition, but
+                // strictly no worse than the pre-fix behavior) rather than
+                // leaving kickMap/X/Y/Z at the also-gated-and-locked recall
+                // position.
+                kickMap = homebindMap;
+                kickX = homebindX;
+                kickY = homebindY;
+                kickZ = homebindZ;
+                kickO = 0.0f;
+            }
+        }
 
         // Defer to the player's next update tick (0ms offset -- guaranteed to
         // run on a later call to EventProcessor::Update(), never inside the
