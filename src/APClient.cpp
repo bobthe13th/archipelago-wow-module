@@ -402,6 +402,10 @@ namespace Archipelago
             if (zoneLevelerStatuesRequired && _callbacks.onZoneLevelerStatuesRequiredReceived)
                 _callbacks.onZoneLevelerStatuesRequiredReceived(*zoneLevelerStatuesRequired);
 
+            auto fillerNeededCount = ParseFillerNeededCountFromSlotData(message);
+            if (fillerNeededCount && _callbacks.onFillerNeededCountReceived)
+                _callbacks.onFillerNeededCountReceived(*fillerNeededCount);
+
             auto zoneLevelerInstancesRequired = ParseZoneLevelerInstancesRequiredFromSlotData(message);
             if (zoneLevelerInstancesRequired && _callbacks.onZoneLevelerInstancesRequiredReceived)
                 _callbacks.onZoneLevelerInstancesRequiredReceived(*zoneLevelerInstancesRequired);

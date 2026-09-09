@@ -387,6 +387,31 @@ namespace Archipelago
         return std::nullopt;
     }
 
+    std::optional<uint32_t> ParseFillerNeededCountFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("filler_needed_count") ||
+                !slotData["filler_needed_count"].is_number_integer())
+                continue;
+            int64_t needed = slotData["filler_needed_count"].get<int64_t>();
+            if (needed < 0)
+                continue;
+            return static_cast<uint32_t>(needed);
+        }
+        return std::nullopt;
+    }
+
     std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw)
     {
         json parsed = json::parse(raw, nullptr, false /* don't throw */);

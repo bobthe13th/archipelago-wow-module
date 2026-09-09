@@ -102,6 +102,12 @@ namespace Archipelago
         // see ArchipelagoManager::GetLastKnownMissingLocations/
         // SetLastKnownMissingLocations and ArchipelagoCommandScript.cpp's consumer).
         std::function<void(std::vector<int64_t> const&)> onMissingLocationsReceived = nullptr;
+        // Connected's real slot_data["filler_needed_count"] (M4.11.6): the
+        // exact per-seed count of Filler Check locations this seed actually
+        // placed (Archipelago/worlds/wow/slot_data.py's
+        // _add_filler_needed_count) -- replaces sending the full compiled
+        // 151-id Filler set unconditionally at OnStartup.
+        std::function<void(uint32_t)> onFillerNeededCountReceived = nullptr;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
@@ -221,6 +227,15 @@ namespace Archipelago
     // recognize" (rejecting negative values). Returns std::nullopt (never
     // throws) if slot_data or the key is absent/malformed.
     std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw);
+
+    // Parses Connected's real slot_data["filler_needed_count"] (M4.11.6):
+    // the exact per-seed count of Filler Check locations this seed actually
+    // placed (Archipelago/worlds/wow/slot_data.py's
+    // _add_filler_needed_count). Mirrors
+    // ParseZoneLevelerStatuesRequiredFromSlotData's exact shape. Returns
+    // nullopt (never throws) if Connected/slot_data/the key is absent or
+    // malformed, matching every other Parse* function's discipline.
+    std::optional<uint32_t> ParseFillerNeededCountFromSlotData(std::string const& raw);
     std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw);
 
     // Parses Connected's slot_data["zone_leveler_instance_keys"] (a JSON

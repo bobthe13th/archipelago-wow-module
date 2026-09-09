@@ -596,3 +596,35 @@ TEST_CASE("ParseItemSendEvents ignores a non-PrintJSON command in the same frame
     CHECK(events[0].sourceSlot == 8);
     CHECK(events[0].destinationSlot == 9);
 }
+
+TEST_CASE("ParseFillerNeededCountFromSlotData extracts the real per-seed count")
+{
+    std::string raw = R"([{"cmd": "Connected", "team": 0, "slot": 1,
+        "slot_data": {"filler_needed_count": 60}}])";
+    std::optional<uint32_t> result = ParseFillerNeededCountFromSlotData(raw);
+    REQUIRE(result.has_value());
+    CHECK(*result == 60);
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData returns nullopt when filler_needed_count is absent")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"other_key": 1}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData returns nullopt on malformed JSON")
+{
+    CHECK(!ParseFillerNeededCountFromSlotData("not json").has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData ignores a non-integer filler_needed_count field")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"filler_needed_count": "oops"}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData ignores a negative filler_needed_count field")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"filler_needed_count": -1}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
+}
