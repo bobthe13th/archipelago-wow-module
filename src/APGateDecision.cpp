@@ -37,4 +37,9 @@ namespace Archipelago::Gating
     {
         return slot - INVENTORY_SLOT_BAG_START + 1;
     }
+
+    bool ShouldSuppressBagSlotEquip(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier)
+    {
+        return notLoading && ShouldSuppressGatedTier(moduleEnabled, gateFamilyEnabled, requiredTier, grantedTier);
+    }
 }

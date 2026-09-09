@@ -40,3 +40,35 @@ TEST_CASE("BagSlotToTier maps slots 19-22 to 1-indexed progressive tiers 1-4")
     CHECK(BagSlotToTier(21) == 3);
     CHECK(BagSlotToTier(22) == 4);
 }
+
+// Fix (post-review): Player::_LoadInventory calls OnPlayerCanEquipItem with
+// not_loading=false for every already-equipped item at every login
+// (PlayerStorage.cpp:5993-5994). Denying during that call strips the bag
+// from its slot and mails it back to the player (PlayerStorage.cpp:6050-
+// 6056) instead of blocking a genuine new manual equip attempt -- a
+// real data-loss bug for any pre-existing character with a bag already
+// equipped in a not-yet-unlocked slot (GetFlagTier("bag_slots") starts at
+// 0). ShouldSuppressBagSlotEquip composes the already-tested
+// ShouldSuppressGatedTier with this one extra notLoading rule; only the
+// new composition is tested here, not ShouldSuppressGatedTier's own logic
+// again.
+TEST_CASE("ShouldSuppressBagSlotEquip never suppresses during inventory load (notLoading == false)")
+{
+    using namespace Archipelago::Gating;
+
+    // Same suppress-worthy state (module+family enabled, required tier 3 >
+    // granted tier 2) suppresses on an interactive equip attempt...
+    CHECK(ShouldSuppressBagSlotEquip(/*notLoading=*/true, true, true, 3, 2) == true);
+    // ...but must never suppress during Player::_LoadInventory's
+    // not_loading=false call, regardless of tier state.
+    CHECK(ShouldSuppressBagSlotEquip(/*notLoading=*/false, true, true, 3, 2) == false);
+}
+
+TEST_CASE("ShouldSuppressBagSlotEquip still respects module/family/tier when notLoading == true")
+{
+    using namespace Archipelago::Gating;
+
+    CHECK(ShouldSuppressBagSlotEquip(true, true, true, 3, 3) == false);  // tier already granted
+    CHECK(ShouldSuppressBagSlotEquip(true, true, false, 3, 0) == false); // family disabled
+    CHECK(ShouldSuppressBagSlotEquip(true, false, true, 3, 0) == false); // module disabled
+}

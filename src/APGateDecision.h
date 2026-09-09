@@ -54,4 +54,18 @@ namespace Archipelago::Gating
     // IsNonBackpackBagSlot(slot) first -- the return value for a slot
     // outside that range is unspecified.
     uint32_t BagSlotToTier(uint32_t slot);
+
+    // Full suppression decision for ArchipelagoBagSlotGateScript::
+    // OnPlayerCanEquipItem (APGating.cpp): composes ShouldSuppressGatedTier
+    // with one bag-slot-specific rule -- notLoading must be true (matching
+    // this hook's own not_loading parameter name exactly). Player::
+    // _LoadInventory calls OnPlayerCanEquipItem with not_loading=false for
+    // every already-equipped item at every login (confirmed real call site:
+    // src/server/game/Entities/Player/PlayerStorage.cpp:5993-5994); denying
+    // there strips the bag from its slot and mails it back to the player
+    // (PlayerStorage.cpp:6050-6056) instead of blocking a new manual equip
+    // attempt, which is the only case this gate is meant to suppress. Never
+    // re-tests ShouldSuppressGatedTier's own already-covered logic -- only
+    // adds the notLoading short-circuit.
+    bool ShouldSuppressBagSlotEquip(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
 }

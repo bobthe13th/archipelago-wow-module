@@ -394,7 +394,7 @@ class ArchipelagoBagSlotGateScript : public PlayerScript
 public:
     ArchipelagoBagSlotGateScript() : PlayerScript("ArchipelagoBagSlotGateScript", { PLAYERHOOK_CAN_EQUIP_ITEM }) { }
 
-    bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& /*dest*/, Item* pItem, bool /*swap*/, bool /*not_loading*/) override
+    bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& /*dest*/, Item* pItem, bool /*swap*/, bool not_loading) override
     {
         if (!Archipelago::Gating::IsNonBackpackBagSlot(slot))
             return true;
@@ -404,7 +404,8 @@ public:
             return true;
 
         uint32_t requiredTier = Archipelago::Gating::BagSlotToTier(slot);
-        if (!Archipelago::Gating::ShouldSuppressGatedTier(
+        if (!Archipelago::Gating::ShouldSuppressBagSlotEquip(
+                not_loading,
                 sArchipelagoRealmState->IsEnabled(),
                 sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
                 requiredTier,
