@@ -703,7 +703,15 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "trainer_spells": FamilySchema(
-        valid_trigger_kinds={"learn_spell"}, valid_delivery_kinds={"mail", "learn_spell"},
+        # M4.11.5.7 (Task 7): "learn_spell" replaced by "learn_next_chain_rank"
+        # -- the extractor (Task 6, extract_trainer_spells.py) now groups every
+        # multi-rank spell chain into one "Progressive <Spell>" item instead of
+        # ever emitting a flat "learn_spell" delivery row; a genuine single-rank
+        # spell still goes out as a "mail" item, same as before. Nothing else in
+        # this file, or in ArchipelagoPlayerScript.cpp, references the old
+        # ApItemIdToSpellId map for this family anymore (see
+        # _emit_cpp_item_delivery_lookup below).
+        valid_trigger_kinds={"trainer_purchase_attempt"}, valid_delivery_kinds={"mail", "learn_next_chain_rank"},
         generic=True, export_triggers=True, export_tags=True, export_item_delivery=True,
     ),
     "filler_reward_items": FamilySchema(
@@ -829,6 +837,18 @@ def _validate_recognized_kinds(family: str, locations: list, items: list, yaml_p
                         f"{yaml_path}: item {item['name']!r} has delivery.kind "
                         f"'learn_spell' but is missing required key 'spell_id'"
                     )
+            if kind == "learn_next_chain_rank":
+                if "spell_ids" not in delivery:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'learn_next_chain_rank' but is missing required key 'spell_ids'"
+                    )
+                if not delivery["spell_ids"]:
+                    raise ValidationError(
+                        f"{yaml_path}: item {item['name']!r} has delivery.kind "
+                        f"'learn_next_chain_rank' but 'spell_ids' is empty -- a chain "
+                        f"item must list at least one rank's spell_id"
+                    )
 
 
 _GENERATED_HEADER_PY = (
@@ -909,6 +929,26 @@ def emit_python_generic(data: dict) -> str:
                 for dim, values in dims.items()
             ]
             lines.append(f'    {_string_literal(row["name"])}: {{{", ".join(dim_parts)}}},')
+        lines.append("}")
+        lines.append("")
+
+    if schema is not None and schema.export_item_delivery:
+        # M4.11.7-fix: a "learn_next_chain_rank" item (trainer_spells'
+        # progressive-item redesign, M4.11.6) covers MULTIPLE locations --
+        # one per spell_ids entry -- breaking the row-index-aligned 1:1
+        # LOCATIONS/ITEMS assumption every other family still satisfies.
+        # This mirrors that item's own delivery.spell_ids list (already
+        # exported to C++ as AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW) so
+        # create_optional_category_item_pool (items.py) can group a
+        # category's locations by which chain item covers them, instead of
+        # assuming a bijection. Always emitted (possibly empty), matching
+        # this file's existing "empty map when no rows use it" convention
+        # for optional per-kind exports.
+        lines.append("CHAIN_SPELL_IDS_BY_ITEM_NAME: dict[str, list[int]] = {")
+        for item in data["items"]:
+            if item["delivery"]["kind"] == "learn_next_chain_rank":
+                spell_ids = item["delivery"]["spell_ids"]
+                lines.append(f'    {_string_literal(item["name"])}: {spell_ids!r},')
         lines.append("}")
         lines.append("")
 
@@ -1892,6 +1932,17 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
     if kind == "learn_spell":
         return _emit_cpp_trigger_lookup_learn_spell(locations)
 
+    if kind == "trainer_purchase_attempt":
+        # M4.11.5.6 (Task 4): trainer_spells' own trigger.kind, replacing
+        # "learn_spell" for this family only (recipes still uses
+        # "learn_spell" for its own class-trainer-independent rows). The
+        # trigger dict's fields didn't change -- still spell_id/min_level --
+        # so this reuses _emit_cpp_trigger_lookup_learn_spell verbatim
+        # rather than duplicating it; ArchipelagoTrainerPurchaseScript
+        # (Task 3) already reads the result by its SPELL_ID_TO_LOCATION_ID
+        # name regardless of which trigger.kind produced it.
+        return _emit_cpp_trigger_lookup_learn_spell(locations)
+
     if kind == "item_first_held":
         return _emit_cpp_trigger_lookup_item_first_held(locations)
 
@@ -1924,28 +1975,46 @@ def _emit_cpp_trigger_lookup_one_kind(data: dict, kind: str, locations: list) ->
 
 
 def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> list[str]:
-    """AP item id -> real wow_item_entry to mail (ApItemIdToWowItemEntry), OR
-    AP item id -> real spell_id to grant directly (ApItemIdToSpellId,
-    M4.11.5.0.5) -- whichever delivery.kind each item actually has. A family
-    with only "mail" items (every generic family before M4.11.5.0.5) emits
-    only the first map, byte-identical to before this change; a family with
-    only "learn_spell" items would emit only the second. valid_delivery_kinds
-    (the family's own FamilySchema, not just its CURRENT rows) additionally
-    forces ApItemIdToSpellId to be emitted (empty, if no row uses it yet)
-    whenever "learn_spell" is a kind this family is schema-eligible for --
-    Trainer Spells (the only such family today) currently has zero real
-    "learn_spell" rows in its compiled data (see that family's own
-    extraction plan for why), but its C++ dispatch code unconditionally
-    references ApItemIdToSpellId, so the symbol must always exist even
-    when empty, not only when at least one row happens to use it. Uses the
-    same raw-constexpr-array-plus-runtime-builder pattern every other
-    large-row-count C++ export in this file uses (recipes: 1,912 items,
-    trainer_spells: 1,966 items -- well past the M4.7.1 stack-overflow
-    threshold a bare aggregate initializer proved unsafe at, twice, before
-    this project learned that lesson -- see _emit_cpp_trigger_lookup's own
-    docstring)."""
+    """AP item id -> real wow_item_entry to mail (ApItemIdToWowItemEntry), AP
+    item id -> real spell_id to grant directly (ApItemIdToSpellId,
+    M4.11.5.0.5), OR AP item id -> ordered list of a chain's rank spell_ids
+    to grant one-at-a-time (ApItemIdToChainSpellIds, M4.11.5.7/Task 7) --
+    whichever delivery.kind each item actually has. A family with only
+    "mail" items (every generic family before M4.11.5.0.5) emits only the
+    first map, byte-identical to before this change; a family with only
+    "learn_spell" items would emit only the second (no family uses this
+    today -- Trainer Spells, the only family that ever did, moved its
+    single-rank spells to "mail" and its multi-rank chains to
+    "learn_next_chain_rank" as of Task 6/7). valid_delivery_kinds (the
+    family's own FamilySchema, not just its CURRENT rows) additionally
+    forces ApItemIdToSpellId/ApItemIdToChainSpellIds to be emitted (empty,
+    if no row uses it yet) whenever "learn_spell"/"learn_next_chain_rank"
+    is a kind this family is schema-eligible for -- e.g. if Trainer Spells
+    ever had zero real "learn_next_chain_rank" rows, its C++ dispatch code
+    still unconditionally references ApItemIdToChainSpellIds, so the symbol
+    must always exist even when empty, not only when at least one row
+    happens to use it. Uses the same raw-constexpr-array-plus-runtime-
+    builder pattern every other large-row-count C++ export in this file
+    uses (recipes: 1,912 items, trainer_spells: 1,966 items -- well past
+    the M4.7.1 stack-overflow threshold a bare aggregate initializer proved
+    unsafe at, twice, before this project learned that lesson -- see
+    _emit_cpp_trigger_lookup's own docstring). The chain map's raw array
+    holds one flat `std::pair<uint32_t, uint32_t>` row per (item_id, single
+    rank spell_id) pair -- same flattened-row shape
+    _emit_cpp_trigger_lookup_zone_pool_credit's ZONE_POOL_CREDIT_CANDIDATES_RAW
+    already uses for its own vector-valued map -- instead of nesting the
+    ordered rank spell_ids inside each row. This was fixed from an earlier
+    version that nested `std::initializer_list<uint32_t>` as the row's value
+    type: storing an initializer_list as a VALUE inside a constexpr static-
+    duration array does not keep its backing storage alive, so the builder's
+    copy into a real std::vector ran over already-invalid memory, corrupting
+    the process before main() ever ran (M4.11.6 post-Task-8 crash fix). The
+    flattened builder instead appends each row's single spell_id onto the
+    result map's vector for that item_id via `operator[]`, relying on rows
+    for the same item_id being emitted/iterated in rank-ascending order."""
     mail_items = [item for item in items if item["delivery"]["kind"] == "mail"]
     spell_items = [item for item in items if item["delivery"]["kind"] == "learn_spell"]
+    chain_items = [item for item in items if item["delivery"]["kind"] == "learn_next_chain_rank"]
     lines: list[str] = []
     if mail_items:
         lines.append("inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {")
@@ -1982,6 +2051,26 @@ def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> li
         # so this branch defines the map directly instead of going through
         # the raw-array-plus-builder pattern the non-empty case above uses.
         lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};")
+    if chain_items:
+        lines.append("inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {")
+        for item in chain_items:
+            for rank, spell_id in enumerate(item["delivery"]["spell_ids"], start=1):
+                lines.append(f'    {{ {item["item_id"]}, {spell_id} }}, // {_string_literal(item["name"])} rank {rank}')
+        lines.append("};")
+        lines.append("inline std::unordered_map<uint32_t, std::vector<uint32_t>> BuildApItemIdToChainSpellIds()")
+        lines.append("{")
+        lines.append("    std::unordered_map<uint32_t, std::vector<uint32_t>> result;")
+        lines.append("    for (auto const& row : AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW)")
+        lines.append("        result[row.first].push_back(row.second);")
+        lines.append("    return result;")
+        lines.append("}")
+        lines.append("inline const std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = BuildApItemIdToChainSpellIds();")
+    elif "learn_next_chain_rank" in valid_delivery_kinds:
+        # Same MSVC C3316 concern as the "learn_spell" empty-map branch
+        # above (an empty `T arr[] = {};` cannot be used in a range-based
+        # for the way a non-empty one can) -- defines the map directly
+        # instead of going through the raw-array-plus-builder pattern.
+        lines.append("inline const std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = {};")
     return lines
 
 

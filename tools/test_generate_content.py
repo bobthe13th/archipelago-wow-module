@@ -14,6 +14,8 @@ from generate_content import (
     emit_cpp_generic,
     validate_family,
     _emit_cpp_trigger_lookup,
+    _emit_cpp_trigger_lookup_one_kind,
+    _emit_cpp_trigger_lookup_learn_spell,
     _validate_recipe_craft_rows,
     _validate_gameobject_loot_rows,
     _emit_cpp_trigger_lookup_recipe_craft,
@@ -766,6 +768,50 @@ class TestLearnSpellTriggerLookup(unittest.TestCase):
         ]
         with self.assertRaises(generate_content.ValidationError):
             generate_content._validate_learn_spell_rows(locations, pathlib.Path("test.yaml"))
+
+
+class TestTrainerPurchaseAttemptTriggerLookup(unittest.TestCase):
+    """M4.11.5.6 (Task 4) introduced trainer_spells' own trigger.kind,
+    "trainer_purchase_attempt", replacing "learn_spell" for this family
+    only -- but left _emit_cpp_trigger_lookup_one_kind (Task 8's bundled
+    prerequisite fix) without a dispatch branch for it, which would make
+    generate_content.py raise ValidationError (see its own
+    "add a branch for it" message) the moment it's run against real
+    trainer_spells.yaml content. The trigger dict's fields are unchanged
+    (still spell_id/min_level), so the fix reuses
+    _emit_cpp_trigger_lookup_learn_spell verbatim rather than duplicating
+    it -- these tests confirm both the dispatch and the reuse."""
+
+    def test_emits_spell_id_to_location_id_map_for_trainer_purchase_attempt(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        lines = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        cpp = "\n".join(lines)
+        self.assertIn("SPELL_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("{ 116, 7000001 }", cpp)
+
+    def test_reuses_learn_spell_emission_function_rather_than_duplicating_it(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        via_dispatch = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        via_direct_call = _emit_cpp_trigger_lookup_learn_spell(locations)
+        self.assertEqual(via_dispatch, via_direct_call)
+
+    def test_unregistered_trigger_kind_still_raises(self) -> None:
+        # Guards against the fix accidentally becoming a catch-all: an
+        # actually-unregistered kind must still hit the ValidationError at
+        # the bottom of _emit_cpp_trigger_lookup_one_kind.
+        locations = [{"name": "x", "location_id": 1, "trigger": {"kind": "not_a_real_kind"}}]
+        with self.assertRaises(ValidationError):
+            _emit_cpp_trigger_lookup_one_kind({"family": "trainer_spells"}, "not_a_real_kind", locations)
 
 
 class TestEmitCppItemDeliveryLookup(unittest.TestCase):
@@ -1544,5 +1590,150 @@ class TestItemDeliveryLookupLearnSpellKind(unittest.TestCase):
         self.assertIn("std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};", lines)
 
 
+class TestLearnNextChainRankDelivery(unittest.TestCase):
+    """M4.11.5.7 (Task 7): trainer_spells' replacement for "learn_spell" --
+    one "Progressive <Spell>" item per multi-rank chain, delivery.spell_ids
+    the ordered rank spell_ids. Sibling coverage to
+    TestLearnSpellTriggerLookup.test_learn_spell_row_missing_spell_id_is_rejected
+    (validation) and TestItemDeliveryLookupLearnSpellKind's real-rows/empty-
+    map-fallback pair (emission) -- same direct-call-the-function,
+    assertRaises/assertIn style those use, applied to the new
+    "learn_next_chain_rank" delivery.kind branches instead of "learn_spell"."""
+
+    def test_learn_next_chain_rank_row_missing_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank"}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_learn_next_chain_rank_row_with_empty_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank", "spell_ids": []}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_emits_chain_spell_ids_map_for_real_chain_rows(self) -> None:
+        # M4.11.6 post-Task-8 crash fix: the raw array is flattened to one
+        # `std::pair<uint32_t, uint32_t>` row per (item_id, single rank
+        # spell_id) instead of nesting a std::initializer_list<uint32_t> as
+        # the row's value -- storing an initializer_list as a value inside a
+        # constexpr static-duration array doesn't keep its backing storage
+        # alive, which crashed worldserver.exe (and this module's own
+        # doctest binary) at static-init time before main() ever ran.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 7500116, "name": "Progressive Frostbolt",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+            {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+        ]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertNotIn("initializer_list", lines)
+        self.assertIn(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {",
+            lines,
+        )
+        self.assertIn("{ 7500116, 116 }, // \"Progressive Frostbolt\" rank 1", lines)
+        self.assertIn("{ 7500116, 205 }, // \"Progressive Frostbolt\" rank 2", lines)
+        self.assertIn("{ 7500116, 837 }, // \"Progressive Frostbolt\" rank 3", lines)
+        self.assertIn("result[row.first].push_back(row.second);", lines)
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertIn("{ 7500999, 42 }", lines)
+
+    def test_multi_rank_chain_rows_flatten_in_rank_order_and_regroup_by_item_id(self) -> None:
+        # Sibling coverage focused specifically on the flattening/regrouping
+        # mechanism for MULTIPLE chains: each chain's rank spell_ids must
+        # appear as separate rows in ascending rank order, interleaved
+        # correctly across chains, since the C++ builder relies on
+        # `result[row.first].push_back(row.second)` (ordered append, not
+        # emplace) to regroup the flat rows back into one ordered vector per
+        # item_id -- this only works if emission preserves rank order.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 100, "name": "Progressive Death Coil (Death Knight)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [47541, 49895]}},
+            {"item_id": 200, "name": "Progressive Death Coil (Warlock)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [6789, 17925, 27223]}},
+        ]
+        lines_list = _emit_cpp_item_delivery_lookup(items, {"learn_next_chain_rank"})
+        lines = "\n".join(lines_list)
+
+        # Extract just the raw-array row lines (between the array's opening
+        # and closing braces) to check relative order precisely.
+        start = lines_list.index(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {"
+        )
+        end = lines_list.index("};", start)
+        row_lines = lines_list[start + 1:end]
+
+        self.assertEqual(
+            row_lines,
+            [
+                '    { 100, 47541 }, // "Progressive Death Coil (Death Knight)" rank 1',
+                '    { 100, 49895 }, // "Progressive Death Coil (Death Knight)" rank 2',
+                '    { 200, 6789 }, // "Progressive Death Coil (Warlock)" rank 1',
+                '    { 200, 17925 }, // "Progressive Death Coil (Warlock)" rank 2',
+                '    { 200, 27223 }, // "Progressive Death Coil (Warlock)" rank 3',
+            ],
+        )
+        self.assertIn("result[row.first].push_back(row.second);", lines)
+
+    def test_learn_next_chain_rank_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
+        # trainer_spells' real shape today (Task 8 regenerates the actual
+        # content, but the schema is already eligible): schema-eligible for
+        # "learn_next_chain_rank" -- the symbol must still exist (empty)
+        # since the C++ dispatch code (ArchipelagoPlayerScript.cpp)
+        # references it unconditionally, same MSVC C3316 concern
+        # (empty `T arr[] = {};` can't be used in a range-based for) as the
+        # sibling "learn_spell" empty-map fallback.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 7500001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertNotIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertIn("std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = {};", lines)
+
+
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEmitPythonGenericChainSpellIdsByItemName(unittest.TestCase):
+    """M4.11.7-fix: sibling coverage to TestLearnNextChainRankDelivery, on
+    the Python side -- emit_python_generic's CHAIN_SPELL_IDS_BY_ITEM_NAME
+    export mirrors the C++ AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW data so
+    create_optional_category_item_pool (Archipelago/worlds/wow/items.py)
+    can group a category's locations by which chain item covers them."""
+
+    def test_emits_chain_spell_ids_for_learn_next_chain_rank_rows_only(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "trainer_spells",
+            "locations": [],
+            "items": [
+                {"item_id": 7500116, "name": "Progressive Frostbolt",
+                 "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+                {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME", lines)
+        self.assertIn('"Progressive Frostbolt": [116, 205, 837]', lines)
+        self.assertNotIn('"y":', lines.split("CHAIN_SPELL_IDS_BY_ITEM_NAME")[1])
+
+    def test_emits_empty_dict_when_no_rows_use_learn_next_chain_rank(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "recipes",
+            "locations": [],
+            "items": [
+                {"item_id": 1750001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME: dict[str, list[int]] = {\n}", lines)
