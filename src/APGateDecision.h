@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APGateDecision.h
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 namespace Archipelago::Gating
@@ -109,4 +110,37 @@ namespace Archipelago::Gating
     // accessors -- OnPlayerCanLearnTalent fires before the point being
     // learned is added to the player's used-talent count).
     bool ShouldSuppressTalentLearn(bool moduleEnabled, bool gateFamilyEnabled, uint32_t tier, uint32_t pointsAlreadySpent);
+
+    // M4.14.2 final review fix (I2): one row of the caller's gated-zone
+    // table, with the "is this gate currently locked" decision already
+    // resolved by the caller (i.e. ShouldSuppressGatedAction's result for
+    // that gate's flagKey) -- this struct carries only the zoneId + the
+    // resulting bool, not the flagKey/displayName themselves, so this file
+    // stays free of the live sArchipelagoRealmState singleton dependency
+    // per its own established discipline (see file-level comments above).
+    struct GatedZoneLockState
+    {
+        uint32_t zoneId;
+        bool locked;
+    };
+
+    // Given a zone id and a snapshot of the module's gated-zone table (one
+    // GatedZoneLockState per curated gate, "locked" already resolved by the
+    // caller), returns whether zoneId matches one of those gates AND that
+    // gate is currently locked. A zoneId that isn't in the table at all
+    // (not one of the module's curated gated zones) returns false -- i.e.
+    // "trust it".
+    //
+    // Used by ArchipelagoZoneAccessScript.cpp to decide whether a player's
+    // saved recall position (Player::m_recallMap/X/Y/Z) is itself a safe
+    // deferred-kick destination, or whether it resolves into a still-gated
+    // zone and the caller should fall back to homebind instead. Bug this
+    // guards against: Player::LoadFromDB calls SaveRecallPosition()
+    // unconditionally at login using the player's own just-loaded (saved-
+    // at-logout) position, with no gate check at all -- so a player who
+    // logged out (or whose gate got enabled) while standing inside a
+    // gated-and-locked zone has a recall position that is ALSO inside that
+    // same locked zone, making the existing deferred kick-back a no-op
+    // (it "kicks" them right back to where they already are).
+    bool IsZoneGatedAndLocked(uint32_t zoneId, GatedZoneLockState const* gates, size_t count);
 }

@@ -1,5 +1,9 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoZoneAccessScript.cpp
+#include <vector>
+
 #include "Chat.h"
+#include "Map.h"
+#include "MapMgr.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "APGateDecision.h"
@@ -36,6 +40,41 @@ namespace
         { 4080, "zone_access_isle_of_quel_danas", "Isle of Quel'Danas" },
         { 4395, "zone_access_dalaran",            "Dalaran" },
     };
+
+    // Shared table lookup, used both for the zone the player just entered
+    // (main hook body) and for the zone the player's recall position
+    // resolves to (M4.14.2 final review fix I2, see below).
+    ZoneGateEntry const* FindGate(uint32 zoneId)
+    {
+        for (auto const& entry : kGatedZones)
+        {
+            if (entry.zoneId == zoneId)
+                return &entry;
+        }
+
+        return nullptr;
+    }
+
+    // Snapshot of "is this gate currently locked" for every row of
+    // kGatedZones, evaluated against the live sArchipelagoRealmState
+    // singleton at call time -- feeds the pure
+    // Archipelago::Gating::IsZoneGatedAndLocked lookup (M4.14.2 final
+    // review fix I2) without that pure layer needing the singleton itself.
+    std::vector<Archipelago::Gating::GatedZoneLockState> SnapshotGateLockStates()
+    {
+        std::vector<Archipelago::Gating::GatedZoneLockState> states;
+        states.reserve(sizeof(kGatedZones) / sizeof(kGatedZones[0]));
+
+        for (auto const& entry : kGatedZones)
+        {
+            states.push_back({ entry.zoneId, Archipelago::Gating::ShouldSuppressGatedAction(
+                sArchipelagoRealmState->IsEnabled(),
+                sArchipelagoRealmState->IsGateFamilyEnabled("zone_access"),
+                sArchipelagoRealmState->IsFlagUnlocked(entry.flagKey)) });
+        }
+
+        return states;
+    }
 }
 
 class player_archipelago_zone_access : public PlayerScript
@@ -61,15 +100,7 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("zone_access"))
             return;
 
-        ZoneGateEntry const* gate = nullptr;
-        for (auto const& entry : kGatedZones)
-        {
-            if (entry.zoneId == newZone)
-            {
-                gate = &entry;
-                break;
-            }
-        }
+        ZoneGateEntry const* gate = FindGate(newZone);
 
         if (!gate || !Archipelago::Gating::ShouldSuppressGatedAction(
                 sArchipelagoRealmState->IsEnabled(),
@@ -93,13 +124,53 @@ public:
         float const recallZ = player->m_recallZ;
         float const recallO = player->m_recallO;
 
+        // M4.14.2 final review fix (I2): Player::LoadFromDB
+        // (PlayerStorage.cpp:5416) calls SaveRecallPosition() UNCONDITIONALLY
+        // at login, using the player's own just-loaded (saved-at-logout)
+        // position, with no gate check at all. If a player logged out (or
+        // this gate got enabled) while standing inside a gated-and-locked
+        // zone -- e.g. having entered before the AP item was ever required,
+        // or via a GM .tele -- then at next login m_recall* == their current
+        // (just-loaded, still-gated) position, and the "kick-back" below
+        // would be a complete no-op: it would teleport them to the exact
+        // spot they're already standing at, leaving them fully free to play
+        // inside the gated zone. Guard against that by resolving the recall
+        // position's own real zone id and checking whether IT is also
+        // gated-and-locked; if so, distrust it and fall back to the
+        // player's real homebind instead. This can't change in the 0ms gap
+        // before the deferred lambda runs (unlike the original zone's lock
+        // state, which the lambda below still re-validates independently),
+        // so resolving it once here at snapshot time is sufficient.
+        Map* recallMapPtr = sMapMgr->CreateBaseMap(recallMap);
+        uint32 const recallZoneId = recallMapPtr
+            ? recallMapPtr->GetZoneId(PHASEMASK_NORMAL, recallX, recallY, recallZ)
+            : 0;
+
+        std::vector<Archipelago::Gating::GatedZoneLockState> const gateLockStates = SnapshotGateLockStates();
+
+        // No usable map (shouldn't happen for a real recall position, but
+        // treat it the same as "gated and locked" out of caution) or the
+        // recall position resolves into one of our own still-locked gates:
+        // don't trust it as a kick-back target.
+        bool const recallIsSafe = recallMapPtr
+            && !Archipelago::Gating::IsZoneGatedAndLocked(recallZoneId, gateLockStates.data(), gateLockStates.size());
+
+        uint32 const kickMap = recallIsSafe ? recallMap : player->m_homebindMapId;
+        float const kickX = recallIsSafe ? recallX : player->m_homebindX;
+        float const kickY = recallIsSafe ? recallY : player->m_homebindY;
+        float const kickZ = recallIsSafe ? recallZ : player->m_homebindZ;
+        // Homebind has no stored orientation field; 0.0f is fine here,
+        // matching how a hearthstone-style teleport doesn't care about
+        // landing orientation.
+        float const kickO = recallIsSafe ? recallO : 0.0f;
+
         // Defer to the player's next update tick (0ms offset -- guaranteed to
         // run on a later call to EventProcessor::Update(), never inside the
         // current call stack), matching ArchipelagoNorthrendPassageScript.cpp's
         // own established convention. If the player logs out before then,
         // EventProcessor's destructor aborts and deletes this event without
         // ever calling its Execute(), so there is no use-after-free risk.
-        player->m_Events.AddEventAtOffset([player, flagKey, recallMap, recallX, recallY, recallZ, recallO]()
+        player->m_Events.AddEventAtOffset([player, flagKey, kickMap, kickX, kickY, kickZ, kickO]()
         {
             if (!player->IsInWorld())
                 return;
@@ -114,7 +185,7 @@ public:
             if (sArchipelagoRealmState->IsFlagUnlocked(flagKey))
                 return;
 
-            player->TeleportTo(recallMap, recallX, recallY, recallZ, recallO);
+            player->TeleportTo(kickMap, kickX, kickY, kickZ, kickO);
         }, 0ms);
     }
 };
