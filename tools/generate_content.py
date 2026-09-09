@@ -932,6 +932,26 @@ def emit_python_generic(data: dict) -> str:
         lines.append("}")
         lines.append("")
 
+    if schema is not None and schema.export_item_delivery:
+        # M4.11.7-fix: a "learn_next_chain_rank" item (trainer_spells'
+        # progressive-item redesign, M4.11.6) covers MULTIPLE locations --
+        # one per spell_ids entry -- breaking the row-index-aligned 1:1
+        # LOCATIONS/ITEMS assumption every other family still satisfies.
+        # This mirrors that item's own delivery.spell_ids list (already
+        # exported to C++ as AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW) so
+        # create_optional_category_item_pool (items.py) can group a
+        # category's locations by which chain item covers them, instead of
+        # assuming a bijection. Always emitted (possibly empty), matching
+        # this file's existing "empty map when no rows use it" convention
+        # for optional per-kind exports.
+        lines.append("CHAIN_SPELL_IDS_BY_ITEM_NAME: dict[str, list[int]] = {")
+        for item in data["items"]:
+            if item["delivery"]["kind"] == "learn_next_chain_rank":
+                spell_ids = item["delivery"]["spell_ids"]
+                lines.append(f'    {_string_literal(item["name"])}: {spell_ids!r},')
+        lines.append("}")
+        lines.append("")
+
     return "\n".join(lines)
 
 

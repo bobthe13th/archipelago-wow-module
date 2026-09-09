@@ -1701,3 +1701,39 @@ class TestLearnNextChainRankDelivery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEmitPythonGenericChainSpellIdsByItemName(unittest.TestCase):
+    """M4.11.7-fix: sibling coverage to TestLearnNextChainRankDelivery, on
+    the Python side -- emit_python_generic's CHAIN_SPELL_IDS_BY_ITEM_NAME
+    export mirrors the C++ AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW data so
+    create_optional_category_item_pool (Archipelago/worlds/wow/items.py)
+    can group a category's locations by which chain item covers them."""
+
+    def test_emits_chain_spell_ids_for_learn_next_chain_rank_rows_only(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "trainer_spells",
+            "locations": [],
+            "items": [
+                {"item_id": 7500116, "name": "Progressive Frostbolt",
+                 "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+                {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME", lines)
+        self.assertIn('"Progressive Frostbolt": [116, 205, 837]', lines)
+        self.assertNotIn('"y":', lines.split("CHAIN_SPELL_IDS_BY_ITEM_NAME")[1])
+
+    def test_emits_empty_dict_when_no_rows_use_learn_next_chain_rank(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "recipes",
+            "locations": [],
+            "items": [
+                {"item_id": 1750001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME: dict[str, list[int]] = {\n}", lines)
