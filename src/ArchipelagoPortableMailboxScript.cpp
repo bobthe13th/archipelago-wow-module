@@ -36,7 +36,12 @@ namespace
     // static mailbox row (entry 32349), see the SQL migration comment for
     // full provenance.
     constexpr uint32 PORTABLE_MAILBOX_GAMEOBJECT_ENTRY = 850200;
-    constexpr uint32 PORTABLE_MAILBOX_DESPAWN_MS = 5 * MINUTE * IN_MILLISECONDS;
+    // SummonGameObject's respawnTime parameter is in SECONDS (GameObject::SetRespawnTime
+    // adds it directly to GameTime::GetGameTime().count(), a seconds-resolution clock) --
+    // NOT milliseconds. M4.14.1 final review fix (C2): this used to be multiplied by
+    // IN_MILLISECONDS, setting the real despawn ~3.47 days in the future instead of 5
+    // minutes.
+    constexpr uint32 PORTABLE_MAILBOX_DESPAWN_SECONDS = 5 * MINUTE;
 }
 
 // 5735 - REUSE (real client spell, repurposed as the Portable Mailbox's
@@ -52,7 +57,7 @@ class spell_archipelago_portable_mailbox : public SpellScript
             return;
 
         caster->SummonGameObject(PORTABLE_MAILBOX_GAMEOBJECT_ENTRY, caster->GetPositionX(), caster->GetPositionY(),
-            caster->GetPositionZ(), caster->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, PORTABLE_MAILBOX_DESPAWN_MS);
+            caster->GetPositionZ(), caster->GetOrientation(), 0.0f, 0.0f, 0.0f, 0.0f, PORTABLE_MAILBOX_DESPAWN_SECONDS);
     }
 
     void Register() override
