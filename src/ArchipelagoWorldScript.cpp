@@ -555,14 +555,27 @@ public:
         std::optional<uint32_t> fillerNeededCount;
         {
             std::lock_guard<std::mutex> lock(_pendingFillerNeededCountMutex);
-            if (!_fillerNeededCountApplied && _pendingFillerNeededCount)
+            // Re-apply whenever the pending value differs from the last one
+            // actually sent, not merely "has this ever been applied" -- a
+            // bare apply-once bool (this class's usual pattern for a
+            // slot_data value that can't change without a full worldserver
+            // restart) would silently stop resending Filler's per-seed set
+            // the moment a *different*, regenerated seed connects to a
+            // still-running worldserver with a larger `needed` than the
+            // first seed it saw, stranding any progression item on the
+            // newly-added Filler Check ids -- the exact softlock this
+            // milestone's design spec says reseeding-in-place must not
+            // regress.
+            if (_pendingFillerNeededCount && _pendingFillerNeededCount != _lastAppliedFillerNeededCount)
             {
                 fillerNeededCount = _pendingFillerNeededCount;
-                _fillerNeededCountApplied = true;
+                _lastAppliedFillerNeededCount = _pendingFillerNeededCount;
             }
         }
         if (fillerNeededCount)
         {
+            LOG_INFO("module.archipelago_wow", "Archipelago: sending {} of {} Filler checks for the connected seed",
+                *fillerNeededCount, Archipelago::Filler::OrderedLocationIds.size());
             sArchipelagoMgr->SendLocationChecks(
                 Archipelago::Filler::SliceNeededLocationIds(Archipelago::Filler::OrderedLocationIds, *fillerNeededCount));
         }
@@ -743,16 +756,22 @@ private:
     std::optional<std::string> _pendingVendorCheckRepeatBehavior;
     bool _vendorCheckRepeatBehaviorApplied = false;
 
-    // Same io-thread-producer/world-thread-consumer, apply-once shape as
-    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
-    // above, for the one-shot filler_needed_count slot_data value (M4.11.6)
-    // -- closes the phantom-filler-check gap
+    // Same io-thread-producer/world-thread-consumer shape as
+    // _pendingVendorCheckRepeatBehavior above, for the filler_needed_count
+    // slot_data value (M4.11.6) -- closes the phantom-filler-check gap
     // docs/guides/realm-refresh-methodology.md's investigation found: the
     // full compiled 151 Filler Check ids are no longer sent unconditionally
     // at OnStartup, only the real per-seed count, once slot_data arrives.
+    // Deliberately NOT a bare apply-once bool like this class's other
+    // slot_data values: those can't change without a full worldserver
+    // restart, but a *different* regenerated seed can connect to a
+    // still-running worldserver with a different `needed` -- tracking the
+    // last-applied value (re-applying only when it genuinely changes) is
+    // what lets reseeding-in-place resend the correct, possibly-larger set
+    // instead of permanently silencing it after the first seed connects.
     std::mutex _pendingFillerNeededCountMutex;
     std::optional<uint32_t> _pendingFillerNeededCount;
-    bool _fillerNeededCountApplied = false;
+    std::optional<uint32_t> _lastAppliedFillerNeededCount;
 
     // Same io-thread-producer/world-thread-consumer, apply-once shape as
     // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
