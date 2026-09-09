@@ -12,6 +12,7 @@
 #include "World.h"
 #include "WorldSessionMgr.h"
 #include "APDelivery.h"
+#include "APFillerDecision.h"
 #include "APGating.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoDeathLink.h"
@@ -395,26 +396,15 @@ public:
         if (!_enabled)
             return;
 
-        // Fix (post-Task 17 review): Task 11's filler locations carry no access
-        // rule, so distribute_items_restrictive can and does place progression
-        // items on them (a Progressive Level Cap copy included) -- nothing in
-        // this module ever sent these checks, so any progression item that
-        // landed on one would be permanently unobtainable in real play, a live
-        // softlock. Since these locations have no real in-game trigger by
-        // design, the correct trigger is "this realm exists" -- send every
-        // filler location id, unconditionally, once per startup.
-        // ArchipelagoManager::SendLocationChecks only *inserts* new ids into
-        // ArchipelagoRealmState's persisted sent-check set (already-sent ids
-        // are a no-op), and the AP server silently ignores any id that isn't
-        // part of this slot's actual location table (MultiServer.py's
-        // register_location_checks: "ignore location IDs unknown to this
-        // multidata") -- so sending the full worst-case id set here is safe
-        // regardless of how many this seed's options actually used, and the
-        // Initialize() callback below (ResendAllChecksAndGoal) will redeliver
-        // them once the AP session actually connects, exactly like every
-        // other check recorded before a (re)connect completes.
-        sArchipelagoMgr->SendLocationChecks(std::vector<int64_t>(
-            Archipelago::Filler::LocationIds.begin(), Archipelago::Filler::LocationIds.end()));
+        // M4.11.6: Filler's location-check send moved off OnStartup entirely
+        // -- sending the full, seed-independent 151-id compiled set here
+        // over-reported every id this seed's own options didn't actually
+        // place as a completed check on every single startup (a real,
+        // observed bug, not hypothetical -- see
+        // docs/guides/realm-refresh-methodology.md and this fix's own design
+        // spec). The real per-seed send now happens in OnUpdate below, once
+        // slot_data's filler_needed_count arrives (same apply-once pattern
+        // as every other one-shot slot_data value in this class).
 
         Archipelago::ClientOptions options;
         options.host = _serverAddress;
@@ -502,6 +492,10 @@ public:
             std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
             _pendingMissingLocations = locations;
         };
+        callbacks.onFillerNeededCountReceived = [this](uint32_t neededCount) {
+            std::lock_guard<std::mutex> lock(_pendingFillerNeededCountMutex);
+            _pendingFillerNeededCount = neededCount;
+        };
         sArchipelagoMgr->Initialize(options, std::move(callbacks));
     }
 
@@ -557,6 +551,21 @@ public:
         }
         if (vendorCheckRepeatBehavior)
             sArchipelagoRealmState->SetVendorCheckRepeatBehavior(*vendorCheckRepeatBehavior);
+
+        std::optional<uint32_t> fillerNeededCount;
+        {
+            std::lock_guard<std::mutex> lock(_pendingFillerNeededCountMutex);
+            if (!_fillerNeededCountApplied && _pendingFillerNeededCount)
+            {
+                fillerNeededCount = _pendingFillerNeededCount;
+                _fillerNeededCountApplied = true;
+            }
+        }
+        if (fillerNeededCount)
+        {
+            sArchipelagoMgr->SendLocationChecks(
+                Archipelago::Filler::SliceNeededLocationIds(Archipelago::Filler::OrderedLocationIds, *fillerNeededCount));
+        }
 
         std::optional<std::string> instanceClearMode;
         {
@@ -733,6 +742,17 @@ private:
     std::mutex _pendingVendorCheckRepeatBehaviorMutex;
     std::optional<std::string> _pendingVendorCheckRepeatBehavior;
     bool _vendorCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
+    // above, for the one-shot filler_needed_count slot_data value (M4.11.6)
+    // -- closes the phantom-filler-check gap
+    // docs/guides/realm-refresh-methodology.md's investigation found: the
+    // full compiled 151 Filler Check ids are no longer sent unconditionally
+    // at OnStartup, only the real per-seed count, once slot_data arrives.
+    std::mutex _pendingFillerNeededCountMutex;
+    std::optional<uint32_t> _pendingFillerNeededCount;
+    bool _fillerNeededCountApplied = false;
 
     // Same io-thread-producer/world-thread-consumer, apply-once shape as
     // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
