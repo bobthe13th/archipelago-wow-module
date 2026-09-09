@@ -226007,5 +226007,46 @@ locations:
     - vanilla
     area:
     - elwynn_forest
+- name: 'Enemy: Archipelago Holiday Herald (#900001)'
+  location_id: 10517430
+  trigger:
+    kind: creature_kill
+    creature_entry: 900001
+  tags:
+    type:
+    - regular
+    expansion:
+    - tbc
+    - vanilla
+    - wotlk
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - hellfire_peninsula
+    - icecrown
+    - ironforge
+    - mulgore
+    - nagrand
+    - orgrimmar
+    - shattrath_city
+    - silvermoon_city
+    - silverpine_forest
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - terokkar_forest
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - wetlands
 items: []
 constants: {}

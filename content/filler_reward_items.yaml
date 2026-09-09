@@ -55867,14 +55867,6 @@ items:
   tags:
     category:
     - equipment
-- name: 'Filler: QATest Darkmoon Faire Tickets (#23271)'
-  item_id: 8023271
-  delivery:
-    kind: mail
-    wow_item_entry: 23271
-  tags:
-    category:
-    - openable
 - name: 'Filler: Crown of the Fire Festival (#23323)'
   item_id: 8023323
   delivery:

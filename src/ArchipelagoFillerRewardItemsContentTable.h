@@ -6995,7 +6995,6 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Filler: Blackened Chain Girdle (#23265)", 8023265},
     {"Filler: Ranger's Vest (#23266)", 8023266},
     {"Filler: Satin Lined Boots (#23267)", 8023267},
-    {"Filler: QATest Darkmoon Faire Tickets (#23271)", 8023271},
     {"Filler: Crown of the Fire Festival (#23323)", 8023323},
     {"Filler: Mantle of the Fire Festival (#23324)", 8023324},
     {"Filler: Midsummer Sausage (#23326)", 8023326},
@@ -19587,7 +19586,6 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 8023265, 23265 }, // "Filler: Blackened Chain Girdle (#23265)"
     { 8023266, 23266 }, // "Filler: Ranger's Vest (#23266)"
     { 8023267, 23267 }, // "Filler: Satin Lined Boots (#23267)"
-    { 8023271, 23271 }, // "Filler: QATest Darkmoon Faire Tickets (#23271)"
     { 8023323, 23323 }, // "Filler: Crown of the Fire Festival (#23323)"
     { 8023324, 23324 }, // "Filler: Mantle of the Fire Festival (#23324)"
     { 8023326, 23326 }, // "Filler: Midsummer Sausage (#23326)"

@@ -1474,241 +1474,220 @@ inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
     {"Craft: Blue Workman's Shirt (#41253)", 11501460},
     {"Craft: Rustic Workman's Shirt (#41254)", 11501461},
     {"Craft: Green Workman's Shirt (#41255)", 11501462},
-    {"Craft: Chaotic Skyflare Diamond (#41285)", 11501463},
-    {"Craft: Destructive Skyflare Diamond (#41307)", 11501464},
-    {"Craft: Ember Skyflare Diamond (#41333)", 11501465},
-    {"Craft: Enigmatic Skyflare Diamond (#41335)", 11501466},
-    {"Craft: Swift Skyflare Diamond (#41339)", 11501467},
-    {"Craft: Tireless Skyflare Diamond (#41375)", 11501468},
-    {"Craft: Revitalizing Skyflare Diamond (#41376)", 11501469},
-    {"Craft: Effulgent Skyflare Diamond (#41377)", 11501470},
-    {"Craft: Forlorn Skyflare Diamond (#41378)", 11501471},
-    {"Craft: Impassive Skyflare Diamond (#41379)", 11501472},
-    {"Craft: Austere Earthsiege Diamond (#41380)", 11501473},
-    {"Craft: Persistent Earthsiege Diamond (#41381)", 11501474},
-    {"Craft: Trenchant Earthsiege Diamond (#41382)", 11501475},
-    {"Craft: Invigorating Earthsiege Diamond (#41385)", 11501476},
-    {"Craft: Beaming Earthsiege Diamond (#41389)", 11501477},
-    {"Craft: Bracing Earthsiege Diamond (#41395)", 11501478},
-    {"Craft: Eternal Earthsiege Diamond (#41396)", 11501479},
-    {"Craft: Powerful Earthsiege Diamond (#41397)", 11501480},
-    {"Craft: Relentless Earthsiege Diamond (#41398)", 11501481},
-    {"Craft: Thundering Skyflare Diamond (#41400)", 11501482},
-    {"Craft: Insightful Earthsiege Diamond (#41401)", 11501483},
-    {"Craft: Mechano-hog (#41508)", 11501484},
-    {"Craft: Ebonweave (#41593)", 11501485},
-    {"Craft: Moonshroud (#41594)", 11501486},
-    {"Craft: Spellweave (#41595)", 11501487},
-    {"Craft: Abyssal Bag (#41597)", 11501488},
-    {"Craft: Mysterious Bag (#41598)", 11501489},
-    {"Craft: Frostweave Bag (#41599)", 11501490},
-    {"Craft: Glacial Bag (#41600)", 11501491},
-    {"Craft: Brilliant Spellthread (#41602)", 11501492},
-    {"Craft: Sapphire Spellthread (#41604)", 11501493},
-    {"Craft: Wispcloak (#41609)", 11501494},
-    {"Craft: Deathchill Cloak (#41610)", 11501495},
-    {"Craft: Hat of Wintry Doom (#41984)", 11501496},
-    {"Craft: Silky Iceshard Boots (#41985)", 11501497},
-    {"Craft: Deep Frozen Cord (#41986)", 11501498},
-    {"Craft: Frostmoon Pants (#42093)", 11501499},
-    {"Craft: Light Blessed Mittens (#42095)", 11501500},
-    {"Craft: Aurora Slippers (#42096)", 11501501},
-    {"Craft: Moonshroud Robe (#42100)", 11501502},
-    {"Craft: Ebonweave Robe (#42101)", 11501503},
-    {"Craft: Spellweave Robe (#42102)", 11501504},
-    {"Craft: Moonshroud Gloves (#42103)", 11501505},
-    {"Craft: Ebonweave Gloves (#42111)", 11501506},
-    {"Craft: Spellweave Gloves (#42113)", 11501507},
-    {"Craft: Bold Dragon's Eye (#42142)", 11501508},
-    {"Craft: Delicate Dragon's Eye (#42143)", 11501509},
-    {"Craft: Runed Dragon's Eye (#42144)", 11501510},
-    {"Craft: Sparkling Dragon's Eye (#42145)", 11501511},
-    {"Craft: Lustrous Dragon's Eye (#42146)", 11501512},
-    {"Craft: Brilliant Dragon's Eye (#42148)", 11501513},
-    {"Craft: Smooth Dragon's Eye (#42149)", 11501514},
-    {"Craft: Quick Dragon's Eye (#42150)", 11501515},
-    {"Craft: Subtle Dragon's Eye (#42151)", 11501516},
-    {"Craft: Flashing Dragon's Eye (#42152)", 11501517},
-    {"Craft: Fractured Dragon's Eye (#42153)", 11501518},
-    {"Craft: Precise Dragon's Eye (#42154)", 11501519},
-    {"Craft: Stormy Dragon's Eye (#42155)", 11501520},
-    {"Craft: Rigid Dragon's Eye (#42156)", 11501521},
-    {"Craft: Thick Dragon's Eye (#42157)", 11501522},
-    {"Craft: Mystic Dragon's Eye (#42158)", 11501523},
-    {"Craft: Titanium Impact Band (#42642)", 11501524},
-    {"Craft: Titanium Earthguard Ring (#42643)", 11501525},
-    {"Craft: Titanium Spellshock Ring (#42644)", 11501526},
-    {"Craft: Titanium Impact Choker (#42645)", 11501527},
-    {"Craft: Titanium Earthguard Chain (#42646)", 11501528},
-    {"Craft: Titanium Spellshock Necklace (#42647)", 11501529},
-    {"Craft: Spicy Fried Herring (#42993)", 11501530},
-    {"Craft: Rhinolicious Wormsteak (#42994)", 11501531},
-    {"Craft: Hearty Rhino (#42995)", 11501532},
-    {"Craft: Snapper Extreme (#42996)", 11501533},
-    {"Craft: Blackened Worg Steak (#42997)", 11501534},
-    {"Craft: Cuttlesteak (#42998)", 11501535},
-    {"Craft: Blackened Dragonfin (#42999)", 11501536},
-    {"Craft: Dragonfin Filet (#43000)", 11501537},
-    {"Craft: Tracker Snacks (#43001)", 11501538},
-    {"Craft: Critter Bites (#43004)", 11501539},
-    {"Craft: Spiced Mammoth Treats (#43005)", 11501540},
-    {"Craft: Fish Feast (#43015)", 11501541},
-    {"Craft: Ring of Earthen Might (#43250)", 11501542},
-    {"Craft: Ring of Scarlet Shadows (#43251)", 11501543},
-    {"Craft: Windfire Band (#43252)", 11501544},
-    {"Craft: Ring of Northern Tears (#43253)", 11501545},
-    {"Craft: Eviscerator's Facemask (#43260)", 11501546},
-    {"Craft: Overcast Headguard (#43261)", 11501547},
-    {"Craft: Overcast Spaulders (#43262)", 11501548},
-    {"Craft: Overcast Chestguard (#43263)", 11501549},
-    {"Craft: Overcast Bracers (#43264)", 11501550},
-    {"Craft: Overcast Handwraps (#43265)", 11501551},
-    {"Craft: Overcast Belt (#43266)", 11501552},
-    {"Craft: Overcast Leggings (#43271)", 11501553},
-    {"Craft: Overcast Boots (#43273)", 11501554},
-    {"Craft: Eviscerator's Shoulderpads (#43433)", 11501555},
-    {"Craft: Eviscerator's Chestguard (#43434)", 11501556},
-    {"Craft: Eviscerator's Bindings (#43435)", 11501557},
-    {"Craft: Eviscerator's Gauntlets (#43436)", 11501558},
-    {"Craft: Eviscerator's Waistguard (#43437)", 11501559},
-    {"Craft: Eviscerator's Legguards (#43438)", 11501560},
-    {"Craft: Eviscerator's Treads (#43439)", 11501561},
-    {"Craft: Swiftarrow Belt (#43442)", 11501562},
-    {"Craft: Swiftarrow Boots (#43443)", 11501563},
-    {"Craft: Swiftarrow Bracers (#43444)", 11501564},
-    {"Craft: Swiftarrow Hauberk (#43445)", 11501565},
-    {"Craft: Swiftarrow Gauntlets (#43446)", 11501566},
-    {"Craft: Swiftarrow Helm (#43447)", 11501567},
-    {"Craft: Swiftarrow Leggings (#43448)", 11501568},
-    {"Craft: Swiftarrow Shoulderguards (#43449)", 11501569},
-    {"Craft: Stormhide Belt (#43450)", 11501570},
-    {"Craft: Stormhide Stompers (#43451)", 11501571},
-    {"Craft: Stormhide Wristguards (#43452)", 11501572},
-    {"Craft: Stormhide Hauberk (#43453)", 11501573},
-    {"Craft: Stormhide Grips (#43454)", 11501574},
-    {"Craft: Stormhide Crown (#43455)", 11501575},
-    {"Craft: Stormhide Legguards (#43456)", 11501576},
-    {"Craft: Stormhide Shoulders (#43457)", 11501577},
-    {"Craft: Giantmaim Legguards (#43458)", 11501578},
-    {"Craft: Giantmaim Bracers (#43459)", 11501579},
-    {"Craft: Revenant's Breastplate (#43461)", 11501580},
-    {"Craft: Revenant's Treads (#43469)", 11501581},
-    {"Craft: Gigantic Feast (#43478)", 11501582},
-    {"Craft: Small Feast (#43480)", 11501583},
-    {"Craft: Trollwoven Spaulders (#43481)", 11501584},
-    {"Craft: Savage Titanium Ring (#43482)", 11501585},
-    {"Craft: Trollwoven Girdle (#43484)", 11501586},
-    {"Craft: Last Weeks Mammoth (#43488)", 11501587},
-    {"Craft: Tasty Cupcake (#43490)", 11501588},
-    {"Craft: Bad Clams (#43491)", 11501589},
-    {"Craft: Haunted Herring (#43492)", 11501590},
-    {"Craft: Earthgiving Legguards (#43495)", 11501591},
-    {"Craft: Savage Titanium Band (#43498)", 11501592},
-    {"Craft: Earthgiving Boots (#43502)", 11501593},
-    {"Craft: Conjured Mana Pie (#43518)", 11501594},
-    {"Craft: Conjured Mana Strudel (#43523)", 11501595},
-    {"Craft: Titanium Frostguard Ring (#43582)", 11501596},
-    {"Craft: Polar Vest (#43590)", 11501597},
-    {"Craft: Polar Cord (#43591)", 11501598},
-    {"Craft: Polar Boots (#43592)", 11501599},
-    {"Craft: Icy Scale Chestguard (#43593)", 11501600},
-    {"Craft: Icy Scale Belt (#43594)", 11501601},
-    {"Craft: Icy Scale Boots (#43595)", 11501602},
-    {"Craft: Mekgineer's Chopper (#44413)", 11501603},
-    {"Craft: Dragonscale Ammo Pouch (#44447)", 11501604},
-    {"Craft: Nerubian Reinforced Quiver (#44448)", 11501605},
-    {"Craft: Pumpkin Pie (#44836)", 11501606},
-    {"Craft: Spice Bread Stuffing (#44837)", 11501607},
-    {"Craft: Slow-Roasted Turkey (#44838)", 11501608},
-    {"Craft: Candied Sweet Potato (#44839)", 11501609},
-    {"Craft: Cranberry Chutney (#44840)", 11501610},
-    {"Craft: Windripper Boots (#44930)", 11501611},
-    {"Craft: Windripper Leggings (#44931)", 11501612},
-    {"Craft: Titanium Plating (#44936)", 11501613},
-    {"Craft: Worg Tartare (#44953)", 11501614},
-    {"Craft: Belt of the Titans (#45550)", 11501615},
-    {"Craft: Indestructible Plate Girdle (#45551)", 11501616},
-    {"Craft: Plate Girdle of Righteousness (#45552)", 11501617},
-    {"Craft: Belt of Dragons (#45553)", 11501618},
-    {"Craft: Blue Belt of Chaos (#45554)", 11501619},
-    {"Craft: Death-warmed Belt (#45555)", 11501620},
-    {"Craft: Belt of Arctic Life (#45556)", 11501621},
-    {"Craft: Sash of Ancient Power (#45557)", 11501622},
-    {"Craft: Cord of the White Dawn (#45558)", 11501623},
-    {"Craft: Battlelord's Plate Boots (#45559)", 11501624},
-    {"Craft: Spiked Deathdealers (#45560)", 11501625},
-    {"Craft: Treads of Destiny (#45561)", 11501626},
-    {"Craft: Boots of Living Scale (#45562)", 11501627},
-    {"Craft: Lightning Grounded Boots (#45563)", 11501628},
-    {"Craft: Footpads of Silence (#45564)", 11501629},
-    {"Craft: Boots of Wintry Endurance (#45565)", 11501630},
-    {"Craft: Spellslinger's Slippers (#45566)", 11501631},
-    {"Craft: Savior's Slippers (#45567)", 11501632},
-    {"Craft: Emerald Bag (#45773)", 11501633},
-    {"Craft: Bread of the Dead (#46691)", 11501634},
-    {"Craft: Flask of the North (#47499)", 11501635},
-    {"Craft: Saronite Swordbreakers (#47570)", 11501636},
-    {"Craft: Saronite Swordbreakers (#47571)", 11501637},
-    {"Craft: Titanium Spikeguards (#47572)", 11501638},
-    {"Craft: Titanium Spikeguards (#47573)", 11501639},
-    {"Craft: Sunforged Bracers (#47574)", 11501640},
-    {"Craft: Sunforged Bracers (#47575)", 11501641},
-    {"Craft: Crusader's Dragonscale Bracers (#47576)", 11501642},
-    {"Craft: Crusader's Dragonscale Bracers (#47577)", 11501643},
-    {"Craft: Black Chitin Bracers (#47579)", 11501644},
-    {"Craft: Black Chitin Bracers (#47580)", 11501645},
-    {"Craft: Bracers of Swift Death (#47581)", 11501646},
-    {"Craft: Bracers of Swift Death (#47582)", 11501647},
-    {"Craft: Moonshadow Armguards (#47583)", 11501648},
-    {"Craft: Moonshadow Armguards (#47584)", 11501649},
-    {"Craft: Bejeweled Wizard's Bracers (#47585)", 11501650},
-    {"Craft: Bejeweled Wizard's Bracers (#47586)", 11501651},
-    {"Craft: Royal Moonshroud Bracers (#47587)", 11501652},
-    {"Craft: Royal Moonshroud Bracers (#47588)", 11501653},
-    {"Craft: Titanium Razorplate (#47589)", 11501654},
-    {"Craft: Titanium Razorplate (#47590)", 11501655},
-    {"Craft: Breastplate of the White Knight (#47591)", 11501656},
-    {"Craft: Breastplate of the White Knight (#47592)", 11501657},
-    {"Craft: Sunforged Breastplate (#47593)", 11501658},
-    {"Craft: Sunforged Breastplate (#47594)", 11501659},
-    {"Craft: Crusader's Dragonscale Breastplate (#47595)", 11501660},
-    {"Craft: Crusader's Dragonscale Breastplate (#47596)", 11501661},
-    {"Craft: Ensorcelled Nerubian Breastplate (#47597)", 11501662},
-    {"Craft: Ensorcelled Nerubian Breastplate (#47598)", 11501663},
-    {"Craft: Knightbane Carapace (#47599)", 11501664},
-    {"Craft: Knightbane Carapace (#47600)", 11501665},
-    {"Craft: Lunar Eclipse Robes (#47601)", 11501666},
-    {"Craft: Lunar Eclipse Robes (#47602)", 11501667},
-    {"Craft: Merlin's Robe (#47603)", 11501668},
-    {"Craft: Merlin's Robe (#47604)", 11501669},
-    {"Craft: Royal Moonshroud Robe (#47605)", 11501670},
-    {"Craft: Royal Moonshroud Robe (#47606)", 11501671},
-    {"Craft: Jeeves (#49040)", 11501672},
-    {"Craft: Nightmare Tear (#49110)", 11501673},
-    {"Craft: Deathfrost Boots (#49890)", 11501674},
-    {"Craft: Leggings of Woven Death (#49891)", 11501675},
-    {"Craft: Lightweave Leggings (#49892)", 11501676},
-    {"Craft: Sandals of Consecration (#49893)", 11501677},
-    {"Craft: Blessed Cenarion Boots (#49894)", 11501678},
-    {"Craft: Footpads of Impending Death (#49895)", 11501679},
-    {"Craft: Earthsoul Boots (#49896)", 11501680},
-    {"Craft: Rock-Steady Treads (#49897)", 11501681},
-    {"Craft: Legwraps of Unleashed Nature (#49898)", 11501682},
-    {"Craft: Bladeborn Leggings (#49899)", 11501683},
-    {"Craft: Lightning-Infused Leggings (#49900)", 11501684},
-    {"Craft: Draconic Bonesplinter Legguards (#49901)", 11501685},
-    {"Craft: Puresteel Legplates (#49902)", 11501686},
-    {"Craft: Legplates of Painful Death (#49903)", 11501687},
-    {"Craft: Pillars of Might (#49904)", 11501688},
-    {"Craft: Protectors of Life (#49905)", 11501689},
-    {"Craft: Hellfrozen Bonegrinders (#49906)", 11501690},
-    {"Craft: Boots of Kingly Upheaval (#49907)", 11501691},
-    {"Craft: Glyph of Eternal Water (#50045)", 11501692},
-    {"Craft: Glyph of Quick Decay (#50077)", 11501693},
-    {"Craft: Glyph of Rapid Rejuvenation (#50125)", 11501694},
-    {"Craft: Shatter Rounds (#52020)", 11501695},
-    {"Craft: Iceblade Arrow (#52021)", 11501696},
-    {"Craft: Frosty Flying Carpet (#54797)", 11501697},
+    {"Craft: Mechano-hog (#41508)", 11501463},
+    {"Craft: Ebonweave (#41593)", 11501464},
+    {"Craft: Moonshroud (#41594)", 11501465},
+    {"Craft: Spellweave (#41595)", 11501466},
+    {"Craft: Abyssal Bag (#41597)", 11501467},
+    {"Craft: Mysterious Bag (#41598)", 11501468},
+    {"Craft: Frostweave Bag (#41599)", 11501469},
+    {"Craft: Glacial Bag (#41600)", 11501470},
+    {"Craft: Brilliant Spellthread (#41602)", 11501471},
+    {"Craft: Sapphire Spellthread (#41604)", 11501472},
+    {"Craft: Wispcloak (#41609)", 11501473},
+    {"Craft: Deathchill Cloak (#41610)", 11501474},
+    {"Craft: Hat of Wintry Doom (#41984)", 11501475},
+    {"Craft: Silky Iceshard Boots (#41985)", 11501476},
+    {"Craft: Deep Frozen Cord (#41986)", 11501477},
+    {"Craft: Frostmoon Pants (#42093)", 11501478},
+    {"Craft: Light Blessed Mittens (#42095)", 11501479},
+    {"Craft: Aurora Slippers (#42096)", 11501480},
+    {"Craft: Moonshroud Robe (#42100)", 11501481},
+    {"Craft: Ebonweave Robe (#42101)", 11501482},
+    {"Craft: Spellweave Robe (#42102)", 11501483},
+    {"Craft: Moonshroud Gloves (#42103)", 11501484},
+    {"Craft: Ebonweave Gloves (#42111)", 11501485},
+    {"Craft: Spellweave Gloves (#42113)", 11501486},
+    {"Craft: Bold Dragon's Eye (#42142)", 11501487},
+    {"Craft: Delicate Dragon's Eye (#42143)", 11501488},
+    {"Craft: Runed Dragon's Eye (#42144)", 11501489},
+    {"Craft: Sparkling Dragon's Eye (#42145)", 11501490},
+    {"Craft: Lustrous Dragon's Eye (#42146)", 11501491},
+    {"Craft: Brilliant Dragon's Eye (#42148)", 11501492},
+    {"Craft: Smooth Dragon's Eye (#42149)", 11501493},
+    {"Craft: Quick Dragon's Eye (#42150)", 11501494},
+    {"Craft: Subtle Dragon's Eye (#42151)", 11501495},
+    {"Craft: Flashing Dragon's Eye (#42152)", 11501496},
+    {"Craft: Fractured Dragon's Eye (#42153)", 11501497},
+    {"Craft: Precise Dragon's Eye (#42154)", 11501498},
+    {"Craft: Stormy Dragon's Eye (#42155)", 11501499},
+    {"Craft: Rigid Dragon's Eye (#42156)", 11501500},
+    {"Craft: Thick Dragon's Eye (#42157)", 11501501},
+    {"Craft: Mystic Dragon's Eye (#42158)", 11501502},
+    {"Craft: Titanium Impact Band (#42642)", 11501503},
+    {"Craft: Titanium Earthguard Ring (#42643)", 11501504},
+    {"Craft: Titanium Spellshock Ring (#42644)", 11501505},
+    {"Craft: Titanium Impact Choker (#42645)", 11501506},
+    {"Craft: Titanium Earthguard Chain (#42646)", 11501507},
+    {"Craft: Titanium Spellshock Necklace (#42647)", 11501508},
+    {"Craft: Spicy Fried Herring (#42993)", 11501509},
+    {"Craft: Rhinolicious Wormsteak (#42994)", 11501510},
+    {"Craft: Hearty Rhino (#42995)", 11501511},
+    {"Craft: Snapper Extreme (#42996)", 11501512},
+    {"Craft: Blackened Worg Steak (#42997)", 11501513},
+    {"Craft: Cuttlesteak (#42998)", 11501514},
+    {"Craft: Blackened Dragonfin (#42999)", 11501515},
+    {"Craft: Dragonfin Filet (#43000)", 11501516},
+    {"Craft: Tracker Snacks (#43001)", 11501517},
+    {"Craft: Critter Bites (#43004)", 11501518},
+    {"Craft: Spiced Mammoth Treats (#43005)", 11501519},
+    {"Craft: Fish Feast (#43015)", 11501520},
+    {"Craft: Ring of Earthen Might (#43250)", 11501521},
+    {"Craft: Ring of Scarlet Shadows (#43251)", 11501522},
+    {"Craft: Windfire Band (#43252)", 11501523},
+    {"Craft: Ring of Northern Tears (#43253)", 11501524},
+    {"Craft: Eviscerator's Facemask (#43260)", 11501525},
+    {"Craft: Overcast Headguard (#43261)", 11501526},
+    {"Craft: Overcast Spaulders (#43262)", 11501527},
+    {"Craft: Overcast Chestguard (#43263)", 11501528},
+    {"Craft: Overcast Bracers (#43264)", 11501529},
+    {"Craft: Overcast Handwraps (#43265)", 11501530},
+    {"Craft: Overcast Belt (#43266)", 11501531},
+    {"Craft: Overcast Leggings (#43271)", 11501532},
+    {"Craft: Overcast Boots (#43273)", 11501533},
+    {"Craft: Eviscerator's Shoulderpads (#43433)", 11501534},
+    {"Craft: Eviscerator's Chestguard (#43434)", 11501535},
+    {"Craft: Eviscerator's Bindings (#43435)", 11501536},
+    {"Craft: Eviscerator's Gauntlets (#43436)", 11501537},
+    {"Craft: Eviscerator's Waistguard (#43437)", 11501538},
+    {"Craft: Eviscerator's Legguards (#43438)", 11501539},
+    {"Craft: Eviscerator's Treads (#43439)", 11501540},
+    {"Craft: Swiftarrow Belt (#43442)", 11501541},
+    {"Craft: Swiftarrow Boots (#43443)", 11501542},
+    {"Craft: Swiftarrow Bracers (#43444)", 11501543},
+    {"Craft: Swiftarrow Hauberk (#43445)", 11501544},
+    {"Craft: Swiftarrow Gauntlets (#43446)", 11501545},
+    {"Craft: Swiftarrow Helm (#43447)", 11501546},
+    {"Craft: Swiftarrow Leggings (#43448)", 11501547},
+    {"Craft: Swiftarrow Shoulderguards (#43449)", 11501548},
+    {"Craft: Stormhide Belt (#43450)", 11501549},
+    {"Craft: Stormhide Stompers (#43451)", 11501550},
+    {"Craft: Stormhide Wristguards (#43452)", 11501551},
+    {"Craft: Stormhide Hauberk (#43453)", 11501552},
+    {"Craft: Stormhide Grips (#43454)", 11501553},
+    {"Craft: Stormhide Crown (#43455)", 11501554},
+    {"Craft: Stormhide Legguards (#43456)", 11501555},
+    {"Craft: Stormhide Shoulders (#43457)", 11501556},
+    {"Craft: Giantmaim Legguards (#43458)", 11501557},
+    {"Craft: Giantmaim Bracers (#43459)", 11501558},
+    {"Craft: Revenant's Breastplate (#43461)", 11501559},
+    {"Craft: Revenant's Treads (#43469)", 11501560},
+    {"Craft: Gigantic Feast (#43478)", 11501561},
+    {"Craft: Small Feast (#43480)", 11501562},
+    {"Craft: Trollwoven Spaulders (#43481)", 11501563},
+    {"Craft: Savage Titanium Ring (#43482)", 11501564},
+    {"Craft: Trollwoven Girdle (#43484)", 11501565},
+    {"Craft: Last Weeks Mammoth (#43488)", 11501566},
+    {"Craft: Tasty Cupcake (#43490)", 11501567},
+    {"Craft: Bad Clams (#43491)", 11501568},
+    {"Craft: Haunted Herring (#43492)", 11501569},
+    {"Craft: Earthgiving Legguards (#43495)", 11501570},
+    {"Craft: Savage Titanium Band (#43498)", 11501571},
+    {"Craft: Earthgiving Boots (#43502)", 11501572},
+    {"Craft: Conjured Mana Pie (#43518)", 11501573},
+    {"Craft: Conjured Mana Strudel (#43523)", 11501574},
+    {"Craft: Titanium Frostguard Ring (#43582)", 11501575},
+    {"Craft: Polar Vest (#43590)", 11501576},
+    {"Craft: Polar Cord (#43591)", 11501577},
+    {"Craft: Polar Boots (#43592)", 11501578},
+    {"Craft: Icy Scale Chestguard (#43593)", 11501579},
+    {"Craft: Icy Scale Belt (#43594)", 11501580},
+    {"Craft: Icy Scale Boots (#43595)", 11501581},
+    {"Craft: Mekgineer's Chopper (#44413)", 11501582},
+    {"Craft: Dragonscale Ammo Pouch (#44447)", 11501583},
+    {"Craft: Nerubian Reinforced Quiver (#44448)", 11501584},
+    {"Craft: Pumpkin Pie (#44836)", 11501585},
+    {"Craft: Spice Bread Stuffing (#44837)", 11501586},
+    {"Craft: Slow-Roasted Turkey (#44838)", 11501587},
+    {"Craft: Candied Sweet Potato (#44839)", 11501588},
+    {"Craft: Cranberry Chutney (#44840)", 11501589},
+    {"Craft: Windripper Boots (#44930)", 11501590},
+    {"Craft: Windripper Leggings (#44931)", 11501591},
+    {"Craft: Titanium Plating (#44936)", 11501592},
+    {"Craft: Worg Tartare (#44953)", 11501593},
+    {"Craft: Belt of the Titans (#45550)", 11501594},
+    {"Craft: Indestructible Plate Girdle (#45551)", 11501595},
+    {"Craft: Plate Girdle of Righteousness (#45552)", 11501596},
+    {"Craft: Belt of Dragons (#45553)", 11501597},
+    {"Craft: Blue Belt of Chaos (#45554)", 11501598},
+    {"Craft: Death-warmed Belt (#45555)", 11501599},
+    {"Craft: Belt of Arctic Life (#45556)", 11501600},
+    {"Craft: Sash of Ancient Power (#45557)", 11501601},
+    {"Craft: Cord of the White Dawn (#45558)", 11501602},
+    {"Craft: Battlelord's Plate Boots (#45559)", 11501603},
+    {"Craft: Spiked Deathdealers (#45560)", 11501604},
+    {"Craft: Treads of Destiny (#45561)", 11501605},
+    {"Craft: Boots of Living Scale (#45562)", 11501606},
+    {"Craft: Lightning Grounded Boots (#45563)", 11501607},
+    {"Craft: Footpads of Silence (#45564)", 11501608},
+    {"Craft: Boots of Wintry Endurance (#45565)", 11501609},
+    {"Craft: Spellslinger's Slippers (#45566)", 11501610},
+    {"Craft: Savior's Slippers (#45567)", 11501611},
+    {"Craft: Emerald Bag (#45773)", 11501612},
+    {"Craft: Bread of the Dead (#46691)", 11501613},
+    {"Craft: Flask of the North (#47499)", 11501614},
+    {"Craft: Saronite Swordbreakers (#47570)", 11501615},
+    {"Craft: Saronite Swordbreakers (#47571)", 11501616},
+    {"Craft: Titanium Spikeguards (#47572)", 11501617},
+    {"Craft: Titanium Spikeguards (#47573)", 11501618},
+    {"Craft: Sunforged Bracers (#47574)", 11501619},
+    {"Craft: Sunforged Bracers (#47575)", 11501620},
+    {"Craft: Crusader's Dragonscale Bracers (#47576)", 11501621},
+    {"Craft: Crusader's Dragonscale Bracers (#47577)", 11501622},
+    {"Craft: Black Chitin Bracers (#47579)", 11501623},
+    {"Craft: Black Chitin Bracers (#47580)", 11501624},
+    {"Craft: Bracers of Swift Death (#47581)", 11501625},
+    {"Craft: Bracers of Swift Death (#47582)", 11501626},
+    {"Craft: Moonshadow Armguards (#47583)", 11501627},
+    {"Craft: Moonshadow Armguards (#47584)", 11501628},
+    {"Craft: Bejeweled Wizard's Bracers (#47585)", 11501629},
+    {"Craft: Bejeweled Wizard's Bracers (#47586)", 11501630},
+    {"Craft: Royal Moonshroud Bracers (#47587)", 11501631},
+    {"Craft: Royal Moonshroud Bracers (#47588)", 11501632},
+    {"Craft: Titanium Razorplate (#47589)", 11501633},
+    {"Craft: Titanium Razorplate (#47590)", 11501634},
+    {"Craft: Breastplate of the White Knight (#47591)", 11501635},
+    {"Craft: Breastplate of the White Knight (#47592)", 11501636},
+    {"Craft: Sunforged Breastplate (#47593)", 11501637},
+    {"Craft: Sunforged Breastplate (#47594)", 11501638},
+    {"Craft: Crusader's Dragonscale Breastplate (#47595)", 11501639},
+    {"Craft: Crusader's Dragonscale Breastplate (#47596)", 11501640},
+    {"Craft: Ensorcelled Nerubian Breastplate (#47597)", 11501641},
+    {"Craft: Ensorcelled Nerubian Breastplate (#47598)", 11501642},
+    {"Craft: Knightbane Carapace (#47599)", 11501643},
+    {"Craft: Knightbane Carapace (#47600)", 11501644},
+    {"Craft: Lunar Eclipse Robes (#47601)", 11501645},
+    {"Craft: Lunar Eclipse Robes (#47602)", 11501646},
+    {"Craft: Merlin's Robe (#47603)", 11501647},
+    {"Craft: Merlin's Robe (#47604)", 11501648},
+    {"Craft: Royal Moonshroud Robe (#47605)", 11501649},
+    {"Craft: Royal Moonshroud Robe (#47606)", 11501650},
+    {"Craft: Jeeves (#49040)", 11501651},
+    {"Craft: Nightmare Tear (#49110)", 11501652},
+    {"Craft: Deathfrost Boots (#49890)", 11501653},
+    {"Craft: Leggings of Woven Death (#49891)", 11501654},
+    {"Craft: Lightweave Leggings (#49892)", 11501655},
+    {"Craft: Sandals of Consecration (#49893)", 11501656},
+    {"Craft: Blessed Cenarion Boots (#49894)", 11501657},
+    {"Craft: Footpads of Impending Death (#49895)", 11501658},
+    {"Craft: Earthsoul Boots (#49896)", 11501659},
+    {"Craft: Rock-Steady Treads (#49897)", 11501660},
+    {"Craft: Legwraps of Unleashed Nature (#49898)", 11501661},
+    {"Craft: Bladeborn Leggings (#49899)", 11501662},
+    {"Craft: Lightning-Infused Leggings (#49900)", 11501663},
+    {"Craft: Draconic Bonesplinter Legguards (#49901)", 11501664},
+    {"Craft: Puresteel Legplates (#49902)", 11501665},
+    {"Craft: Legplates of Painful Death (#49903)", 11501666},
+    {"Craft: Pillars of Might (#49904)", 11501667},
+    {"Craft: Protectors of Life (#49905)", 11501668},
+    {"Craft: Hellfrozen Bonegrinders (#49906)", 11501669},
+    {"Craft: Boots of Kingly Upheaval (#49907)", 11501670},
+    {"Craft: Glyph of Eternal Water (#50045)", 11501671},
+    {"Craft: Glyph of Quick Decay (#50077)", 11501672},
+    {"Craft: Glyph of Rapid Rejuvenation (#50125)", 11501673},
+    {"Craft: Shatter Rounds (#52020)", 11501674},
+    {"Craft: Iceblade Arrow (#52021)", 11501675},
+    {"Craft: Frosty Flying Carpet (#54797)", 11501676},
 };
 inline std::map<std::string, uint32_t> BuildLOCATIONS()
 {
@@ -3182,241 +3161,220 @@ inline constexpr std::pair<char const*, uint32_t> ITEMS_RAW[] = {
     {"Craftsanity Item: Blue Workman's Shirt (#41253)", 11751460},
     {"Craftsanity Item: Rustic Workman's Shirt (#41254)", 11751461},
     {"Craftsanity Item: Green Workman's Shirt (#41255)", 11751462},
-    {"Craftsanity Item: Chaotic Skyflare Diamond (#41285)", 11751463},
-    {"Craftsanity Item: Destructive Skyflare Diamond (#41307)", 11751464},
-    {"Craftsanity Item: Ember Skyflare Diamond (#41333)", 11751465},
-    {"Craftsanity Item: Enigmatic Skyflare Diamond (#41335)", 11751466},
-    {"Craftsanity Item: Swift Skyflare Diamond (#41339)", 11751467},
-    {"Craftsanity Item: Tireless Skyflare Diamond (#41375)", 11751468},
-    {"Craftsanity Item: Revitalizing Skyflare Diamond (#41376)", 11751469},
-    {"Craftsanity Item: Effulgent Skyflare Diamond (#41377)", 11751470},
-    {"Craftsanity Item: Forlorn Skyflare Diamond (#41378)", 11751471},
-    {"Craftsanity Item: Impassive Skyflare Diamond (#41379)", 11751472},
-    {"Craftsanity Item: Austere Earthsiege Diamond (#41380)", 11751473},
-    {"Craftsanity Item: Persistent Earthsiege Diamond (#41381)", 11751474},
-    {"Craftsanity Item: Trenchant Earthsiege Diamond (#41382)", 11751475},
-    {"Craftsanity Item: Invigorating Earthsiege Diamond (#41385)", 11751476},
-    {"Craftsanity Item: Beaming Earthsiege Diamond (#41389)", 11751477},
-    {"Craftsanity Item: Bracing Earthsiege Diamond (#41395)", 11751478},
-    {"Craftsanity Item: Eternal Earthsiege Diamond (#41396)", 11751479},
-    {"Craftsanity Item: Powerful Earthsiege Diamond (#41397)", 11751480},
-    {"Craftsanity Item: Relentless Earthsiege Diamond (#41398)", 11751481},
-    {"Craftsanity Item: Thundering Skyflare Diamond (#41400)", 11751482},
-    {"Craftsanity Item: Insightful Earthsiege Diamond (#41401)", 11751483},
-    {"Craftsanity Item: Mechano-hog (#41508)", 11751484},
-    {"Craftsanity Item: Ebonweave (#41593)", 11751485},
-    {"Craftsanity Item: Moonshroud (#41594)", 11751486},
-    {"Craftsanity Item: Spellweave (#41595)", 11751487},
-    {"Craftsanity Item: Abyssal Bag (#41597)", 11751488},
-    {"Craftsanity Item: Mysterious Bag (#41598)", 11751489},
-    {"Craftsanity Item: Frostweave Bag (#41599)", 11751490},
-    {"Craftsanity Item: Glacial Bag (#41600)", 11751491},
-    {"Craftsanity Item: Brilliant Spellthread (#41602)", 11751492},
-    {"Craftsanity Item: Sapphire Spellthread (#41604)", 11751493},
-    {"Craftsanity Item: Wispcloak (#41609)", 11751494},
-    {"Craftsanity Item: Deathchill Cloak (#41610)", 11751495},
-    {"Craftsanity Item: Hat of Wintry Doom (#41984)", 11751496},
-    {"Craftsanity Item: Silky Iceshard Boots (#41985)", 11751497},
-    {"Craftsanity Item: Deep Frozen Cord (#41986)", 11751498},
-    {"Craftsanity Item: Frostmoon Pants (#42093)", 11751499},
-    {"Craftsanity Item: Light Blessed Mittens (#42095)", 11751500},
-    {"Craftsanity Item: Aurora Slippers (#42096)", 11751501},
-    {"Craftsanity Item: Moonshroud Robe (#42100)", 11751502},
-    {"Craftsanity Item: Ebonweave Robe (#42101)", 11751503},
-    {"Craftsanity Item: Spellweave Robe (#42102)", 11751504},
-    {"Craftsanity Item: Moonshroud Gloves (#42103)", 11751505},
-    {"Craftsanity Item: Ebonweave Gloves (#42111)", 11751506},
-    {"Craftsanity Item: Spellweave Gloves (#42113)", 11751507},
-    {"Craftsanity Item: Bold Dragon's Eye (#42142)", 11751508},
-    {"Craftsanity Item: Delicate Dragon's Eye (#42143)", 11751509},
-    {"Craftsanity Item: Runed Dragon's Eye (#42144)", 11751510},
-    {"Craftsanity Item: Sparkling Dragon's Eye (#42145)", 11751511},
-    {"Craftsanity Item: Lustrous Dragon's Eye (#42146)", 11751512},
-    {"Craftsanity Item: Brilliant Dragon's Eye (#42148)", 11751513},
-    {"Craftsanity Item: Smooth Dragon's Eye (#42149)", 11751514},
-    {"Craftsanity Item: Quick Dragon's Eye (#42150)", 11751515},
-    {"Craftsanity Item: Subtle Dragon's Eye (#42151)", 11751516},
-    {"Craftsanity Item: Flashing Dragon's Eye (#42152)", 11751517},
-    {"Craftsanity Item: Fractured Dragon's Eye (#42153)", 11751518},
-    {"Craftsanity Item: Precise Dragon's Eye (#42154)", 11751519},
-    {"Craftsanity Item: Stormy Dragon's Eye (#42155)", 11751520},
-    {"Craftsanity Item: Rigid Dragon's Eye (#42156)", 11751521},
-    {"Craftsanity Item: Thick Dragon's Eye (#42157)", 11751522},
-    {"Craftsanity Item: Mystic Dragon's Eye (#42158)", 11751523},
-    {"Craftsanity Item: Titanium Impact Band (#42642)", 11751524},
-    {"Craftsanity Item: Titanium Earthguard Ring (#42643)", 11751525},
-    {"Craftsanity Item: Titanium Spellshock Ring (#42644)", 11751526},
-    {"Craftsanity Item: Titanium Impact Choker (#42645)", 11751527},
-    {"Craftsanity Item: Titanium Earthguard Chain (#42646)", 11751528},
-    {"Craftsanity Item: Titanium Spellshock Necklace (#42647)", 11751529},
-    {"Craftsanity Item: Spicy Fried Herring (#42993)", 11751530},
-    {"Craftsanity Item: Rhinolicious Wormsteak (#42994)", 11751531},
-    {"Craftsanity Item: Hearty Rhino (#42995)", 11751532},
-    {"Craftsanity Item: Snapper Extreme (#42996)", 11751533},
-    {"Craftsanity Item: Blackened Worg Steak (#42997)", 11751534},
-    {"Craftsanity Item: Cuttlesteak (#42998)", 11751535},
-    {"Craftsanity Item: Blackened Dragonfin (#42999)", 11751536},
-    {"Craftsanity Item: Dragonfin Filet (#43000)", 11751537},
-    {"Craftsanity Item: Tracker Snacks (#43001)", 11751538},
-    {"Craftsanity Item: Critter Bites (#43004)", 11751539},
-    {"Craftsanity Item: Spiced Mammoth Treats (#43005)", 11751540},
-    {"Craftsanity Item: Fish Feast (#43015)", 11751541},
-    {"Craftsanity Item: Ring of Earthen Might (#43250)", 11751542},
-    {"Craftsanity Item: Ring of Scarlet Shadows (#43251)", 11751543},
-    {"Craftsanity Item: Windfire Band (#43252)", 11751544},
-    {"Craftsanity Item: Ring of Northern Tears (#43253)", 11751545},
-    {"Craftsanity Item: Eviscerator's Facemask (#43260)", 11751546},
-    {"Craftsanity Item: Overcast Headguard (#43261)", 11751547},
-    {"Craftsanity Item: Overcast Spaulders (#43262)", 11751548},
-    {"Craftsanity Item: Overcast Chestguard (#43263)", 11751549},
-    {"Craftsanity Item: Overcast Bracers (#43264)", 11751550},
-    {"Craftsanity Item: Overcast Handwraps (#43265)", 11751551},
-    {"Craftsanity Item: Overcast Belt (#43266)", 11751552},
-    {"Craftsanity Item: Overcast Leggings (#43271)", 11751553},
-    {"Craftsanity Item: Overcast Boots (#43273)", 11751554},
-    {"Craftsanity Item: Eviscerator's Shoulderpads (#43433)", 11751555},
-    {"Craftsanity Item: Eviscerator's Chestguard (#43434)", 11751556},
-    {"Craftsanity Item: Eviscerator's Bindings (#43435)", 11751557},
-    {"Craftsanity Item: Eviscerator's Gauntlets (#43436)", 11751558},
-    {"Craftsanity Item: Eviscerator's Waistguard (#43437)", 11751559},
-    {"Craftsanity Item: Eviscerator's Legguards (#43438)", 11751560},
-    {"Craftsanity Item: Eviscerator's Treads (#43439)", 11751561},
-    {"Craftsanity Item: Swiftarrow Belt (#43442)", 11751562},
-    {"Craftsanity Item: Swiftarrow Boots (#43443)", 11751563},
-    {"Craftsanity Item: Swiftarrow Bracers (#43444)", 11751564},
-    {"Craftsanity Item: Swiftarrow Hauberk (#43445)", 11751565},
-    {"Craftsanity Item: Swiftarrow Gauntlets (#43446)", 11751566},
-    {"Craftsanity Item: Swiftarrow Helm (#43447)", 11751567},
-    {"Craftsanity Item: Swiftarrow Leggings (#43448)", 11751568},
-    {"Craftsanity Item: Swiftarrow Shoulderguards (#43449)", 11751569},
-    {"Craftsanity Item: Stormhide Belt (#43450)", 11751570},
-    {"Craftsanity Item: Stormhide Stompers (#43451)", 11751571},
-    {"Craftsanity Item: Stormhide Wristguards (#43452)", 11751572},
-    {"Craftsanity Item: Stormhide Hauberk (#43453)", 11751573},
-    {"Craftsanity Item: Stormhide Grips (#43454)", 11751574},
-    {"Craftsanity Item: Stormhide Crown (#43455)", 11751575},
-    {"Craftsanity Item: Stormhide Legguards (#43456)", 11751576},
-    {"Craftsanity Item: Stormhide Shoulders (#43457)", 11751577},
-    {"Craftsanity Item: Giantmaim Legguards (#43458)", 11751578},
-    {"Craftsanity Item: Giantmaim Bracers (#43459)", 11751579},
-    {"Craftsanity Item: Revenant's Breastplate (#43461)", 11751580},
-    {"Craftsanity Item: Revenant's Treads (#43469)", 11751581},
-    {"Craftsanity Item: Gigantic Feast (#43478)", 11751582},
-    {"Craftsanity Item: Small Feast (#43480)", 11751583},
-    {"Craftsanity Item: Trollwoven Spaulders (#43481)", 11751584},
-    {"Craftsanity Item: Savage Titanium Ring (#43482)", 11751585},
-    {"Craftsanity Item: Trollwoven Girdle (#43484)", 11751586},
-    {"Craftsanity Item: Last Weeks Mammoth (#43488)", 11751587},
-    {"Craftsanity Item: Tasty Cupcake (#43490)", 11751588},
-    {"Craftsanity Item: Bad Clams (#43491)", 11751589},
-    {"Craftsanity Item: Haunted Herring (#43492)", 11751590},
-    {"Craftsanity Item: Earthgiving Legguards (#43495)", 11751591},
-    {"Craftsanity Item: Savage Titanium Band (#43498)", 11751592},
-    {"Craftsanity Item: Earthgiving Boots (#43502)", 11751593},
-    {"Craftsanity Item: Conjured Mana Pie (#43518)", 11751594},
-    {"Craftsanity Item: Conjured Mana Strudel (#43523)", 11751595},
-    {"Craftsanity Item: Titanium Frostguard Ring (#43582)", 11751596},
-    {"Craftsanity Item: Polar Vest (#43590)", 11751597},
-    {"Craftsanity Item: Polar Cord (#43591)", 11751598},
-    {"Craftsanity Item: Polar Boots (#43592)", 11751599},
-    {"Craftsanity Item: Icy Scale Chestguard (#43593)", 11751600},
-    {"Craftsanity Item: Icy Scale Belt (#43594)", 11751601},
-    {"Craftsanity Item: Icy Scale Boots (#43595)", 11751602},
-    {"Craftsanity Item: Mekgineer's Chopper (#44413)", 11751603},
-    {"Craftsanity Item: Dragonscale Ammo Pouch (#44447)", 11751604},
-    {"Craftsanity Item: Nerubian Reinforced Quiver (#44448)", 11751605},
-    {"Craftsanity Item: Pumpkin Pie (#44836)", 11751606},
-    {"Craftsanity Item: Spice Bread Stuffing (#44837)", 11751607},
-    {"Craftsanity Item: Slow-Roasted Turkey (#44838)", 11751608},
-    {"Craftsanity Item: Candied Sweet Potato (#44839)", 11751609},
-    {"Craftsanity Item: Cranberry Chutney (#44840)", 11751610},
-    {"Craftsanity Item: Windripper Boots (#44930)", 11751611},
-    {"Craftsanity Item: Windripper Leggings (#44931)", 11751612},
-    {"Craftsanity Item: Titanium Plating (#44936)", 11751613},
-    {"Craftsanity Item: Worg Tartare (#44953)", 11751614},
-    {"Craftsanity Item: Belt of the Titans (#45550)", 11751615},
-    {"Craftsanity Item: Indestructible Plate Girdle (#45551)", 11751616},
-    {"Craftsanity Item: Plate Girdle of Righteousness (#45552)", 11751617},
-    {"Craftsanity Item: Belt of Dragons (#45553)", 11751618},
-    {"Craftsanity Item: Blue Belt of Chaos (#45554)", 11751619},
-    {"Craftsanity Item: Death-warmed Belt (#45555)", 11751620},
-    {"Craftsanity Item: Belt of Arctic Life (#45556)", 11751621},
-    {"Craftsanity Item: Sash of Ancient Power (#45557)", 11751622},
-    {"Craftsanity Item: Cord of the White Dawn (#45558)", 11751623},
-    {"Craftsanity Item: Battlelord's Plate Boots (#45559)", 11751624},
-    {"Craftsanity Item: Spiked Deathdealers (#45560)", 11751625},
-    {"Craftsanity Item: Treads of Destiny (#45561)", 11751626},
-    {"Craftsanity Item: Boots of Living Scale (#45562)", 11751627},
-    {"Craftsanity Item: Lightning Grounded Boots (#45563)", 11751628},
-    {"Craftsanity Item: Footpads of Silence (#45564)", 11751629},
-    {"Craftsanity Item: Boots of Wintry Endurance (#45565)", 11751630},
-    {"Craftsanity Item: Spellslinger's Slippers (#45566)", 11751631},
-    {"Craftsanity Item: Savior's Slippers (#45567)", 11751632},
-    {"Craftsanity Item: Emerald Bag (#45773)", 11751633},
-    {"Craftsanity Item: Bread of the Dead (#46691)", 11751634},
-    {"Craftsanity Item: Flask of the North (#47499)", 11751635},
-    {"Craftsanity Item: Saronite Swordbreakers (#47570)", 11751636},
-    {"Craftsanity Item: Saronite Swordbreakers (#47571)", 11751637},
-    {"Craftsanity Item: Titanium Spikeguards (#47572)", 11751638},
-    {"Craftsanity Item: Titanium Spikeguards (#47573)", 11751639},
-    {"Craftsanity Item: Sunforged Bracers (#47574)", 11751640},
-    {"Craftsanity Item: Sunforged Bracers (#47575)", 11751641},
-    {"Craftsanity Item: Crusader's Dragonscale Bracers (#47576)", 11751642},
-    {"Craftsanity Item: Crusader's Dragonscale Bracers (#47577)", 11751643},
-    {"Craftsanity Item: Black Chitin Bracers (#47579)", 11751644},
-    {"Craftsanity Item: Black Chitin Bracers (#47580)", 11751645},
-    {"Craftsanity Item: Bracers of Swift Death (#47581)", 11751646},
-    {"Craftsanity Item: Bracers of Swift Death (#47582)", 11751647},
-    {"Craftsanity Item: Moonshadow Armguards (#47583)", 11751648},
-    {"Craftsanity Item: Moonshadow Armguards (#47584)", 11751649},
-    {"Craftsanity Item: Bejeweled Wizard's Bracers (#47585)", 11751650},
-    {"Craftsanity Item: Bejeweled Wizard's Bracers (#47586)", 11751651},
-    {"Craftsanity Item: Royal Moonshroud Bracers (#47587)", 11751652},
-    {"Craftsanity Item: Royal Moonshroud Bracers (#47588)", 11751653},
-    {"Craftsanity Item: Titanium Razorplate (#47589)", 11751654},
-    {"Craftsanity Item: Titanium Razorplate (#47590)", 11751655},
-    {"Craftsanity Item: Breastplate of the White Knight (#47591)", 11751656},
-    {"Craftsanity Item: Breastplate of the White Knight (#47592)", 11751657},
-    {"Craftsanity Item: Sunforged Breastplate (#47593)", 11751658},
-    {"Craftsanity Item: Sunforged Breastplate (#47594)", 11751659},
-    {"Craftsanity Item: Crusader's Dragonscale Breastplate (#47595)", 11751660},
-    {"Craftsanity Item: Crusader's Dragonscale Breastplate (#47596)", 11751661},
-    {"Craftsanity Item: Ensorcelled Nerubian Breastplate (#47597)", 11751662},
-    {"Craftsanity Item: Ensorcelled Nerubian Breastplate (#47598)", 11751663},
-    {"Craftsanity Item: Knightbane Carapace (#47599)", 11751664},
-    {"Craftsanity Item: Knightbane Carapace (#47600)", 11751665},
-    {"Craftsanity Item: Lunar Eclipse Robes (#47601)", 11751666},
-    {"Craftsanity Item: Lunar Eclipse Robes (#47602)", 11751667},
-    {"Craftsanity Item: Merlin's Robe (#47603)", 11751668},
-    {"Craftsanity Item: Merlin's Robe (#47604)", 11751669},
-    {"Craftsanity Item: Royal Moonshroud Robe (#47605)", 11751670},
-    {"Craftsanity Item: Royal Moonshroud Robe (#47606)", 11751671},
-    {"Craftsanity Item: Jeeves (#49040)", 11751672},
-    {"Craftsanity Item: Nightmare Tear (#49110)", 11751673},
-    {"Craftsanity Item: Deathfrost Boots (#49890)", 11751674},
-    {"Craftsanity Item: Leggings of Woven Death (#49891)", 11751675},
-    {"Craftsanity Item: Lightweave Leggings (#49892)", 11751676},
-    {"Craftsanity Item: Sandals of Consecration (#49893)", 11751677},
-    {"Craftsanity Item: Blessed Cenarion Boots (#49894)", 11751678},
-    {"Craftsanity Item: Footpads of Impending Death (#49895)", 11751679},
-    {"Craftsanity Item: Earthsoul Boots (#49896)", 11751680},
-    {"Craftsanity Item: Rock-Steady Treads (#49897)", 11751681},
-    {"Craftsanity Item: Legwraps of Unleashed Nature (#49898)", 11751682},
-    {"Craftsanity Item: Bladeborn Leggings (#49899)", 11751683},
-    {"Craftsanity Item: Lightning-Infused Leggings (#49900)", 11751684},
-    {"Craftsanity Item: Draconic Bonesplinter Legguards (#49901)", 11751685},
-    {"Craftsanity Item: Puresteel Legplates (#49902)", 11751686},
-    {"Craftsanity Item: Legplates of Painful Death (#49903)", 11751687},
-    {"Craftsanity Item: Pillars of Might (#49904)", 11751688},
-    {"Craftsanity Item: Protectors of Life (#49905)", 11751689},
-    {"Craftsanity Item: Hellfrozen Bonegrinders (#49906)", 11751690},
-    {"Craftsanity Item: Boots of Kingly Upheaval (#49907)", 11751691},
-    {"Craftsanity Item: Glyph of Eternal Water (#50045)", 11751692},
-    {"Craftsanity Item: Glyph of Quick Decay (#50077)", 11751693},
-    {"Craftsanity Item: Glyph of Rapid Rejuvenation (#50125)", 11751694},
-    {"Craftsanity Item: Shatter Rounds (#52020)", 11751695},
-    {"Craftsanity Item: Iceblade Arrow (#52021)", 11751696},
-    {"Craftsanity Item: Frosty Flying Carpet (#54797)", 11751697},
+    {"Craftsanity Item: Mechano-hog (#41508)", 11751463},
+    {"Craftsanity Item: Ebonweave (#41593)", 11751464},
+    {"Craftsanity Item: Moonshroud (#41594)", 11751465},
+    {"Craftsanity Item: Spellweave (#41595)", 11751466},
+    {"Craftsanity Item: Abyssal Bag (#41597)", 11751467},
+    {"Craftsanity Item: Mysterious Bag (#41598)", 11751468},
+    {"Craftsanity Item: Frostweave Bag (#41599)", 11751469},
+    {"Craftsanity Item: Glacial Bag (#41600)", 11751470},
+    {"Craftsanity Item: Brilliant Spellthread (#41602)", 11751471},
+    {"Craftsanity Item: Sapphire Spellthread (#41604)", 11751472},
+    {"Craftsanity Item: Wispcloak (#41609)", 11751473},
+    {"Craftsanity Item: Deathchill Cloak (#41610)", 11751474},
+    {"Craftsanity Item: Hat of Wintry Doom (#41984)", 11751475},
+    {"Craftsanity Item: Silky Iceshard Boots (#41985)", 11751476},
+    {"Craftsanity Item: Deep Frozen Cord (#41986)", 11751477},
+    {"Craftsanity Item: Frostmoon Pants (#42093)", 11751478},
+    {"Craftsanity Item: Light Blessed Mittens (#42095)", 11751479},
+    {"Craftsanity Item: Aurora Slippers (#42096)", 11751480},
+    {"Craftsanity Item: Moonshroud Robe (#42100)", 11751481},
+    {"Craftsanity Item: Ebonweave Robe (#42101)", 11751482},
+    {"Craftsanity Item: Spellweave Robe (#42102)", 11751483},
+    {"Craftsanity Item: Moonshroud Gloves (#42103)", 11751484},
+    {"Craftsanity Item: Ebonweave Gloves (#42111)", 11751485},
+    {"Craftsanity Item: Spellweave Gloves (#42113)", 11751486},
+    {"Craftsanity Item: Bold Dragon's Eye (#42142)", 11751487},
+    {"Craftsanity Item: Delicate Dragon's Eye (#42143)", 11751488},
+    {"Craftsanity Item: Runed Dragon's Eye (#42144)", 11751489},
+    {"Craftsanity Item: Sparkling Dragon's Eye (#42145)", 11751490},
+    {"Craftsanity Item: Lustrous Dragon's Eye (#42146)", 11751491},
+    {"Craftsanity Item: Brilliant Dragon's Eye (#42148)", 11751492},
+    {"Craftsanity Item: Smooth Dragon's Eye (#42149)", 11751493},
+    {"Craftsanity Item: Quick Dragon's Eye (#42150)", 11751494},
+    {"Craftsanity Item: Subtle Dragon's Eye (#42151)", 11751495},
+    {"Craftsanity Item: Flashing Dragon's Eye (#42152)", 11751496},
+    {"Craftsanity Item: Fractured Dragon's Eye (#42153)", 11751497},
+    {"Craftsanity Item: Precise Dragon's Eye (#42154)", 11751498},
+    {"Craftsanity Item: Stormy Dragon's Eye (#42155)", 11751499},
+    {"Craftsanity Item: Rigid Dragon's Eye (#42156)", 11751500},
+    {"Craftsanity Item: Thick Dragon's Eye (#42157)", 11751501},
+    {"Craftsanity Item: Mystic Dragon's Eye (#42158)", 11751502},
+    {"Craftsanity Item: Titanium Impact Band (#42642)", 11751503},
+    {"Craftsanity Item: Titanium Earthguard Ring (#42643)", 11751504},
+    {"Craftsanity Item: Titanium Spellshock Ring (#42644)", 11751505},
+    {"Craftsanity Item: Titanium Impact Choker (#42645)", 11751506},
+    {"Craftsanity Item: Titanium Earthguard Chain (#42646)", 11751507},
+    {"Craftsanity Item: Titanium Spellshock Necklace (#42647)", 11751508},
+    {"Craftsanity Item: Spicy Fried Herring (#42993)", 11751509},
+    {"Craftsanity Item: Rhinolicious Wormsteak (#42994)", 11751510},
+    {"Craftsanity Item: Hearty Rhino (#42995)", 11751511},
+    {"Craftsanity Item: Snapper Extreme (#42996)", 11751512},
+    {"Craftsanity Item: Blackened Worg Steak (#42997)", 11751513},
+    {"Craftsanity Item: Cuttlesteak (#42998)", 11751514},
+    {"Craftsanity Item: Blackened Dragonfin (#42999)", 11751515},
+    {"Craftsanity Item: Dragonfin Filet (#43000)", 11751516},
+    {"Craftsanity Item: Tracker Snacks (#43001)", 11751517},
+    {"Craftsanity Item: Critter Bites (#43004)", 11751518},
+    {"Craftsanity Item: Spiced Mammoth Treats (#43005)", 11751519},
+    {"Craftsanity Item: Fish Feast (#43015)", 11751520},
+    {"Craftsanity Item: Ring of Earthen Might (#43250)", 11751521},
+    {"Craftsanity Item: Ring of Scarlet Shadows (#43251)", 11751522},
+    {"Craftsanity Item: Windfire Band (#43252)", 11751523},
+    {"Craftsanity Item: Ring of Northern Tears (#43253)", 11751524},
+    {"Craftsanity Item: Eviscerator's Facemask (#43260)", 11751525},
+    {"Craftsanity Item: Overcast Headguard (#43261)", 11751526},
+    {"Craftsanity Item: Overcast Spaulders (#43262)", 11751527},
+    {"Craftsanity Item: Overcast Chestguard (#43263)", 11751528},
+    {"Craftsanity Item: Overcast Bracers (#43264)", 11751529},
+    {"Craftsanity Item: Overcast Handwraps (#43265)", 11751530},
+    {"Craftsanity Item: Overcast Belt (#43266)", 11751531},
+    {"Craftsanity Item: Overcast Leggings (#43271)", 11751532},
+    {"Craftsanity Item: Overcast Boots (#43273)", 11751533},
+    {"Craftsanity Item: Eviscerator's Shoulderpads (#43433)", 11751534},
+    {"Craftsanity Item: Eviscerator's Chestguard (#43434)", 11751535},
+    {"Craftsanity Item: Eviscerator's Bindings (#43435)", 11751536},
+    {"Craftsanity Item: Eviscerator's Gauntlets (#43436)", 11751537},
+    {"Craftsanity Item: Eviscerator's Waistguard (#43437)", 11751538},
+    {"Craftsanity Item: Eviscerator's Legguards (#43438)", 11751539},
+    {"Craftsanity Item: Eviscerator's Treads (#43439)", 11751540},
+    {"Craftsanity Item: Swiftarrow Belt (#43442)", 11751541},
+    {"Craftsanity Item: Swiftarrow Boots (#43443)", 11751542},
+    {"Craftsanity Item: Swiftarrow Bracers (#43444)", 11751543},
+    {"Craftsanity Item: Swiftarrow Hauberk (#43445)", 11751544},
+    {"Craftsanity Item: Swiftarrow Gauntlets (#43446)", 11751545},
+    {"Craftsanity Item: Swiftarrow Helm (#43447)", 11751546},
+    {"Craftsanity Item: Swiftarrow Leggings (#43448)", 11751547},
+    {"Craftsanity Item: Swiftarrow Shoulderguards (#43449)", 11751548},
+    {"Craftsanity Item: Stormhide Belt (#43450)", 11751549},
+    {"Craftsanity Item: Stormhide Stompers (#43451)", 11751550},
+    {"Craftsanity Item: Stormhide Wristguards (#43452)", 11751551},
+    {"Craftsanity Item: Stormhide Hauberk (#43453)", 11751552},
+    {"Craftsanity Item: Stormhide Grips (#43454)", 11751553},
+    {"Craftsanity Item: Stormhide Crown (#43455)", 11751554},
+    {"Craftsanity Item: Stormhide Legguards (#43456)", 11751555},
+    {"Craftsanity Item: Stormhide Shoulders (#43457)", 11751556},
+    {"Craftsanity Item: Giantmaim Legguards (#43458)", 11751557},
+    {"Craftsanity Item: Giantmaim Bracers (#43459)", 11751558},
+    {"Craftsanity Item: Revenant's Breastplate (#43461)", 11751559},
+    {"Craftsanity Item: Revenant's Treads (#43469)", 11751560},
+    {"Craftsanity Item: Gigantic Feast (#43478)", 11751561},
+    {"Craftsanity Item: Small Feast (#43480)", 11751562},
+    {"Craftsanity Item: Trollwoven Spaulders (#43481)", 11751563},
+    {"Craftsanity Item: Savage Titanium Ring (#43482)", 11751564},
+    {"Craftsanity Item: Trollwoven Girdle (#43484)", 11751565},
+    {"Craftsanity Item: Last Weeks Mammoth (#43488)", 11751566},
+    {"Craftsanity Item: Tasty Cupcake (#43490)", 11751567},
+    {"Craftsanity Item: Bad Clams (#43491)", 11751568},
+    {"Craftsanity Item: Haunted Herring (#43492)", 11751569},
+    {"Craftsanity Item: Earthgiving Legguards (#43495)", 11751570},
+    {"Craftsanity Item: Savage Titanium Band (#43498)", 11751571},
+    {"Craftsanity Item: Earthgiving Boots (#43502)", 11751572},
+    {"Craftsanity Item: Conjured Mana Pie (#43518)", 11751573},
+    {"Craftsanity Item: Conjured Mana Strudel (#43523)", 11751574},
+    {"Craftsanity Item: Titanium Frostguard Ring (#43582)", 11751575},
+    {"Craftsanity Item: Polar Vest (#43590)", 11751576},
+    {"Craftsanity Item: Polar Cord (#43591)", 11751577},
+    {"Craftsanity Item: Polar Boots (#43592)", 11751578},
+    {"Craftsanity Item: Icy Scale Chestguard (#43593)", 11751579},
+    {"Craftsanity Item: Icy Scale Belt (#43594)", 11751580},
+    {"Craftsanity Item: Icy Scale Boots (#43595)", 11751581},
+    {"Craftsanity Item: Mekgineer's Chopper (#44413)", 11751582},
+    {"Craftsanity Item: Dragonscale Ammo Pouch (#44447)", 11751583},
+    {"Craftsanity Item: Nerubian Reinforced Quiver (#44448)", 11751584},
+    {"Craftsanity Item: Pumpkin Pie (#44836)", 11751585},
+    {"Craftsanity Item: Spice Bread Stuffing (#44837)", 11751586},
+    {"Craftsanity Item: Slow-Roasted Turkey (#44838)", 11751587},
+    {"Craftsanity Item: Candied Sweet Potato (#44839)", 11751588},
+    {"Craftsanity Item: Cranberry Chutney (#44840)", 11751589},
+    {"Craftsanity Item: Windripper Boots (#44930)", 11751590},
+    {"Craftsanity Item: Windripper Leggings (#44931)", 11751591},
+    {"Craftsanity Item: Titanium Plating (#44936)", 11751592},
+    {"Craftsanity Item: Worg Tartare (#44953)", 11751593},
+    {"Craftsanity Item: Belt of the Titans (#45550)", 11751594},
+    {"Craftsanity Item: Indestructible Plate Girdle (#45551)", 11751595},
+    {"Craftsanity Item: Plate Girdle of Righteousness (#45552)", 11751596},
+    {"Craftsanity Item: Belt of Dragons (#45553)", 11751597},
+    {"Craftsanity Item: Blue Belt of Chaos (#45554)", 11751598},
+    {"Craftsanity Item: Death-warmed Belt (#45555)", 11751599},
+    {"Craftsanity Item: Belt of Arctic Life (#45556)", 11751600},
+    {"Craftsanity Item: Sash of Ancient Power (#45557)", 11751601},
+    {"Craftsanity Item: Cord of the White Dawn (#45558)", 11751602},
+    {"Craftsanity Item: Battlelord's Plate Boots (#45559)", 11751603},
+    {"Craftsanity Item: Spiked Deathdealers (#45560)", 11751604},
+    {"Craftsanity Item: Treads of Destiny (#45561)", 11751605},
+    {"Craftsanity Item: Boots of Living Scale (#45562)", 11751606},
+    {"Craftsanity Item: Lightning Grounded Boots (#45563)", 11751607},
+    {"Craftsanity Item: Footpads of Silence (#45564)", 11751608},
+    {"Craftsanity Item: Boots of Wintry Endurance (#45565)", 11751609},
+    {"Craftsanity Item: Spellslinger's Slippers (#45566)", 11751610},
+    {"Craftsanity Item: Savior's Slippers (#45567)", 11751611},
+    {"Craftsanity Item: Emerald Bag (#45773)", 11751612},
+    {"Craftsanity Item: Bread of the Dead (#46691)", 11751613},
+    {"Craftsanity Item: Flask of the North (#47499)", 11751614},
+    {"Craftsanity Item: Saronite Swordbreakers (#47570)", 11751615},
+    {"Craftsanity Item: Saronite Swordbreakers (#47571)", 11751616},
+    {"Craftsanity Item: Titanium Spikeguards (#47572)", 11751617},
+    {"Craftsanity Item: Titanium Spikeguards (#47573)", 11751618},
+    {"Craftsanity Item: Sunforged Bracers (#47574)", 11751619},
+    {"Craftsanity Item: Sunforged Bracers (#47575)", 11751620},
+    {"Craftsanity Item: Crusader's Dragonscale Bracers (#47576)", 11751621},
+    {"Craftsanity Item: Crusader's Dragonscale Bracers (#47577)", 11751622},
+    {"Craftsanity Item: Black Chitin Bracers (#47579)", 11751623},
+    {"Craftsanity Item: Black Chitin Bracers (#47580)", 11751624},
+    {"Craftsanity Item: Bracers of Swift Death (#47581)", 11751625},
+    {"Craftsanity Item: Bracers of Swift Death (#47582)", 11751626},
+    {"Craftsanity Item: Moonshadow Armguards (#47583)", 11751627},
+    {"Craftsanity Item: Moonshadow Armguards (#47584)", 11751628},
+    {"Craftsanity Item: Bejeweled Wizard's Bracers (#47585)", 11751629},
+    {"Craftsanity Item: Bejeweled Wizard's Bracers (#47586)", 11751630},
+    {"Craftsanity Item: Royal Moonshroud Bracers (#47587)", 11751631},
+    {"Craftsanity Item: Royal Moonshroud Bracers (#47588)", 11751632},
+    {"Craftsanity Item: Titanium Razorplate (#47589)", 11751633},
+    {"Craftsanity Item: Titanium Razorplate (#47590)", 11751634},
+    {"Craftsanity Item: Breastplate of the White Knight (#47591)", 11751635},
+    {"Craftsanity Item: Breastplate of the White Knight (#47592)", 11751636},
+    {"Craftsanity Item: Sunforged Breastplate (#47593)", 11751637},
+    {"Craftsanity Item: Sunforged Breastplate (#47594)", 11751638},
+    {"Craftsanity Item: Crusader's Dragonscale Breastplate (#47595)", 11751639},
+    {"Craftsanity Item: Crusader's Dragonscale Breastplate (#47596)", 11751640},
+    {"Craftsanity Item: Ensorcelled Nerubian Breastplate (#47597)", 11751641},
+    {"Craftsanity Item: Ensorcelled Nerubian Breastplate (#47598)", 11751642},
+    {"Craftsanity Item: Knightbane Carapace (#47599)", 11751643},
+    {"Craftsanity Item: Knightbane Carapace (#47600)", 11751644},
+    {"Craftsanity Item: Lunar Eclipse Robes (#47601)", 11751645},
+    {"Craftsanity Item: Lunar Eclipse Robes (#47602)", 11751646},
+    {"Craftsanity Item: Merlin's Robe (#47603)", 11751647},
+    {"Craftsanity Item: Merlin's Robe (#47604)", 11751648},
+    {"Craftsanity Item: Royal Moonshroud Robe (#47605)", 11751649},
+    {"Craftsanity Item: Royal Moonshroud Robe (#47606)", 11751650},
+    {"Craftsanity Item: Jeeves (#49040)", 11751651},
+    {"Craftsanity Item: Nightmare Tear (#49110)", 11751652},
+    {"Craftsanity Item: Deathfrost Boots (#49890)", 11751653},
+    {"Craftsanity Item: Leggings of Woven Death (#49891)", 11751654},
+    {"Craftsanity Item: Lightweave Leggings (#49892)", 11751655},
+    {"Craftsanity Item: Sandals of Consecration (#49893)", 11751656},
+    {"Craftsanity Item: Blessed Cenarion Boots (#49894)", 11751657},
+    {"Craftsanity Item: Footpads of Impending Death (#49895)", 11751658},
+    {"Craftsanity Item: Earthsoul Boots (#49896)", 11751659},
+    {"Craftsanity Item: Rock-Steady Treads (#49897)", 11751660},
+    {"Craftsanity Item: Legwraps of Unleashed Nature (#49898)", 11751661},
+    {"Craftsanity Item: Bladeborn Leggings (#49899)", 11751662},
+    {"Craftsanity Item: Lightning-Infused Leggings (#49900)", 11751663},
+    {"Craftsanity Item: Draconic Bonesplinter Legguards (#49901)", 11751664},
+    {"Craftsanity Item: Puresteel Legplates (#49902)", 11751665},
+    {"Craftsanity Item: Legplates of Painful Death (#49903)", 11751666},
+    {"Craftsanity Item: Pillars of Might (#49904)", 11751667},
+    {"Craftsanity Item: Protectors of Life (#49905)", 11751668},
+    {"Craftsanity Item: Hellfrozen Bonegrinders (#49906)", 11751669},
+    {"Craftsanity Item: Boots of Kingly Upheaval (#49907)", 11751670},
+    {"Craftsanity Item: Glyph of Eternal Water (#50045)", 11751671},
+    {"Craftsanity Item: Glyph of Quick Decay (#50077)", 11751672},
+    {"Craftsanity Item: Glyph of Rapid Rejuvenation (#50125)", 11751673},
+    {"Craftsanity Item: Shatter Rounds (#52020)", 11751674},
+    {"Craftsanity Item: Iceblade Arrow (#52021)", 11751675},
+    {"Craftsanity Item: Frosty Flying Carpet (#54797)", 11751676},
 };
 inline std::map<std::string, uint32_t> BuildITEMS()
 {
@@ -4890,241 +4848,220 @@ inline constexpr std::pair<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID_RAW[] = 
     { 41253, 11501460 }, // "Craft: Blue Workman's Shirt (#41253)"
     { 41254, 11501461 }, // "Craft: Rustic Workman's Shirt (#41254)"
     { 41255, 11501462 }, // "Craft: Green Workman's Shirt (#41255)"
-    { 41285, 11501463 }, // "Craft: Chaotic Skyflare Diamond (#41285)"
-    { 41307, 11501464 }, // "Craft: Destructive Skyflare Diamond (#41307)"
-    { 41333, 11501465 }, // "Craft: Ember Skyflare Diamond (#41333)"
-    { 41335, 11501466 }, // "Craft: Enigmatic Skyflare Diamond (#41335)"
-    { 41339, 11501467 }, // "Craft: Swift Skyflare Diamond (#41339)"
-    { 41375, 11501468 }, // "Craft: Tireless Skyflare Diamond (#41375)"
-    { 41376, 11501469 }, // "Craft: Revitalizing Skyflare Diamond (#41376)"
-    { 41377, 11501470 }, // "Craft: Effulgent Skyflare Diamond (#41377)"
-    { 41378, 11501471 }, // "Craft: Forlorn Skyflare Diamond (#41378)"
-    { 41379, 11501472 }, // "Craft: Impassive Skyflare Diamond (#41379)"
-    { 41380, 11501473 }, // "Craft: Austere Earthsiege Diamond (#41380)"
-    { 41381, 11501474 }, // "Craft: Persistent Earthsiege Diamond (#41381)"
-    { 41382, 11501475 }, // "Craft: Trenchant Earthsiege Diamond (#41382)"
-    { 41385, 11501476 }, // "Craft: Invigorating Earthsiege Diamond (#41385)"
-    { 41389, 11501477 }, // "Craft: Beaming Earthsiege Diamond (#41389)"
-    { 41395, 11501478 }, // "Craft: Bracing Earthsiege Diamond (#41395)"
-    { 41396, 11501479 }, // "Craft: Eternal Earthsiege Diamond (#41396)"
-    { 41397, 11501480 }, // "Craft: Powerful Earthsiege Diamond (#41397)"
-    { 41398, 11501481 }, // "Craft: Relentless Earthsiege Diamond (#41398)"
-    { 41400, 11501482 }, // "Craft: Thundering Skyflare Diamond (#41400)"
-    { 41401, 11501483 }, // "Craft: Insightful Earthsiege Diamond (#41401)"
-    { 41508, 11501484 }, // "Craft: Mechano-hog (#41508)"
-    { 41593, 11501485 }, // "Craft: Ebonweave (#41593)"
-    { 41594, 11501486 }, // "Craft: Moonshroud (#41594)"
-    { 41595, 11501487 }, // "Craft: Spellweave (#41595)"
-    { 41597, 11501488 }, // "Craft: Abyssal Bag (#41597)"
-    { 41598, 11501489 }, // "Craft: Mysterious Bag (#41598)"
-    { 41599, 11501490 }, // "Craft: Frostweave Bag (#41599)"
-    { 41600, 11501491 }, // "Craft: Glacial Bag (#41600)"
-    { 41602, 11501492 }, // "Craft: Brilliant Spellthread (#41602)"
-    { 41604, 11501493 }, // "Craft: Sapphire Spellthread (#41604)"
-    { 41609, 11501494 }, // "Craft: Wispcloak (#41609)"
-    { 41610, 11501495 }, // "Craft: Deathchill Cloak (#41610)"
-    { 41984, 11501496 }, // "Craft: Hat of Wintry Doom (#41984)"
-    { 41985, 11501497 }, // "Craft: Silky Iceshard Boots (#41985)"
-    { 41986, 11501498 }, // "Craft: Deep Frozen Cord (#41986)"
-    { 42093, 11501499 }, // "Craft: Frostmoon Pants (#42093)"
-    { 42095, 11501500 }, // "Craft: Light Blessed Mittens (#42095)"
-    { 42096, 11501501 }, // "Craft: Aurora Slippers (#42096)"
-    { 42100, 11501502 }, // "Craft: Moonshroud Robe (#42100)"
-    { 42101, 11501503 }, // "Craft: Ebonweave Robe (#42101)"
-    { 42102, 11501504 }, // "Craft: Spellweave Robe (#42102)"
-    { 42103, 11501505 }, // "Craft: Moonshroud Gloves (#42103)"
-    { 42111, 11501506 }, // "Craft: Ebonweave Gloves (#42111)"
-    { 42113, 11501507 }, // "Craft: Spellweave Gloves (#42113)"
-    { 42142, 11501508 }, // "Craft: Bold Dragon's Eye (#42142)"
-    { 42143, 11501509 }, // "Craft: Delicate Dragon's Eye (#42143)"
-    { 42144, 11501510 }, // "Craft: Runed Dragon's Eye (#42144)"
-    { 42145, 11501511 }, // "Craft: Sparkling Dragon's Eye (#42145)"
-    { 42146, 11501512 }, // "Craft: Lustrous Dragon's Eye (#42146)"
-    { 42148, 11501513 }, // "Craft: Brilliant Dragon's Eye (#42148)"
-    { 42149, 11501514 }, // "Craft: Smooth Dragon's Eye (#42149)"
-    { 42150, 11501515 }, // "Craft: Quick Dragon's Eye (#42150)"
-    { 42151, 11501516 }, // "Craft: Subtle Dragon's Eye (#42151)"
-    { 42152, 11501517 }, // "Craft: Flashing Dragon's Eye (#42152)"
-    { 42153, 11501518 }, // "Craft: Fractured Dragon's Eye (#42153)"
-    { 42154, 11501519 }, // "Craft: Precise Dragon's Eye (#42154)"
-    { 42155, 11501520 }, // "Craft: Stormy Dragon's Eye (#42155)"
-    { 42156, 11501521 }, // "Craft: Rigid Dragon's Eye (#42156)"
-    { 42157, 11501522 }, // "Craft: Thick Dragon's Eye (#42157)"
-    { 42158, 11501523 }, // "Craft: Mystic Dragon's Eye (#42158)"
-    { 42642, 11501524 }, // "Craft: Titanium Impact Band (#42642)"
-    { 42643, 11501525 }, // "Craft: Titanium Earthguard Ring (#42643)"
-    { 42644, 11501526 }, // "Craft: Titanium Spellshock Ring (#42644)"
-    { 42645, 11501527 }, // "Craft: Titanium Impact Choker (#42645)"
-    { 42646, 11501528 }, // "Craft: Titanium Earthguard Chain (#42646)"
-    { 42647, 11501529 }, // "Craft: Titanium Spellshock Necklace (#42647)"
-    { 42993, 11501530 }, // "Craft: Spicy Fried Herring (#42993)"
-    { 42994, 11501531 }, // "Craft: Rhinolicious Wormsteak (#42994)"
-    { 42995, 11501532 }, // "Craft: Hearty Rhino (#42995)"
-    { 42996, 11501533 }, // "Craft: Snapper Extreme (#42996)"
-    { 42997, 11501534 }, // "Craft: Blackened Worg Steak (#42997)"
-    { 42998, 11501535 }, // "Craft: Cuttlesteak (#42998)"
-    { 42999, 11501536 }, // "Craft: Blackened Dragonfin (#42999)"
-    { 43000, 11501537 }, // "Craft: Dragonfin Filet (#43000)"
-    { 43001, 11501538 }, // "Craft: Tracker Snacks (#43001)"
-    { 43004, 11501539 }, // "Craft: Critter Bites (#43004)"
-    { 43005, 11501540 }, // "Craft: Spiced Mammoth Treats (#43005)"
-    { 43015, 11501541 }, // "Craft: Fish Feast (#43015)"
-    { 43250, 11501542 }, // "Craft: Ring of Earthen Might (#43250)"
-    { 43251, 11501543 }, // "Craft: Ring of Scarlet Shadows (#43251)"
-    { 43252, 11501544 }, // "Craft: Windfire Band (#43252)"
-    { 43253, 11501545 }, // "Craft: Ring of Northern Tears (#43253)"
-    { 43260, 11501546 }, // "Craft: Eviscerator's Facemask (#43260)"
-    { 43261, 11501547 }, // "Craft: Overcast Headguard (#43261)"
-    { 43262, 11501548 }, // "Craft: Overcast Spaulders (#43262)"
-    { 43263, 11501549 }, // "Craft: Overcast Chestguard (#43263)"
-    { 43264, 11501550 }, // "Craft: Overcast Bracers (#43264)"
-    { 43265, 11501551 }, // "Craft: Overcast Handwraps (#43265)"
-    { 43266, 11501552 }, // "Craft: Overcast Belt (#43266)"
-    { 43271, 11501553 }, // "Craft: Overcast Leggings (#43271)"
-    { 43273, 11501554 }, // "Craft: Overcast Boots (#43273)"
-    { 43433, 11501555 }, // "Craft: Eviscerator's Shoulderpads (#43433)"
-    { 43434, 11501556 }, // "Craft: Eviscerator's Chestguard (#43434)"
-    { 43435, 11501557 }, // "Craft: Eviscerator's Bindings (#43435)"
-    { 43436, 11501558 }, // "Craft: Eviscerator's Gauntlets (#43436)"
-    { 43437, 11501559 }, // "Craft: Eviscerator's Waistguard (#43437)"
-    { 43438, 11501560 }, // "Craft: Eviscerator's Legguards (#43438)"
-    { 43439, 11501561 }, // "Craft: Eviscerator's Treads (#43439)"
-    { 43442, 11501562 }, // "Craft: Swiftarrow Belt (#43442)"
-    { 43443, 11501563 }, // "Craft: Swiftarrow Boots (#43443)"
-    { 43444, 11501564 }, // "Craft: Swiftarrow Bracers (#43444)"
-    { 43445, 11501565 }, // "Craft: Swiftarrow Hauberk (#43445)"
-    { 43446, 11501566 }, // "Craft: Swiftarrow Gauntlets (#43446)"
-    { 43447, 11501567 }, // "Craft: Swiftarrow Helm (#43447)"
-    { 43448, 11501568 }, // "Craft: Swiftarrow Leggings (#43448)"
-    { 43449, 11501569 }, // "Craft: Swiftarrow Shoulderguards (#43449)"
-    { 43450, 11501570 }, // "Craft: Stormhide Belt (#43450)"
-    { 43451, 11501571 }, // "Craft: Stormhide Stompers (#43451)"
-    { 43452, 11501572 }, // "Craft: Stormhide Wristguards (#43452)"
-    { 43453, 11501573 }, // "Craft: Stormhide Hauberk (#43453)"
-    { 43454, 11501574 }, // "Craft: Stormhide Grips (#43454)"
-    { 43455, 11501575 }, // "Craft: Stormhide Crown (#43455)"
-    { 43456, 11501576 }, // "Craft: Stormhide Legguards (#43456)"
-    { 43457, 11501577 }, // "Craft: Stormhide Shoulders (#43457)"
-    { 43458, 11501578 }, // "Craft: Giantmaim Legguards (#43458)"
-    { 43459, 11501579 }, // "Craft: Giantmaim Bracers (#43459)"
-    { 43461, 11501580 }, // "Craft: Revenant's Breastplate (#43461)"
-    { 43469, 11501581 }, // "Craft: Revenant's Treads (#43469)"
-    { 43478, 11501582 }, // "Craft: Gigantic Feast (#43478)"
-    { 43480, 11501583 }, // "Craft: Small Feast (#43480)"
-    { 43481, 11501584 }, // "Craft: Trollwoven Spaulders (#43481)"
-    { 43482, 11501585 }, // "Craft: Savage Titanium Ring (#43482)"
-    { 43484, 11501586 }, // "Craft: Trollwoven Girdle (#43484)"
-    { 43488, 11501587 }, // "Craft: Last Weeks Mammoth (#43488)"
-    { 43490, 11501588 }, // "Craft: Tasty Cupcake (#43490)"
-    { 43491, 11501589 }, // "Craft: Bad Clams (#43491)"
-    { 43492, 11501590 }, // "Craft: Haunted Herring (#43492)"
-    { 43495, 11501591 }, // "Craft: Earthgiving Legguards (#43495)"
-    { 43498, 11501592 }, // "Craft: Savage Titanium Band (#43498)"
-    { 43502, 11501593 }, // "Craft: Earthgiving Boots (#43502)"
-    { 43518, 11501594 }, // "Craft: Conjured Mana Pie (#43518)"
-    { 43523, 11501595 }, // "Craft: Conjured Mana Strudel (#43523)"
-    { 43582, 11501596 }, // "Craft: Titanium Frostguard Ring (#43582)"
-    { 43590, 11501597 }, // "Craft: Polar Vest (#43590)"
-    { 43591, 11501598 }, // "Craft: Polar Cord (#43591)"
-    { 43592, 11501599 }, // "Craft: Polar Boots (#43592)"
-    { 43593, 11501600 }, // "Craft: Icy Scale Chestguard (#43593)"
-    { 43594, 11501601 }, // "Craft: Icy Scale Belt (#43594)"
-    { 43595, 11501602 }, // "Craft: Icy Scale Boots (#43595)"
-    { 44413, 11501603 }, // "Craft: Mekgineer's Chopper (#44413)"
-    { 44447, 11501604 }, // "Craft: Dragonscale Ammo Pouch (#44447)"
-    { 44448, 11501605 }, // "Craft: Nerubian Reinforced Quiver (#44448)"
-    { 44836, 11501606 }, // "Craft: Pumpkin Pie (#44836)"
-    { 44837, 11501607 }, // "Craft: Spice Bread Stuffing (#44837)"
-    { 44838, 11501608 }, // "Craft: Slow-Roasted Turkey (#44838)"
-    { 44839, 11501609 }, // "Craft: Candied Sweet Potato (#44839)"
-    { 44840, 11501610 }, // "Craft: Cranberry Chutney (#44840)"
-    { 44930, 11501611 }, // "Craft: Windripper Boots (#44930)"
-    { 44931, 11501612 }, // "Craft: Windripper Leggings (#44931)"
-    { 44936, 11501613 }, // "Craft: Titanium Plating (#44936)"
-    { 44953, 11501614 }, // "Craft: Worg Tartare (#44953)"
-    { 45550, 11501615 }, // "Craft: Belt of the Titans (#45550)"
-    { 45551, 11501616 }, // "Craft: Indestructible Plate Girdle (#45551)"
-    { 45552, 11501617 }, // "Craft: Plate Girdle of Righteousness (#45552)"
-    { 45553, 11501618 }, // "Craft: Belt of Dragons (#45553)"
-    { 45554, 11501619 }, // "Craft: Blue Belt of Chaos (#45554)"
-    { 45555, 11501620 }, // "Craft: Death-warmed Belt (#45555)"
-    { 45556, 11501621 }, // "Craft: Belt of Arctic Life (#45556)"
-    { 45557, 11501622 }, // "Craft: Sash of Ancient Power (#45557)"
-    { 45558, 11501623 }, // "Craft: Cord of the White Dawn (#45558)"
-    { 45559, 11501624 }, // "Craft: Battlelord's Plate Boots (#45559)"
-    { 45560, 11501625 }, // "Craft: Spiked Deathdealers (#45560)"
-    { 45561, 11501626 }, // "Craft: Treads of Destiny (#45561)"
-    { 45562, 11501627 }, // "Craft: Boots of Living Scale (#45562)"
-    { 45563, 11501628 }, // "Craft: Lightning Grounded Boots (#45563)"
-    { 45564, 11501629 }, // "Craft: Footpads of Silence (#45564)"
-    { 45565, 11501630 }, // "Craft: Boots of Wintry Endurance (#45565)"
-    { 45566, 11501631 }, // "Craft: Spellslinger's Slippers (#45566)"
-    { 45567, 11501632 }, // "Craft: Savior's Slippers (#45567)"
-    { 45773, 11501633 }, // "Craft: Emerald Bag (#45773)"
-    { 46691, 11501634 }, // "Craft: Bread of the Dead (#46691)"
-    { 47499, 11501635 }, // "Craft: Flask of the North (#47499)"
-    { 47570, 11501636 }, // "Craft: Saronite Swordbreakers (#47570)"
-    { 47571, 11501637 }, // "Craft: Saronite Swordbreakers (#47571)"
-    { 47572, 11501638 }, // "Craft: Titanium Spikeguards (#47572)"
-    { 47573, 11501639 }, // "Craft: Titanium Spikeguards (#47573)"
-    { 47574, 11501640 }, // "Craft: Sunforged Bracers (#47574)"
-    { 47575, 11501641 }, // "Craft: Sunforged Bracers (#47575)"
-    { 47576, 11501642 }, // "Craft: Crusader's Dragonscale Bracers (#47576)"
-    { 47577, 11501643 }, // "Craft: Crusader's Dragonscale Bracers (#47577)"
-    { 47579, 11501644 }, // "Craft: Black Chitin Bracers (#47579)"
-    { 47580, 11501645 }, // "Craft: Black Chitin Bracers (#47580)"
-    { 47581, 11501646 }, // "Craft: Bracers of Swift Death (#47581)"
-    { 47582, 11501647 }, // "Craft: Bracers of Swift Death (#47582)"
-    { 47583, 11501648 }, // "Craft: Moonshadow Armguards (#47583)"
-    { 47584, 11501649 }, // "Craft: Moonshadow Armguards (#47584)"
-    { 47585, 11501650 }, // "Craft: Bejeweled Wizard's Bracers (#47585)"
-    { 47586, 11501651 }, // "Craft: Bejeweled Wizard's Bracers (#47586)"
-    { 47587, 11501652 }, // "Craft: Royal Moonshroud Bracers (#47587)"
-    { 47588, 11501653 }, // "Craft: Royal Moonshroud Bracers (#47588)"
-    { 47589, 11501654 }, // "Craft: Titanium Razorplate (#47589)"
-    { 47590, 11501655 }, // "Craft: Titanium Razorplate (#47590)"
-    { 47591, 11501656 }, // "Craft: Breastplate of the White Knight (#47591)"
-    { 47592, 11501657 }, // "Craft: Breastplate of the White Knight (#47592)"
-    { 47593, 11501658 }, // "Craft: Sunforged Breastplate (#47593)"
-    { 47594, 11501659 }, // "Craft: Sunforged Breastplate (#47594)"
-    { 47595, 11501660 }, // "Craft: Crusader's Dragonscale Breastplate (#47595)"
-    { 47596, 11501661 }, // "Craft: Crusader's Dragonscale Breastplate (#47596)"
-    { 47597, 11501662 }, // "Craft: Ensorcelled Nerubian Breastplate (#47597)"
-    { 47598, 11501663 }, // "Craft: Ensorcelled Nerubian Breastplate (#47598)"
-    { 47599, 11501664 }, // "Craft: Knightbane Carapace (#47599)"
-    { 47600, 11501665 }, // "Craft: Knightbane Carapace (#47600)"
-    { 47601, 11501666 }, // "Craft: Lunar Eclipse Robes (#47601)"
-    { 47602, 11501667 }, // "Craft: Lunar Eclipse Robes (#47602)"
-    { 47603, 11501668 }, // "Craft: Merlin's Robe (#47603)"
-    { 47604, 11501669 }, // "Craft: Merlin's Robe (#47604)"
-    { 47605, 11501670 }, // "Craft: Royal Moonshroud Robe (#47605)"
-    { 47606, 11501671 }, // "Craft: Royal Moonshroud Robe (#47606)"
-    { 49040, 11501672 }, // "Craft: Jeeves (#49040)"
-    { 49110, 11501673 }, // "Craft: Nightmare Tear (#49110)"
-    { 49890, 11501674 }, // "Craft: Deathfrost Boots (#49890)"
-    { 49891, 11501675 }, // "Craft: Leggings of Woven Death (#49891)"
-    { 49892, 11501676 }, // "Craft: Lightweave Leggings (#49892)"
-    { 49893, 11501677 }, // "Craft: Sandals of Consecration (#49893)"
-    { 49894, 11501678 }, // "Craft: Blessed Cenarion Boots (#49894)"
-    { 49895, 11501679 }, // "Craft: Footpads of Impending Death (#49895)"
-    { 49896, 11501680 }, // "Craft: Earthsoul Boots (#49896)"
-    { 49897, 11501681 }, // "Craft: Rock-Steady Treads (#49897)"
-    { 49898, 11501682 }, // "Craft: Legwraps of Unleashed Nature (#49898)"
-    { 49899, 11501683 }, // "Craft: Bladeborn Leggings (#49899)"
-    { 49900, 11501684 }, // "Craft: Lightning-Infused Leggings (#49900)"
-    { 49901, 11501685 }, // "Craft: Draconic Bonesplinter Legguards (#49901)"
-    { 49902, 11501686 }, // "Craft: Puresteel Legplates (#49902)"
-    { 49903, 11501687 }, // "Craft: Legplates of Painful Death (#49903)"
-    { 49904, 11501688 }, // "Craft: Pillars of Might (#49904)"
-    { 49905, 11501689 }, // "Craft: Protectors of Life (#49905)"
-    { 49906, 11501690 }, // "Craft: Hellfrozen Bonegrinders (#49906)"
-    { 49907, 11501691 }, // "Craft: Boots of Kingly Upheaval (#49907)"
-    { 50045, 11501692 }, // "Craft: Glyph of Eternal Water (#50045)"
-    { 50077, 11501693 }, // "Craft: Glyph of Quick Decay (#50077)"
-    { 50125, 11501694 }, // "Craft: Glyph of Rapid Rejuvenation (#50125)"
-    { 52020, 11501695 }, // "Craft: Shatter Rounds (#52020)"
-    { 52021, 11501696 }, // "Craft: Iceblade Arrow (#52021)"
-    { 54797, 11501697 }, // "Craft: Frosty Flying Carpet (#54797)"
+    { 41508, 11501463 }, // "Craft: Mechano-hog (#41508)"
+    { 41593, 11501464 }, // "Craft: Ebonweave (#41593)"
+    { 41594, 11501465 }, // "Craft: Moonshroud (#41594)"
+    { 41595, 11501466 }, // "Craft: Spellweave (#41595)"
+    { 41597, 11501467 }, // "Craft: Abyssal Bag (#41597)"
+    { 41598, 11501468 }, // "Craft: Mysterious Bag (#41598)"
+    { 41599, 11501469 }, // "Craft: Frostweave Bag (#41599)"
+    { 41600, 11501470 }, // "Craft: Glacial Bag (#41600)"
+    { 41602, 11501471 }, // "Craft: Brilliant Spellthread (#41602)"
+    { 41604, 11501472 }, // "Craft: Sapphire Spellthread (#41604)"
+    { 41609, 11501473 }, // "Craft: Wispcloak (#41609)"
+    { 41610, 11501474 }, // "Craft: Deathchill Cloak (#41610)"
+    { 41984, 11501475 }, // "Craft: Hat of Wintry Doom (#41984)"
+    { 41985, 11501476 }, // "Craft: Silky Iceshard Boots (#41985)"
+    { 41986, 11501477 }, // "Craft: Deep Frozen Cord (#41986)"
+    { 42093, 11501478 }, // "Craft: Frostmoon Pants (#42093)"
+    { 42095, 11501479 }, // "Craft: Light Blessed Mittens (#42095)"
+    { 42096, 11501480 }, // "Craft: Aurora Slippers (#42096)"
+    { 42100, 11501481 }, // "Craft: Moonshroud Robe (#42100)"
+    { 42101, 11501482 }, // "Craft: Ebonweave Robe (#42101)"
+    { 42102, 11501483 }, // "Craft: Spellweave Robe (#42102)"
+    { 42103, 11501484 }, // "Craft: Moonshroud Gloves (#42103)"
+    { 42111, 11501485 }, // "Craft: Ebonweave Gloves (#42111)"
+    { 42113, 11501486 }, // "Craft: Spellweave Gloves (#42113)"
+    { 42142, 11501487 }, // "Craft: Bold Dragon's Eye (#42142)"
+    { 42143, 11501488 }, // "Craft: Delicate Dragon's Eye (#42143)"
+    { 42144, 11501489 }, // "Craft: Runed Dragon's Eye (#42144)"
+    { 42145, 11501490 }, // "Craft: Sparkling Dragon's Eye (#42145)"
+    { 42146, 11501491 }, // "Craft: Lustrous Dragon's Eye (#42146)"
+    { 42148, 11501492 }, // "Craft: Brilliant Dragon's Eye (#42148)"
+    { 42149, 11501493 }, // "Craft: Smooth Dragon's Eye (#42149)"
+    { 42150, 11501494 }, // "Craft: Quick Dragon's Eye (#42150)"
+    { 42151, 11501495 }, // "Craft: Subtle Dragon's Eye (#42151)"
+    { 42152, 11501496 }, // "Craft: Flashing Dragon's Eye (#42152)"
+    { 42153, 11501497 }, // "Craft: Fractured Dragon's Eye (#42153)"
+    { 42154, 11501498 }, // "Craft: Precise Dragon's Eye (#42154)"
+    { 42155, 11501499 }, // "Craft: Stormy Dragon's Eye (#42155)"
+    { 42156, 11501500 }, // "Craft: Rigid Dragon's Eye (#42156)"
+    { 42157, 11501501 }, // "Craft: Thick Dragon's Eye (#42157)"
+    { 42158, 11501502 }, // "Craft: Mystic Dragon's Eye (#42158)"
+    { 42642, 11501503 }, // "Craft: Titanium Impact Band (#42642)"
+    { 42643, 11501504 }, // "Craft: Titanium Earthguard Ring (#42643)"
+    { 42644, 11501505 }, // "Craft: Titanium Spellshock Ring (#42644)"
+    { 42645, 11501506 }, // "Craft: Titanium Impact Choker (#42645)"
+    { 42646, 11501507 }, // "Craft: Titanium Earthguard Chain (#42646)"
+    { 42647, 11501508 }, // "Craft: Titanium Spellshock Necklace (#42647)"
+    { 42993, 11501509 }, // "Craft: Spicy Fried Herring (#42993)"
+    { 42994, 11501510 }, // "Craft: Rhinolicious Wormsteak (#42994)"
+    { 42995, 11501511 }, // "Craft: Hearty Rhino (#42995)"
+    { 42996, 11501512 }, // "Craft: Snapper Extreme (#42996)"
+    { 42997, 11501513 }, // "Craft: Blackened Worg Steak (#42997)"
+    { 42998, 11501514 }, // "Craft: Cuttlesteak (#42998)"
+    { 42999, 11501515 }, // "Craft: Blackened Dragonfin (#42999)"
+    { 43000, 11501516 }, // "Craft: Dragonfin Filet (#43000)"
+    { 43001, 11501517 }, // "Craft: Tracker Snacks (#43001)"
+    { 43004, 11501518 }, // "Craft: Critter Bites (#43004)"
+    { 43005, 11501519 }, // "Craft: Spiced Mammoth Treats (#43005)"
+    { 43015, 11501520 }, // "Craft: Fish Feast (#43015)"
+    { 43250, 11501521 }, // "Craft: Ring of Earthen Might (#43250)"
+    { 43251, 11501522 }, // "Craft: Ring of Scarlet Shadows (#43251)"
+    { 43252, 11501523 }, // "Craft: Windfire Band (#43252)"
+    { 43253, 11501524 }, // "Craft: Ring of Northern Tears (#43253)"
+    { 43260, 11501525 }, // "Craft: Eviscerator's Facemask (#43260)"
+    { 43261, 11501526 }, // "Craft: Overcast Headguard (#43261)"
+    { 43262, 11501527 }, // "Craft: Overcast Spaulders (#43262)"
+    { 43263, 11501528 }, // "Craft: Overcast Chestguard (#43263)"
+    { 43264, 11501529 }, // "Craft: Overcast Bracers (#43264)"
+    { 43265, 11501530 }, // "Craft: Overcast Handwraps (#43265)"
+    { 43266, 11501531 }, // "Craft: Overcast Belt (#43266)"
+    { 43271, 11501532 }, // "Craft: Overcast Leggings (#43271)"
+    { 43273, 11501533 }, // "Craft: Overcast Boots (#43273)"
+    { 43433, 11501534 }, // "Craft: Eviscerator's Shoulderpads (#43433)"
+    { 43434, 11501535 }, // "Craft: Eviscerator's Chestguard (#43434)"
+    { 43435, 11501536 }, // "Craft: Eviscerator's Bindings (#43435)"
+    { 43436, 11501537 }, // "Craft: Eviscerator's Gauntlets (#43436)"
+    { 43437, 11501538 }, // "Craft: Eviscerator's Waistguard (#43437)"
+    { 43438, 11501539 }, // "Craft: Eviscerator's Legguards (#43438)"
+    { 43439, 11501540 }, // "Craft: Eviscerator's Treads (#43439)"
+    { 43442, 11501541 }, // "Craft: Swiftarrow Belt (#43442)"
+    { 43443, 11501542 }, // "Craft: Swiftarrow Boots (#43443)"
+    { 43444, 11501543 }, // "Craft: Swiftarrow Bracers (#43444)"
+    { 43445, 11501544 }, // "Craft: Swiftarrow Hauberk (#43445)"
+    { 43446, 11501545 }, // "Craft: Swiftarrow Gauntlets (#43446)"
+    { 43447, 11501546 }, // "Craft: Swiftarrow Helm (#43447)"
+    { 43448, 11501547 }, // "Craft: Swiftarrow Leggings (#43448)"
+    { 43449, 11501548 }, // "Craft: Swiftarrow Shoulderguards (#43449)"
+    { 43450, 11501549 }, // "Craft: Stormhide Belt (#43450)"
+    { 43451, 11501550 }, // "Craft: Stormhide Stompers (#43451)"
+    { 43452, 11501551 }, // "Craft: Stormhide Wristguards (#43452)"
+    { 43453, 11501552 }, // "Craft: Stormhide Hauberk (#43453)"
+    { 43454, 11501553 }, // "Craft: Stormhide Grips (#43454)"
+    { 43455, 11501554 }, // "Craft: Stormhide Crown (#43455)"
+    { 43456, 11501555 }, // "Craft: Stormhide Legguards (#43456)"
+    { 43457, 11501556 }, // "Craft: Stormhide Shoulders (#43457)"
+    { 43458, 11501557 }, // "Craft: Giantmaim Legguards (#43458)"
+    { 43459, 11501558 }, // "Craft: Giantmaim Bracers (#43459)"
+    { 43461, 11501559 }, // "Craft: Revenant's Breastplate (#43461)"
+    { 43469, 11501560 }, // "Craft: Revenant's Treads (#43469)"
+    { 43478, 11501561 }, // "Craft: Gigantic Feast (#43478)"
+    { 43480, 11501562 }, // "Craft: Small Feast (#43480)"
+    { 43481, 11501563 }, // "Craft: Trollwoven Spaulders (#43481)"
+    { 43482, 11501564 }, // "Craft: Savage Titanium Ring (#43482)"
+    { 43484, 11501565 }, // "Craft: Trollwoven Girdle (#43484)"
+    { 43488, 11501566 }, // "Craft: Last Weeks Mammoth (#43488)"
+    { 43490, 11501567 }, // "Craft: Tasty Cupcake (#43490)"
+    { 43491, 11501568 }, // "Craft: Bad Clams (#43491)"
+    { 43492, 11501569 }, // "Craft: Haunted Herring (#43492)"
+    { 43495, 11501570 }, // "Craft: Earthgiving Legguards (#43495)"
+    { 43498, 11501571 }, // "Craft: Savage Titanium Band (#43498)"
+    { 43502, 11501572 }, // "Craft: Earthgiving Boots (#43502)"
+    { 43518, 11501573 }, // "Craft: Conjured Mana Pie (#43518)"
+    { 43523, 11501574 }, // "Craft: Conjured Mana Strudel (#43523)"
+    { 43582, 11501575 }, // "Craft: Titanium Frostguard Ring (#43582)"
+    { 43590, 11501576 }, // "Craft: Polar Vest (#43590)"
+    { 43591, 11501577 }, // "Craft: Polar Cord (#43591)"
+    { 43592, 11501578 }, // "Craft: Polar Boots (#43592)"
+    { 43593, 11501579 }, // "Craft: Icy Scale Chestguard (#43593)"
+    { 43594, 11501580 }, // "Craft: Icy Scale Belt (#43594)"
+    { 43595, 11501581 }, // "Craft: Icy Scale Boots (#43595)"
+    { 44413, 11501582 }, // "Craft: Mekgineer's Chopper (#44413)"
+    { 44447, 11501583 }, // "Craft: Dragonscale Ammo Pouch (#44447)"
+    { 44448, 11501584 }, // "Craft: Nerubian Reinforced Quiver (#44448)"
+    { 44836, 11501585 }, // "Craft: Pumpkin Pie (#44836)"
+    { 44837, 11501586 }, // "Craft: Spice Bread Stuffing (#44837)"
+    { 44838, 11501587 }, // "Craft: Slow-Roasted Turkey (#44838)"
+    { 44839, 11501588 }, // "Craft: Candied Sweet Potato (#44839)"
+    { 44840, 11501589 }, // "Craft: Cranberry Chutney (#44840)"
+    { 44930, 11501590 }, // "Craft: Windripper Boots (#44930)"
+    { 44931, 11501591 }, // "Craft: Windripper Leggings (#44931)"
+    { 44936, 11501592 }, // "Craft: Titanium Plating (#44936)"
+    { 44953, 11501593 }, // "Craft: Worg Tartare (#44953)"
+    { 45550, 11501594 }, // "Craft: Belt of the Titans (#45550)"
+    { 45551, 11501595 }, // "Craft: Indestructible Plate Girdle (#45551)"
+    { 45552, 11501596 }, // "Craft: Plate Girdle of Righteousness (#45552)"
+    { 45553, 11501597 }, // "Craft: Belt of Dragons (#45553)"
+    { 45554, 11501598 }, // "Craft: Blue Belt of Chaos (#45554)"
+    { 45555, 11501599 }, // "Craft: Death-warmed Belt (#45555)"
+    { 45556, 11501600 }, // "Craft: Belt of Arctic Life (#45556)"
+    { 45557, 11501601 }, // "Craft: Sash of Ancient Power (#45557)"
+    { 45558, 11501602 }, // "Craft: Cord of the White Dawn (#45558)"
+    { 45559, 11501603 }, // "Craft: Battlelord's Plate Boots (#45559)"
+    { 45560, 11501604 }, // "Craft: Spiked Deathdealers (#45560)"
+    { 45561, 11501605 }, // "Craft: Treads of Destiny (#45561)"
+    { 45562, 11501606 }, // "Craft: Boots of Living Scale (#45562)"
+    { 45563, 11501607 }, // "Craft: Lightning Grounded Boots (#45563)"
+    { 45564, 11501608 }, // "Craft: Footpads of Silence (#45564)"
+    { 45565, 11501609 }, // "Craft: Boots of Wintry Endurance (#45565)"
+    { 45566, 11501610 }, // "Craft: Spellslinger's Slippers (#45566)"
+    { 45567, 11501611 }, // "Craft: Savior's Slippers (#45567)"
+    { 45773, 11501612 }, // "Craft: Emerald Bag (#45773)"
+    { 46691, 11501613 }, // "Craft: Bread of the Dead (#46691)"
+    { 47499, 11501614 }, // "Craft: Flask of the North (#47499)"
+    { 47570, 11501615 }, // "Craft: Saronite Swordbreakers (#47570)"
+    { 47571, 11501616 }, // "Craft: Saronite Swordbreakers (#47571)"
+    { 47572, 11501617 }, // "Craft: Titanium Spikeguards (#47572)"
+    { 47573, 11501618 }, // "Craft: Titanium Spikeguards (#47573)"
+    { 47574, 11501619 }, // "Craft: Sunforged Bracers (#47574)"
+    { 47575, 11501620 }, // "Craft: Sunforged Bracers (#47575)"
+    { 47576, 11501621 }, // "Craft: Crusader's Dragonscale Bracers (#47576)"
+    { 47577, 11501622 }, // "Craft: Crusader's Dragonscale Bracers (#47577)"
+    { 47579, 11501623 }, // "Craft: Black Chitin Bracers (#47579)"
+    { 47580, 11501624 }, // "Craft: Black Chitin Bracers (#47580)"
+    { 47581, 11501625 }, // "Craft: Bracers of Swift Death (#47581)"
+    { 47582, 11501626 }, // "Craft: Bracers of Swift Death (#47582)"
+    { 47583, 11501627 }, // "Craft: Moonshadow Armguards (#47583)"
+    { 47584, 11501628 }, // "Craft: Moonshadow Armguards (#47584)"
+    { 47585, 11501629 }, // "Craft: Bejeweled Wizard's Bracers (#47585)"
+    { 47586, 11501630 }, // "Craft: Bejeweled Wizard's Bracers (#47586)"
+    { 47587, 11501631 }, // "Craft: Royal Moonshroud Bracers (#47587)"
+    { 47588, 11501632 }, // "Craft: Royal Moonshroud Bracers (#47588)"
+    { 47589, 11501633 }, // "Craft: Titanium Razorplate (#47589)"
+    { 47590, 11501634 }, // "Craft: Titanium Razorplate (#47590)"
+    { 47591, 11501635 }, // "Craft: Breastplate of the White Knight (#47591)"
+    { 47592, 11501636 }, // "Craft: Breastplate of the White Knight (#47592)"
+    { 47593, 11501637 }, // "Craft: Sunforged Breastplate (#47593)"
+    { 47594, 11501638 }, // "Craft: Sunforged Breastplate (#47594)"
+    { 47595, 11501639 }, // "Craft: Crusader's Dragonscale Breastplate (#47595)"
+    { 47596, 11501640 }, // "Craft: Crusader's Dragonscale Breastplate (#47596)"
+    { 47597, 11501641 }, // "Craft: Ensorcelled Nerubian Breastplate (#47597)"
+    { 47598, 11501642 }, // "Craft: Ensorcelled Nerubian Breastplate (#47598)"
+    { 47599, 11501643 }, // "Craft: Knightbane Carapace (#47599)"
+    { 47600, 11501644 }, // "Craft: Knightbane Carapace (#47600)"
+    { 47601, 11501645 }, // "Craft: Lunar Eclipse Robes (#47601)"
+    { 47602, 11501646 }, // "Craft: Lunar Eclipse Robes (#47602)"
+    { 47603, 11501647 }, // "Craft: Merlin's Robe (#47603)"
+    { 47604, 11501648 }, // "Craft: Merlin's Robe (#47604)"
+    { 47605, 11501649 }, // "Craft: Royal Moonshroud Robe (#47605)"
+    { 47606, 11501650 }, // "Craft: Royal Moonshroud Robe (#47606)"
+    { 49040, 11501651 }, // "Craft: Jeeves (#49040)"
+    { 49110, 11501652 }, // "Craft: Nightmare Tear (#49110)"
+    { 49890, 11501653 }, // "Craft: Deathfrost Boots (#49890)"
+    { 49891, 11501654 }, // "Craft: Leggings of Woven Death (#49891)"
+    { 49892, 11501655 }, // "Craft: Lightweave Leggings (#49892)"
+    { 49893, 11501656 }, // "Craft: Sandals of Consecration (#49893)"
+    { 49894, 11501657 }, // "Craft: Blessed Cenarion Boots (#49894)"
+    { 49895, 11501658 }, // "Craft: Footpads of Impending Death (#49895)"
+    { 49896, 11501659 }, // "Craft: Earthsoul Boots (#49896)"
+    { 49897, 11501660 }, // "Craft: Rock-Steady Treads (#49897)"
+    { 49898, 11501661 }, // "Craft: Legwraps of Unleashed Nature (#49898)"
+    { 49899, 11501662 }, // "Craft: Bladeborn Leggings (#49899)"
+    { 49900, 11501663 }, // "Craft: Lightning-Infused Leggings (#49900)"
+    { 49901, 11501664 }, // "Craft: Draconic Bonesplinter Legguards (#49901)"
+    { 49902, 11501665 }, // "Craft: Puresteel Legplates (#49902)"
+    { 49903, 11501666 }, // "Craft: Legplates of Painful Death (#49903)"
+    { 49904, 11501667 }, // "Craft: Pillars of Might (#49904)"
+    { 49905, 11501668 }, // "Craft: Protectors of Life (#49905)"
+    { 49906, 11501669 }, // "Craft: Hellfrozen Bonegrinders (#49906)"
+    { 49907, 11501670 }, // "Craft: Boots of Kingly Upheaval (#49907)"
+    { 50045, 11501671 }, // "Craft: Glyph of Eternal Water (#50045)"
+    { 50077, 11501672 }, // "Craft: Glyph of Quick Decay (#50077)"
+    { 50125, 11501673 }, // "Craft: Glyph of Rapid Rejuvenation (#50125)"
+    { 52020, 11501674 }, // "Craft: Shatter Rounds (#52020)"
+    { 52021, 11501675 }, // "Craft: Iceblade Arrow (#52021)"
+    { 54797, 11501676 }, // "Craft: Frosty Flying Carpet (#54797)"
 };
 inline std::unordered_map<uint32_t, int64_t> BuildITEM_ENTRY_TO_LOCATION_ID()
 {
@@ -6598,241 +6535,220 @@ inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[]
     { 11751460, 41253 }, // "Craftsanity Item: Blue Workman's Shirt (#41253)"
     { 11751461, 41254 }, // "Craftsanity Item: Rustic Workman's Shirt (#41254)"
     { 11751462, 41255 }, // "Craftsanity Item: Green Workman's Shirt (#41255)"
-    { 11751463, 41285 }, // "Craftsanity Item: Chaotic Skyflare Diamond (#41285)"
-    { 11751464, 41307 }, // "Craftsanity Item: Destructive Skyflare Diamond (#41307)"
-    { 11751465, 41333 }, // "Craftsanity Item: Ember Skyflare Diamond (#41333)"
-    { 11751466, 41335 }, // "Craftsanity Item: Enigmatic Skyflare Diamond (#41335)"
-    { 11751467, 41339 }, // "Craftsanity Item: Swift Skyflare Diamond (#41339)"
-    { 11751468, 41375 }, // "Craftsanity Item: Tireless Skyflare Diamond (#41375)"
-    { 11751469, 41376 }, // "Craftsanity Item: Revitalizing Skyflare Diamond (#41376)"
-    { 11751470, 41377 }, // "Craftsanity Item: Effulgent Skyflare Diamond (#41377)"
-    { 11751471, 41378 }, // "Craftsanity Item: Forlorn Skyflare Diamond (#41378)"
-    { 11751472, 41379 }, // "Craftsanity Item: Impassive Skyflare Diamond (#41379)"
-    { 11751473, 41380 }, // "Craftsanity Item: Austere Earthsiege Diamond (#41380)"
-    { 11751474, 41381 }, // "Craftsanity Item: Persistent Earthsiege Diamond (#41381)"
-    { 11751475, 41382 }, // "Craftsanity Item: Trenchant Earthsiege Diamond (#41382)"
-    { 11751476, 41385 }, // "Craftsanity Item: Invigorating Earthsiege Diamond (#41385)"
-    { 11751477, 41389 }, // "Craftsanity Item: Beaming Earthsiege Diamond (#41389)"
-    { 11751478, 41395 }, // "Craftsanity Item: Bracing Earthsiege Diamond (#41395)"
-    { 11751479, 41396 }, // "Craftsanity Item: Eternal Earthsiege Diamond (#41396)"
-    { 11751480, 41397 }, // "Craftsanity Item: Powerful Earthsiege Diamond (#41397)"
-    { 11751481, 41398 }, // "Craftsanity Item: Relentless Earthsiege Diamond (#41398)"
-    { 11751482, 41400 }, // "Craftsanity Item: Thundering Skyflare Diamond (#41400)"
-    { 11751483, 41401 }, // "Craftsanity Item: Insightful Earthsiege Diamond (#41401)"
-    { 11751484, 41508 }, // "Craftsanity Item: Mechano-hog (#41508)"
-    { 11751485, 41593 }, // "Craftsanity Item: Ebonweave (#41593)"
-    { 11751486, 41594 }, // "Craftsanity Item: Moonshroud (#41594)"
-    { 11751487, 41595 }, // "Craftsanity Item: Spellweave (#41595)"
-    { 11751488, 41597 }, // "Craftsanity Item: Abyssal Bag (#41597)"
-    { 11751489, 41598 }, // "Craftsanity Item: Mysterious Bag (#41598)"
-    { 11751490, 41599 }, // "Craftsanity Item: Frostweave Bag (#41599)"
-    { 11751491, 41600 }, // "Craftsanity Item: Glacial Bag (#41600)"
-    { 11751492, 41602 }, // "Craftsanity Item: Brilliant Spellthread (#41602)"
-    { 11751493, 41604 }, // "Craftsanity Item: Sapphire Spellthread (#41604)"
-    { 11751494, 41609 }, // "Craftsanity Item: Wispcloak (#41609)"
-    { 11751495, 41610 }, // "Craftsanity Item: Deathchill Cloak (#41610)"
-    { 11751496, 41984 }, // "Craftsanity Item: Hat of Wintry Doom (#41984)"
-    { 11751497, 41985 }, // "Craftsanity Item: Silky Iceshard Boots (#41985)"
-    { 11751498, 41986 }, // "Craftsanity Item: Deep Frozen Cord (#41986)"
-    { 11751499, 42093 }, // "Craftsanity Item: Frostmoon Pants (#42093)"
-    { 11751500, 42095 }, // "Craftsanity Item: Light Blessed Mittens (#42095)"
-    { 11751501, 42096 }, // "Craftsanity Item: Aurora Slippers (#42096)"
-    { 11751502, 42100 }, // "Craftsanity Item: Moonshroud Robe (#42100)"
-    { 11751503, 42101 }, // "Craftsanity Item: Ebonweave Robe (#42101)"
-    { 11751504, 42102 }, // "Craftsanity Item: Spellweave Robe (#42102)"
-    { 11751505, 42103 }, // "Craftsanity Item: Moonshroud Gloves (#42103)"
-    { 11751506, 42111 }, // "Craftsanity Item: Ebonweave Gloves (#42111)"
-    { 11751507, 42113 }, // "Craftsanity Item: Spellweave Gloves (#42113)"
-    { 11751508, 42142 }, // "Craftsanity Item: Bold Dragon's Eye (#42142)"
-    { 11751509, 42143 }, // "Craftsanity Item: Delicate Dragon's Eye (#42143)"
-    { 11751510, 42144 }, // "Craftsanity Item: Runed Dragon's Eye (#42144)"
-    { 11751511, 42145 }, // "Craftsanity Item: Sparkling Dragon's Eye (#42145)"
-    { 11751512, 42146 }, // "Craftsanity Item: Lustrous Dragon's Eye (#42146)"
-    { 11751513, 42148 }, // "Craftsanity Item: Brilliant Dragon's Eye (#42148)"
-    { 11751514, 42149 }, // "Craftsanity Item: Smooth Dragon's Eye (#42149)"
-    { 11751515, 42150 }, // "Craftsanity Item: Quick Dragon's Eye (#42150)"
-    { 11751516, 42151 }, // "Craftsanity Item: Subtle Dragon's Eye (#42151)"
-    { 11751517, 42152 }, // "Craftsanity Item: Flashing Dragon's Eye (#42152)"
-    { 11751518, 42153 }, // "Craftsanity Item: Fractured Dragon's Eye (#42153)"
-    { 11751519, 42154 }, // "Craftsanity Item: Precise Dragon's Eye (#42154)"
-    { 11751520, 42155 }, // "Craftsanity Item: Stormy Dragon's Eye (#42155)"
-    { 11751521, 42156 }, // "Craftsanity Item: Rigid Dragon's Eye (#42156)"
-    { 11751522, 42157 }, // "Craftsanity Item: Thick Dragon's Eye (#42157)"
-    { 11751523, 42158 }, // "Craftsanity Item: Mystic Dragon's Eye (#42158)"
-    { 11751524, 42642 }, // "Craftsanity Item: Titanium Impact Band (#42642)"
-    { 11751525, 42643 }, // "Craftsanity Item: Titanium Earthguard Ring (#42643)"
-    { 11751526, 42644 }, // "Craftsanity Item: Titanium Spellshock Ring (#42644)"
-    { 11751527, 42645 }, // "Craftsanity Item: Titanium Impact Choker (#42645)"
-    { 11751528, 42646 }, // "Craftsanity Item: Titanium Earthguard Chain (#42646)"
-    { 11751529, 42647 }, // "Craftsanity Item: Titanium Spellshock Necklace (#42647)"
-    { 11751530, 42993 }, // "Craftsanity Item: Spicy Fried Herring (#42993)"
-    { 11751531, 42994 }, // "Craftsanity Item: Rhinolicious Wormsteak (#42994)"
-    { 11751532, 42995 }, // "Craftsanity Item: Hearty Rhino (#42995)"
-    { 11751533, 42996 }, // "Craftsanity Item: Snapper Extreme (#42996)"
-    { 11751534, 42997 }, // "Craftsanity Item: Blackened Worg Steak (#42997)"
-    { 11751535, 42998 }, // "Craftsanity Item: Cuttlesteak (#42998)"
-    { 11751536, 42999 }, // "Craftsanity Item: Blackened Dragonfin (#42999)"
-    { 11751537, 43000 }, // "Craftsanity Item: Dragonfin Filet (#43000)"
-    { 11751538, 43001 }, // "Craftsanity Item: Tracker Snacks (#43001)"
-    { 11751539, 43004 }, // "Craftsanity Item: Critter Bites (#43004)"
-    { 11751540, 43005 }, // "Craftsanity Item: Spiced Mammoth Treats (#43005)"
-    { 11751541, 43015 }, // "Craftsanity Item: Fish Feast (#43015)"
-    { 11751542, 43250 }, // "Craftsanity Item: Ring of Earthen Might (#43250)"
-    { 11751543, 43251 }, // "Craftsanity Item: Ring of Scarlet Shadows (#43251)"
-    { 11751544, 43252 }, // "Craftsanity Item: Windfire Band (#43252)"
-    { 11751545, 43253 }, // "Craftsanity Item: Ring of Northern Tears (#43253)"
-    { 11751546, 43260 }, // "Craftsanity Item: Eviscerator's Facemask (#43260)"
-    { 11751547, 43261 }, // "Craftsanity Item: Overcast Headguard (#43261)"
-    { 11751548, 43262 }, // "Craftsanity Item: Overcast Spaulders (#43262)"
-    { 11751549, 43263 }, // "Craftsanity Item: Overcast Chestguard (#43263)"
-    { 11751550, 43264 }, // "Craftsanity Item: Overcast Bracers (#43264)"
-    { 11751551, 43265 }, // "Craftsanity Item: Overcast Handwraps (#43265)"
-    { 11751552, 43266 }, // "Craftsanity Item: Overcast Belt (#43266)"
-    { 11751553, 43271 }, // "Craftsanity Item: Overcast Leggings (#43271)"
-    { 11751554, 43273 }, // "Craftsanity Item: Overcast Boots (#43273)"
-    { 11751555, 43433 }, // "Craftsanity Item: Eviscerator's Shoulderpads (#43433)"
-    { 11751556, 43434 }, // "Craftsanity Item: Eviscerator's Chestguard (#43434)"
-    { 11751557, 43435 }, // "Craftsanity Item: Eviscerator's Bindings (#43435)"
-    { 11751558, 43436 }, // "Craftsanity Item: Eviscerator's Gauntlets (#43436)"
-    { 11751559, 43437 }, // "Craftsanity Item: Eviscerator's Waistguard (#43437)"
-    { 11751560, 43438 }, // "Craftsanity Item: Eviscerator's Legguards (#43438)"
-    { 11751561, 43439 }, // "Craftsanity Item: Eviscerator's Treads (#43439)"
-    { 11751562, 43442 }, // "Craftsanity Item: Swiftarrow Belt (#43442)"
-    { 11751563, 43443 }, // "Craftsanity Item: Swiftarrow Boots (#43443)"
-    { 11751564, 43444 }, // "Craftsanity Item: Swiftarrow Bracers (#43444)"
-    { 11751565, 43445 }, // "Craftsanity Item: Swiftarrow Hauberk (#43445)"
-    { 11751566, 43446 }, // "Craftsanity Item: Swiftarrow Gauntlets (#43446)"
-    { 11751567, 43447 }, // "Craftsanity Item: Swiftarrow Helm (#43447)"
-    { 11751568, 43448 }, // "Craftsanity Item: Swiftarrow Leggings (#43448)"
-    { 11751569, 43449 }, // "Craftsanity Item: Swiftarrow Shoulderguards (#43449)"
-    { 11751570, 43450 }, // "Craftsanity Item: Stormhide Belt (#43450)"
-    { 11751571, 43451 }, // "Craftsanity Item: Stormhide Stompers (#43451)"
-    { 11751572, 43452 }, // "Craftsanity Item: Stormhide Wristguards (#43452)"
-    { 11751573, 43453 }, // "Craftsanity Item: Stormhide Hauberk (#43453)"
-    { 11751574, 43454 }, // "Craftsanity Item: Stormhide Grips (#43454)"
-    { 11751575, 43455 }, // "Craftsanity Item: Stormhide Crown (#43455)"
-    { 11751576, 43456 }, // "Craftsanity Item: Stormhide Legguards (#43456)"
-    { 11751577, 43457 }, // "Craftsanity Item: Stormhide Shoulders (#43457)"
-    { 11751578, 43458 }, // "Craftsanity Item: Giantmaim Legguards (#43458)"
-    { 11751579, 43459 }, // "Craftsanity Item: Giantmaim Bracers (#43459)"
-    { 11751580, 43461 }, // "Craftsanity Item: Revenant's Breastplate (#43461)"
-    { 11751581, 43469 }, // "Craftsanity Item: Revenant's Treads (#43469)"
-    { 11751582, 43478 }, // "Craftsanity Item: Gigantic Feast (#43478)"
-    { 11751583, 43480 }, // "Craftsanity Item: Small Feast (#43480)"
-    { 11751584, 43481 }, // "Craftsanity Item: Trollwoven Spaulders (#43481)"
-    { 11751585, 43482 }, // "Craftsanity Item: Savage Titanium Ring (#43482)"
-    { 11751586, 43484 }, // "Craftsanity Item: Trollwoven Girdle (#43484)"
-    { 11751587, 43488 }, // "Craftsanity Item: Last Weeks Mammoth (#43488)"
-    { 11751588, 43490 }, // "Craftsanity Item: Tasty Cupcake (#43490)"
-    { 11751589, 43491 }, // "Craftsanity Item: Bad Clams (#43491)"
-    { 11751590, 43492 }, // "Craftsanity Item: Haunted Herring (#43492)"
-    { 11751591, 43495 }, // "Craftsanity Item: Earthgiving Legguards (#43495)"
-    { 11751592, 43498 }, // "Craftsanity Item: Savage Titanium Band (#43498)"
-    { 11751593, 43502 }, // "Craftsanity Item: Earthgiving Boots (#43502)"
-    { 11751594, 43518 }, // "Craftsanity Item: Conjured Mana Pie (#43518)"
-    { 11751595, 43523 }, // "Craftsanity Item: Conjured Mana Strudel (#43523)"
-    { 11751596, 43582 }, // "Craftsanity Item: Titanium Frostguard Ring (#43582)"
-    { 11751597, 43590 }, // "Craftsanity Item: Polar Vest (#43590)"
-    { 11751598, 43591 }, // "Craftsanity Item: Polar Cord (#43591)"
-    { 11751599, 43592 }, // "Craftsanity Item: Polar Boots (#43592)"
-    { 11751600, 43593 }, // "Craftsanity Item: Icy Scale Chestguard (#43593)"
-    { 11751601, 43594 }, // "Craftsanity Item: Icy Scale Belt (#43594)"
-    { 11751602, 43595 }, // "Craftsanity Item: Icy Scale Boots (#43595)"
-    { 11751603, 44413 }, // "Craftsanity Item: Mekgineer's Chopper (#44413)"
-    { 11751604, 44447 }, // "Craftsanity Item: Dragonscale Ammo Pouch (#44447)"
-    { 11751605, 44448 }, // "Craftsanity Item: Nerubian Reinforced Quiver (#44448)"
-    { 11751606, 44836 }, // "Craftsanity Item: Pumpkin Pie (#44836)"
-    { 11751607, 44837 }, // "Craftsanity Item: Spice Bread Stuffing (#44837)"
-    { 11751608, 44838 }, // "Craftsanity Item: Slow-Roasted Turkey (#44838)"
-    { 11751609, 44839 }, // "Craftsanity Item: Candied Sweet Potato (#44839)"
-    { 11751610, 44840 }, // "Craftsanity Item: Cranberry Chutney (#44840)"
-    { 11751611, 44930 }, // "Craftsanity Item: Windripper Boots (#44930)"
-    { 11751612, 44931 }, // "Craftsanity Item: Windripper Leggings (#44931)"
-    { 11751613, 44936 }, // "Craftsanity Item: Titanium Plating (#44936)"
-    { 11751614, 44953 }, // "Craftsanity Item: Worg Tartare (#44953)"
-    { 11751615, 45550 }, // "Craftsanity Item: Belt of the Titans (#45550)"
-    { 11751616, 45551 }, // "Craftsanity Item: Indestructible Plate Girdle (#45551)"
-    { 11751617, 45552 }, // "Craftsanity Item: Plate Girdle of Righteousness (#45552)"
-    { 11751618, 45553 }, // "Craftsanity Item: Belt of Dragons (#45553)"
-    { 11751619, 45554 }, // "Craftsanity Item: Blue Belt of Chaos (#45554)"
-    { 11751620, 45555 }, // "Craftsanity Item: Death-warmed Belt (#45555)"
-    { 11751621, 45556 }, // "Craftsanity Item: Belt of Arctic Life (#45556)"
-    { 11751622, 45557 }, // "Craftsanity Item: Sash of Ancient Power (#45557)"
-    { 11751623, 45558 }, // "Craftsanity Item: Cord of the White Dawn (#45558)"
-    { 11751624, 45559 }, // "Craftsanity Item: Battlelord's Plate Boots (#45559)"
-    { 11751625, 45560 }, // "Craftsanity Item: Spiked Deathdealers (#45560)"
-    { 11751626, 45561 }, // "Craftsanity Item: Treads of Destiny (#45561)"
-    { 11751627, 45562 }, // "Craftsanity Item: Boots of Living Scale (#45562)"
-    { 11751628, 45563 }, // "Craftsanity Item: Lightning Grounded Boots (#45563)"
-    { 11751629, 45564 }, // "Craftsanity Item: Footpads of Silence (#45564)"
-    { 11751630, 45565 }, // "Craftsanity Item: Boots of Wintry Endurance (#45565)"
-    { 11751631, 45566 }, // "Craftsanity Item: Spellslinger's Slippers (#45566)"
-    { 11751632, 45567 }, // "Craftsanity Item: Savior's Slippers (#45567)"
-    { 11751633, 45773 }, // "Craftsanity Item: Emerald Bag (#45773)"
-    { 11751634, 46691 }, // "Craftsanity Item: Bread of the Dead (#46691)"
-    { 11751635, 47499 }, // "Craftsanity Item: Flask of the North (#47499)"
-    { 11751636, 47570 }, // "Craftsanity Item: Saronite Swordbreakers (#47570)"
-    { 11751637, 47571 }, // "Craftsanity Item: Saronite Swordbreakers (#47571)"
-    { 11751638, 47572 }, // "Craftsanity Item: Titanium Spikeguards (#47572)"
-    { 11751639, 47573 }, // "Craftsanity Item: Titanium Spikeguards (#47573)"
-    { 11751640, 47574 }, // "Craftsanity Item: Sunforged Bracers (#47574)"
-    { 11751641, 47575 }, // "Craftsanity Item: Sunforged Bracers (#47575)"
-    { 11751642, 47576 }, // "Craftsanity Item: Crusader's Dragonscale Bracers (#47576)"
-    { 11751643, 47577 }, // "Craftsanity Item: Crusader's Dragonscale Bracers (#47577)"
-    { 11751644, 47579 }, // "Craftsanity Item: Black Chitin Bracers (#47579)"
-    { 11751645, 47580 }, // "Craftsanity Item: Black Chitin Bracers (#47580)"
-    { 11751646, 47581 }, // "Craftsanity Item: Bracers of Swift Death (#47581)"
-    { 11751647, 47582 }, // "Craftsanity Item: Bracers of Swift Death (#47582)"
-    { 11751648, 47583 }, // "Craftsanity Item: Moonshadow Armguards (#47583)"
-    { 11751649, 47584 }, // "Craftsanity Item: Moonshadow Armguards (#47584)"
-    { 11751650, 47585 }, // "Craftsanity Item: Bejeweled Wizard's Bracers (#47585)"
-    { 11751651, 47586 }, // "Craftsanity Item: Bejeweled Wizard's Bracers (#47586)"
-    { 11751652, 47587 }, // "Craftsanity Item: Royal Moonshroud Bracers (#47587)"
-    { 11751653, 47588 }, // "Craftsanity Item: Royal Moonshroud Bracers (#47588)"
-    { 11751654, 47589 }, // "Craftsanity Item: Titanium Razorplate (#47589)"
-    { 11751655, 47590 }, // "Craftsanity Item: Titanium Razorplate (#47590)"
-    { 11751656, 47591 }, // "Craftsanity Item: Breastplate of the White Knight (#47591)"
-    { 11751657, 47592 }, // "Craftsanity Item: Breastplate of the White Knight (#47592)"
-    { 11751658, 47593 }, // "Craftsanity Item: Sunforged Breastplate (#47593)"
-    { 11751659, 47594 }, // "Craftsanity Item: Sunforged Breastplate (#47594)"
-    { 11751660, 47595 }, // "Craftsanity Item: Crusader's Dragonscale Breastplate (#47595)"
-    { 11751661, 47596 }, // "Craftsanity Item: Crusader's Dragonscale Breastplate (#47596)"
-    { 11751662, 47597 }, // "Craftsanity Item: Ensorcelled Nerubian Breastplate (#47597)"
-    { 11751663, 47598 }, // "Craftsanity Item: Ensorcelled Nerubian Breastplate (#47598)"
-    { 11751664, 47599 }, // "Craftsanity Item: Knightbane Carapace (#47599)"
-    { 11751665, 47600 }, // "Craftsanity Item: Knightbane Carapace (#47600)"
-    { 11751666, 47601 }, // "Craftsanity Item: Lunar Eclipse Robes (#47601)"
-    { 11751667, 47602 }, // "Craftsanity Item: Lunar Eclipse Robes (#47602)"
-    { 11751668, 47603 }, // "Craftsanity Item: Merlin's Robe (#47603)"
-    { 11751669, 47604 }, // "Craftsanity Item: Merlin's Robe (#47604)"
-    { 11751670, 47605 }, // "Craftsanity Item: Royal Moonshroud Robe (#47605)"
-    { 11751671, 47606 }, // "Craftsanity Item: Royal Moonshroud Robe (#47606)"
-    { 11751672, 49040 }, // "Craftsanity Item: Jeeves (#49040)"
-    { 11751673, 49110 }, // "Craftsanity Item: Nightmare Tear (#49110)"
-    { 11751674, 49890 }, // "Craftsanity Item: Deathfrost Boots (#49890)"
-    { 11751675, 49891 }, // "Craftsanity Item: Leggings of Woven Death (#49891)"
-    { 11751676, 49892 }, // "Craftsanity Item: Lightweave Leggings (#49892)"
-    { 11751677, 49893 }, // "Craftsanity Item: Sandals of Consecration (#49893)"
-    { 11751678, 49894 }, // "Craftsanity Item: Blessed Cenarion Boots (#49894)"
-    { 11751679, 49895 }, // "Craftsanity Item: Footpads of Impending Death (#49895)"
-    { 11751680, 49896 }, // "Craftsanity Item: Earthsoul Boots (#49896)"
-    { 11751681, 49897 }, // "Craftsanity Item: Rock-Steady Treads (#49897)"
-    { 11751682, 49898 }, // "Craftsanity Item: Legwraps of Unleashed Nature (#49898)"
-    { 11751683, 49899 }, // "Craftsanity Item: Bladeborn Leggings (#49899)"
-    { 11751684, 49900 }, // "Craftsanity Item: Lightning-Infused Leggings (#49900)"
-    { 11751685, 49901 }, // "Craftsanity Item: Draconic Bonesplinter Legguards (#49901)"
-    { 11751686, 49902 }, // "Craftsanity Item: Puresteel Legplates (#49902)"
-    { 11751687, 49903 }, // "Craftsanity Item: Legplates of Painful Death (#49903)"
-    { 11751688, 49904 }, // "Craftsanity Item: Pillars of Might (#49904)"
-    { 11751689, 49905 }, // "Craftsanity Item: Protectors of Life (#49905)"
-    { 11751690, 49906 }, // "Craftsanity Item: Hellfrozen Bonegrinders (#49906)"
-    { 11751691, 49907 }, // "Craftsanity Item: Boots of Kingly Upheaval (#49907)"
-    { 11751692, 50045 }, // "Craftsanity Item: Glyph of Eternal Water (#50045)"
-    { 11751693, 50077 }, // "Craftsanity Item: Glyph of Quick Decay (#50077)"
-    { 11751694, 50125 }, // "Craftsanity Item: Glyph of Rapid Rejuvenation (#50125)"
-    { 11751695, 52020 }, // "Craftsanity Item: Shatter Rounds (#52020)"
-    { 11751696, 52021 }, // "Craftsanity Item: Iceblade Arrow (#52021)"
-    { 11751697, 54797 }, // "Craftsanity Item: Frosty Flying Carpet (#54797)"
+    { 11751463, 41508 }, // "Craftsanity Item: Mechano-hog (#41508)"
+    { 11751464, 41593 }, // "Craftsanity Item: Ebonweave (#41593)"
+    { 11751465, 41594 }, // "Craftsanity Item: Moonshroud (#41594)"
+    { 11751466, 41595 }, // "Craftsanity Item: Spellweave (#41595)"
+    { 11751467, 41597 }, // "Craftsanity Item: Abyssal Bag (#41597)"
+    { 11751468, 41598 }, // "Craftsanity Item: Mysterious Bag (#41598)"
+    { 11751469, 41599 }, // "Craftsanity Item: Frostweave Bag (#41599)"
+    { 11751470, 41600 }, // "Craftsanity Item: Glacial Bag (#41600)"
+    { 11751471, 41602 }, // "Craftsanity Item: Brilliant Spellthread (#41602)"
+    { 11751472, 41604 }, // "Craftsanity Item: Sapphire Spellthread (#41604)"
+    { 11751473, 41609 }, // "Craftsanity Item: Wispcloak (#41609)"
+    { 11751474, 41610 }, // "Craftsanity Item: Deathchill Cloak (#41610)"
+    { 11751475, 41984 }, // "Craftsanity Item: Hat of Wintry Doom (#41984)"
+    { 11751476, 41985 }, // "Craftsanity Item: Silky Iceshard Boots (#41985)"
+    { 11751477, 41986 }, // "Craftsanity Item: Deep Frozen Cord (#41986)"
+    { 11751478, 42093 }, // "Craftsanity Item: Frostmoon Pants (#42093)"
+    { 11751479, 42095 }, // "Craftsanity Item: Light Blessed Mittens (#42095)"
+    { 11751480, 42096 }, // "Craftsanity Item: Aurora Slippers (#42096)"
+    { 11751481, 42100 }, // "Craftsanity Item: Moonshroud Robe (#42100)"
+    { 11751482, 42101 }, // "Craftsanity Item: Ebonweave Robe (#42101)"
+    { 11751483, 42102 }, // "Craftsanity Item: Spellweave Robe (#42102)"
+    { 11751484, 42103 }, // "Craftsanity Item: Moonshroud Gloves (#42103)"
+    { 11751485, 42111 }, // "Craftsanity Item: Ebonweave Gloves (#42111)"
+    { 11751486, 42113 }, // "Craftsanity Item: Spellweave Gloves (#42113)"
+    { 11751487, 42142 }, // "Craftsanity Item: Bold Dragon's Eye (#42142)"
+    { 11751488, 42143 }, // "Craftsanity Item: Delicate Dragon's Eye (#42143)"
+    { 11751489, 42144 }, // "Craftsanity Item: Runed Dragon's Eye (#42144)"
+    { 11751490, 42145 }, // "Craftsanity Item: Sparkling Dragon's Eye (#42145)"
+    { 11751491, 42146 }, // "Craftsanity Item: Lustrous Dragon's Eye (#42146)"
+    { 11751492, 42148 }, // "Craftsanity Item: Brilliant Dragon's Eye (#42148)"
+    { 11751493, 42149 }, // "Craftsanity Item: Smooth Dragon's Eye (#42149)"
+    { 11751494, 42150 }, // "Craftsanity Item: Quick Dragon's Eye (#42150)"
+    { 11751495, 42151 }, // "Craftsanity Item: Subtle Dragon's Eye (#42151)"
+    { 11751496, 42152 }, // "Craftsanity Item: Flashing Dragon's Eye (#42152)"
+    { 11751497, 42153 }, // "Craftsanity Item: Fractured Dragon's Eye (#42153)"
+    { 11751498, 42154 }, // "Craftsanity Item: Precise Dragon's Eye (#42154)"
+    { 11751499, 42155 }, // "Craftsanity Item: Stormy Dragon's Eye (#42155)"
+    { 11751500, 42156 }, // "Craftsanity Item: Rigid Dragon's Eye (#42156)"
+    { 11751501, 42157 }, // "Craftsanity Item: Thick Dragon's Eye (#42157)"
+    { 11751502, 42158 }, // "Craftsanity Item: Mystic Dragon's Eye (#42158)"
+    { 11751503, 42642 }, // "Craftsanity Item: Titanium Impact Band (#42642)"
+    { 11751504, 42643 }, // "Craftsanity Item: Titanium Earthguard Ring (#42643)"
+    { 11751505, 42644 }, // "Craftsanity Item: Titanium Spellshock Ring (#42644)"
+    { 11751506, 42645 }, // "Craftsanity Item: Titanium Impact Choker (#42645)"
+    { 11751507, 42646 }, // "Craftsanity Item: Titanium Earthguard Chain (#42646)"
+    { 11751508, 42647 }, // "Craftsanity Item: Titanium Spellshock Necklace (#42647)"
+    { 11751509, 42993 }, // "Craftsanity Item: Spicy Fried Herring (#42993)"
+    { 11751510, 42994 }, // "Craftsanity Item: Rhinolicious Wormsteak (#42994)"
+    { 11751511, 42995 }, // "Craftsanity Item: Hearty Rhino (#42995)"
+    { 11751512, 42996 }, // "Craftsanity Item: Snapper Extreme (#42996)"
+    { 11751513, 42997 }, // "Craftsanity Item: Blackened Worg Steak (#42997)"
+    { 11751514, 42998 }, // "Craftsanity Item: Cuttlesteak (#42998)"
+    { 11751515, 42999 }, // "Craftsanity Item: Blackened Dragonfin (#42999)"
+    { 11751516, 43000 }, // "Craftsanity Item: Dragonfin Filet (#43000)"
+    { 11751517, 43001 }, // "Craftsanity Item: Tracker Snacks (#43001)"
+    { 11751518, 43004 }, // "Craftsanity Item: Critter Bites (#43004)"
+    { 11751519, 43005 }, // "Craftsanity Item: Spiced Mammoth Treats (#43005)"
+    { 11751520, 43015 }, // "Craftsanity Item: Fish Feast (#43015)"
+    { 11751521, 43250 }, // "Craftsanity Item: Ring of Earthen Might (#43250)"
+    { 11751522, 43251 }, // "Craftsanity Item: Ring of Scarlet Shadows (#43251)"
+    { 11751523, 43252 }, // "Craftsanity Item: Windfire Band (#43252)"
+    { 11751524, 43253 }, // "Craftsanity Item: Ring of Northern Tears (#43253)"
+    { 11751525, 43260 }, // "Craftsanity Item: Eviscerator's Facemask (#43260)"
+    { 11751526, 43261 }, // "Craftsanity Item: Overcast Headguard (#43261)"
+    { 11751527, 43262 }, // "Craftsanity Item: Overcast Spaulders (#43262)"
+    { 11751528, 43263 }, // "Craftsanity Item: Overcast Chestguard (#43263)"
+    { 11751529, 43264 }, // "Craftsanity Item: Overcast Bracers (#43264)"
+    { 11751530, 43265 }, // "Craftsanity Item: Overcast Handwraps (#43265)"
+    { 11751531, 43266 }, // "Craftsanity Item: Overcast Belt (#43266)"
+    { 11751532, 43271 }, // "Craftsanity Item: Overcast Leggings (#43271)"
+    { 11751533, 43273 }, // "Craftsanity Item: Overcast Boots (#43273)"
+    { 11751534, 43433 }, // "Craftsanity Item: Eviscerator's Shoulderpads (#43433)"
+    { 11751535, 43434 }, // "Craftsanity Item: Eviscerator's Chestguard (#43434)"
+    { 11751536, 43435 }, // "Craftsanity Item: Eviscerator's Bindings (#43435)"
+    { 11751537, 43436 }, // "Craftsanity Item: Eviscerator's Gauntlets (#43436)"
+    { 11751538, 43437 }, // "Craftsanity Item: Eviscerator's Waistguard (#43437)"
+    { 11751539, 43438 }, // "Craftsanity Item: Eviscerator's Legguards (#43438)"
+    { 11751540, 43439 }, // "Craftsanity Item: Eviscerator's Treads (#43439)"
+    { 11751541, 43442 }, // "Craftsanity Item: Swiftarrow Belt (#43442)"
+    { 11751542, 43443 }, // "Craftsanity Item: Swiftarrow Boots (#43443)"
+    { 11751543, 43444 }, // "Craftsanity Item: Swiftarrow Bracers (#43444)"
+    { 11751544, 43445 }, // "Craftsanity Item: Swiftarrow Hauberk (#43445)"
+    { 11751545, 43446 }, // "Craftsanity Item: Swiftarrow Gauntlets (#43446)"
+    { 11751546, 43447 }, // "Craftsanity Item: Swiftarrow Helm (#43447)"
+    { 11751547, 43448 }, // "Craftsanity Item: Swiftarrow Leggings (#43448)"
+    { 11751548, 43449 }, // "Craftsanity Item: Swiftarrow Shoulderguards (#43449)"
+    { 11751549, 43450 }, // "Craftsanity Item: Stormhide Belt (#43450)"
+    { 11751550, 43451 }, // "Craftsanity Item: Stormhide Stompers (#43451)"
+    { 11751551, 43452 }, // "Craftsanity Item: Stormhide Wristguards (#43452)"
+    { 11751552, 43453 }, // "Craftsanity Item: Stormhide Hauberk (#43453)"
+    { 11751553, 43454 }, // "Craftsanity Item: Stormhide Grips (#43454)"
+    { 11751554, 43455 }, // "Craftsanity Item: Stormhide Crown (#43455)"
+    { 11751555, 43456 }, // "Craftsanity Item: Stormhide Legguards (#43456)"
+    { 11751556, 43457 }, // "Craftsanity Item: Stormhide Shoulders (#43457)"
+    { 11751557, 43458 }, // "Craftsanity Item: Giantmaim Legguards (#43458)"
+    { 11751558, 43459 }, // "Craftsanity Item: Giantmaim Bracers (#43459)"
+    { 11751559, 43461 }, // "Craftsanity Item: Revenant's Breastplate (#43461)"
+    { 11751560, 43469 }, // "Craftsanity Item: Revenant's Treads (#43469)"
+    { 11751561, 43478 }, // "Craftsanity Item: Gigantic Feast (#43478)"
+    { 11751562, 43480 }, // "Craftsanity Item: Small Feast (#43480)"
+    { 11751563, 43481 }, // "Craftsanity Item: Trollwoven Spaulders (#43481)"
+    { 11751564, 43482 }, // "Craftsanity Item: Savage Titanium Ring (#43482)"
+    { 11751565, 43484 }, // "Craftsanity Item: Trollwoven Girdle (#43484)"
+    { 11751566, 43488 }, // "Craftsanity Item: Last Weeks Mammoth (#43488)"
+    { 11751567, 43490 }, // "Craftsanity Item: Tasty Cupcake (#43490)"
+    { 11751568, 43491 }, // "Craftsanity Item: Bad Clams (#43491)"
+    { 11751569, 43492 }, // "Craftsanity Item: Haunted Herring (#43492)"
+    { 11751570, 43495 }, // "Craftsanity Item: Earthgiving Legguards (#43495)"
+    { 11751571, 43498 }, // "Craftsanity Item: Savage Titanium Band (#43498)"
+    { 11751572, 43502 }, // "Craftsanity Item: Earthgiving Boots (#43502)"
+    { 11751573, 43518 }, // "Craftsanity Item: Conjured Mana Pie (#43518)"
+    { 11751574, 43523 }, // "Craftsanity Item: Conjured Mana Strudel (#43523)"
+    { 11751575, 43582 }, // "Craftsanity Item: Titanium Frostguard Ring (#43582)"
+    { 11751576, 43590 }, // "Craftsanity Item: Polar Vest (#43590)"
+    { 11751577, 43591 }, // "Craftsanity Item: Polar Cord (#43591)"
+    { 11751578, 43592 }, // "Craftsanity Item: Polar Boots (#43592)"
+    { 11751579, 43593 }, // "Craftsanity Item: Icy Scale Chestguard (#43593)"
+    { 11751580, 43594 }, // "Craftsanity Item: Icy Scale Belt (#43594)"
+    { 11751581, 43595 }, // "Craftsanity Item: Icy Scale Boots (#43595)"
+    { 11751582, 44413 }, // "Craftsanity Item: Mekgineer's Chopper (#44413)"
+    { 11751583, 44447 }, // "Craftsanity Item: Dragonscale Ammo Pouch (#44447)"
+    { 11751584, 44448 }, // "Craftsanity Item: Nerubian Reinforced Quiver (#44448)"
+    { 11751585, 44836 }, // "Craftsanity Item: Pumpkin Pie (#44836)"
+    { 11751586, 44837 }, // "Craftsanity Item: Spice Bread Stuffing (#44837)"
+    { 11751587, 44838 }, // "Craftsanity Item: Slow-Roasted Turkey (#44838)"
+    { 11751588, 44839 }, // "Craftsanity Item: Candied Sweet Potato (#44839)"
+    { 11751589, 44840 }, // "Craftsanity Item: Cranberry Chutney (#44840)"
+    { 11751590, 44930 }, // "Craftsanity Item: Windripper Boots (#44930)"
+    { 11751591, 44931 }, // "Craftsanity Item: Windripper Leggings (#44931)"
+    { 11751592, 44936 }, // "Craftsanity Item: Titanium Plating (#44936)"
+    { 11751593, 44953 }, // "Craftsanity Item: Worg Tartare (#44953)"
+    { 11751594, 45550 }, // "Craftsanity Item: Belt of the Titans (#45550)"
+    { 11751595, 45551 }, // "Craftsanity Item: Indestructible Plate Girdle (#45551)"
+    { 11751596, 45552 }, // "Craftsanity Item: Plate Girdle of Righteousness (#45552)"
+    { 11751597, 45553 }, // "Craftsanity Item: Belt of Dragons (#45553)"
+    { 11751598, 45554 }, // "Craftsanity Item: Blue Belt of Chaos (#45554)"
+    { 11751599, 45555 }, // "Craftsanity Item: Death-warmed Belt (#45555)"
+    { 11751600, 45556 }, // "Craftsanity Item: Belt of Arctic Life (#45556)"
+    { 11751601, 45557 }, // "Craftsanity Item: Sash of Ancient Power (#45557)"
+    { 11751602, 45558 }, // "Craftsanity Item: Cord of the White Dawn (#45558)"
+    { 11751603, 45559 }, // "Craftsanity Item: Battlelord's Plate Boots (#45559)"
+    { 11751604, 45560 }, // "Craftsanity Item: Spiked Deathdealers (#45560)"
+    { 11751605, 45561 }, // "Craftsanity Item: Treads of Destiny (#45561)"
+    { 11751606, 45562 }, // "Craftsanity Item: Boots of Living Scale (#45562)"
+    { 11751607, 45563 }, // "Craftsanity Item: Lightning Grounded Boots (#45563)"
+    { 11751608, 45564 }, // "Craftsanity Item: Footpads of Silence (#45564)"
+    { 11751609, 45565 }, // "Craftsanity Item: Boots of Wintry Endurance (#45565)"
+    { 11751610, 45566 }, // "Craftsanity Item: Spellslinger's Slippers (#45566)"
+    { 11751611, 45567 }, // "Craftsanity Item: Savior's Slippers (#45567)"
+    { 11751612, 45773 }, // "Craftsanity Item: Emerald Bag (#45773)"
+    { 11751613, 46691 }, // "Craftsanity Item: Bread of the Dead (#46691)"
+    { 11751614, 47499 }, // "Craftsanity Item: Flask of the North (#47499)"
+    { 11751615, 47570 }, // "Craftsanity Item: Saronite Swordbreakers (#47570)"
+    { 11751616, 47571 }, // "Craftsanity Item: Saronite Swordbreakers (#47571)"
+    { 11751617, 47572 }, // "Craftsanity Item: Titanium Spikeguards (#47572)"
+    { 11751618, 47573 }, // "Craftsanity Item: Titanium Spikeguards (#47573)"
+    { 11751619, 47574 }, // "Craftsanity Item: Sunforged Bracers (#47574)"
+    { 11751620, 47575 }, // "Craftsanity Item: Sunforged Bracers (#47575)"
+    { 11751621, 47576 }, // "Craftsanity Item: Crusader's Dragonscale Bracers (#47576)"
+    { 11751622, 47577 }, // "Craftsanity Item: Crusader's Dragonscale Bracers (#47577)"
+    { 11751623, 47579 }, // "Craftsanity Item: Black Chitin Bracers (#47579)"
+    { 11751624, 47580 }, // "Craftsanity Item: Black Chitin Bracers (#47580)"
+    { 11751625, 47581 }, // "Craftsanity Item: Bracers of Swift Death (#47581)"
+    { 11751626, 47582 }, // "Craftsanity Item: Bracers of Swift Death (#47582)"
+    { 11751627, 47583 }, // "Craftsanity Item: Moonshadow Armguards (#47583)"
+    { 11751628, 47584 }, // "Craftsanity Item: Moonshadow Armguards (#47584)"
+    { 11751629, 47585 }, // "Craftsanity Item: Bejeweled Wizard's Bracers (#47585)"
+    { 11751630, 47586 }, // "Craftsanity Item: Bejeweled Wizard's Bracers (#47586)"
+    { 11751631, 47587 }, // "Craftsanity Item: Royal Moonshroud Bracers (#47587)"
+    { 11751632, 47588 }, // "Craftsanity Item: Royal Moonshroud Bracers (#47588)"
+    { 11751633, 47589 }, // "Craftsanity Item: Titanium Razorplate (#47589)"
+    { 11751634, 47590 }, // "Craftsanity Item: Titanium Razorplate (#47590)"
+    { 11751635, 47591 }, // "Craftsanity Item: Breastplate of the White Knight (#47591)"
+    { 11751636, 47592 }, // "Craftsanity Item: Breastplate of the White Knight (#47592)"
+    { 11751637, 47593 }, // "Craftsanity Item: Sunforged Breastplate (#47593)"
+    { 11751638, 47594 }, // "Craftsanity Item: Sunforged Breastplate (#47594)"
+    { 11751639, 47595 }, // "Craftsanity Item: Crusader's Dragonscale Breastplate (#47595)"
+    { 11751640, 47596 }, // "Craftsanity Item: Crusader's Dragonscale Breastplate (#47596)"
+    { 11751641, 47597 }, // "Craftsanity Item: Ensorcelled Nerubian Breastplate (#47597)"
+    { 11751642, 47598 }, // "Craftsanity Item: Ensorcelled Nerubian Breastplate (#47598)"
+    { 11751643, 47599 }, // "Craftsanity Item: Knightbane Carapace (#47599)"
+    { 11751644, 47600 }, // "Craftsanity Item: Knightbane Carapace (#47600)"
+    { 11751645, 47601 }, // "Craftsanity Item: Lunar Eclipse Robes (#47601)"
+    { 11751646, 47602 }, // "Craftsanity Item: Lunar Eclipse Robes (#47602)"
+    { 11751647, 47603 }, // "Craftsanity Item: Merlin's Robe (#47603)"
+    { 11751648, 47604 }, // "Craftsanity Item: Merlin's Robe (#47604)"
+    { 11751649, 47605 }, // "Craftsanity Item: Royal Moonshroud Robe (#47605)"
+    { 11751650, 47606 }, // "Craftsanity Item: Royal Moonshroud Robe (#47606)"
+    { 11751651, 49040 }, // "Craftsanity Item: Jeeves (#49040)"
+    { 11751652, 49110 }, // "Craftsanity Item: Nightmare Tear (#49110)"
+    { 11751653, 49890 }, // "Craftsanity Item: Deathfrost Boots (#49890)"
+    { 11751654, 49891 }, // "Craftsanity Item: Leggings of Woven Death (#49891)"
+    { 11751655, 49892 }, // "Craftsanity Item: Lightweave Leggings (#49892)"
+    { 11751656, 49893 }, // "Craftsanity Item: Sandals of Consecration (#49893)"
+    { 11751657, 49894 }, // "Craftsanity Item: Blessed Cenarion Boots (#49894)"
+    { 11751658, 49895 }, // "Craftsanity Item: Footpads of Impending Death (#49895)"
+    { 11751659, 49896 }, // "Craftsanity Item: Earthsoul Boots (#49896)"
+    { 11751660, 49897 }, // "Craftsanity Item: Rock-Steady Treads (#49897)"
+    { 11751661, 49898 }, // "Craftsanity Item: Legwraps of Unleashed Nature (#49898)"
+    { 11751662, 49899 }, // "Craftsanity Item: Bladeborn Leggings (#49899)"
+    { 11751663, 49900 }, // "Craftsanity Item: Lightning-Infused Leggings (#49900)"
+    { 11751664, 49901 }, // "Craftsanity Item: Draconic Bonesplinter Legguards (#49901)"
+    { 11751665, 49902 }, // "Craftsanity Item: Puresteel Legplates (#49902)"
+    { 11751666, 49903 }, // "Craftsanity Item: Legplates of Painful Death (#49903)"
+    { 11751667, 49904 }, // "Craftsanity Item: Pillars of Might (#49904)"
+    { 11751668, 49905 }, // "Craftsanity Item: Protectors of Life (#49905)"
+    { 11751669, 49906 }, // "Craftsanity Item: Hellfrozen Bonegrinders (#49906)"
+    { 11751670, 49907 }, // "Craftsanity Item: Boots of Kingly Upheaval (#49907)"
+    { 11751671, 50045 }, // "Craftsanity Item: Glyph of Eternal Water (#50045)"
+    { 11751672, 50077 }, // "Craftsanity Item: Glyph of Quick Decay (#50077)"
+    { 11751673, 50125 }, // "Craftsanity Item: Glyph of Rapid Rejuvenation (#50125)"
+    { 11751674, 52020 }, // "Craftsanity Item: Shatter Rounds (#52020)"
+    { 11751675, 52021 }, // "Craftsanity Item: Iceblade Arrow (#52021)"
+    { 11751676, 54797 }, // "Craftsanity Item: Frosty Flying Carpet (#54797)"
 };
 inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
 {

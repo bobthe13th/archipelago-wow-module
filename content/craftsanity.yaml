@@ -62,6 +62,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Rye (#1114)'
   location_id: 11500006
   trigger:
@@ -72,6 +99,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Pumpernickel (#1487)'
   location_id: 11500007
   trigger:
@@ -82,6 +136,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Purified Water (#2136)'
   location_id: 11500008
   trigger:
@@ -92,6 +173,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Fresh Water (#2288)'
   location_id: 11500009
   trigger:
@@ -102,6 +210,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Fine Leather Boots (#2307)'
   location_id: 11500010
   trigger:
@@ -472,6 +607,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Shadow Oil (#3824)'
   location_id: 11500047
   trigger:
@@ -1242,6 +1404,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Muffin (#5349)'
   location_id: 11500124
   trigger:
@@ -1252,6 +1436,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Water (#5350)'
   location_id: 11500125
   trigger:
@@ -1262,6 +1473,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Kaldorei Spider Kabob (#5472)'
   location_id: 11500126
   trigger:
@@ -1352,6 +1590,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Mana Agate (#5514)'
   location_id: 11500135
   trigger:
@@ -1362,6 +1627,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Clam Chowder (#5526)'
   location_id: 11500136
   trigger:
@@ -2352,6 +2644,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Mana Ruby (#8008)'
   location_id: 11500235
   trigger:
@@ -2362,6 +2681,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Sourdough (#8075)'
   location_id: 11500236
   trigger:
@@ -2372,6 +2718,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Sweet Roll (#8076)'
   location_id: 11500237
   trigger:
@@ -2382,6 +2755,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Mineral Water (#8077)'
   location_id: 11500238
   trigger:
@@ -2392,6 +2792,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Sparkling Water (#8078)'
   location_id: 11500239
   trigger:
@@ -2402,6 +2829,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Crystal Water (#8079)'
   location_id: 11500240
   trigger:
@@ -2412,6 +2866,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Comfortable Leather Hat (#8174)'
   location_id: 11500241
   trigger:
@@ -5292,6 +5773,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Soulstone (#16893)'
   location_id: 11500529
   trigger:
@@ -5302,6 +5805,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Greater Soulstone (#16895)'
   location_id: 11500530
   trigger:
@@ -5312,6 +5837,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Major Soulstone (#16896)'
   location_id: 11500531
   trigger:
@@ -5322,6 +5869,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Flarecore Gloves (#16979)'
   location_id: 11500532
   trigger:
@@ -7392,6 +7961,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Master Soulstone (#22116)'
   location_id: 11500739
   trigger:
@@ -7402,6 +7998,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Obsidian Mail Tunic (#22191)'
   location_id: 11500740
   trigger:
@@ -10842,6 +11460,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Ring of Arcane Shielding (#30825)'
   location_id: 11501084
   trigger:
@@ -11992,6 +12637,33 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Steady Talasite (#33782)'
   location_id: 11501199
   trigger:
@@ -12872,6 +13544,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Purified Shadowsong Amethyst (#37503)'
   location_id: 11501287
   trigger:
@@ -14392,6 +15086,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Reinforced Cobalt Shoulders (#40956)'
   location_id: 11501439
   trigger:
@@ -14442,6 +15158,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Lesser Firestone (#41170)'
   location_id: 11501444
   trigger:
@@ -14452,6 +15190,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Greater Firestone (#41171)'
   location_id: 11501445
   trigger:
@@ -14462,6 +15222,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Major Firestone (#41172)'
   location_id: 11501446
   trigger:
@@ -14472,6 +15254,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Fel Firestone (#41173)'
   location_id: 11501447
   trigger:
@@ -14482,6 +15286,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Grand Firestone (#41174)'
   location_id: 11501448
   trigger:
@@ -14492,6 +15318,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Spellstone (#41191)'
   location_id: 11501449
   trigger:
@@ -14502,6 +15350,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Greater Spellstone (#41192)'
   location_id: 11501450
   trigger:
@@ -14512,6 +15382,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Major Spellstone (#41193)'
   location_id: 11501451
   trigger:
@@ -14522,6 +15414,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Master Spellstone (#41194)'
   location_id: 11501452
   trigger:
@@ -14532,6 +15446,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Demonic Spellstone (#41195)'
   location_id: 11501453
   trigger:
@@ -14542,6 +15478,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Grand Spellstone (#41196)'
   location_id: 11501454
   trigger:
@@ -14552,6 +15510,28 @@ locations:
     - warlock
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - desolace
+    - dun_morogh
+    - durotar
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - stormwind_city
+    - swamp_of_sorrows
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Red Lumberjack Shirt (#41248)'
   location_id: 11501455
   trigger:
@@ -14632,218 +15612,8 @@ locations:
     - tailoring
     expansion:
     - wotlk
-- name: 'Craft: Chaotic Skyflare Diamond (#41285)'
-  location_id: 11501463
-  trigger:
-    kind: recipe_craft
-    item_entry: 41285
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Destructive Skyflare Diamond (#41307)'
-  location_id: 11501464
-  trigger:
-    kind: recipe_craft
-    item_entry: 41307
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Ember Skyflare Diamond (#41333)'
-  location_id: 11501465
-  trigger:
-    kind: recipe_craft
-    item_entry: 41333
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Enigmatic Skyflare Diamond (#41335)'
-  location_id: 11501466
-  trigger:
-    kind: recipe_craft
-    item_entry: 41335
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Swift Skyflare Diamond (#41339)'
-  location_id: 11501467
-  trigger:
-    kind: recipe_craft
-    item_entry: 41339
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Tireless Skyflare Diamond (#41375)'
-  location_id: 11501468
-  trigger:
-    kind: recipe_craft
-    item_entry: 41375
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Revitalizing Skyflare Diamond (#41376)'
-  location_id: 11501469
-  trigger:
-    kind: recipe_craft
-    item_entry: 41376
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Effulgent Skyflare Diamond (#41377)'
-  location_id: 11501470
-  trigger:
-    kind: recipe_craft
-    item_entry: 41377
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Forlorn Skyflare Diamond (#41378)'
-  location_id: 11501471
-  trigger:
-    kind: recipe_craft
-    item_entry: 41378
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Impassive Skyflare Diamond (#41379)'
-  location_id: 11501472
-  trigger:
-    kind: recipe_craft
-    item_entry: 41379
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Austere Earthsiege Diamond (#41380)'
-  location_id: 11501473
-  trigger:
-    kind: recipe_craft
-    item_entry: 41380
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Persistent Earthsiege Diamond (#41381)'
-  location_id: 11501474
-  trigger:
-    kind: recipe_craft
-    item_entry: 41381
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Trenchant Earthsiege Diamond (#41382)'
-  location_id: 11501475
-  trigger:
-    kind: recipe_craft
-    item_entry: 41382
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Invigorating Earthsiege Diamond (#41385)'
-  location_id: 11501476
-  trigger:
-    kind: recipe_craft
-    item_entry: 41385
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Beaming Earthsiege Diamond (#41389)'
-  location_id: 11501477
-  trigger:
-    kind: recipe_craft
-    item_entry: 41389
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Bracing Earthsiege Diamond (#41395)'
-  location_id: 11501478
-  trigger:
-    kind: recipe_craft
-    item_entry: 41395
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Eternal Earthsiege Diamond (#41396)'
-  location_id: 11501479
-  trigger:
-    kind: recipe_craft
-    item_entry: 41396
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Powerful Earthsiege Diamond (#41397)'
-  location_id: 11501480
-  trigger:
-    kind: recipe_craft
-    item_entry: 41397
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Relentless Earthsiege Diamond (#41398)'
-  location_id: 11501481
-  trigger:
-    kind: recipe_craft
-    item_entry: 41398
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Thundering Skyflare Diamond (#41400)'
-  location_id: 11501482
-  trigger:
-    kind: recipe_craft
-    item_entry: 41400
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
-- name: 'Craft: Insightful Earthsiege Diamond (#41401)'
-  location_id: 11501483
-  trigger:
-    kind: recipe_craft
-    item_entry: 41401
-  tags:
-    profession:
-    - jewelcrafting
-    expansion:
-    - wotlk
 - name: 'Craft: Mechano-hog (#41508)'
-  location_id: 11501484
+  location_id: 11501463
   trigger:
     kind: recipe_craft
     item_entry: 41508
@@ -14853,7 +15623,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ebonweave (#41593)'
-  location_id: 11501485
+  location_id: 11501464
   trigger:
     kind: recipe_craft
     item_entry: 41593
@@ -14863,7 +15633,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Moonshroud (#41594)'
-  location_id: 11501486
+  location_id: 11501465
   trigger:
     kind: recipe_craft
     item_entry: 41594
@@ -14873,7 +15643,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spellweave (#41595)'
-  location_id: 11501487
+  location_id: 11501466
   trigger:
     kind: recipe_craft
     item_entry: 41595
@@ -14883,7 +15653,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Abyssal Bag (#41597)'
-  location_id: 11501488
+  location_id: 11501467
   trigger:
     kind: recipe_craft
     item_entry: 41597
@@ -14893,7 +15663,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Mysterious Bag (#41598)'
-  location_id: 11501489
+  location_id: 11501468
   trigger:
     kind: recipe_craft
     item_entry: 41598
@@ -14903,7 +15673,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Frostweave Bag (#41599)'
-  location_id: 11501490
+  location_id: 11501469
   trigger:
     kind: recipe_craft
     item_entry: 41599
@@ -14913,7 +15683,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Glacial Bag (#41600)'
-  location_id: 11501491
+  location_id: 11501470
   trigger:
     kind: recipe_craft
     item_entry: 41600
@@ -14923,7 +15693,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Brilliant Spellthread (#41602)'
-  location_id: 11501492
+  location_id: 11501471
   trigger:
     kind: recipe_craft
     item_entry: 41602
@@ -14933,7 +15703,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sapphire Spellthread (#41604)'
-  location_id: 11501493
+  location_id: 11501472
   trigger:
     kind: recipe_craft
     item_entry: 41604
@@ -14943,7 +15713,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Wispcloak (#41609)'
-  location_id: 11501494
+  location_id: 11501473
   trigger:
     kind: recipe_craft
     item_entry: 41609
@@ -14953,7 +15723,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Deathchill Cloak (#41610)'
-  location_id: 11501495
+  location_id: 11501474
   trigger:
     kind: recipe_craft
     item_entry: 41610
@@ -14963,7 +15733,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Hat of Wintry Doom (#41984)'
-  location_id: 11501496
+  location_id: 11501475
   trigger:
     kind: recipe_craft
     item_entry: 41984
@@ -14973,7 +15743,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Silky Iceshard Boots (#41985)'
-  location_id: 11501497
+  location_id: 11501476
   trigger:
     kind: recipe_craft
     item_entry: 41985
@@ -14983,7 +15753,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Deep Frozen Cord (#41986)'
-  location_id: 11501498
+  location_id: 11501477
   trigger:
     kind: recipe_craft
     item_entry: 41986
@@ -14993,7 +15763,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Frostmoon Pants (#42093)'
-  location_id: 11501499
+  location_id: 11501478
   trigger:
     kind: recipe_craft
     item_entry: 42093
@@ -15003,7 +15773,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Light Blessed Mittens (#42095)'
-  location_id: 11501500
+  location_id: 11501479
   trigger:
     kind: recipe_craft
     item_entry: 42095
@@ -15013,7 +15783,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Aurora Slippers (#42096)'
-  location_id: 11501501
+  location_id: 11501480
   trigger:
     kind: recipe_craft
     item_entry: 42096
@@ -15023,7 +15793,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Moonshroud Robe (#42100)'
-  location_id: 11501502
+  location_id: 11501481
   trigger:
     kind: recipe_craft
     item_entry: 42100
@@ -15033,7 +15803,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ebonweave Robe (#42101)'
-  location_id: 11501503
+  location_id: 11501482
   trigger:
     kind: recipe_craft
     item_entry: 42101
@@ -15043,7 +15813,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spellweave Robe (#42102)'
-  location_id: 11501504
+  location_id: 11501483
   trigger:
     kind: recipe_craft
     item_entry: 42102
@@ -15053,7 +15823,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Moonshroud Gloves (#42103)'
-  location_id: 11501505
+  location_id: 11501484
   trigger:
     kind: recipe_craft
     item_entry: 42103
@@ -15063,7 +15833,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ebonweave Gloves (#42111)'
-  location_id: 11501506
+  location_id: 11501485
   trigger:
     kind: recipe_craft
     item_entry: 42111
@@ -15073,7 +15843,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spellweave Gloves (#42113)'
-  location_id: 11501507
+  location_id: 11501486
   trigger:
     kind: recipe_craft
     item_entry: 42113
@@ -15083,7 +15853,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bold Dragon''s Eye (#42142)'
-  location_id: 11501508
+  location_id: 11501487
   trigger:
     kind: recipe_craft
     item_entry: 42142
@@ -15093,7 +15863,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Delicate Dragon''s Eye (#42143)'
-  location_id: 11501509
+  location_id: 11501488
   trigger:
     kind: recipe_craft
     item_entry: 42143
@@ -15103,7 +15873,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Runed Dragon''s Eye (#42144)'
-  location_id: 11501510
+  location_id: 11501489
   trigger:
     kind: recipe_craft
     item_entry: 42144
@@ -15113,7 +15883,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Sparkling Dragon''s Eye (#42145)'
-  location_id: 11501511
+  location_id: 11501490
   trigger:
     kind: recipe_craft
     item_entry: 42145
@@ -15123,7 +15893,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Lustrous Dragon''s Eye (#42146)'
-  location_id: 11501512
+  location_id: 11501491
   trigger:
     kind: recipe_craft
     item_entry: 42146
@@ -15133,7 +15903,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Brilliant Dragon''s Eye (#42148)'
-  location_id: 11501513
+  location_id: 11501492
   trigger:
     kind: recipe_craft
     item_entry: 42148
@@ -15143,7 +15913,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Smooth Dragon''s Eye (#42149)'
-  location_id: 11501514
+  location_id: 11501493
   trigger:
     kind: recipe_craft
     item_entry: 42149
@@ -15153,7 +15923,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Quick Dragon''s Eye (#42150)'
-  location_id: 11501515
+  location_id: 11501494
   trigger:
     kind: recipe_craft
     item_entry: 42150
@@ -15163,7 +15933,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Subtle Dragon''s Eye (#42151)'
-  location_id: 11501516
+  location_id: 11501495
   trigger:
     kind: recipe_craft
     item_entry: 42151
@@ -15173,7 +15943,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Flashing Dragon''s Eye (#42152)'
-  location_id: 11501517
+  location_id: 11501496
   trigger:
     kind: recipe_craft
     item_entry: 42152
@@ -15183,7 +15953,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Fractured Dragon''s Eye (#42153)'
-  location_id: 11501518
+  location_id: 11501497
   trigger:
     kind: recipe_craft
     item_entry: 42153
@@ -15193,7 +15963,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Precise Dragon''s Eye (#42154)'
-  location_id: 11501519
+  location_id: 11501498
   trigger:
     kind: recipe_craft
     item_entry: 42154
@@ -15203,7 +15973,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Stormy Dragon''s Eye (#42155)'
-  location_id: 11501520
+  location_id: 11501499
   trigger:
     kind: recipe_craft
     item_entry: 42155
@@ -15213,7 +15983,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Rigid Dragon''s Eye (#42156)'
-  location_id: 11501521
+  location_id: 11501500
   trigger:
     kind: recipe_craft
     item_entry: 42156
@@ -15223,7 +15993,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Thick Dragon''s Eye (#42157)'
-  location_id: 11501522
+  location_id: 11501501
   trigger:
     kind: recipe_craft
     item_entry: 42157
@@ -15233,7 +16003,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Mystic Dragon''s Eye (#42158)'
-  location_id: 11501523
+  location_id: 11501502
   trigger:
     kind: recipe_craft
     item_entry: 42158
@@ -15243,7 +16013,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Titanium Impact Band (#42642)'
-  location_id: 11501524
+  location_id: 11501503
   trigger:
     kind: recipe_craft
     item_entry: 42642
@@ -15253,7 +16023,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Earthguard Ring (#42643)'
-  location_id: 11501525
+  location_id: 11501504
   trigger:
     kind: recipe_craft
     item_entry: 42643
@@ -15263,7 +16033,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Spellshock Ring (#42644)'
-  location_id: 11501526
+  location_id: 11501505
   trigger:
     kind: recipe_craft
     item_entry: 42644
@@ -15273,7 +16043,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Impact Choker (#42645)'
-  location_id: 11501527
+  location_id: 11501506
   trigger:
     kind: recipe_craft
     item_entry: 42645
@@ -15283,7 +16053,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Earthguard Chain (#42646)'
-  location_id: 11501528
+  location_id: 11501507
   trigger:
     kind: recipe_craft
     item_entry: 42646
@@ -15293,7 +16063,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Spellshock Necklace (#42647)'
-  location_id: 11501529
+  location_id: 11501508
   trigger:
     kind: recipe_craft
     item_entry: 42647
@@ -15303,7 +16073,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spicy Fried Herring (#42993)'
-  location_id: 11501530
+  location_id: 11501509
   trigger:
     kind: recipe_craft
     item_entry: 42993
@@ -15313,7 +16083,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Rhinolicious Wormsteak (#42994)'
-  location_id: 11501531
+  location_id: 11501510
   trigger:
     kind: recipe_craft
     item_entry: 42994
@@ -15323,7 +16093,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Hearty Rhino (#42995)'
-  location_id: 11501532
+  location_id: 11501511
   trigger:
     kind: recipe_craft
     item_entry: 42995
@@ -15333,7 +16103,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Snapper Extreme (#42996)'
-  location_id: 11501533
+  location_id: 11501512
   trigger:
     kind: recipe_craft
     item_entry: 42996
@@ -15343,7 +16113,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Blackened Worg Steak (#42997)'
-  location_id: 11501534
+  location_id: 11501513
   trigger:
     kind: recipe_craft
     item_entry: 42997
@@ -15353,7 +16123,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Cuttlesteak (#42998)'
-  location_id: 11501535
+  location_id: 11501514
   trigger:
     kind: recipe_craft
     item_entry: 42998
@@ -15363,7 +16133,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Blackened Dragonfin (#42999)'
-  location_id: 11501536
+  location_id: 11501515
   trigger:
     kind: recipe_craft
     item_entry: 42999
@@ -15373,7 +16143,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Dragonfin Filet (#43000)'
-  location_id: 11501537
+  location_id: 11501516
   trigger:
     kind: recipe_craft
     item_entry: 43000
@@ -15383,7 +16153,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Tracker Snacks (#43001)'
-  location_id: 11501538
+  location_id: 11501517
   trigger:
     kind: recipe_craft
     item_entry: 43001
@@ -15393,7 +16163,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Critter Bites (#43004)'
-  location_id: 11501539
+  location_id: 11501518
   trigger:
     kind: recipe_craft
     item_entry: 43004
@@ -15403,7 +16173,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spiced Mammoth Treats (#43005)'
-  location_id: 11501540
+  location_id: 11501519
   trigger:
     kind: recipe_craft
     item_entry: 43005
@@ -15413,7 +16183,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Fish Feast (#43015)'
-  location_id: 11501541
+  location_id: 11501520
   trigger:
     kind: recipe_craft
     item_entry: 43015
@@ -15423,7 +16193,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ring of Earthen Might (#43250)'
-  location_id: 11501542
+  location_id: 11501521
   trigger:
     kind: recipe_craft
     item_entry: 43250
@@ -15433,7 +16203,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ring of Scarlet Shadows (#43251)'
-  location_id: 11501543
+  location_id: 11501522
   trigger:
     kind: recipe_craft
     item_entry: 43251
@@ -15443,7 +16213,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Windfire Band (#43252)'
-  location_id: 11501544
+  location_id: 11501523
   trigger:
     kind: recipe_craft
     item_entry: 43252
@@ -15453,7 +16223,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ring of Northern Tears (#43253)'
-  location_id: 11501545
+  location_id: 11501524
   trigger:
     kind: recipe_craft
     item_entry: 43253
@@ -15463,7 +16233,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Facemask (#43260)'
-  location_id: 11501546
+  location_id: 11501525
   trigger:
     kind: recipe_craft
     item_entry: 43260
@@ -15473,7 +16243,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Headguard (#43261)'
-  location_id: 11501547
+  location_id: 11501526
   trigger:
     kind: recipe_craft
     item_entry: 43261
@@ -15483,7 +16253,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Spaulders (#43262)'
-  location_id: 11501548
+  location_id: 11501527
   trigger:
     kind: recipe_craft
     item_entry: 43262
@@ -15493,7 +16263,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Chestguard (#43263)'
-  location_id: 11501549
+  location_id: 11501528
   trigger:
     kind: recipe_craft
     item_entry: 43263
@@ -15503,7 +16273,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Bracers (#43264)'
-  location_id: 11501550
+  location_id: 11501529
   trigger:
     kind: recipe_craft
     item_entry: 43264
@@ -15513,7 +16283,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Handwraps (#43265)'
-  location_id: 11501551
+  location_id: 11501530
   trigger:
     kind: recipe_craft
     item_entry: 43265
@@ -15523,7 +16293,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Belt (#43266)'
-  location_id: 11501552
+  location_id: 11501531
   trigger:
     kind: recipe_craft
     item_entry: 43266
@@ -15533,7 +16303,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Leggings (#43271)'
-  location_id: 11501553
+  location_id: 11501532
   trigger:
     kind: recipe_craft
     item_entry: 43271
@@ -15543,7 +16313,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Overcast Boots (#43273)'
-  location_id: 11501554
+  location_id: 11501533
   trigger:
     kind: recipe_craft
     item_entry: 43273
@@ -15553,7 +16323,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Shoulderpads (#43433)'
-  location_id: 11501555
+  location_id: 11501534
   trigger:
     kind: recipe_craft
     item_entry: 43433
@@ -15563,7 +16333,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Chestguard (#43434)'
-  location_id: 11501556
+  location_id: 11501535
   trigger:
     kind: recipe_craft
     item_entry: 43434
@@ -15573,7 +16343,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Bindings (#43435)'
-  location_id: 11501557
+  location_id: 11501536
   trigger:
     kind: recipe_craft
     item_entry: 43435
@@ -15583,7 +16353,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Gauntlets (#43436)'
-  location_id: 11501558
+  location_id: 11501537
   trigger:
     kind: recipe_craft
     item_entry: 43436
@@ -15593,7 +16363,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Waistguard (#43437)'
-  location_id: 11501559
+  location_id: 11501538
   trigger:
     kind: recipe_craft
     item_entry: 43437
@@ -15603,7 +16373,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Legguards (#43438)'
-  location_id: 11501560
+  location_id: 11501539
   trigger:
     kind: recipe_craft
     item_entry: 43438
@@ -15613,7 +16383,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Eviscerator''s Treads (#43439)'
-  location_id: 11501561
+  location_id: 11501540
   trigger:
     kind: recipe_craft
     item_entry: 43439
@@ -15623,7 +16393,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Belt (#43442)'
-  location_id: 11501562
+  location_id: 11501541
   trigger:
     kind: recipe_craft
     item_entry: 43442
@@ -15633,7 +16403,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Boots (#43443)'
-  location_id: 11501563
+  location_id: 11501542
   trigger:
     kind: recipe_craft
     item_entry: 43443
@@ -15643,7 +16413,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Bracers (#43444)'
-  location_id: 11501564
+  location_id: 11501543
   trigger:
     kind: recipe_craft
     item_entry: 43444
@@ -15653,7 +16423,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Hauberk (#43445)'
-  location_id: 11501565
+  location_id: 11501544
   trigger:
     kind: recipe_craft
     item_entry: 43445
@@ -15663,7 +16433,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Gauntlets (#43446)'
-  location_id: 11501566
+  location_id: 11501545
   trigger:
     kind: recipe_craft
     item_entry: 43446
@@ -15673,7 +16443,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Helm (#43447)'
-  location_id: 11501567
+  location_id: 11501546
   trigger:
     kind: recipe_craft
     item_entry: 43447
@@ -15683,7 +16453,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Leggings (#43448)'
-  location_id: 11501568
+  location_id: 11501547
   trigger:
     kind: recipe_craft
     item_entry: 43448
@@ -15693,7 +16463,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Swiftarrow Shoulderguards (#43449)'
-  location_id: 11501569
+  location_id: 11501548
   trigger:
     kind: recipe_craft
     item_entry: 43449
@@ -15703,7 +16473,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Belt (#43450)'
-  location_id: 11501570
+  location_id: 11501549
   trigger:
     kind: recipe_craft
     item_entry: 43450
@@ -15713,7 +16483,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Stompers (#43451)'
-  location_id: 11501571
+  location_id: 11501550
   trigger:
     kind: recipe_craft
     item_entry: 43451
@@ -15723,7 +16493,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Wristguards (#43452)'
-  location_id: 11501572
+  location_id: 11501551
   trigger:
     kind: recipe_craft
     item_entry: 43452
@@ -15733,7 +16503,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Hauberk (#43453)'
-  location_id: 11501573
+  location_id: 11501552
   trigger:
     kind: recipe_craft
     item_entry: 43453
@@ -15743,7 +16513,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Grips (#43454)'
-  location_id: 11501574
+  location_id: 11501553
   trigger:
     kind: recipe_craft
     item_entry: 43454
@@ -15753,7 +16523,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Crown (#43455)'
-  location_id: 11501575
+  location_id: 11501554
   trigger:
     kind: recipe_craft
     item_entry: 43455
@@ -15763,7 +16533,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Legguards (#43456)'
-  location_id: 11501576
+  location_id: 11501555
   trigger:
     kind: recipe_craft
     item_entry: 43456
@@ -15773,7 +16543,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Stormhide Shoulders (#43457)'
-  location_id: 11501577
+  location_id: 11501556
   trigger:
     kind: recipe_craft
     item_entry: 43457
@@ -15783,7 +16553,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Giantmaim Legguards (#43458)'
-  location_id: 11501578
+  location_id: 11501557
   trigger:
     kind: recipe_craft
     item_entry: 43458
@@ -15793,7 +16563,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Giantmaim Bracers (#43459)'
-  location_id: 11501579
+  location_id: 11501558
   trigger:
     kind: recipe_craft
     item_entry: 43459
@@ -15803,7 +16573,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Revenant''s Breastplate (#43461)'
-  location_id: 11501580
+  location_id: 11501559
   trigger:
     kind: recipe_craft
     item_entry: 43461
@@ -15813,7 +16583,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Revenant''s Treads (#43469)'
-  location_id: 11501581
+  location_id: 11501560
   trigger:
     kind: recipe_craft
     item_entry: 43469
@@ -15823,7 +16593,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Gigantic Feast (#43478)'
-  location_id: 11501582
+  location_id: 11501561
   trigger:
     kind: recipe_craft
     item_entry: 43478
@@ -15833,7 +16603,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Small Feast (#43480)'
-  location_id: 11501583
+  location_id: 11501562
   trigger:
     kind: recipe_craft
     item_entry: 43480
@@ -15843,7 +16613,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Trollwoven Spaulders (#43481)'
-  location_id: 11501584
+  location_id: 11501563
   trigger:
     kind: recipe_craft
     item_entry: 43481
@@ -15853,7 +16623,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Savage Titanium Ring (#43482)'
-  location_id: 11501585
+  location_id: 11501564
   trigger:
     kind: recipe_craft
     item_entry: 43482
@@ -15863,7 +16633,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Trollwoven Girdle (#43484)'
-  location_id: 11501586
+  location_id: 11501565
   trigger:
     kind: recipe_craft
     item_entry: 43484
@@ -15873,7 +16643,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Last Weeks Mammoth (#43488)'
-  location_id: 11501587
+  location_id: 11501566
   trigger:
     kind: recipe_craft
     item_entry: 43488
@@ -15883,7 +16653,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Tasty Cupcake (#43490)'
-  location_id: 11501588
+  location_id: 11501567
   trigger:
     kind: recipe_craft
     item_entry: 43490
@@ -15893,7 +16663,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Bad Clams (#43491)'
-  location_id: 11501589
+  location_id: 11501568
   trigger:
     kind: recipe_craft
     item_entry: 43491
@@ -15903,7 +16673,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Haunted Herring (#43492)'
-  location_id: 11501590
+  location_id: 11501569
   trigger:
     kind: recipe_craft
     item_entry: 43492
@@ -15913,7 +16683,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Earthgiving Legguards (#43495)'
-  location_id: 11501591
+  location_id: 11501570
   trigger:
     kind: recipe_craft
     item_entry: 43495
@@ -15923,7 +16693,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Savage Titanium Band (#43498)'
-  location_id: 11501592
+  location_id: 11501571
   trigger:
     kind: recipe_craft
     item_entry: 43498
@@ -15933,7 +16703,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Earthgiving Boots (#43502)'
-  location_id: 11501593
+  location_id: 11501572
   trigger:
     kind: recipe_craft
     item_entry: 43502
@@ -15943,7 +16713,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Conjured Mana Pie (#43518)'
-  location_id: 11501594
+  location_id: 11501573
   trigger:
     kind: recipe_craft
     item_entry: 43518
@@ -15952,8 +16722,35 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Conjured Mana Strudel (#43523)'
-  location_id: 11501595
+  location_id: 11501574
   trigger:
     kind: recipe_craft
     item_entry: 43523
@@ -15962,8 +16759,35 @@ locations:
     - mage
     expansion:
     - vanilla
+    area:
+    - azuremyst_isle
+    - barrens
+    - crystalsong_forest
+    - darnassus
+    - desolace
+    - dun_morogh
+    - durotar
+    - dustwallow_marsh
+    - elwynn_forest
+    - eversong_woods
+    - exodar
+    - feralas
+    - icecrown
+    - ironforge
+    - mulgore
+    - orgrimmar
+    - silvermoon_city
+    - storm_peaks
+    - stormwind_city
+    - teldrassil
+    - thunder_bluff
+    - tirisfal_glades
+    - undercity
+    - western_plaguelands
+    - westfall
+    - wetlands
 - name: 'Craft: Titanium Frostguard Ring (#43582)'
-  location_id: 11501596
+  location_id: 11501575
   trigger:
     kind: recipe_craft
     item_entry: 43582
@@ -15973,7 +16797,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Polar Vest (#43590)'
-  location_id: 11501597
+  location_id: 11501576
   trigger:
     kind: recipe_craft
     item_entry: 43590
@@ -15983,7 +16807,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Polar Cord (#43591)'
-  location_id: 11501598
+  location_id: 11501577
   trigger:
     kind: recipe_craft
     item_entry: 43591
@@ -15993,7 +16817,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Polar Boots (#43592)'
-  location_id: 11501599
+  location_id: 11501578
   trigger:
     kind: recipe_craft
     item_entry: 43592
@@ -16003,7 +16827,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Icy Scale Chestguard (#43593)'
-  location_id: 11501600
+  location_id: 11501579
   trigger:
     kind: recipe_craft
     item_entry: 43593
@@ -16013,7 +16837,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Icy Scale Belt (#43594)'
-  location_id: 11501601
+  location_id: 11501580
   trigger:
     kind: recipe_craft
     item_entry: 43594
@@ -16023,7 +16847,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Icy Scale Boots (#43595)'
-  location_id: 11501602
+  location_id: 11501581
   trigger:
     kind: recipe_craft
     item_entry: 43595
@@ -16033,7 +16857,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Mekgineer''s Chopper (#44413)'
-  location_id: 11501603
+  location_id: 11501582
   trigger:
     kind: recipe_craft
     item_entry: 44413
@@ -16043,7 +16867,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Dragonscale Ammo Pouch (#44447)'
-  location_id: 11501604
+  location_id: 11501583
   trigger:
     kind: recipe_craft
     item_entry: 44447
@@ -16053,7 +16877,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Nerubian Reinforced Quiver (#44448)'
-  location_id: 11501605
+  location_id: 11501584
   trigger:
     kind: recipe_craft
     item_entry: 44448
@@ -16063,7 +16887,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Pumpkin Pie (#44836)'
-  location_id: 11501606
+  location_id: 11501585
   trigger:
     kind: recipe_craft
     item_entry: 44836
@@ -16073,7 +16897,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Spice Bread Stuffing (#44837)'
-  location_id: 11501607
+  location_id: 11501586
   trigger:
     kind: recipe_craft
     item_entry: 44837
@@ -16083,7 +16907,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Slow-Roasted Turkey (#44838)'
-  location_id: 11501608
+  location_id: 11501587
   trigger:
     kind: recipe_craft
     item_entry: 44838
@@ -16093,7 +16917,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Candied Sweet Potato (#44839)'
-  location_id: 11501609
+  location_id: 11501588
   trigger:
     kind: recipe_craft
     item_entry: 44839
@@ -16103,7 +16927,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Cranberry Chutney (#44840)'
-  location_id: 11501610
+  location_id: 11501589
   trigger:
     kind: recipe_craft
     item_entry: 44840
@@ -16113,7 +16937,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Windripper Boots (#44930)'
-  location_id: 11501611
+  location_id: 11501590
   trigger:
     kind: recipe_craft
     item_entry: 44930
@@ -16123,7 +16947,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Windripper Leggings (#44931)'
-  location_id: 11501612
+  location_id: 11501591
   trigger:
     kind: recipe_craft
     item_entry: 44931
@@ -16133,7 +16957,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Plating (#44936)'
-  location_id: 11501613
+  location_id: 11501592
   trigger:
     kind: recipe_craft
     item_entry: 44936
@@ -16143,7 +16967,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Worg Tartare (#44953)'
-  location_id: 11501614
+  location_id: 11501593
   trigger:
     kind: recipe_craft
     item_entry: 44953
@@ -16153,7 +16977,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Belt of the Titans (#45550)'
-  location_id: 11501615
+  location_id: 11501594
   trigger:
     kind: recipe_craft
     item_entry: 45550
@@ -16163,7 +16987,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Indestructible Plate Girdle (#45551)'
-  location_id: 11501616
+  location_id: 11501595
   trigger:
     kind: recipe_craft
     item_entry: 45551
@@ -16173,7 +16997,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Plate Girdle of Righteousness (#45552)'
-  location_id: 11501617
+  location_id: 11501596
   trigger:
     kind: recipe_craft
     item_entry: 45552
@@ -16183,7 +17007,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Belt of Dragons (#45553)'
-  location_id: 11501618
+  location_id: 11501597
   trigger:
     kind: recipe_craft
     item_entry: 45553
@@ -16193,7 +17017,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Blue Belt of Chaos (#45554)'
-  location_id: 11501619
+  location_id: 11501598
   trigger:
     kind: recipe_craft
     item_entry: 45554
@@ -16203,7 +17027,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Death-warmed Belt (#45555)'
-  location_id: 11501620
+  location_id: 11501599
   trigger:
     kind: recipe_craft
     item_entry: 45555
@@ -16213,7 +17037,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Belt of Arctic Life (#45556)'
-  location_id: 11501621
+  location_id: 11501600
   trigger:
     kind: recipe_craft
     item_entry: 45556
@@ -16223,7 +17047,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sash of Ancient Power (#45557)'
-  location_id: 11501622
+  location_id: 11501601
   trigger:
     kind: recipe_craft
     item_entry: 45557
@@ -16233,7 +17057,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Cord of the White Dawn (#45558)'
-  location_id: 11501623
+  location_id: 11501602
   trigger:
     kind: recipe_craft
     item_entry: 45558
@@ -16243,7 +17067,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Battlelord''s Plate Boots (#45559)'
-  location_id: 11501624
+  location_id: 11501603
   trigger:
     kind: recipe_craft
     item_entry: 45559
@@ -16253,7 +17077,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spiked Deathdealers (#45560)'
-  location_id: 11501625
+  location_id: 11501604
   trigger:
     kind: recipe_craft
     item_entry: 45560
@@ -16263,7 +17087,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Treads of Destiny (#45561)'
-  location_id: 11501626
+  location_id: 11501605
   trigger:
     kind: recipe_craft
     item_entry: 45561
@@ -16273,7 +17097,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Boots of Living Scale (#45562)'
-  location_id: 11501627
+  location_id: 11501606
   trigger:
     kind: recipe_craft
     item_entry: 45562
@@ -16283,7 +17107,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Lightning Grounded Boots (#45563)'
-  location_id: 11501628
+  location_id: 11501607
   trigger:
     kind: recipe_craft
     item_entry: 45563
@@ -16293,7 +17117,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Footpads of Silence (#45564)'
-  location_id: 11501629
+  location_id: 11501608
   trigger:
     kind: recipe_craft
     item_entry: 45564
@@ -16303,7 +17127,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Boots of Wintry Endurance (#45565)'
-  location_id: 11501630
+  location_id: 11501609
   trigger:
     kind: recipe_craft
     item_entry: 45565
@@ -16313,7 +17137,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Spellslinger''s Slippers (#45566)'
-  location_id: 11501631
+  location_id: 11501610
   trigger:
     kind: recipe_craft
     item_entry: 45566
@@ -16323,7 +17147,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Savior''s Slippers (#45567)'
-  location_id: 11501632
+  location_id: 11501611
   trigger:
     kind: recipe_craft
     item_entry: 45567
@@ -16333,7 +17157,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Emerald Bag (#45773)'
-  location_id: 11501633
+  location_id: 11501612
   trigger:
     kind: recipe_craft
     item_entry: 45773
@@ -16343,7 +17167,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bread of the Dead (#46691)'
-  location_id: 11501634
+  location_id: 11501613
   trigger:
     kind: recipe_craft
     item_entry: 46691
@@ -16353,7 +17177,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Flask of the North (#47499)'
-  location_id: 11501635
+  location_id: 11501614
   trigger:
     kind: recipe_craft
     item_entry: 47499
@@ -16363,7 +17187,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Saronite Swordbreakers (#47570)'
-  location_id: 11501636
+  location_id: 11501615
   trigger:
     kind: recipe_craft
     item_entry: 47570
@@ -16373,7 +17197,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Saronite Swordbreakers (#47571)'
-  location_id: 11501637
+  location_id: 11501616
   trigger:
     kind: recipe_craft
     item_entry: 47571
@@ -16383,7 +17207,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Spikeguards (#47572)'
-  location_id: 11501638
+  location_id: 11501617
   trigger:
     kind: recipe_craft
     item_entry: 47572
@@ -16393,7 +17217,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Spikeguards (#47573)'
-  location_id: 11501639
+  location_id: 11501618
   trigger:
     kind: recipe_craft
     item_entry: 47573
@@ -16403,7 +17227,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sunforged Bracers (#47574)'
-  location_id: 11501640
+  location_id: 11501619
   trigger:
     kind: recipe_craft
     item_entry: 47574
@@ -16413,7 +17237,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sunforged Bracers (#47575)'
-  location_id: 11501641
+  location_id: 11501620
   trigger:
     kind: recipe_craft
     item_entry: 47575
@@ -16423,7 +17247,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Crusader''s Dragonscale Bracers (#47576)'
-  location_id: 11501642
+  location_id: 11501621
   trigger:
     kind: recipe_craft
     item_entry: 47576
@@ -16433,7 +17257,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Crusader''s Dragonscale Bracers (#47577)'
-  location_id: 11501643
+  location_id: 11501622
   trigger:
     kind: recipe_craft
     item_entry: 47577
@@ -16443,7 +17267,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Black Chitin Bracers (#47579)'
-  location_id: 11501644
+  location_id: 11501623
   trigger:
     kind: recipe_craft
     item_entry: 47579
@@ -16453,7 +17277,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Black Chitin Bracers (#47580)'
-  location_id: 11501645
+  location_id: 11501624
   trigger:
     kind: recipe_craft
     item_entry: 47580
@@ -16463,7 +17287,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bracers of Swift Death (#47581)'
-  location_id: 11501646
+  location_id: 11501625
   trigger:
     kind: recipe_craft
     item_entry: 47581
@@ -16473,7 +17297,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bracers of Swift Death (#47582)'
-  location_id: 11501647
+  location_id: 11501626
   trigger:
     kind: recipe_craft
     item_entry: 47582
@@ -16483,7 +17307,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Moonshadow Armguards (#47583)'
-  location_id: 11501648
+  location_id: 11501627
   trigger:
     kind: recipe_craft
     item_entry: 47583
@@ -16493,7 +17317,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Moonshadow Armguards (#47584)'
-  location_id: 11501649
+  location_id: 11501628
   trigger:
     kind: recipe_craft
     item_entry: 47584
@@ -16503,7 +17327,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bejeweled Wizard''s Bracers (#47585)'
-  location_id: 11501650
+  location_id: 11501629
   trigger:
     kind: recipe_craft
     item_entry: 47585
@@ -16513,7 +17337,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bejeweled Wizard''s Bracers (#47586)'
-  location_id: 11501651
+  location_id: 11501630
   trigger:
     kind: recipe_craft
     item_entry: 47586
@@ -16523,7 +17347,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Royal Moonshroud Bracers (#47587)'
-  location_id: 11501652
+  location_id: 11501631
   trigger:
     kind: recipe_craft
     item_entry: 47587
@@ -16533,7 +17357,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Royal Moonshroud Bracers (#47588)'
-  location_id: 11501653
+  location_id: 11501632
   trigger:
     kind: recipe_craft
     item_entry: 47588
@@ -16543,7 +17367,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Razorplate (#47589)'
-  location_id: 11501654
+  location_id: 11501633
   trigger:
     kind: recipe_craft
     item_entry: 47589
@@ -16553,7 +17377,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Titanium Razorplate (#47590)'
-  location_id: 11501655
+  location_id: 11501634
   trigger:
     kind: recipe_craft
     item_entry: 47590
@@ -16563,7 +17387,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Breastplate of the White Knight (#47591)'
-  location_id: 11501656
+  location_id: 11501635
   trigger:
     kind: recipe_craft
     item_entry: 47591
@@ -16573,7 +17397,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Breastplate of the White Knight (#47592)'
-  location_id: 11501657
+  location_id: 11501636
   trigger:
     kind: recipe_craft
     item_entry: 47592
@@ -16583,7 +17407,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sunforged Breastplate (#47593)'
-  location_id: 11501658
+  location_id: 11501637
   trigger:
     kind: recipe_craft
     item_entry: 47593
@@ -16593,7 +17417,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sunforged Breastplate (#47594)'
-  location_id: 11501659
+  location_id: 11501638
   trigger:
     kind: recipe_craft
     item_entry: 47594
@@ -16603,7 +17427,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Crusader''s Dragonscale Breastplate (#47595)'
-  location_id: 11501660
+  location_id: 11501639
   trigger:
     kind: recipe_craft
     item_entry: 47595
@@ -16613,7 +17437,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Crusader''s Dragonscale Breastplate (#47596)'
-  location_id: 11501661
+  location_id: 11501640
   trigger:
     kind: recipe_craft
     item_entry: 47596
@@ -16623,7 +17447,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ensorcelled Nerubian Breastplate (#47597)'
-  location_id: 11501662
+  location_id: 11501641
   trigger:
     kind: recipe_craft
     item_entry: 47597
@@ -16633,7 +17457,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Ensorcelled Nerubian Breastplate (#47598)'
-  location_id: 11501663
+  location_id: 11501642
   trigger:
     kind: recipe_craft
     item_entry: 47598
@@ -16643,7 +17467,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Knightbane Carapace (#47599)'
-  location_id: 11501664
+  location_id: 11501643
   trigger:
     kind: recipe_craft
     item_entry: 47599
@@ -16653,7 +17477,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Knightbane Carapace (#47600)'
-  location_id: 11501665
+  location_id: 11501644
   trigger:
     kind: recipe_craft
     item_entry: 47600
@@ -16663,7 +17487,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Lunar Eclipse Robes (#47601)'
-  location_id: 11501666
+  location_id: 11501645
   trigger:
     kind: recipe_craft
     item_entry: 47601
@@ -16673,7 +17497,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Lunar Eclipse Robes (#47602)'
-  location_id: 11501667
+  location_id: 11501646
   trigger:
     kind: recipe_craft
     item_entry: 47602
@@ -16683,7 +17507,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Merlin''s Robe (#47603)'
-  location_id: 11501668
+  location_id: 11501647
   trigger:
     kind: recipe_craft
     item_entry: 47603
@@ -16693,7 +17517,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Merlin''s Robe (#47604)'
-  location_id: 11501669
+  location_id: 11501648
   trigger:
     kind: recipe_craft
     item_entry: 47604
@@ -16703,7 +17527,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Royal Moonshroud Robe (#47605)'
-  location_id: 11501670
+  location_id: 11501649
   trigger:
     kind: recipe_craft
     item_entry: 47605
@@ -16713,7 +17537,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Royal Moonshroud Robe (#47606)'
-  location_id: 11501671
+  location_id: 11501650
   trigger:
     kind: recipe_craft
     item_entry: 47606
@@ -16723,7 +17547,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Jeeves (#49040)'
-  location_id: 11501672
+  location_id: 11501651
   trigger:
     kind: recipe_craft
     item_entry: 49040
@@ -16733,7 +17557,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Nightmare Tear (#49110)'
-  location_id: 11501673
+  location_id: 11501652
   trigger:
     kind: recipe_craft
     item_entry: 49110
@@ -16743,7 +17567,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Deathfrost Boots (#49890)'
-  location_id: 11501674
+  location_id: 11501653
   trigger:
     kind: recipe_craft
     item_entry: 49890
@@ -16753,7 +17577,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Leggings of Woven Death (#49891)'
-  location_id: 11501675
+  location_id: 11501654
   trigger:
     kind: recipe_craft
     item_entry: 49891
@@ -16763,7 +17587,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Lightweave Leggings (#49892)'
-  location_id: 11501676
+  location_id: 11501655
   trigger:
     kind: recipe_craft
     item_entry: 49892
@@ -16773,7 +17597,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Sandals of Consecration (#49893)'
-  location_id: 11501677
+  location_id: 11501656
   trigger:
     kind: recipe_craft
     item_entry: 49893
@@ -16783,7 +17607,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Blessed Cenarion Boots (#49894)'
-  location_id: 11501678
+  location_id: 11501657
   trigger:
     kind: recipe_craft
     item_entry: 49894
@@ -16793,7 +17617,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Footpads of Impending Death (#49895)'
-  location_id: 11501679
+  location_id: 11501658
   trigger:
     kind: recipe_craft
     item_entry: 49895
@@ -16803,7 +17627,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Earthsoul Boots (#49896)'
-  location_id: 11501680
+  location_id: 11501659
   trigger:
     kind: recipe_craft
     item_entry: 49896
@@ -16813,7 +17637,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Rock-Steady Treads (#49897)'
-  location_id: 11501681
+  location_id: 11501660
   trigger:
     kind: recipe_craft
     item_entry: 49897
@@ -16823,7 +17647,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Legwraps of Unleashed Nature (#49898)'
-  location_id: 11501682
+  location_id: 11501661
   trigger:
     kind: recipe_craft
     item_entry: 49898
@@ -16833,7 +17657,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Bladeborn Leggings (#49899)'
-  location_id: 11501683
+  location_id: 11501662
   trigger:
     kind: recipe_craft
     item_entry: 49899
@@ -16843,7 +17667,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Lightning-Infused Leggings (#49900)'
-  location_id: 11501684
+  location_id: 11501663
   trigger:
     kind: recipe_craft
     item_entry: 49900
@@ -16853,7 +17677,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Draconic Bonesplinter Legguards (#49901)'
-  location_id: 11501685
+  location_id: 11501664
   trigger:
     kind: recipe_craft
     item_entry: 49901
@@ -16863,7 +17687,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Puresteel Legplates (#49902)'
-  location_id: 11501686
+  location_id: 11501665
   trigger:
     kind: recipe_craft
     item_entry: 49902
@@ -16873,7 +17697,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Legplates of Painful Death (#49903)'
-  location_id: 11501687
+  location_id: 11501666
   trigger:
     kind: recipe_craft
     item_entry: 49903
@@ -16883,7 +17707,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Pillars of Might (#49904)'
-  location_id: 11501688
+  location_id: 11501667
   trigger:
     kind: recipe_craft
     item_entry: 49904
@@ -16893,7 +17717,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Protectors of Life (#49905)'
-  location_id: 11501689
+  location_id: 11501668
   trigger:
     kind: recipe_craft
     item_entry: 49905
@@ -16903,7 +17727,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Hellfrozen Bonegrinders (#49906)'
-  location_id: 11501690
+  location_id: 11501669
   trigger:
     kind: recipe_craft
     item_entry: 49906
@@ -16913,7 +17737,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Boots of Kingly Upheaval (#49907)'
-  location_id: 11501691
+  location_id: 11501670
   trigger:
     kind: recipe_craft
     item_entry: 49907
@@ -16923,7 +17747,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Glyph of Eternal Water (#50045)'
-  location_id: 11501692
+  location_id: 11501671
   trigger:
     kind: recipe_craft
     item_entry: 50045
@@ -16933,7 +17757,7 @@ locations:
     expansion:
     - vanilla
 - name: 'Craft: Glyph of Quick Decay (#50077)'
-  location_id: 11501693
+  location_id: 11501672
   trigger:
     kind: recipe_craft
     item_entry: 50077
@@ -16943,7 +17767,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Glyph of Rapid Rejuvenation (#50125)'
-  location_id: 11501694
+  location_id: 11501673
   trigger:
     kind: recipe_craft
     item_entry: 50125
@@ -16953,7 +17777,7 @@ locations:
     expansion:
     - tbc
 - name: 'Craft: Shatter Rounds (#52020)'
-  location_id: 11501695
+  location_id: 11501674
   trigger:
     kind: recipe_craft
     item_entry: 52020
@@ -16963,7 +17787,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Iceblade Arrow (#52021)'
-  location_id: 11501696
+  location_id: 11501675
   trigger:
     kind: recipe_craft
     item_entry: 52021
@@ -16973,7 +17797,7 @@ locations:
     expansion:
     - wotlk
 - name: 'Craft: Frosty Flying Carpet (#54797)'
-  location_id: 11501697
+  location_id: 11501676
   trigger:
     kind: recipe_craft
     item_entry: 54797
@@ -24298,1178 +25122,1073 @@ items:
   delivery:
     kind: mail
     wow_item_entry: 41255
-- name: 'Craftsanity Item: Chaotic Skyflare Diamond (#41285)'
-  item_id: 11751463
-  delivery:
-    kind: mail
-    wow_item_entry: 41285
-- name: 'Craftsanity Item: Destructive Skyflare Diamond (#41307)'
-  item_id: 11751464
-  delivery:
-    kind: mail
-    wow_item_entry: 41307
-- name: 'Craftsanity Item: Ember Skyflare Diamond (#41333)'
-  item_id: 11751465
-  delivery:
-    kind: mail
-    wow_item_entry: 41333
-- name: 'Craftsanity Item: Enigmatic Skyflare Diamond (#41335)'
-  item_id: 11751466
-  delivery:
-    kind: mail
-    wow_item_entry: 41335
-- name: 'Craftsanity Item: Swift Skyflare Diamond (#41339)'
-  item_id: 11751467
-  delivery:
-    kind: mail
-    wow_item_entry: 41339
-- name: 'Craftsanity Item: Tireless Skyflare Diamond (#41375)'
-  item_id: 11751468
-  delivery:
-    kind: mail
-    wow_item_entry: 41375
-- name: 'Craftsanity Item: Revitalizing Skyflare Diamond (#41376)'
-  item_id: 11751469
-  delivery:
-    kind: mail
-    wow_item_entry: 41376
-- name: 'Craftsanity Item: Effulgent Skyflare Diamond (#41377)'
-  item_id: 11751470
-  delivery:
-    kind: mail
-    wow_item_entry: 41377
-- name: 'Craftsanity Item: Forlorn Skyflare Diamond (#41378)'
-  item_id: 11751471
-  delivery:
-    kind: mail
-    wow_item_entry: 41378
-- name: 'Craftsanity Item: Impassive Skyflare Diamond (#41379)'
-  item_id: 11751472
-  delivery:
-    kind: mail
-    wow_item_entry: 41379
-- name: 'Craftsanity Item: Austere Earthsiege Diamond (#41380)'
-  item_id: 11751473
-  delivery:
-    kind: mail
-    wow_item_entry: 41380
-- name: 'Craftsanity Item: Persistent Earthsiege Diamond (#41381)'
-  item_id: 11751474
-  delivery:
-    kind: mail
-    wow_item_entry: 41381
-- name: 'Craftsanity Item: Trenchant Earthsiege Diamond (#41382)'
-  item_id: 11751475
-  delivery:
-    kind: mail
-    wow_item_entry: 41382
-- name: 'Craftsanity Item: Invigorating Earthsiege Diamond (#41385)'
-  item_id: 11751476
-  delivery:
-    kind: mail
-    wow_item_entry: 41385
-- name: 'Craftsanity Item: Beaming Earthsiege Diamond (#41389)'
-  item_id: 11751477
-  delivery:
-    kind: mail
-    wow_item_entry: 41389
-- name: 'Craftsanity Item: Bracing Earthsiege Diamond (#41395)'
-  item_id: 11751478
-  delivery:
-    kind: mail
-    wow_item_entry: 41395
-- name: 'Craftsanity Item: Eternal Earthsiege Diamond (#41396)'
-  item_id: 11751479
-  delivery:
-    kind: mail
-    wow_item_entry: 41396
-- name: 'Craftsanity Item: Powerful Earthsiege Diamond (#41397)'
-  item_id: 11751480
-  delivery:
-    kind: mail
-    wow_item_entry: 41397
-- name: 'Craftsanity Item: Relentless Earthsiege Diamond (#41398)'
-  item_id: 11751481
-  delivery:
-    kind: mail
-    wow_item_entry: 41398
-- name: 'Craftsanity Item: Thundering Skyflare Diamond (#41400)'
-  item_id: 11751482
-  delivery:
-    kind: mail
-    wow_item_entry: 41400
-- name: 'Craftsanity Item: Insightful Earthsiege Diamond (#41401)'
-  item_id: 11751483
-  delivery:
-    kind: mail
-    wow_item_entry: 41401
 - name: 'Craftsanity Item: Mechano-hog (#41508)'
-  item_id: 11751484
+  item_id: 11751463
   delivery:
     kind: mail
     wow_item_entry: 41508
 - name: 'Craftsanity Item: Ebonweave (#41593)'
-  item_id: 11751485
+  item_id: 11751464
   delivery:
     kind: mail
     wow_item_entry: 41593
 - name: 'Craftsanity Item: Moonshroud (#41594)'
-  item_id: 11751486
+  item_id: 11751465
   delivery:
     kind: mail
     wow_item_entry: 41594
 - name: 'Craftsanity Item: Spellweave (#41595)'
-  item_id: 11751487
+  item_id: 11751466
   delivery:
     kind: mail
     wow_item_entry: 41595
 - name: 'Craftsanity Item: Abyssal Bag (#41597)'
-  item_id: 11751488
+  item_id: 11751467
   delivery:
     kind: mail
     wow_item_entry: 41597
 - name: 'Craftsanity Item: Mysterious Bag (#41598)'
-  item_id: 11751489
+  item_id: 11751468
   delivery:
     kind: mail
     wow_item_entry: 41598
 - name: 'Craftsanity Item: Frostweave Bag (#41599)'
-  item_id: 11751490
+  item_id: 11751469
   delivery:
     kind: mail
     wow_item_entry: 41599
 - name: 'Craftsanity Item: Glacial Bag (#41600)'
-  item_id: 11751491
+  item_id: 11751470
   delivery:
     kind: mail
     wow_item_entry: 41600
 - name: 'Craftsanity Item: Brilliant Spellthread (#41602)'
-  item_id: 11751492
+  item_id: 11751471
   delivery:
     kind: mail
     wow_item_entry: 41602
 - name: 'Craftsanity Item: Sapphire Spellthread (#41604)'
-  item_id: 11751493
+  item_id: 11751472
   delivery:
     kind: mail
     wow_item_entry: 41604
 - name: 'Craftsanity Item: Wispcloak (#41609)'
-  item_id: 11751494
+  item_id: 11751473
   delivery:
     kind: mail
     wow_item_entry: 41609
 - name: 'Craftsanity Item: Deathchill Cloak (#41610)'
-  item_id: 11751495
+  item_id: 11751474
   delivery:
     kind: mail
     wow_item_entry: 41610
 - name: 'Craftsanity Item: Hat of Wintry Doom (#41984)'
-  item_id: 11751496
+  item_id: 11751475
   delivery:
     kind: mail
     wow_item_entry: 41984
 - name: 'Craftsanity Item: Silky Iceshard Boots (#41985)'
-  item_id: 11751497
+  item_id: 11751476
   delivery:
     kind: mail
     wow_item_entry: 41985
 - name: 'Craftsanity Item: Deep Frozen Cord (#41986)'
-  item_id: 11751498
+  item_id: 11751477
   delivery:
     kind: mail
     wow_item_entry: 41986
 - name: 'Craftsanity Item: Frostmoon Pants (#42093)'
-  item_id: 11751499
+  item_id: 11751478
   delivery:
     kind: mail
     wow_item_entry: 42093
 - name: 'Craftsanity Item: Light Blessed Mittens (#42095)'
-  item_id: 11751500
+  item_id: 11751479
   delivery:
     kind: mail
     wow_item_entry: 42095
 - name: 'Craftsanity Item: Aurora Slippers (#42096)'
-  item_id: 11751501
+  item_id: 11751480
   delivery:
     kind: mail
     wow_item_entry: 42096
 - name: 'Craftsanity Item: Moonshroud Robe (#42100)'
-  item_id: 11751502
+  item_id: 11751481
   delivery:
     kind: mail
     wow_item_entry: 42100
 - name: 'Craftsanity Item: Ebonweave Robe (#42101)'
-  item_id: 11751503
+  item_id: 11751482
   delivery:
     kind: mail
     wow_item_entry: 42101
 - name: 'Craftsanity Item: Spellweave Robe (#42102)'
-  item_id: 11751504
+  item_id: 11751483
   delivery:
     kind: mail
     wow_item_entry: 42102
 - name: 'Craftsanity Item: Moonshroud Gloves (#42103)'
-  item_id: 11751505
+  item_id: 11751484
   delivery:
     kind: mail
     wow_item_entry: 42103
 - name: 'Craftsanity Item: Ebonweave Gloves (#42111)'
-  item_id: 11751506
+  item_id: 11751485
   delivery:
     kind: mail
     wow_item_entry: 42111
 - name: 'Craftsanity Item: Spellweave Gloves (#42113)'
-  item_id: 11751507
+  item_id: 11751486
   delivery:
     kind: mail
     wow_item_entry: 42113
 - name: 'Craftsanity Item: Bold Dragon''s Eye (#42142)'
-  item_id: 11751508
+  item_id: 11751487
   delivery:
     kind: mail
     wow_item_entry: 42142
 - name: 'Craftsanity Item: Delicate Dragon''s Eye (#42143)'
-  item_id: 11751509
+  item_id: 11751488
   delivery:
     kind: mail
     wow_item_entry: 42143
 - name: 'Craftsanity Item: Runed Dragon''s Eye (#42144)'
-  item_id: 11751510
+  item_id: 11751489
   delivery:
     kind: mail
     wow_item_entry: 42144
 - name: 'Craftsanity Item: Sparkling Dragon''s Eye (#42145)'
-  item_id: 11751511
+  item_id: 11751490
   delivery:
     kind: mail
     wow_item_entry: 42145
 - name: 'Craftsanity Item: Lustrous Dragon''s Eye (#42146)'
-  item_id: 11751512
+  item_id: 11751491
   delivery:
     kind: mail
     wow_item_entry: 42146
 - name: 'Craftsanity Item: Brilliant Dragon''s Eye (#42148)'
-  item_id: 11751513
+  item_id: 11751492
   delivery:
     kind: mail
     wow_item_entry: 42148
 - name: 'Craftsanity Item: Smooth Dragon''s Eye (#42149)'
-  item_id: 11751514
+  item_id: 11751493
   delivery:
     kind: mail
     wow_item_entry: 42149
 - name: 'Craftsanity Item: Quick Dragon''s Eye (#42150)'
-  item_id: 11751515
+  item_id: 11751494
   delivery:
     kind: mail
     wow_item_entry: 42150
 - name: 'Craftsanity Item: Subtle Dragon''s Eye (#42151)'
-  item_id: 11751516
+  item_id: 11751495
   delivery:
     kind: mail
     wow_item_entry: 42151
 - name: 'Craftsanity Item: Flashing Dragon''s Eye (#42152)'
-  item_id: 11751517
+  item_id: 11751496
   delivery:
     kind: mail
     wow_item_entry: 42152
 - name: 'Craftsanity Item: Fractured Dragon''s Eye (#42153)'
-  item_id: 11751518
+  item_id: 11751497
   delivery:
     kind: mail
     wow_item_entry: 42153
 - name: 'Craftsanity Item: Precise Dragon''s Eye (#42154)'
-  item_id: 11751519
+  item_id: 11751498
   delivery:
     kind: mail
     wow_item_entry: 42154
 - name: 'Craftsanity Item: Stormy Dragon''s Eye (#42155)'
-  item_id: 11751520
+  item_id: 11751499
   delivery:
     kind: mail
     wow_item_entry: 42155
 - name: 'Craftsanity Item: Rigid Dragon''s Eye (#42156)'
-  item_id: 11751521
+  item_id: 11751500
   delivery:
     kind: mail
     wow_item_entry: 42156
 - name: 'Craftsanity Item: Thick Dragon''s Eye (#42157)'
-  item_id: 11751522
+  item_id: 11751501
   delivery:
     kind: mail
     wow_item_entry: 42157
 - name: 'Craftsanity Item: Mystic Dragon''s Eye (#42158)'
-  item_id: 11751523
+  item_id: 11751502
   delivery:
     kind: mail
     wow_item_entry: 42158
 - name: 'Craftsanity Item: Titanium Impact Band (#42642)'
-  item_id: 11751524
+  item_id: 11751503
   delivery:
     kind: mail
     wow_item_entry: 42642
 - name: 'Craftsanity Item: Titanium Earthguard Ring (#42643)'
-  item_id: 11751525
+  item_id: 11751504
   delivery:
     kind: mail
     wow_item_entry: 42643
 - name: 'Craftsanity Item: Titanium Spellshock Ring (#42644)'
-  item_id: 11751526
+  item_id: 11751505
   delivery:
     kind: mail
     wow_item_entry: 42644
 - name: 'Craftsanity Item: Titanium Impact Choker (#42645)'
-  item_id: 11751527
+  item_id: 11751506
   delivery:
     kind: mail
     wow_item_entry: 42645
 - name: 'Craftsanity Item: Titanium Earthguard Chain (#42646)'
-  item_id: 11751528
+  item_id: 11751507
   delivery:
     kind: mail
     wow_item_entry: 42646
 - name: 'Craftsanity Item: Titanium Spellshock Necklace (#42647)'
-  item_id: 11751529
+  item_id: 11751508
   delivery:
     kind: mail
     wow_item_entry: 42647
 - name: 'Craftsanity Item: Spicy Fried Herring (#42993)'
-  item_id: 11751530
+  item_id: 11751509
   delivery:
     kind: mail
     wow_item_entry: 42993
 - name: 'Craftsanity Item: Rhinolicious Wormsteak (#42994)'
-  item_id: 11751531
+  item_id: 11751510
   delivery:
     kind: mail
     wow_item_entry: 42994
 - name: 'Craftsanity Item: Hearty Rhino (#42995)'
-  item_id: 11751532
+  item_id: 11751511
   delivery:
     kind: mail
     wow_item_entry: 42995
 - name: 'Craftsanity Item: Snapper Extreme (#42996)'
-  item_id: 11751533
+  item_id: 11751512
   delivery:
     kind: mail
     wow_item_entry: 42996
 - name: 'Craftsanity Item: Blackened Worg Steak (#42997)'
-  item_id: 11751534
+  item_id: 11751513
   delivery:
     kind: mail
     wow_item_entry: 42997
 - name: 'Craftsanity Item: Cuttlesteak (#42998)'
-  item_id: 11751535
+  item_id: 11751514
   delivery:
     kind: mail
     wow_item_entry: 42998
 - name: 'Craftsanity Item: Blackened Dragonfin (#42999)'
-  item_id: 11751536
+  item_id: 11751515
   delivery:
     kind: mail
     wow_item_entry: 42999
 - name: 'Craftsanity Item: Dragonfin Filet (#43000)'
-  item_id: 11751537
+  item_id: 11751516
   delivery:
     kind: mail
     wow_item_entry: 43000
 - name: 'Craftsanity Item: Tracker Snacks (#43001)'
-  item_id: 11751538
+  item_id: 11751517
   delivery:
     kind: mail
     wow_item_entry: 43001
 - name: 'Craftsanity Item: Critter Bites (#43004)'
-  item_id: 11751539
+  item_id: 11751518
   delivery:
     kind: mail
     wow_item_entry: 43004
 - name: 'Craftsanity Item: Spiced Mammoth Treats (#43005)'
-  item_id: 11751540
+  item_id: 11751519
   delivery:
     kind: mail
     wow_item_entry: 43005
 - name: 'Craftsanity Item: Fish Feast (#43015)'
-  item_id: 11751541
+  item_id: 11751520
   delivery:
     kind: mail
     wow_item_entry: 43015
 - name: 'Craftsanity Item: Ring of Earthen Might (#43250)'
-  item_id: 11751542
+  item_id: 11751521
   delivery:
     kind: mail
     wow_item_entry: 43250
 - name: 'Craftsanity Item: Ring of Scarlet Shadows (#43251)'
-  item_id: 11751543
+  item_id: 11751522
   delivery:
     kind: mail
     wow_item_entry: 43251
 - name: 'Craftsanity Item: Windfire Band (#43252)'
-  item_id: 11751544
+  item_id: 11751523
   delivery:
     kind: mail
     wow_item_entry: 43252
 - name: 'Craftsanity Item: Ring of Northern Tears (#43253)'
-  item_id: 11751545
+  item_id: 11751524
   delivery:
     kind: mail
     wow_item_entry: 43253
 - name: 'Craftsanity Item: Eviscerator''s Facemask (#43260)'
-  item_id: 11751546
+  item_id: 11751525
   delivery:
     kind: mail
     wow_item_entry: 43260
 - name: 'Craftsanity Item: Overcast Headguard (#43261)'
-  item_id: 11751547
+  item_id: 11751526
   delivery:
     kind: mail
     wow_item_entry: 43261
 - name: 'Craftsanity Item: Overcast Spaulders (#43262)'
-  item_id: 11751548
+  item_id: 11751527
   delivery:
     kind: mail
     wow_item_entry: 43262
 - name: 'Craftsanity Item: Overcast Chestguard (#43263)'
-  item_id: 11751549
+  item_id: 11751528
   delivery:
     kind: mail
     wow_item_entry: 43263
 - name: 'Craftsanity Item: Overcast Bracers (#43264)'
-  item_id: 11751550
+  item_id: 11751529
   delivery:
     kind: mail
     wow_item_entry: 43264
 - name: 'Craftsanity Item: Overcast Handwraps (#43265)'
-  item_id: 11751551
+  item_id: 11751530
   delivery:
     kind: mail
     wow_item_entry: 43265
 - name: 'Craftsanity Item: Overcast Belt (#43266)'
-  item_id: 11751552
+  item_id: 11751531
   delivery:
     kind: mail
     wow_item_entry: 43266
 - name: 'Craftsanity Item: Overcast Leggings (#43271)'
-  item_id: 11751553
+  item_id: 11751532
   delivery:
     kind: mail
     wow_item_entry: 43271
 - name: 'Craftsanity Item: Overcast Boots (#43273)'
-  item_id: 11751554
+  item_id: 11751533
   delivery:
     kind: mail
     wow_item_entry: 43273
 - name: 'Craftsanity Item: Eviscerator''s Shoulderpads (#43433)'
-  item_id: 11751555
+  item_id: 11751534
   delivery:
     kind: mail
     wow_item_entry: 43433
 - name: 'Craftsanity Item: Eviscerator''s Chestguard (#43434)'
-  item_id: 11751556
+  item_id: 11751535
   delivery:
     kind: mail
     wow_item_entry: 43434
 - name: 'Craftsanity Item: Eviscerator''s Bindings (#43435)'
-  item_id: 11751557
+  item_id: 11751536
   delivery:
     kind: mail
     wow_item_entry: 43435
 - name: 'Craftsanity Item: Eviscerator''s Gauntlets (#43436)'
-  item_id: 11751558
+  item_id: 11751537
   delivery:
     kind: mail
     wow_item_entry: 43436
 - name: 'Craftsanity Item: Eviscerator''s Waistguard (#43437)'
-  item_id: 11751559
+  item_id: 11751538
   delivery:
     kind: mail
     wow_item_entry: 43437
 - name: 'Craftsanity Item: Eviscerator''s Legguards (#43438)'
-  item_id: 11751560
+  item_id: 11751539
   delivery:
     kind: mail
     wow_item_entry: 43438
 - name: 'Craftsanity Item: Eviscerator''s Treads (#43439)'
-  item_id: 11751561
+  item_id: 11751540
   delivery:
     kind: mail
     wow_item_entry: 43439
 - name: 'Craftsanity Item: Swiftarrow Belt (#43442)'
-  item_id: 11751562
+  item_id: 11751541
   delivery:
     kind: mail
     wow_item_entry: 43442
 - name: 'Craftsanity Item: Swiftarrow Boots (#43443)'
-  item_id: 11751563
+  item_id: 11751542
   delivery:
     kind: mail
     wow_item_entry: 43443
 - name: 'Craftsanity Item: Swiftarrow Bracers (#43444)'
-  item_id: 11751564
+  item_id: 11751543
   delivery:
     kind: mail
     wow_item_entry: 43444
 - name: 'Craftsanity Item: Swiftarrow Hauberk (#43445)'
-  item_id: 11751565
+  item_id: 11751544
   delivery:
     kind: mail
     wow_item_entry: 43445
 - name: 'Craftsanity Item: Swiftarrow Gauntlets (#43446)'
-  item_id: 11751566
+  item_id: 11751545
   delivery:
     kind: mail
     wow_item_entry: 43446
 - name: 'Craftsanity Item: Swiftarrow Helm (#43447)'
-  item_id: 11751567
+  item_id: 11751546
   delivery:
     kind: mail
     wow_item_entry: 43447
 - name: 'Craftsanity Item: Swiftarrow Leggings (#43448)'
-  item_id: 11751568
+  item_id: 11751547
   delivery:
     kind: mail
     wow_item_entry: 43448
 - name: 'Craftsanity Item: Swiftarrow Shoulderguards (#43449)'
-  item_id: 11751569
+  item_id: 11751548
   delivery:
     kind: mail
     wow_item_entry: 43449
 - name: 'Craftsanity Item: Stormhide Belt (#43450)'
-  item_id: 11751570
+  item_id: 11751549
   delivery:
     kind: mail
     wow_item_entry: 43450
 - name: 'Craftsanity Item: Stormhide Stompers (#43451)'
-  item_id: 11751571
+  item_id: 11751550
   delivery:
     kind: mail
     wow_item_entry: 43451
 - name: 'Craftsanity Item: Stormhide Wristguards (#43452)'
-  item_id: 11751572
+  item_id: 11751551
   delivery:
     kind: mail
     wow_item_entry: 43452
 - name: 'Craftsanity Item: Stormhide Hauberk (#43453)'
-  item_id: 11751573
+  item_id: 11751552
   delivery:
     kind: mail
     wow_item_entry: 43453
 - name: 'Craftsanity Item: Stormhide Grips (#43454)'
-  item_id: 11751574
+  item_id: 11751553
   delivery:
     kind: mail
     wow_item_entry: 43454
 - name: 'Craftsanity Item: Stormhide Crown (#43455)'
-  item_id: 11751575
+  item_id: 11751554
   delivery:
     kind: mail
     wow_item_entry: 43455
 - name: 'Craftsanity Item: Stormhide Legguards (#43456)'
-  item_id: 11751576
+  item_id: 11751555
   delivery:
     kind: mail
     wow_item_entry: 43456
 - name: 'Craftsanity Item: Stormhide Shoulders (#43457)'
-  item_id: 11751577
+  item_id: 11751556
   delivery:
     kind: mail
     wow_item_entry: 43457
 - name: 'Craftsanity Item: Giantmaim Legguards (#43458)'
-  item_id: 11751578
+  item_id: 11751557
   delivery:
     kind: mail
     wow_item_entry: 43458
 - name: 'Craftsanity Item: Giantmaim Bracers (#43459)'
-  item_id: 11751579
+  item_id: 11751558
   delivery:
     kind: mail
     wow_item_entry: 43459
 - name: 'Craftsanity Item: Revenant''s Breastplate (#43461)'
-  item_id: 11751580
+  item_id: 11751559
   delivery:
     kind: mail
     wow_item_entry: 43461
 - name: 'Craftsanity Item: Revenant''s Treads (#43469)'
-  item_id: 11751581
+  item_id: 11751560
   delivery:
     kind: mail
     wow_item_entry: 43469
 - name: 'Craftsanity Item: Gigantic Feast (#43478)'
-  item_id: 11751582
+  item_id: 11751561
   delivery:
     kind: mail
     wow_item_entry: 43478
 - name: 'Craftsanity Item: Small Feast (#43480)'
-  item_id: 11751583
+  item_id: 11751562
   delivery:
     kind: mail
     wow_item_entry: 43480
 - name: 'Craftsanity Item: Trollwoven Spaulders (#43481)'
-  item_id: 11751584
+  item_id: 11751563
   delivery:
     kind: mail
     wow_item_entry: 43481
 - name: 'Craftsanity Item: Savage Titanium Ring (#43482)'
-  item_id: 11751585
+  item_id: 11751564
   delivery:
     kind: mail
     wow_item_entry: 43482
 - name: 'Craftsanity Item: Trollwoven Girdle (#43484)'
-  item_id: 11751586
+  item_id: 11751565
   delivery:
     kind: mail
     wow_item_entry: 43484
 - name: 'Craftsanity Item: Last Weeks Mammoth (#43488)'
-  item_id: 11751587
+  item_id: 11751566
   delivery:
     kind: mail
     wow_item_entry: 43488
 - name: 'Craftsanity Item: Tasty Cupcake (#43490)'
-  item_id: 11751588
+  item_id: 11751567
   delivery:
     kind: mail
     wow_item_entry: 43490
 - name: 'Craftsanity Item: Bad Clams (#43491)'
-  item_id: 11751589
+  item_id: 11751568
   delivery:
     kind: mail
     wow_item_entry: 43491
 - name: 'Craftsanity Item: Haunted Herring (#43492)'
-  item_id: 11751590
+  item_id: 11751569
   delivery:
     kind: mail
     wow_item_entry: 43492
 - name: 'Craftsanity Item: Earthgiving Legguards (#43495)'
-  item_id: 11751591
+  item_id: 11751570
   delivery:
     kind: mail
     wow_item_entry: 43495
 - name: 'Craftsanity Item: Savage Titanium Band (#43498)'
-  item_id: 11751592
+  item_id: 11751571
   delivery:
     kind: mail
     wow_item_entry: 43498
 - name: 'Craftsanity Item: Earthgiving Boots (#43502)'
-  item_id: 11751593
+  item_id: 11751572
   delivery:
     kind: mail
     wow_item_entry: 43502
 - name: 'Craftsanity Item: Conjured Mana Pie (#43518)'
-  item_id: 11751594
+  item_id: 11751573
   delivery:
     kind: mail
     wow_item_entry: 43518
 - name: 'Craftsanity Item: Conjured Mana Strudel (#43523)'
-  item_id: 11751595
+  item_id: 11751574
   delivery:
     kind: mail
     wow_item_entry: 43523
 - name: 'Craftsanity Item: Titanium Frostguard Ring (#43582)'
-  item_id: 11751596
+  item_id: 11751575
   delivery:
     kind: mail
     wow_item_entry: 43582
 - name: 'Craftsanity Item: Polar Vest (#43590)'
-  item_id: 11751597
+  item_id: 11751576
   delivery:
     kind: mail
     wow_item_entry: 43590
 - name: 'Craftsanity Item: Polar Cord (#43591)'
-  item_id: 11751598
+  item_id: 11751577
   delivery:
     kind: mail
     wow_item_entry: 43591
 - name: 'Craftsanity Item: Polar Boots (#43592)'
-  item_id: 11751599
+  item_id: 11751578
   delivery:
     kind: mail
     wow_item_entry: 43592
 - name: 'Craftsanity Item: Icy Scale Chestguard (#43593)'
-  item_id: 11751600
+  item_id: 11751579
   delivery:
     kind: mail
     wow_item_entry: 43593
 - name: 'Craftsanity Item: Icy Scale Belt (#43594)'
-  item_id: 11751601
+  item_id: 11751580
   delivery:
     kind: mail
     wow_item_entry: 43594
 - name: 'Craftsanity Item: Icy Scale Boots (#43595)'
-  item_id: 11751602
+  item_id: 11751581
   delivery:
     kind: mail
     wow_item_entry: 43595
 - name: 'Craftsanity Item: Mekgineer''s Chopper (#44413)'
-  item_id: 11751603
+  item_id: 11751582
   delivery:
     kind: mail
     wow_item_entry: 44413
 - name: 'Craftsanity Item: Dragonscale Ammo Pouch (#44447)'
-  item_id: 11751604
+  item_id: 11751583
   delivery:
     kind: mail
     wow_item_entry: 44447
 - name: 'Craftsanity Item: Nerubian Reinforced Quiver (#44448)'
-  item_id: 11751605
+  item_id: 11751584
   delivery:
     kind: mail
     wow_item_entry: 44448
 - name: 'Craftsanity Item: Pumpkin Pie (#44836)'
-  item_id: 11751606
+  item_id: 11751585
   delivery:
     kind: mail
     wow_item_entry: 44836
 - name: 'Craftsanity Item: Spice Bread Stuffing (#44837)'
-  item_id: 11751607
+  item_id: 11751586
   delivery:
     kind: mail
     wow_item_entry: 44837
 - name: 'Craftsanity Item: Slow-Roasted Turkey (#44838)'
-  item_id: 11751608
+  item_id: 11751587
   delivery:
     kind: mail
     wow_item_entry: 44838
 - name: 'Craftsanity Item: Candied Sweet Potato (#44839)'
-  item_id: 11751609
+  item_id: 11751588
   delivery:
     kind: mail
     wow_item_entry: 44839
 - name: 'Craftsanity Item: Cranberry Chutney (#44840)'
-  item_id: 11751610
+  item_id: 11751589
   delivery:
     kind: mail
     wow_item_entry: 44840
 - name: 'Craftsanity Item: Windripper Boots (#44930)'
-  item_id: 11751611
+  item_id: 11751590
   delivery:
     kind: mail
     wow_item_entry: 44930
 - name: 'Craftsanity Item: Windripper Leggings (#44931)'
-  item_id: 11751612
+  item_id: 11751591
   delivery:
     kind: mail
     wow_item_entry: 44931
 - name: 'Craftsanity Item: Titanium Plating (#44936)'
-  item_id: 11751613
+  item_id: 11751592
   delivery:
     kind: mail
     wow_item_entry: 44936
 - name: 'Craftsanity Item: Worg Tartare (#44953)'
-  item_id: 11751614
+  item_id: 11751593
   delivery:
     kind: mail
     wow_item_entry: 44953
 - name: 'Craftsanity Item: Belt of the Titans (#45550)'
-  item_id: 11751615
+  item_id: 11751594
   delivery:
     kind: mail
     wow_item_entry: 45550
 - name: 'Craftsanity Item: Indestructible Plate Girdle (#45551)'
-  item_id: 11751616
+  item_id: 11751595
   delivery:
     kind: mail
     wow_item_entry: 45551
 - name: 'Craftsanity Item: Plate Girdle of Righteousness (#45552)'
-  item_id: 11751617
+  item_id: 11751596
   delivery:
     kind: mail
     wow_item_entry: 45552
 - name: 'Craftsanity Item: Belt of Dragons (#45553)'
-  item_id: 11751618
+  item_id: 11751597
   delivery:
     kind: mail
     wow_item_entry: 45553
 - name: 'Craftsanity Item: Blue Belt of Chaos (#45554)'
-  item_id: 11751619
+  item_id: 11751598
   delivery:
     kind: mail
     wow_item_entry: 45554
 - name: 'Craftsanity Item: Death-warmed Belt (#45555)'
-  item_id: 11751620
+  item_id: 11751599
   delivery:
     kind: mail
     wow_item_entry: 45555
 - name: 'Craftsanity Item: Belt of Arctic Life (#45556)'
-  item_id: 11751621
+  item_id: 11751600
   delivery:
     kind: mail
     wow_item_entry: 45556
 - name: 'Craftsanity Item: Sash of Ancient Power (#45557)'
-  item_id: 11751622
+  item_id: 11751601
   delivery:
     kind: mail
     wow_item_entry: 45557
 - name: 'Craftsanity Item: Cord of the White Dawn (#45558)'
-  item_id: 11751623
+  item_id: 11751602
   delivery:
     kind: mail
     wow_item_entry: 45558
 - name: 'Craftsanity Item: Battlelord''s Plate Boots (#45559)'
-  item_id: 11751624
+  item_id: 11751603
   delivery:
     kind: mail
     wow_item_entry: 45559
 - name: 'Craftsanity Item: Spiked Deathdealers (#45560)'
-  item_id: 11751625
+  item_id: 11751604
   delivery:
     kind: mail
     wow_item_entry: 45560
 - name: 'Craftsanity Item: Treads of Destiny (#45561)'
-  item_id: 11751626
+  item_id: 11751605
   delivery:
     kind: mail
     wow_item_entry: 45561
 - name: 'Craftsanity Item: Boots of Living Scale (#45562)'
-  item_id: 11751627
+  item_id: 11751606
   delivery:
     kind: mail
     wow_item_entry: 45562
 - name: 'Craftsanity Item: Lightning Grounded Boots (#45563)'
-  item_id: 11751628
+  item_id: 11751607
   delivery:
     kind: mail
     wow_item_entry: 45563
 - name: 'Craftsanity Item: Footpads of Silence (#45564)'
-  item_id: 11751629
+  item_id: 11751608
   delivery:
     kind: mail
     wow_item_entry: 45564
 - name: 'Craftsanity Item: Boots of Wintry Endurance (#45565)'
-  item_id: 11751630
+  item_id: 11751609
   delivery:
     kind: mail
     wow_item_entry: 45565
 - name: 'Craftsanity Item: Spellslinger''s Slippers (#45566)'
-  item_id: 11751631
+  item_id: 11751610
   delivery:
     kind: mail
     wow_item_entry: 45566
 - name: 'Craftsanity Item: Savior''s Slippers (#45567)'
-  item_id: 11751632
+  item_id: 11751611
   delivery:
     kind: mail
     wow_item_entry: 45567
 - name: 'Craftsanity Item: Emerald Bag (#45773)'
-  item_id: 11751633
+  item_id: 11751612
   delivery:
     kind: mail
     wow_item_entry: 45773
 - name: 'Craftsanity Item: Bread of the Dead (#46691)'
-  item_id: 11751634
+  item_id: 11751613
   delivery:
     kind: mail
     wow_item_entry: 46691
 - name: 'Craftsanity Item: Flask of the North (#47499)'
-  item_id: 11751635
+  item_id: 11751614
   delivery:
     kind: mail
     wow_item_entry: 47499
 - name: 'Craftsanity Item: Saronite Swordbreakers (#47570)'
-  item_id: 11751636
+  item_id: 11751615
   delivery:
     kind: mail
     wow_item_entry: 47570
 - name: 'Craftsanity Item: Saronite Swordbreakers (#47571)'
-  item_id: 11751637
+  item_id: 11751616
   delivery:
     kind: mail
     wow_item_entry: 47571
 - name: 'Craftsanity Item: Titanium Spikeguards (#47572)'
-  item_id: 11751638
+  item_id: 11751617
   delivery:
     kind: mail
     wow_item_entry: 47572
 - name: 'Craftsanity Item: Titanium Spikeguards (#47573)'
-  item_id: 11751639
+  item_id: 11751618
   delivery:
     kind: mail
     wow_item_entry: 47573
 - name: 'Craftsanity Item: Sunforged Bracers (#47574)'
-  item_id: 11751640
+  item_id: 11751619
   delivery:
     kind: mail
     wow_item_entry: 47574
 - name: 'Craftsanity Item: Sunforged Bracers (#47575)'
-  item_id: 11751641
+  item_id: 11751620
   delivery:
     kind: mail
     wow_item_entry: 47575
 - name: 'Craftsanity Item: Crusader''s Dragonscale Bracers (#47576)'
-  item_id: 11751642
+  item_id: 11751621
   delivery:
     kind: mail
     wow_item_entry: 47576
 - name: 'Craftsanity Item: Crusader''s Dragonscale Bracers (#47577)'
-  item_id: 11751643
+  item_id: 11751622
   delivery:
     kind: mail
     wow_item_entry: 47577
 - name: 'Craftsanity Item: Black Chitin Bracers (#47579)'
-  item_id: 11751644
+  item_id: 11751623
   delivery:
     kind: mail
     wow_item_entry: 47579
 - name: 'Craftsanity Item: Black Chitin Bracers (#47580)'
-  item_id: 11751645
+  item_id: 11751624
   delivery:
     kind: mail
     wow_item_entry: 47580
 - name: 'Craftsanity Item: Bracers of Swift Death (#47581)'
-  item_id: 11751646
+  item_id: 11751625
   delivery:
     kind: mail
     wow_item_entry: 47581
 - name: 'Craftsanity Item: Bracers of Swift Death (#47582)'
-  item_id: 11751647
+  item_id: 11751626
   delivery:
     kind: mail
     wow_item_entry: 47582
 - name: 'Craftsanity Item: Moonshadow Armguards (#47583)'
-  item_id: 11751648
+  item_id: 11751627
   delivery:
     kind: mail
     wow_item_entry: 47583
 - name: 'Craftsanity Item: Moonshadow Armguards (#47584)'
-  item_id: 11751649
+  item_id: 11751628
   delivery:
     kind: mail
     wow_item_entry: 47584
 - name: 'Craftsanity Item: Bejeweled Wizard''s Bracers (#47585)'
-  item_id: 11751650
+  item_id: 11751629
   delivery:
     kind: mail
     wow_item_entry: 47585
 - name: 'Craftsanity Item: Bejeweled Wizard''s Bracers (#47586)'
-  item_id: 11751651
+  item_id: 11751630
   delivery:
     kind: mail
     wow_item_entry: 47586
 - name: 'Craftsanity Item: Royal Moonshroud Bracers (#47587)'
-  item_id: 11751652
+  item_id: 11751631
   delivery:
     kind: mail
     wow_item_entry: 47587
 - name: 'Craftsanity Item: Royal Moonshroud Bracers (#47588)'
-  item_id: 11751653
+  item_id: 11751632
   delivery:
     kind: mail
     wow_item_entry: 47588
 - name: 'Craftsanity Item: Titanium Razorplate (#47589)'
-  item_id: 11751654
+  item_id: 11751633
   delivery:
     kind: mail
     wow_item_entry: 47589
 - name: 'Craftsanity Item: Titanium Razorplate (#47590)'
-  item_id: 11751655
+  item_id: 11751634
   delivery:
     kind: mail
     wow_item_entry: 47590
 - name: 'Craftsanity Item: Breastplate of the White Knight (#47591)'
-  item_id: 11751656
+  item_id: 11751635
   delivery:
     kind: mail
     wow_item_entry: 47591
 - name: 'Craftsanity Item: Breastplate of the White Knight (#47592)'
-  item_id: 11751657
+  item_id: 11751636
   delivery:
     kind: mail
     wow_item_entry: 47592
 - name: 'Craftsanity Item: Sunforged Breastplate (#47593)'
-  item_id: 11751658
+  item_id: 11751637
   delivery:
     kind: mail
     wow_item_entry: 47593
 - name: 'Craftsanity Item: Sunforged Breastplate (#47594)'
-  item_id: 11751659
+  item_id: 11751638
   delivery:
     kind: mail
     wow_item_entry: 47594
 - name: 'Craftsanity Item: Crusader''s Dragonscale Breastplate (#47595)'
-  item_id: 11751660
+  item_id: 11751639
   delivery:
     kind: mail
     wow_item_entry: 47595
 - name: 'Craftsanity Item: Crusader''s Dragonscale Breastplate (#47596)'
-  item_id: 11751661
+  item_id: 11751640
   delivery:
     kind: mail
     wow_item_entry: 47596
 - name: 'Craftsanity Item: Ensorcelled Nerubian Breastplate (#47597)'
-  item_id: 11751662
+  item_id: 11751641
   delivery:
     kind: mail
     wow_item_entry: 47597
 - name: 'Craftsanity Item: Ensorcelled Nerubian Breastplate (#47598)'
-  item_id: 11751663
+  item_id: 11751642
   delivery:
     kind: mail
     wow_item_entry: 47598
 - name: 'Craftsanity Item: Knightbane Carapace (#47599)'
-  item_id: 11751664
+  item_id: 11751643
   delivery:
     kind: mail
     wow_item_entry: 47599
 - name: 'Craftsanity Item: Knightbane Carapace (#47600)'
-  item_id: 11751665
+  item_id: 11751644
   delivery:
     kind: mail
     wow_item_entry: 47600
 - name: 'Craftsanity Item: Lunar Eclipse Robes (#47601)'
-  item_id: 11751666
+  item_id: 11751645
   delivery:
     kind: mail
     wow_item_entry: 47601
 - name: 'Craftsanity Item: Lunar Eclipse Robes (#47602)'
-  item_id: 11751667
+  item_id: 11751646
   delivery:
     kind: mail
     wow_item_entry: 47602
 - name: 'Craftsanity Item: Merlin''s Robe (#47603)'
-  item_id: 11751668
+  item_id: 11751647
   delivery:
     kind: mail
     wow_item_entry: 47603
 - name: 'Craftsanity Item: Merlin''s Robe (#47604)'
-  item_id: 11751669
+  item_id: 11751648
   delivery:
     kind: mail
     wow_item_entry: 47604
 - name: 'Craftsanity Item: Royal Moonshroud Robe (#47605)'
-  item_id: 11751670
+  item_id: 11751649
   delivery:
     kind: mail
     wow_item_entry: 47605
 - name: 'Craftsanity Item: Royal Moonshroud Robe (#47606)'
-  item_id: 11751671
+  item_id: 11751650
   delivery:
     kind: mail
     wow_item_entry: 47606
 - name: 'Craftsanity Item: Jeeves (#49040)'
-  item_id: 11751672
+  item_id: 11751651
   delivery:
     kind: mail
     wow_item_entry: 49040
 - name: 'Craftsanity Item: Nightmare Tear (#49110)'
-  item_id: 11751673
+  item_id: 11751652
   delivery:
     kind: mail
     wow_item_entry: 49110
 - name: 'Craftsanity Item: Deathfrost Boots (#49890)'
-  item_id: 11751674
+  item_id: 11751653
   delivery:
     kind: mail
     wow_item_entry: 49890
 - name: 'Craftsanity Item: Leggings of Woven Death (#49891)'
-  item_id: 11751675
+  item_id: 11751654
   delivery:
     kind: mail
     wow_item_entry: 49891
 - name: 'Craftsanity Item: Lightweave Leggings (#49892)'
-  item_id: 11751676
+  item_id: 11751655
   delivery:
     kind: mail
     wow_item_entry: 49892
 - name: 'Craftsanity Item: Sandals of Consecration (#49893)'
-  item_id: 11751677
+  item_id: 11751656
   delivery:
     kind: mail
     wow_item_entry: 49893
 - name: 'Craftsanity Item: Blessed Cenarion Boots (#49894)'
-  item_id: 11751678
+  item_id: 11751657
   delivery:
     kind: mail
     wow_item_entry: 49894
 - name: 'Craftsanity Item: Footpads of Impending Death (#49895)'
-  item_id: 11751679
+  item_id: 11751658
   delivery:
     kind: mail
     wow_item_entry: 49895
 - name: 'Craftsanity Item: Earthsoul Boots (#49896)'
-  item_id: 11751680
+  item_id: 11751659
   delivery:
     kind: mail
     wow_item_entry: 49896
 - name: 'Craftsanity Item: Rock-Steady Treads (#49897)'
-  item_id: 11751681
+  item_id: 11751660
   delivery:
     kind: mail
     wow_item_entry: 49897
 - name: 'Craftsanity Item: Legwraps of Unleashed Nature (#49898)'
-  item_id: 11751682
+  item_id: 11751661
   delivery:
     kind: mail
     wow_item_entry: 49898
 - name: 'Craftsanity Item: Bladeborn Leggings (#49899)'
-  item_id: 11751683
+  item_id: 11751662
   delivery:
     kind: mail
     wow_item_entry: 49899
 - name: 'Craftsanity Item: Lightning-Infused Leggings (#49900)'
-  item_id: 11751684
+  item_id: 11751663
   delivery:
     kind: mail
     wow_item_entry: 49900
 - name: 'Craftsanity Item: Draconic Bonesplinter Legguards (#49901)'
-  item_id: 11751685
+  item_id: 11751664
   delivery:
     kind: mail
     wow_item_entry: 49901
 - name: 'Craftsanity Item: Puresteel Legplates (#49902)'
-  item_id: 11751686
+  item_id: 11751665
   delivery:
     kind: mail
     wow_item_entry: 49902
 - name: 'Craftsanity Item: Legplates of Painful Death (#49903)'
-  item_id: 11751687
+  item_id: 11751666
   delivery:
     kind: mail
     wow_item_entry: 49903
 - name: 'Craftsanity Item: Pillars of Might (#49904)'
-  item_id: 11751688
+  item_id: 11751667
   delivery:
     kind: mail
     wow_item_entry: 49904
 - name: 'Craftsanity Item: Protectors of Life (#49905)'
-  item_id: 11751689
+  item_id: 11751668
   delivery:
     kind: mail
     wow_item_entry: 49905
 - name: 'Craftsanity Item: Hellfrozen Bonegrinders (#49906)'
-  item_id: 11751690
+  item_id: 11751669
   delivery:
     kind: mail
     wow_item_entry: 49906
 - name: 'Craftsanity Item: Boots of Kingly Upheaval (#49907)'
-  item_id: 11751691
+  item_id: 11751670
   delivery:
     kind: mail
     wow_item_entry: 49907
 - name: 'Craftsanity Item: Glyph of Eternal Water (#50045)'
-  item_id: 11751692
+  item_id: 11751671
   delivery:
     kind: mail
     wow_item_entry: 50045
 - name: 'Craftsanity Item: Glyph of Quick Decay (#50077)'
-  item_id: 11751693
+  item_id: 11751672
   delivery:
     kind: mail
     wow_item_entry: 50077
 - name: 'Craftsanity Item: Glyph of Rapid Rejuvenation (#50125)'
-  item_id: 11751694
+  item_id: 11751673
   delivery:
     kind: mail
     wow_item_entry: 50125
 - name: 'Craftsanity Item: Shatter Rounds (#52020)'
-  item_id: 11751695
+  item_id: 11751674
   delivery:
     kind: mail
     wow_item_entry: 52020
 - name: 'Craftsanity Item: Iceblade Arrow (#52021)'
-  item_id: 11751696
+  item_id: 11751675
   delivery:
     kind: mail
     wow_item_entry: 52021
 - name: 'Craftsanity Item: Frosty Flying Carpet (#54797)'
-  item_id: 11751697
+  item_id: 11751676
   delivery:
     kind: mail
     wow_item_entry: 54797

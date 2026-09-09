@@ -17441,6 +17441,7 @@ inline constexpr std::pair<char const*, uint32_t> LOCATIONS_RAW[] = {
     {"Enemy: Ruby Dragon (#40870)", 10517427},
     {"Enemy: Conversing With the Depths Trigger (#70100)", 10517428},
     {"Enemy: Archipelago Cache Keeper (#900000)", 10517429},
+    {"Enemy: Archipelago Holiday Herald (#900001)", 10517430},
 };
 inline std::map<std::string, uint32_t> BuildLOCATIONS()
 {
@@ -34882,6 +34883,7 @@ inline constexpr std::pair<uint32_t, int64_t> CREATURE_ENTRY_TO_LOCATION_ID_RAW[
     { 40870, 10517427 }, // "Enemy: Ruby Dragon (#40870)"
     { 70100, 10517428 }, // "Enemy: Conversing With the Depths Trigger (#70100)"
     { 900000, 10517429 }, // "Enemy: Archipelago Cache Keeper (#900000)"
+    { 900001, 10517430 }, // "Enemy: Archipelago Holiday Herald (#900001)"
 };
 inline std::unordered_map<uint32_t, int64_t> BuildCREATURE_ENTRY_TO_LOCATION_ID()
 {
