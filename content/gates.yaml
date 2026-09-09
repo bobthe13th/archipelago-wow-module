@@ -146,12 +146,20 @@ items:
   #     setter directly -- that function also copies/clears per-spec action
   #     bars and calls SendTalentsInfoData(false) to sync the client, which
   #     a bare setter call would skip.
-  #   - Talent Point Access (flag_key access_talent_points, tier 1 boolean):
-  #     the one item in this family that IS continuous suppression, not a
-  #     grant -- named "Access" (not "Progressive"/"Unlock") to match that.
-  #     Gated via PLAYERHOOK_CAN_LEARN_TALENT (Player::LearnTalent, confirmed
-  #     real and boolean-returning at Player.cpp:14281), blocking every
-  #     talent point spend realm-wide until received.
+  #   - Talent Point Access (flag_key access_talent_points, now 3 tranches --
+  #     M4.14.1 retrofit): the one item in this family that IS continuous
+  #     suppression, not a grant -- named "Access" (not "Progressive"/
+  #     "Unlock") to match that. Gated via PLAYERHOOK_CAN_LEARN_TALENT
+  #     (Player::LearnTalent, confirmed real and boolean-returning at
+  #     Player.cpp:14281), checking cumulative talent points already spent
+  #     (Player::CalculateTalentsPoints() - Player::GetFreeTalentPoints())
+  #     against a tier-derived cap, not a bare boolean. The originally-
+  #     shipped tier-1 item (830025) is kept as-is and reinterpreted as
+  #     Tranche 1 (points 1-25) for backward compatibility with
+  #     already-generated seeds; Tranche 2 (830041, points 1-50) and Tranche
+  #     3 (830042, no cap) are new. See APGateDecision.h's
+  #     ShouldSuppressTalentLearn for why Tranche 3 is expressed as "skip the
+  #     cap comparison" rather than a hardcoded max (RATE_TALENT-dependent).
   - name: "Progressive Bank Bag Slot: Slot 1"
     item_id: 830018
     count: 1
@@ -184,6 +192,14 @@ items:
     item_id: 830025
     count: 1
     delivery: {kind: flag, flag_key: access_talent_points, tier: 1}
+  - name: "Talent Point Access: Tranche 2"
+    item_id: 830041
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 2}
+  - name: "Talent Point Access: Tranche 3"
+    item_id: 830042
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 3}
   - name: "Dual Spec Unlock"
     item_id: 830026
     count: 1
@@ -241,4 +257,91 @@ items:
     item_id: 830028
     count: 1
     delivery: {kind: flag, flag_key: combo_unlock_wotlk, tier: 1}
+
+  # Progressive Bag Slots (Task 1, M4.14.1 -- part of the "character_unlocks"
+  # family alongside Progressive Bank Bag Slot/Glyph Slot above, same
+  # continuous-suppression shape as Talent Point Access, not a grant). Gates
+  # the 4 non-backpack inventory bag slots (INVENTORY_SLOT_BAG_START=19
+  # through INVENTORY_SLOT_BAG_END-1=22, real AzerothCore constants
+  # confirmed in Player.h) via PLAYERHOOK_CAN_EQUIP_ITEM, denying the equip
+  # of a container (ItemTemplate::InventoryType == INVTYPE_BAG) into a slot
+  # whose 1-indexed tier exceeds the realm's "bag_slots" GetFlagTier -- see
+  # ArchipelagoBagSlotGateScript in APGating.cpp. Distinct from Progressive
+  # Bank Bag Slot above: that flag_key (bank_bag_slots) grants
+  # Player::SetBankBagSlotCount for the *bank* bag slots; this one
+  # suppresses equipping into the *inventory* bag slots and never touches
+  # the bank.
+  - name: "Progressive Bag Slot: Slot 1"
+    item_id: 830037
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 1}
+  - name: "Progressive Bag Slot: Slot 2"
+    item_id: 830038
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 2}
+  - name: "Progressive Bag Slot: Slot 3"
+    item_id: 830039
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 3}
+  - name: "Progressive Bag Slot: Slot 4"
+    item_id: 830040
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 4}
+
+  # Random Flight Path Unlock (Task 4, M4.14.1 "Useful Items"). Grant-shaped,
+  # not flag-shaped: unlike every other item in this family, receipt
+  # immediately grants one uniformly-random previously-unknown real taxi
+  # node (sTaxiNodesStore) to the delivery character via
+  # PlayerTaxi::SetTaximaskNode -- see GrantRandomTaxiNode in
+  # ArchipelagoPlayerScript.cpp. item_id 830043-830044 were reserved for
+  # Task 6 -- see the Progressive EXP/Move-Speed Boost items below.
+  - name: "Random Flight Path Unlock"
+    item_id: 830045
+    count: 1
+    delivery: {kind: grant_random_taxi_node}
+
+  # Portable Mailbox (Task 5, M4.14.1 "Useful Items"). A real, mailable
+  # consumable item (wow_item_entry 850104, a custom item_template row --
+  # see data/sql/updates/pending_db_world/) whose spellid_1 is bound to
+  # spell 5735 ("REUSE", a real, empirically-verified single-SPELL_EFFECT_
+  # DUMMY placeholder spell shipped in Blizzard's own Spell.dbc, unused by
+  # any other item_template row or src/server/scripts/ SpellScript in this
+  # checkout) -- see ArchipelagoPortableMailboxScript.cpp's
+  # spell_archipelago_portable_mailbox for the real on-use effect (summons
+  # gameobject_template entry 850200, a despawn-timed clone of the real
+  # static mailbox row 32349). Uses the same `mail` delivery kind every
+  # other "just hand over a real WoW item" family already uses; the
+  # "gates" family's own C++ emitter (_emit_cpp_gates) was extended to
+  # also emit Archipelago::Gates::ApItemIdToWowItemEntry for this and any
+  # future mail-kind gates item, since gates was otherwise an all-flag
+  # family with no such map before this task.
+  - name: "Portable Mailbox"
+    item_id: 830046
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 850104}
+
+  # Progressive EXP/Move-Speed Boost (Task 6, M4.14.1 "Useful Items").
+  # Flag-shaped, applied as a permanent login aura in
+  # Archipelago::Gating::SyncCharacterUnlocksToPlayer (APGating.cpp), the
+  # same login-sync function that already handles bank_bag_slots/dual_spec
+  # above -- not a new login hook. Real, spot-verified spell ids (see this
+  # task's own report for the full DBC field-offset calibration and
+  # zero-reference check against item_template.spellid_1..5,
+  # spell_script_names, playercreateinfo_cast_spell, spell_area, and
+  # src/server/scripts/): spell 42138 "Brewfest Enthusiast" (single-effect
+  # SPELL_AURA_MOD_XP_PCT, EffectBasePoints[0]=9, ~10%) for xp_boost; spell
+  # 22587 "8% speed bonus" (single-effect SPELL_AURA_MOD_INCREASE_SPEED,
+  # EffectBasePoints[0]=7, ~8%) for speed_boost. Both are simple flat-
+  # percentage passive auras with no stacking/proc side effects, so
+  # Player::AddAura re-applying an already-present aura on every login is a
+  # harmless idempotent refresh. Drop-rate is explicitly out of scope per
+  # the design spec.
+  - name: "Progressive EXP Boost"
+    item_id: 830043
+    count: 1
+    delivery: {kind: flag, flag_key: xp_boost, tier: 1}
+  - name: "Progressive Move Speed Boost"
+    item_id: 830044
+    count: 1
+    delivery: {kind: flag, flag_key: speed_boost, tier: 1}
 

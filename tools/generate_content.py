@@ -666,7 +666,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"level_milestone", "instance_clear"},
         valid_delivery_kinds={"realm_state"},
     ),
-    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
+    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag", "grant_random_taxi_node", "mail"}),
     "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "raidlogger": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"instant_level_set"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
@@ -1141,11 +1141,15 @@ def _emit_python_gates(data: dict) -> str:
     lines.append("")
     lines.append("FLAG_KEY_BY_ITEM_NAME: dict[str, str] = {")
     for item in data["items"]:
+        if item["delivery"]["kind"] != "flag":
+            continue
         lines.append(f'    "{item["name"]}": "{item["delivery"]["flag_key"]}",')
     lines.append("}")
     lines.append("")
     lines.append("FLAG_TIER_BY_ITEM_NAME: dict[str, int] = {")
     for item in data["items"]:
+        if item["delivery"]["kind"] != "flag":
+            continue
         lines.append(f'    "{item["name"]}": {item["delivery"]["tier"]},')
     lines.append("}")
     lines.append("")
@@ -2048,6 +2052,14 @@ def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> li
         lines.append("    return result;")
         lines.append("}")
         lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();")
+    elif "mail" in valid_delivery_kinds:
+        # M4.14.1 final review fix (I5): same MSVC C3316 empty-array concern
+        # as the learn_spell/learn_next_chain_rank branches below -- gates
+        # is schema-eligible for "mail" (Task 5's Portable Mailbox) and C++
+        # dispatch code references Archipelago::Gates::ApItemIdToWowItemEntry
+        # unconditionally, so the symbol must exist even if a future edit
+        # ever removed the one real mail-kind row.
+        lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = {};")
     if spell_items:
         lines.append("inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_SPELL_ID_RAW[] = {")
         for item in spell_items:
@@ -2267,6 +2279,7 @@ def _emit_cpp_core_loop(data: dict) -> str:
 def _emit_cpp_gates(data: dict) -> str:
     family = data["family"]
     namespace = "Archipelago::" + family.title()
+    schema = FAMILY_SCHEMAS.get(family)
     lines = [
         _GENERATED_HEADER_CPP.format(source=f"content/{family}.yaml"),
         "#pragma once", "",
@@ -2283,8 +2296,23 @@ def _emit_cpp_gates(data: dict) -> str:
     lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {")
     for item in data["items"]:
         delivery = item["delivery"]
+        if delivery["kind"] != "flag":
+            continue
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
     lines.append("    };")
+    # Task 5 (M4.14.1 Portable Mailbox): "gates" is otherwise an all-flag
+    # family (ApItemToFlagKeyAndTier above), but Portable Mailbox is a real
+    # WoW item that needs mailing, not a realm-wide flag -- reuses the same
+    # shared _emit_cpp_item_delivery_lookup helper every generic "mail"
+    # family (fish/collections/recipes/...) already emits its own
+    # ApItemIdToWowItemEntry from, indented to match this hand-rolled
+    # emitter's namespace body (that helper is written for the top-level
+    # emit_cpp_generic's un-indented namespace body, so each returned line
+    # is re-indented by 4 spaces here to match this function's own style).
+    if schema is not None:
+        delivery_lines = _emit_cpp_item_delivery_lookup(data["items"], schema.valid_delivery_kinds)
+        for line in delivery_lines:
+            lines.append(("    " + line) if line else line)
     lines.append("}")
     lines.append("")
     return "\n".join(lines)
@@ -2339,7 +2367,7 @@ def _emit_cpp_filler(data: dict) -> str:
         lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
     lines.append("    };")
     lines.append("")
-    lines.append("    // Same 151 ids as LocationIds above, but ordered exactly as")
+    lines.append("    // Same ids as LocationIds above, but ordered exactly as")
     lines.append("    // filler_content_data.LOCATIONS' Python dict iterates (both are")
     lines.append("    // compiled from this same ordered content/filler.yaml by this")
     lines.append("    // same generate_content.py invocation) -- a structural guarantee,")

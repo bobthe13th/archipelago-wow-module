@@ -34,4 +34,79 @@ namespace Archipelago::Gating
     // is ever consulted, so alreadyKnownOrGrantedViaAP only needs to
     // cover "already granted via APSpellGrant::GrantOrQueue" in practice.
     bool ShouldBlockTrainerTeach(bool moduleEnabled, bool alreadyKnownOrGrantedViaAP);
+
+    // Progressive Bag Slots gate (M4.14.1): true if slot is one of the 4
+    // non-backpack inventory bag slots (INVENTORY_SLOT_BAG_START=19 through
+    // INVENTORY_SLOT_BAG_END=23, exclusive -- real constants confirmed in
+    // src/server/game/Entities/Player/Player.h, reproduced as literals in
+    // the .cpp rather than #included so this header/its .cpp stay free of
+    // AzerothCore engine dependencies, matching this file's own established
+    // discipline). Backpack slots and all other equipment slots are false.
+    // Factored out here for the same standalone-doctest testability reason
+    // as ShouldSuppressGatedTier above -- the Player*/Item*-touching hook
+    // (ArchipelagoBagSlotGateScript::OnPlayerCanEquipItem, APGating.cpp)
+    // stays manually verified only.
+    bool IsNonBackpackBagSlot(uint32_t slot);
+
+    // Maps a non-backpack bag slot to its 1-indexed progressive tier
+    // (slot 19 -> tier 1, ..., slot 22 -> tier 4), matching content/
+    // gates.yaml's "bag_slots" flag_key tiers 1-4. Callers must check
+    // IsNonBackpackBagSlot(slot) first -- the return value for a slot
+    // outside that range is unspecified.
+    uint32_t BagSlotToTier(uint32_t slot);
+
+    // Full suppression decision for ArchipelagoBagSlotGateScript::
+    // OnPlayerCanEquipItem (APGating.cpp): composes ShouldSuppressGatedTier
+    // with one bag-slot-specific rule -- notLoading must be true (matching
+    // this hook's own not_loading parameter name exactly). Player::
+    // _LoadInventory calls OnPlayerCanEquipItem with not_loading=false for
+    // every already-equipped item at every login (confirmed real call site:
+    // src/server/game/Entities/Player/PlayerStorage.cpp:5993-5994); denying
+    // there strips the bag from its slot and mails it back to the player
+    // (PlayerStorage.cpp:6050-6056) instead of blocking a new manual equip
+    // attempt, which is the only case this gate is meant to suppress. Never
+    // re-tests ShouldSuppressGatedTier's own already-covered logic -- only
+    // adds the notLoading short-circuit.
+    bool ShouldSuppressBagSlotEquip(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
+
+    // M4.14.1 final review fix (I2): ShouldSuppressBagSlotEquip above only
+    // ever engages when the real AzerothCore hook fires with a specific
+    // non-backpack bag slot -- true for an explicit drag-to-slot equip, but
+    // NOT for WorldSession::HandleAutoEquipItemOpcode (right-click/shift-
+    // click auto-equip, real confirmed call site: ItemHandler.cpp:192),
+    // which calls Player::CanEquipItem(NULL_SLOT, ...) BEFORE resolving
+    // which real slot the item lands in -- so the gate silently never
+    // engaged for that path, letting a player bypass it entirely by right-
+    // clicking a bag instead of dragging it. Since the real destination
+    // slot isn't knowable at that call, this counts the player's CURRENT
+    // number of equipped non-backpack bags instead and suppresses if
+    // adding one more would exceed the granted tier. This is exact, not an
+    // approximation, specifically for bags: Player::FindEquipSlot (real,
+    // confirmed) is called with swap=false for a bag item in
+    // HandleAutoEquipItemOpcode, so auto-equipping a bag can ONLY ever
+    // resolve to a genuinely EMPTY non-backpack bag slot -- it never swaps
+    // into an already-occupied one -- so "current count + 1" is always the
+    // real resulting count, never an over- or under-estimate.
+    bool ShouldSuppressBagSlotEquipByCount(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t currentlyEquippedBagCount, uint32_t grantedTier);
+
+    // Progressive Talent Tranches (M4.14.1): true means "block spending this
+    // talent point". Retrofits the originally-shipped "Talent Point Access"
+    // boolean gate (flag_key access_talent_points) into 3 tranches without
+    // breaking already-generated seeds -- the existing tier-1 item is kept
+    // as-is and reinterpreted as Tranche 1. Tier 0 always suppresses (no
+    // Talent Point Access item received at all yet). Tiers 1/2 cap
+    // cumulative points already spent at 25/50 respectively. Tier 3 (and any
+    // higher tier) applies no cap at all: deliberately NOT expressed as a
+    // hardcoded upper bound (e.g. the real default-RATE_TALENT level-80 max
+    // of 71, confirmed via Player::CalculateTalentsPoints/Player.cpp), since
+    // that would silently assume RATE_TALENT == 1.0 and could wrongly keep
+    // suppressing on a server configured with a higher rate -- "fully
+    // unlocked" is expressed by skipping the cap comparison entirely.
+    // pointsAlreadySpent must be the count *before* the point currently
+    // being attempted (Player::CalculateTalentsPoints() -
+    // Player::GetFreeTalentPoints(), read at
+    // PLAYERHOOK_CAN_LEARN_TALENT-fire-time, both real Player.h public
+    // accessors -- OnPlayerCanLearnTalent fires before the point being
+    // learned is added to the player's used-talent count).
+    bool ShouldSuppressTalentLearn(bool moduleEnabled, bool gateFamilyEnabled, uint32_t tier, uint32_t pointsAlreadySpent);
 }

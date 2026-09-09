@@ -87731,6 +87731,14 @@ items:
   tags:
     category:
     - gear_enhancement
+- name: 'Filler: Ancestral Claymore (#38691)'
+  item_id: 8038691
+  delivery:
+    kind: mail
+    wow_item_entry: 38691
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Bitter Plasma (#38698)'
   item_id: 8038698
   delivery:
@@ -95707,6 +95715,118 @@ items:
   tags:
     category:
     - consumable
+- name: 'Filler: Bloodied Arcanite Reaper (#42943)'
+  item_id: 8042943
+  delivery:
+    kind: mail
+    wow_item_entry: 42943
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Balanced Heartseeker (#42944)'
+  item_id: 8042944
+  delivery:
+    kind: mail
+    wow_item_entry: 42944
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Venerable Dal''Rend''s Sacred Charge (#42945)'
+  item_id: 8042945
+  delivery:
+    kind: mail
+    wow_item_entry: 42945
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Charmed Ancient Bone Bow (#42946)'
+  item_id: 8042946
+  delivery:
+    kind: mail
+    wow_item_entry: 42946
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Dignified Headmaster''s Charge (#42947)'
+  item_id: 8042947
+  delivery:
+    kind: mail
+    wow_item_entry: 42947
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Devout Aurastone Hammer (#42948)'
+  item_id: 8042948
+  delivery:
+    kind: mail
+    wow_item_entry: 42948
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Polished Spaulders of Valor (#42949)'
+  item_id: 8042949
+  delivery:
+    kind: mail
+    wow_item_entry: 42949
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Champion Herod''s Shoulder (#42950)'
+  item_id: 8042950
+  delivery:
+    kind: mail
+    wow_item_entry: 42950
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Mystical Pauldrons of Elements (#42951)'
+  item_id: 8042951
+  delivery:
+    kind: mail
+    wow_item_entry: 42951
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Stained Shadowcraft Spaulders (#42952)'
+  item_id: 8042952
+  delivery:
+    kind: mail
+    wow_item_entry: 42952
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Preened Ironfeather Shoulders (#42984)'
+  item_id: 8042984
+  delivery:
+    kind: mail
+    wow_item_entry: 42984
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Tattered Dreadmist Mantle (#42985)'
+  item_id: 8042985
+  delivery:
+    kind: mail
+    wow_item_entry: 42985
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Swift Hand of Justice (#42991)'
+  item_id: 8042991
+  delivery:
+    kind: mail
+    wow_item_entry: 42991
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Discerning Eye of the Beast (#42992)'
+  item_id: 8042992
+  delivery:
+    kind: mail
+    wow_item_entry: 42992
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Spicy Fried Herring (#42993)'
   item_id: 8042993
   delivery:
@@ -97299,6 +97419,126 @@ items:
   tags:
     category:
     - gear_enhancement
+- name: 'Filler: Sharpened Scarlet Kris (#44091)'
+  item_id: 8044091
+  delivery:
+    kind: mail
+    wow_item_entry: 44091
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Reforged Truesilver Champion (#44092)'
+  item_id: 8044092
+  delivery:
+    kind: mail
+    wow_item_entry: 44092
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Upgraded Dwarven Hand Cannon (#44093)'
+  item_id: 8044093
+  delivery:
+    kind: mail
+    wow_item_entry: 44093
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: The Blessed Hammer of Grace (#44094)'
+  item_id: 8044094
+  delivery:
+    kind: mail
+    wow_item_entry: 44094
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Grand Staff of Jordan (#44095)'
+  item_id: 8044095
+  delivery:
+    kind: mail
+    wow_item_entry: 44095
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Battleworn Thrash Blade (#44096)'
+  item_id: 8044096
+  delivery:
+    kind: mail
+    wow_item_entry: 44096
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Inherited Insignia of the Horde (#44097)'
+  item_id: 8044097
+  delivery:
+    kind: mail
+    wow_item_entry: 44097
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Inherited Insignia of the Alliance (#44098)'
+  item_id: 8044098
+  delivery:
+    kind: mail
+    wow_item_entry: 44098
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Strengthened Stockade Pauldrons (#44099)'
+  item_id: 8044099
+  delivery:
+    kind: mail
+    wow_item_entry: 44099
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Pristine Lightforge Spaulders (#44100)'
+  item_id: 8044100
+  delivery:
+    kind: mail
+    wow_item_entry: 44100
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Prized Beastmaster''s Mantle (#44101)'
+  item_id: 8044101
+  delivery:
+    kind: mail
+    wow_item_entry: 44101
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Aged Pauldrons of The Five Thunders (#44102)'
+  item_id: 8044102
+  delivery:
+    kind: mail
+    wow_item_entry: 44102
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Exceptional Stormshroud Shoulders (#44103)'
+  item_id: 8044103
+  delivery:
+    kind: mail
+    wow_item_entry: 44103
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Lasting Feralheart Spaulders (#44105)'
+  item_id: 8044105
+  delivery:
+    kind: mail
+    wow_item_entry: 44105
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Exquisite Sunderseer Mantle (#44107)'
+  item_id: 8044107
+  delivery:
+    kind: mail
+    wow_item_entry: 44107
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Old Spices (#44114)'
   item_id: 8044114
   delivery:
@@ -97307,6 +97547,78 @@ items:
   tags:
     category:
     - consumable
+- name: 'Filler: Wintergrasp Commendation (#44115)'
+  item_id: 8044115
+  delivery:
+    kind: mail
+    wow_item_entry: 44115
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Axe (#44133)'
+  item_id: 8044133
+  delivery:
+    kind: mail
+    wow_item_entry: 44133
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Crag (#44134)'
+  item_id: 8044134
+  delivery:
+    kind: mail
+    wow_item_entry: 44134
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Storm  (#44135)'
+  item_id: 8044135
+  delivery:
+    kind: mail
+    wow_item_entry: 44135
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Pinnacle (#44136)'
+  item_id: 8044136
+  delivery:
+    kind: mail
+    wow_item_entry: 44136
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Torment (#44149)'
+  item_id: 8044149
+  delivery:
+    kind: mail
+    wow_item_entry: 44149
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of the Stalwart Protector (#44150)'
+  item_id: 8044150
+  delivery:
+    kind: mail
+    wow_item_entry: 44150
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Blissful Mending (#44152)'
+  item_id: 8044152
+  delivery:
+    kind: mail
+    wow_item_entry: 44152
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Burning Mysteries (#44159)'
+  item_id: 8044159
+  delivery:
+    kind: mail
+    wow_item_entry: 44159
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Reins of the Red Proto-Drake (#44160)'
   item_id: 8044160
   delivery:
@@ -97835,6 +98147,22 @@ items:
   tags:
     category:
     - equipment
+- name: 'Filler: Arcanum of the Savage Gladiator (#44701)'
+  item_id: 8044701
+  delivery:
+    kind: mail
+    wow_item_entry: 44701
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of the Savage Gladiator (#44702)'
+  item_id: 8044702
+  delivery:
+    kind: mail
+    wow_item_entry: 44702
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Dark Herring (#44703)'
   item_id: 8044703
   delivery:
@@ -99771,6 +100099,70 @@ items:
   tags:
     category:
     - pet
+- name: 'Filler: Champion''s Deathdealer Breastplate (#48677)'
+  item_id: 8048677
+  delivery:
+    kind: mail
+    wow_item_entry: 48677
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Mystical Vest of Elements (#48683)'
+  item_id: 8048683
+  delivery:
+    kind: mail
+    wow_item_entry: 48683
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Polished Breastplate of Valor (#48685)'
+  item_id: 8048685
+  delivery:
+    kind: mail
+    wow_item_entry: 48685
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Preened Ironfeather Breastplate (#48687)'
+  item_id: 8048687
+  delivery:
+    kind: mail
+    wow_item_entry: 48687
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Stained Shadowcraft Tunic (#48689)'
+  item_id: 8048689
+  delivery:
+    kind: mail
+    wow_item_entry: 48689
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Tattered Dreadmist Robe (#48691)'
+  item_id: 8048691
+  delivery:
+    kind: mail
+    wow_item_entry: 48691
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Venerable Mass of McGowan (#48716)'
+  item_id: 8048716
+  delivery:
+    kind: mail
+    wow_item_entry: 48716
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Repurposed Lava Dredger (#48718)'
+  item_id: 8048718
+  delivery:
+    kind: mail
+    wow_item_entry: 48718
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Swift Alliance Steed (#49044)'
   item_id: 8049044
   delivery:
@@ -99835,6 +100227,14 @@ items:
   tags:
     category:
     - gear_enhancement
+- name: 'Filler: Tome of Cold Weather Flight (#49177)'
+  item_id: 8049177
+  delivery:
+    kind: mail
+    wow_item_entry: 49177
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Goblin Rocket Pack (#49278)'
   item_id: 8049278
   delivery:
@@ -100275,6 +100675,14 @@ items:
   tags:
     category:
     - mount
+- name: 'Filler: Dread Pirate Ring (#50255)'
+  item_id: 8050255
+  delivery:
+    kind: mail
+    wow_item_entry: 50255
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Landro''s Pet Box (#50301)'
   item_id: 8050301
   delivery:
@@ -100299,6 +100707,86 @@ items:
   tags:
     category:
     - bag
+- name: 'Filler: Greater Inscription of the Axe (#50335)'
+  item_id: 8050335
+  delivery:
+    kind: mail
+    wow_item_entry: 50335
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Crag (#50336)'
+  item_id: 8050336
+  delivery:
+    kind: mail
+    wow_item_entry: 50336
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Pinnacle (#50337)'
+  item_id: 8050337
+  delivery:
+    kind: mail
+    wow_item_entry: 50337
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Greater Inscription of the Storm  (#50338)'
+  item_id: 8050338
+  delivery:
+    kind: mail
+    wow_item_entry: 50338
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Torment (#50367)'
+  item_id: 8050367
+  delivery:
+    kind: mail
+    wow_item_entry: 50367
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Burning Mysteries (#50368)'
+  item_id: 8050368
+  delivery:
+    kind: mail
+    wow_item_entry: 50368
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of the Stalwart Protector (#50369)'
+  item_id: 8050369
+  delivery:
+    kind: mail
+    wow_item_entry: 50369
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of Blissful Mending (#50370)'
+  item_id: 8050370
+  delivery:
+    kind: mail
+    wow_item_entry: 50370
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of the Savage Gladiator (#50372)'
+  item_id: 8050372
+  delivery:
+    kind: mail
+    wow_item_entry: 50372
+  tags:
+    category:
+    - heirloom
+- name: 'Filler: Arcanum of the Savage Gladiator (#50373)'
+  item_id: 8050373
+  delivery:
+    kind: mail
+    wow_item_entry: 50373
+  tags:
+    category:
+    - heirloom
 - name: 'Filler: Wrathful Gladiator''s Frost Wyrm (#50435)'
   item_id: 8050435
   delivery:

@@ -1,11 +1,15 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoPlayerScript.cpp
 #include <algorithm>
+#include <vector>
 
 #include "CharacterCache.h"
+#include "Chat.h"
 #include "DatabaseEnv.h"
+#include "DBCStores.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
+#include "Random.h"
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSessionMgr.h"
@@ -15,6 +19,7 @@
 #include "APGating.h"
 #include "APProtocol.h"
 #include "APRaidlogger.h"
+#include "APRandomTaxiNode.h"
 #include "APSpellGrant.h"
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
@@ -65,6 +70,58 @@ namespace
         if (g_lastItemIndex == -2)
             g_lastItemIndex = LoadLastItemIndexFromDB();
         return g_lastItemIndex;
+    }
+
+    // Random Flight Path Unlock (Task 4, M4.14.1 "Useful Items"). Grants one
+    // uniformly-random previously-unknown real taxi node
+    // (TaxiNodesEntry::ID, sTaxiNodesStore) to `player` via the real
+    // PlayerTaxi::SetTaximaskNode -- PlayerTaxi::IsTaximaskNodeKnown queries
+    // whether it's already known (both real, confirmed at PlayerTaxi.h:35,42;
+    // the design spec's guessed AddTaximaskNode does not exist). No-ops
+    // safely (logs and returns) if every real node is already known, rather
+    // than crashing or throwing. The set-difference itself is factored out
+    // into Archipelago::RandomTaxiNode::ComputeUnknownTaxiNodes
+    // (APRandomTaxiNode.h) purely so it's unit-testable without a live
+    // Player*/DBC store -- this function stays manually verified only, per
+    // this module's established discipline for anything Player*/DBC-coupled
+    // (see APGateDecision.h's own stated rationale).
+    void GrantRandomTaxiNode(Player* player)
+    {
+        std::vector<uint32_t> allNodeIds;
+        std::vector<uint32_t> knownNodeIds;
+        for (uint32 i = 1; i < sTaxiNodesStore.GetNumRows(); ++i)
+        {
+            TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(i);
+            if (!node)
+                continue;
+            allNodeIds.push_back(node->ID);
+            if (player->m_taxi.IsTaximaskNodeKnown(node->ID))
+                knownNodeIds.push_back(node->ID);
+        }
+
+        std::vector<uint32_t> unknownNodes = Archipelago::RandomTaxiNode::ComputeUnknownTaxiNodes(allNodeIds, knownNodeIds);
+        if (unknownNodes.empty())
+        {
+            LOG_INFO("module.archipelago_wow", "Archipelago: {} already knows every real flight path node, Random Flight Path Unlock is a no-op", player->GetName());
+            return;
+        }
+
+        uint32 chosen = unknownNodes[urand(0, unknownNodes.size() - 1)];
+        // M4.14.1 final review fix (I4): SetTaximaskNode alone updates server-side
+        // state but never notifies the connected client -- the in-game flight map
+        // wouldn't show the new node until the player relogged. WorldSession::
+        // SendDiscoverNewTaxiNode is the real core idiom every other in-game taxi
+        // node grant uses (see SpellEffects.cpp's SPELL_EFFECT_QUEST_COMPLETE
+        // handling): it sets the flag, sends SMSG_NEW_TAXI_PATH, and fires
+        // sScriptMgr->OnPlayerLearnTaxiNode, all in one call.
+        WorldSession* session = player->GetSession();
+        if (!session)
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: {} has no active WorldSession, Random Flight Path Unlock could not notify the client", player->GetName());
+            return;
+        }
+        session->SendDiscoverNewTaxiNode(chosen);
+        ChatHandler(session).PSendSysMessage("Archipelago: You've learned a new flight path.");
     }
 }
 
@@ -191,6 +248,29 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
+        // Task 4 (M4.14.1 "Useful Items"): Random Flight Path Unlock grants
+        // one random previously-unknown real taxi node on receipt -- not a
+        // {kind: flag} item, so it's never in Archipelago::Gates::
+        // ApItemToFlagKeyAndTier below; a single-item identity check, same
+        // shape as AP_ITEM_DARK_PORTAL_ACCESS above, checked first per this
+        // dispatch's own convention of single-item checks before the
+        // generic per-family map lookup. Grants touch a live Player*, so
+        // this uses the same online-delivery-character resolution pattern
+        // as Traps/FillerRewardEffects above -- skipped (logged, not lost
+        // forever, matching those items' documented scope boundary) if the
+        // delivery character is offline right now.
+        if (received.item == Archipelago::Gates::AP_ITEM_RANDOM_FLIGHT_PATH_UNLOCK)
+        {
+            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+            Player* onlineReceiver = receiverGuid.IsEmpty() ? nullptr : ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+            if (onlineReceiver)
+                GrantRandomTaxiNode(onlineReceiver);
+            else
+                LOG_INFO("module.archipelago_wow", "Archipelago: Random Flight Path Unlock skipped, delivery character '{}' is offline", deliveryCharacter);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
         auto gateIt = Archipelago::Gates::ApItemToFlagKeyAndTier.find(received.item);
         if (gateIt != Archipelago::Gates::ApItemToFlagKeyAndTier.end())
         {
@@ -200,8 +280,12 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             // fields, unlike every other gates-family flag_key -- apply the
             // grant to everyone already online now (OnPlayerLogin handles
             // anyone who logs in later, including characters who were
-            // offline for this exact delivery).
-            if (flagKey == "bank_bag_slots" || flagKey == "dual_spec")
+            // offline for this exact delivery). M4.14.1 final review fix
+            // (I3): xp_boost/speed_boost (Task 6) are the same per-character
+            // shape -- SyncCharacterUnlocksToPlayer also applies their auras
+            // -- so they need the same immediate resync, or an online
+            // recipient would see nothing until their next relog.
+            if (flagKey == "bank_bag_slots" || flagKey == "dual_spec" || flagKey == "xp_boost" || flagKey == "speed_boost")
             {
                 sWorldSessionMgr->DoForAllOnlinePlayers([](Player* onlinePlayer)
                 {
@@ -228,6 +312,26 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
                     onlinePlayer->InitGlyphsForLevel();
                 });
             }
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // Task 5 (M4.14.1 Portable Mailbox): gates is otherwise an all-flag
+        // family (ApItemToFlagKeyAndTier directly above), but Portable
+        // Mailbox is a real, mailable WoW item (wow_item_entry 850104), not
+        // a realm flag -- checked here, right after the gates flag lookup,
+        // so both of the gates family's lookup tables stay grouped together
+        // before falling through to unrelated families below. A gates item
+        // is never in both maps at once, so this placement doesn't affect
+        // correctness, only readability. Mirrors the Recipes/Trainer Spells
+        // dispatch shape above (plain DeliverItem + history insert, no
+        // per-item "received" flag -- unlike fish/collections, gates items
+        // are one-off unlocks, not "collect all N" completion-check content).
+        auto gatesEntryIt = Archipelago::Gates::ApItemIdToWowItemEntry.find(received.item);
+        if (gatesEntryIt != Archipelago::Gates::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, gatesEntryIt->second, deliveryCharacter, auctionHouseCostTier, auctionHouseFactionMode, "Gates", batch, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", gatesEntryIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

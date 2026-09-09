@@ -173,9 +173,19 @@ namespace Archipelago::Filler
         740148, // Filler Check 149
         740149, // Filler Check 150
         740150, // Filler Check 151
+        740151, // Filler Check 152
+        740152, // Filler Check 153
+        740153, // Filler Check 154
+        740154, // Filler Check 155
+        740155, // Filler Check 156
+        740156, // Filler Check 157
+        740157, // Filler Check 158
+        740158, // Filler Check 159
+        740159, // Filler Check 160
+        740160, // Filler Check 161
     };
 
-    // Same 151 ids as LocationIds above, but ordered exactly as
+    // Same ids as LocationIds above, but ordered exactly as
     // filler_content_data.LOCATIONS' Python dict iterates (both are
     // compiled from this same ordered content/filler.yaml by this
     // same generate_content.py invocation) -- a structural guarantee,
@@ -334,5 +344,15 @@ namespace Archipelago::Filler
         740148, // Filler Check 149
         740149, // Filler Check 150
         740150, // Filler Check 151
+        740151, // Filler Check 152
+        740152, // Filler Check 153
+        740153, // Filler Check 154
+        740154, // Filler Check 155
+        740155, // Filler Check 156
+        740156, // Filler Check 157
+        740157, // Filler Check 158
+        740158, // Filler Check 159
+        740159, // Filler Check 160
+        740160, // Filler Check 161
     };
 }
