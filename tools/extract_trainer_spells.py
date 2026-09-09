@@ -7,6 +7,7 @@ this plan's Global Constraints on cross-family spell_id collisions)."""
 from __future__ import annotations
 
 import pathlib
+from collections import Counter
 
 import yaml
 
@@ -56,9 +57,8 @@ def _load_recipe_spell_ids() -> frozenset[int]:
 
 
 def _query_consumable_items() -> list[tuple[int, str]]:
-    """Real, safe fallback item universe for a Trainer Spells reward that
-    isn't safe to grant as a direct spell (see
-    _is_spell_safe_to_grant_directly): the exact same real WHERE clause
+    """Real fallback item universe for a standalone (single-rank) Trainer
+    Spells reward's mail delivery: the exact same real WHERE clause
     extract_filler_reward_items.py's own "consumable" category already uses
     and has already been vetted safe there (denylist-filtered, no learn-on-
     use side effect, unlike a recipe item) -- deliberately NOT importing
@@ -85,24 +85,16 @@ def _assign_consumable_item(candidates: list[tuple[int, str]], index: int) -> in
     return candidates[index % len(candidates)][0]
 
 
-def _is_spell_safe_to_grant_directly(spell_id: int, all_trigger_spell_ids: frozenset[int]) -> bool:
-    """A spell is safe to deliver as a direct "learn this spell now" grant
-    ONLY if it is not ALSO the trigger spell for some Trainer Spells
-    location -- granting it would otherwise silently auto-complete that
-    other location's check out of band (without genuine player action,
-    and bypassing that location's own real min_level gate), the exact
-    multiworld-integrity risk documented in
-    extract_filler_reward_items.py's header for why the "recipe" Filler
-    category was removed entirely rather than fixed. Confirmed during
-    M4.11.5.0.5's own planning: every real spell_id in this family's own
-    data IS, by construction, one of its own trigger spells (items.py's
-    create_optional_category_item_pool only ever pools items 1:1 with this
-    family's own sampled locations) -- so this always returns False against
-    this checkout's real data today. Kept as a real, checked gate (not
-    silently assumed) so a future data change that ever introduces a
-    genuinely disjoint spell cannot silently regress into the unsafe
-    behavior this plan's research found and avoided."""
-    return spell_id not in all_trigger_spell_ids
+def _load_spell_ranks() -> dict[int, tuple[int, int]]:
+    """spell_id -> (first_spell_id, rank), from the real `spell_ranks` world-DB
+    table (columns first_spell_id, spell_id, rank -- confirmed via
+    SpellMgr::LoadSpellRanks, src/server/game/Spells/SpellMgr.cpp:1279-1385;
+    NOT a table called `spell_chain`, which doesn't exist in this schema).
+    A spell_id absent from this dict has no rank chain at all (a genuine
+    single-rank spell) -- callers must treat absence as "standalone," not
+    as an error."""
+    rows = run_query("SELECT first_spell_id, spell_id, `rank` FROM spell_ranks")
+    return {int(spell_id): (int(first_spell_id), int(rank)) for first_spell_id, spell_id, rank in rows}
 
 
 def _load_trainer_expansions() -> dict[int, str]:
@@ -178,6 +170,7 @@ def extract() -> dict:
     world_map_areas = parse_world_map_areas()
     area_zone_ids = parse_area_zone_ids()
     area_names = parse_area_names()
+    spell_ranks = _load_spell_ranks()
 
     rows = run_query(f"""
         SELECT ts.SpellId, t.Requirement, t.Id, ts.ReqLevel
@@ -205,10 +198,17 @@ def extract() -> dict:
         entry["req_level"] = min(entry["req_level"], int(req_level_str))
         entry["trainer_ids"].add(int(trainer_id_str))
 
-    all_trigger_spell_ids = frozenset(by_spell.keys())
     consumable_candidates = _query_consumable_items()
 
-    locations, items = [], []
+    # Group spell_ids by rank chain (spell_ranks, real world-DB table --
+    # _load_spell_ranks) as we build locations: a multi-rank chain (e.g.
+    # Frostbolt ranks 1-7) becomes ONE "Progressive <name>" item after the
+    # loop, keyed by the chain's first_spell_id; a spell absent from
+    # spell_ranks entirely has no chain (a genuine single-rank spell) and
+    # stays a standalone mail item, unchanged from before this grouping.
+    locations = []
+    chains: dict[int, list[tuple[int, int]]] = {}  # first_spell_id -> [(rank, spell_id), ...]
+    standalone_spell_ids: list[int] = []
     for spell_id in sorted(by_spell):
         info = by_spell[spell_id]
         name = spell_names.get(spell_id, "")
@@ -251,20 +251,67 @@ def extract() -> dict:
             # (generate_content.py's export_tags emission), TRIGGERS keeps the
             # raw trigger dict verbatim.
             "trigger": {
-                "kind": "learn_spell", "spell_id": spell_id,
+                "kind": "trainer_purchase_attempt", "spell_id": spell_id,
                 "min_level": info["req_level"],
             },
             "tags": tags,
         })
-        if _is_spell_safe_to_grant_directly(spell_id, all_trigger_spell_ids):
-            delivery = {"kind": "learn_spell", "spell_id": spell_id}
+        if spell_id in spell_ranks:
+            first_spell_id, rank = spell_ranks[spell_id]
+            chains.setdefault(first_spell_id, []).append((rank, spell_id))
         else:
-            wow_item_entry = _assign_consumable_item(consumable_candidates, len(items))
-            delivery = {"kind": "mail", "wow_item_entry": wow_item_entry}
+            standalone_spell_ids.append(spell_id)
+
+    # Second pass, now that every rank's location exists: one "Progressive
+    # <name>" item per chain (ordered lowest-to-highest rank), then one
+    # standalone mail item per genuine single-rank spell -- same
+    # _assign_consumable_item cycling as before, just applied after the
+    # chain items so the whole item universe is cycled evenly.
+    # Two different chains can share a display name -- confirmed against
+    # real live-DB data (regenerating this file, M4.11.6/Task 8): Death
+    # Knight's and Warlock's spells are BOTH named "Death Coil" in
+    # spell.dbc, distinct chains (first_spell_id 49892 vs 6789). Undetected,
+    # this produces two items both named "Progressive Death Coil", which
+    # generate_content.py's own _validate_unique_names correctly rejects as
+    # a cross-item name collision. Computed as a first pass so every
+    # colliding chain (not just the second one encountered) gets
+    # disambiguated identically.
+    chain_names: dict[int, str] = {
+        first_spell_id: spell_names.get(
+            first_spell_id, spell_names.get(sorted(chains[first_spell_id])[0][1], "")
+        )
+        for first_spell_id in chains
+    }
+    name_counts = Counter(chain_names.values())
+
+    items = []
+    for first_spell_id in sorted(chains):
+        ordered = [spell_id for _rank, spell_id in sorted(chains[first_spell_id])]
+        chain_name = chain_names[first_spell_id]
+        if name_counts[chain_name] > 1:
+            # Disambiguate with the teaching class(es). first_spell_id
+            # itself is NOT guaranteed to be in by_spell (a chain's rank 1
+            # is sometimes not directly taught by any class trainer --
+            # confirmed against real data, e.g. first_spell_id 47541); use
+            # ordered[0] instead -- the lowest-ranked spell_id that IS
+            # actually taught, guaranteed present in by_spell because
+            # chains is only ever populated from `for spell_id in
+            # sorted(by_spell)` above. Same snake_case -> Title Case
+            # convention extract_gathersanity.py's tier_label already uses.
+            classes = sorted(by_spell[ordered[0]]["classes"])
+            class_label = "/".join(c.replace("_", " ").title() for c in classes)
+            chain_name = f"{chain_name} ({class_label})"
         items.append({
-            "name": f"Trainer Spell Item: {name} (#{spell_id})",
+            "name": f"Progressive {chain_name}",
+            "item_id": _ITEM_ID_BASE + first_spell_id,
+            "delivery": {"kind": "learn_next_chain_rank", "spell_ids": ordered},
+        })
+    for spell_id in standalone_spell_ids:
+        wow_item_entry = _assign_consumable_item(consumable_candidates, len(items))
+        items.append({
+            "name": f"Trainer Spell Item: {spell_names[spell_id]} (#{spell_id})",
             "item_id": _ITEM_ID_BASE + spell_id,
-            "delivery": delivery,
+            "delivery": {"kind": "mail", "wow_item_entry": wow_item_entry},
         })
 
     return {"family": "trainer_spells", "locations": locations, "items": items, "constants": {}}

@@ -15,6 +15,7 @@ void AddArchipelagoLootScripts();
 void AddArchipelagoProfessionScripts();
 void AddArchipelagoCollectionScripts();
 void AddArchipelagoLearnSpellScripts();
+void AddArchipelagoTrainerPurchaseScripts();
 void AddArchipelagoCraftsanityScripts();
 void AddArchipelagoInterceptionScripts();
 void AddArchipelagoAchievementScripts();
@@ -44,6 +45,7 @@ void Addarchipelago_wowScripts()
     AddArchipelagoProfessionScripts();
     AddArchipelagoCollectionScripts();
     AddArchipelagoLearnSpellScripts();
+    AddArchipelagoTrainerPurchaseScripts();
     AddArchipelagoCraftsanityScripts();
     AddArchipelagoInterceptionScripts();
     AddArchipelagoAchievementScripts();

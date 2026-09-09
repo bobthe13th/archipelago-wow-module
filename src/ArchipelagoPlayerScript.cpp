@@ -31,6 +31,7 @@
 #include "ArchipelagoGoldenBoarStatuesContentTable.h"
 #include "ArchipelagoHOLIDAYSANITYContent.h"
 #include "ArchipelagoITEMSANITYContent.h"
+#include "ArchipelagoManager.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
 #include "ArchipelagoRaidloggerContentTable.h"
@@ -79,18 +80,25 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
     // AllAccountsDelivery, have no single recipient at all, so an operator running
     // one of those policies should not be forced to also configure a delivery
     // character that nothing here will use.
+    //
+    // A missing/nonexistent DeliveryCharacter used to drop the whole batch here.
+    // Falling back to Policy::AuctionHouse instead (same idiom ArchipelagoWorldScript
+    // already uses the other direction for AccessGating=1) keeps every item
+    // recoverable -- auctionHouseCostTier/auctionHouseFactionMode are always parsed
+    // from config with real defaults regardless of the configured policy, so they're
+    // already valid to use here even when SingleDeliveryCharacter was the operator's
+    // primary choice.
     if (deliveryPolicy == Archipelago::Delivery::Policy::SingleDeliveryCharacter)
     {
         if (deliveryCharacter.empty())
         {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: received {} item(s) but Archipelago.DeliveryCharacter is unset, dropping", items.size());
-            return;
+            LOG_ERROR("module.archipelago_wow", "Archipelago: Archipelago.DeliveryCharacter is unset, falling back to Auction House delivery for {} item(s)", items.size());
+            deliveryPolicy = Archipelago::Delivery::Policy::AuctionHouse;
         }
-
-        if (sCharacterCache->GetCharacterGuidByName(deliveryCharacter).IsEmpty())
+        else if (sCharacterCache->GetCharacterGuidByName(deliveryCharacter).IsEmpty())
         {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, dropping {} item(s)", deliveryCharacter, items.size());
-            return;
+            LOG_ERROR("module.archipelago_wow", "Archipelago: DeliveryCharacter '{}' does not exist, falling back to Auction House delivery for {} item(s)", deliveryCharacter, items.size());
+            deliveryPolicy = Archipelago::Delivery::Policy::AuctionHouse;
         }
     }
 
@@ -383,23 +391,64 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
-        // M4.11.5.0.5: direct spell grant. deliveryCharacter is the same
-        // single named recipient every other SingleDeliveryCharacter-policy
-        // branch in this function targets -- Archipelago::SpellGrant::
-        // GrantOrQueue handles the online/offline split exactly like
-        // APDelivery::GiveOrMailItem does for physical items, just with no
-        // mail fallback (there is none for a spell). Currently unreachable
-        // against this checkout's real compiled data (the map is always
-        // empty -- see that family's own extraction plan for why), kept as
-        // real, correct dispatch code for the day it isn't.
-        auto trainerSpellSpellIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.find(received.item);
-        if (trainerSpellSpellIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToSpellId.end())
+        // Progressive trainer-spell chain items (M-next): each chain's
+        // realm-wide "how many ranks granted so far" tier lives in the
+        // existing generic flag store under a per-chain key, same
+        // mechanism GetLevelCapCopiesReceived/GrantLevelCapCopy already
+        // use for Progressive Level Cap -- consistent with this realm's
+        // "one realm = one AP slot" model (ArchipelagoRealmState.h),
+        // which already collapses every delivery target to the single
+        // configured deliveryCharacter regardless of which real
+        // character eventually casts the spell.
+        auto trainerChainIt = ArchipelagoTRAINER_SPELLSContent::ApItemIdToChainSpellIds.find(received.item);
+        if (trainerChainIt != ArchipelagoTRAINER_SPELLSContent::ApItemIdToChainSpellIds.end())
         {
-            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
-            if (!receiverGuid.IsEmpty())
+            std::string flagKey = "trainer_chain_rank_" + std::to_string(received.item);
+            uint32_t tier = sArchipelagoRealmState->GetFlagTier(flagKey);
+            std::vector<uint32_t> const& ranks = trainerChainIt->second;
+            if (tier < ranks.size())
             {
-                Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
-                Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), trainerSpellSpellIt->second, trans);
+                uint32_t rankSpellId = ranks[tier];
+                ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+                if (!receiverGuid.IsEmpty())
+                {
+                    // Final-review fix (Finding 1): SPELL_ID_TO_LOCATION_ID
+                    // still keys ONE location per individual rank spell_id
+                    // (unchanged by this branch), and
+                    // ArchipelagoTrainerPurchaseScript::OnPlayerCanTrainerTeachSpell
+                    // -- the only other place that sends/attributes that
+                    // location's check -- is only reachable while
+                    // Trainer::CanTeachSpell still returns Available, which
+                    // flips to Known the instant the player has the spell.
+                    // Granting the rank directly here (as this block always
+                    // has) without also sending/attributing its own location
+                    // check first would make that rank's location
+                    // permanently unreachable for the rest of this
+                    // character's life. Mirror
+                    // OnPlayerCanTrainerTeachSpell's exact dedup-guarded
+                    // send/attribution pattern before granting;
+                    // HasSentLocationCheck's guard makes this safe even if
+                    // the player legitimately purchased this rank from the
+                    // trainer first (no double-send).
+                    auto locationIt = ArchipelagoTRAINER_SPELLSContent::SPELL_ID_TO_LOCATION_ID.find(rankSpellId);
+                    if (locationIt != ArchipelagoTRAINER_SPELLSContent::SPELL_ID_TO_LOCATION_ID.end())
+                    {
+                        uint64_t locationId = static_cast<uint64_t>(locationIt->second);
+                        if (!sArchipelagoRealmState->HasSentLocationCheck(locationId))
+                        {
+                            sArchipelagoMgr->SendLocationChecks({ locationIt->second });
+                            sArchipelagoRealmState->RecordLocationCheckAttribution(locationId, receiverGuid.GetCounter());
+                        }
+                    }
+
+                    Player* onlineReceiver = ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+                    Archipelago::SpellGrant::GrantOrQueue(onlineReceiver, receiverGuid.GetCounter(), rankSpellId, trans);
+                }
+                sArchipelagoRealmState->SetFlagTier(flagKey, tier + 1);
+            }
+            else
+            {
+                LOG_ERROR("module.archipelago_wow", "Archipelago: received Progressive chain item {} but all {} ranks are already granted", received.item, ranks.size());
             }
             highestSeen = std::max(highestSeen, received.index);
             continue;

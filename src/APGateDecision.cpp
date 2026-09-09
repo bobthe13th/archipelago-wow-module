@@ -12,4 +12,9 @@ namespace Archipelago::Gating
     {
         return moduleEnabled && gateFamilyEnabled && requiredTier > grantedTier;
     }
+
+    bool ShouldBlockTrainerTeach(bool moduleEnabled, bool alreadyKnownOrGrantedViaAP)
+    {
+        return moduleEnabled && !alreadyKnownOrGrantedViaAP;
+    }
 }

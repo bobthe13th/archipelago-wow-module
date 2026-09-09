@@ -26,4 +26,12 @@ namespace Archipelago::Gating
     // predicate rather than a single grant call, since InitGlyphsForLevel
     // needs to decide per-slot-index whether to call SetGlyphSlot at all.
     bool ShouldSuppressGatedTier(bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
+
+    // Pure decision logic for the Trainersanity trainer-purchase gate
+    // (M-next): true means "block the vanilla TeachSpell learn/cast and
+    // charge no gold" -- Trainer::CanTeachSpell already filters out a
+    // spell the player legitimately already knows before this predicate
+    // is ever consulted, so alreadyKnownOrGrantedViaAP only needs to
+    // cover "already granted via APSpellGrant::GrantOrQueue" in practice.
+    bool ShouldBlockTrainerTeach(bool moduleEnabled, bool alreadyKnownOrGrantedViaAP);
 }
