@@ -8,6 +8,7 @@
 #include "DBCStructure.h"
 #include "GameObject.h"
 #include "GameTime.h"
+#include "Item.h"
 #include "ItemTemplate.h"
 #include "MiscScript.h"
 #include "ObjectGuid.h"
@@ -380,6 +381,41 @@ public:
     }
 };
 
+// Progressive Bag Slots (Task 1, M4.14.1): gates the 4 non-backpack
+// inventory bag slots via PLAYERHOOK_CAN_EQUIP_ITEM, distinct from the
+// already-shipped Progressive Bank Bag Slot (bank_bag_slots flag_key,
+// grant-based via SetBankBagSlotCount) above -- this one is continuous
+// suppression, like Talent Point Access, and never touches the bank.
+// IsNonBackpackBagSlot/BagSlotToTier live in APGateDecision.h/.cpp (not
+// here) so they're unit-testable in the standalone doctest target without
+// a live Player/Item.
+class ArchipelagoBagSlotGateScript : public PlayerScript
+{
+public:
+    ArchipelagoBagSlotGateScript() : PlayerScript("ArchipelagoBagSlotGateScript", { PLAYERHOOK_CAN_EQUIP_ITEM }) { }
+
+    bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& /*dest*/, Item* pItem, bool /*swap*/, bool /*not_loading*/) override
+    {
+        if (!Archipelago::Gating::IsNonBackpackBagSlot(slot))
+            return true;
+
+        ItemTemplate const* proto = pItem ? pItem->GetTemplate() : nullptr;
+        if (!proto || proto->InventoryType != INVTYPE_BAG)
+            return true;
+
+        uint32_t requiredTier = Archipelago::Gating::BagSlotToTier(slot);
+        if (!Archipelago::Gating::ShouldSuppressGatedTier(
+                sArchipelagoRealmState->IsEnabled(),
+                sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                requiredTier,
+                sArchipelagoRealmState->GetFlagTier("bag_slots")))
+            return true;
+
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Bag Slot %u to use this bag slot.", requiredTier);
+        return false;
+    }
+};
+
 class ArchipelagoGatheringGateScript : public AllSpellScript
 {
 public:
@@ -471,6 +507,7 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoAuctionHouseGateScript();
     new ArchipelagoTalentPointGateScript();
     new ArchipelagoGatheringGateScript();
+    new ArchipelagoBagSlotGateScript();
 
     ArchipelagoShouldSuppressBankAccess = []() {
         return Archipelago::Gating::ShouldSuppressGatedAction(

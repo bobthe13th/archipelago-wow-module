@@ -34,4 +34,24 @@ namespace Archipelago::Gating
     // is ever consulted, so alreadyKnownOrGrantedViaAP only needs to
     // cover "already granted via APSpellGrant::GrantOrQueue" in practice.
     bool ShouldBlockTrainerTeach(bool moduleEnabled, bool alreadyKnownOrGrantedViaAP);
+
+    // Progressive Bag Slots gate (M4.14.1): true if slot is one of the 4
+    // non-backpack inventory bag slots (INVENTORY_SLOT_BAG_START=19 through
+    // INVENTORY_SLOT_BAG_END=23, exclusive -- real constants confirmed in
+    // src/server/game/Entities/Player/Player.h, reproduced as literals in
+    // the .cpp rather than #included so this header/its .cpp stay free of
+    // AzerothCore engine dependencies, matching this file's own established
+    // discipline). Backpack slots and all other equipment slots are false.
+    // Factored out here for the same standalone-doctest testability reason
+    // as ShouldSuppressGatedTier above -- the Player*/Item*-touching hook
+    // (ArchipelagoBagSlotGateScript::OnPlayerCanEquipItem, APGating.cpp)
+    // stays manually verified only.
+    bool IsNonBackpackBagSlot(uint32_t slot);
+
+    // Maps a non-backpack bag slot to its 1-indexed progressive tier
+    // (slot 19 -> tier 1, ..., slot 22 -> tier 4), matching content/
+    // gates.yaml's "bag_slots" flag_key tiers 1-4. Callers must check
+    // IsNonBackpackBagSlot(slot) first -- the return value for a slot
+    // outside that range is unspecified.
+    uint32_t BagSlotToTier(uint32_t slot);
 }

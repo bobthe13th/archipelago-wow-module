@@ -17,4 +17,24 @@ namespace Archipelago::Gating
     {
         return moduleEnabled && !alreadyKnownOrGrantedViaAP;
     }
+
+    namespace
+    {
+        // Real constants confirmed in
+        // src/server/game/Entities/Player/Player.h -- reproduced as literals
+        // here (not #included) so this file stays free of AzerothCore engine
+        // dependencies, matching APGateDecision.h's own stated discipline.
+        constexpr uint32_t INVENTORY_SLOT_BAG_START = 19;
+        constexpr uint32_t INVENTORY_SLOT_BAG_END = 23; // exclusive
+    }
+
+    bool IsNonBackpackBagSlot(uint32_t slot)
+    {
+        return slot >= INVENTORY_SLOT_BAG_START && slot < INVENTORY_SLOT_BAG_END;
+    }
+
+    uint32_t BagSlotToTier(uint32_t slot)
+    {
+        return slot - INVENTORY_SLOT_BAG_START + 1;
+    }
 }

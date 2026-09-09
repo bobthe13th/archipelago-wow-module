@@ -242,3 +242,33 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: combo_unlock_wotlk, tier: 1}
 
+  # Progressive Bag Slots (Task 1, M4.14.1 -- part of the "character_unlocks"
+  # family alongside Progressive Bank Bag Slot/Glyph Slot above, same
+  # continuous-suppression shape as Talent Point Access, not a grant). Gates
+  # the 4 non-backpack inventory bag slots (INVENTORY_SLOT_BAG_START=19
+  # through INVENTORY_SLOT_BAG_END-1=22, real AzerothCore constants
+  # confirmed in Player.h) via PLAYERHOOK_CAN_EQUIP_ITEM, denying the equip
+  # of a container (ItemTemplate::InventoryType == INVTYPE_BAG) into a slot
+  # whose 1-indexed tier exceeds the realm's "bag_slots" GetFlagTier -- see
+  # ArchipelagoBagSlotGateScript in APGating.cpp. Distinct from Progressive
+  # Bank Bag Slot above: that flag_key (bank_bag_slots) grants
+  # Player::SetBankBagSlotCount for the *bank* bag slots; this one
+  # suppresses equipping into the *inventory* bag slots and never touches
+  # the bank.
+  - name: "Progressive Bag Slot: Slot 1"
+    item_id: 830037
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 1}
+  - name: "Progressive Bag Slot: Slot 2"
+    item_id: 830038
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 2}
+  - name: "Progressive Bag Slot: Slot 3"
+    item_id: 830039
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 3}
+  - name: "Progressive Bag Slot: Slot 4"
+    item_id: 830040
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 4}
+

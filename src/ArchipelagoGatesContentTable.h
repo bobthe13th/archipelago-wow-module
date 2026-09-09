@@ -47,6 +47,10 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_6 = 830036;
     inline constexpr int64_t AP_ITEM_TBC_COMBO_UNLOCK = 830027;
     inline constexpr int64_t AP_ITEM_WOTLK_COMBO_UNLOCK = 830028;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_1 = 830037;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_2 = 830038;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_3 = 830039;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_4 = 830040;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -86,5 +90,9 @@ namespace Archipelago::Gates
         { 830036, { "glyph_slots", 6 } }, // Progressive Glyph Slot: Slot 6
         { 830027, { "combo_unlock_tbc", 1 } }, // TBC Combo Unlock
         { 830028, { "combo_unlock_wotlk", 1 } }, // WotLK Combo Unlock
+        { 830037, { "bag_slots", 1 } }, // Progressive Bag Slot: Slot 1
+        { 830038, { "bag_slots", 2 } }, // Progressive Bag Slot: Slot 2
+        { 830039, { "bag_slots", 3 } }, // Progressive Bag Slot: Slot 3
+        { 830040, { "bag_slots", 4 } }, // Progressive Bag Slot: Slot 4
     };
 }
