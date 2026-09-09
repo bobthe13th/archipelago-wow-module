@@ -61,6 +61,21 @@ namespace Archipelago::Gating
 
         if (sArchipelagoRealmState->IsFlagUnlocked("dual_spec") && player->GetSpecsCount() < 2)
             player->UpdateSpecCount(2);
+
+        // Progressive EXP/Move-Speed Boost (Task 6, M4.14.1 "Useful Items"):
+        // permanent login-applied auras, real spell ids spot-verified against
+        // this checkout's Spell.dbc (single-effect shape, zero references
+        // across item_template.spellid_1..5/spell_script_names/
+        // playercreateinfo_cast_spell/spell_area/src/server/scripts/ -- see
+        // content/gates.yaml's comment on these two items for the full
+        // calibration). AddAura re-applying an already-present aura on every
+        // login is a harmless idempotent refresh for both: each is a simple
+        // flat-percentage passive aura (SPELL_AURA_MOD_XP_PCT /
+        // SPELL_AURA_MOD_INCREASE_SPEED) with no stacking/proc side effects.
+        if (sArchipelagoRealmState->IsFlagUnlocked("xp_boost"))
+            player->AddAura(42138, player); // "Brewfest Enthusiast", ~10% XP
+        if (sArchipelagoRealmState->IsFlagUnlocked("speed_boost"))
+            player->AddAura(22587, player); // "8% speed bonus"
     }
 
     void ApplyComboUnlockMasks()

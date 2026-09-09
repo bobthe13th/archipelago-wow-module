@@ -293,8 +293,8 @@ items:
   # immediately grants one uniformly-random previously-unknown real taxi
   # node (sTaxiNodesStore) to the delivery character via
   # PlayerTaxi::SetTaximaskNode -- see GrantRandomTaxiNode in
-  # ArchipelagoPlayerScript.cpp. item_id 830043-830044 are reserved for
-  # Task 6 (not yet implemented as of this commit) -- do not reuse them.
+  # ArchipelagoPlayerScript.cpp. item_id 830043-830044 were reserved for
+  # Task 6 -- see the Progressive EXP/Move-Speed Boost items below.
   - name: "Random Flight Path Unlock"
     item_id: 830045
     count: 1
@@ -319,4 +319,29 @@ items:
     item_id: 830046
     count: 1
     delivery: {kind: mail, wow_item_entry: 850104}
+
+  # Progressive EXP/Move-Speed Boost (Task 6, M4.14.1 "Useful Items").
+  # Flag-shaped, applied as a permanent login aura in
+  # Archipelago::Gating::SyncCharacterUnlocksToPlayer (APGating.cpp), the
+  # same login-sync function that already handles bank_bag_slots/dual_spec
+  # above -- not a new login hook. Real, spot-verified spell ids (see this
+  # task's own report for the full DBC field-offset calibration and
+  # zero-reference check against item_template.spellid_1..5,
+  # spell_script_names, playercreateinfo_cast_spell, spell_area, and
+  # src/server/scripts/): spell 42138 "Brewfest Enthusiast" (single-effect
+  # SPELL_AURA_MOD_XP_PCT, EffectBasePoints[0]=9, ~10%) for xp_boost; spell
+  # 22587 "8% speed bonus" (single-effect SPELL_AURA_MOD_INCREASE_SPEED,
+  # EffectBasePoints[0]=7, ~8%) for speed_boost. Both are simple flat-
+  # percentage passive auras with no stacking/proc side effects, so
+  # Player::AddAura re-applying an already-present aura on every login is a
+  # harmless idempotent refresh. Drop-rate is explicitly out of scope per
+  # the design spec.
+  - name: "Progressive EXP Boost"
+    item_id: 830043
+    count: 1
+    delivery: {kind: flag, flag_key: xp_boost, tier: 1}
+  - name: "Progressive Move Speed Boost"
+    item_id: 830044
+    count: 1
+    delivery: {kind: flag, flag_key: speed_boost, tier: 1}
 
