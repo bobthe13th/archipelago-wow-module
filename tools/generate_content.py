@@ -2318,18 +2318,35 @@ def _emit_cpp_filler(data: dict) -> str:
         _GENERATED_HEADER_CPP.format(source="content/filler.yaml"),
         "#pragma once", "",
         "#include <cstdint>",
-        "#include <unordered_set>", "",
+        "#include <unordered_set>",
+        "#include <vector>", "",
         "namespace Archipelago::Filler", "{",
         "    // Sink locations with no real in-game trigger -- they exist only",
         "    // to keep the AP fill algorithm's location count >= the worst-case",
         "    // (all optional gate families on) item count (see docs/m4-plan.md's",
         "    // Task 11 section). They carry no access rule, so the fill algorithm",
         "    // can and does place progression items on them (Progressive Level Cap",
-        "    // included) -- ArchipelagoWorldScript::OnStartup sends every id here as",
-        "    // a location check unconditionally on realm startup (see docs/m4-plan.md's",
-        "    // Task 17 follow-up fix note) so whatever landed on one is never stranded.",
+        "    // included). M4.11.6: only the first `filler_needed_count` (a real,",
+        "    // per-seed slot_data value, computed the same way",
+        "    // locations.py::create_filler_locations decides how many of these to",
+        "    // actually place) of these ids are ever real AP locations for a given",
+        "    // seed -- ArchipelagoWorldScript sends exactly that many, in",
+        "    // OrderedLocationIds order, once slot_data arrives at connect time,",
+        "    // never the full worst-case set unconditionally on every startup.",
     ]
     lines.append("    inline std::unordered_set<int64_t> const LocationIds = {")
+    for loc in data["locations"]:
+        lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
+    lines.append("    };")
+    lines.append("")
+    lines.append("    // Same 151 ids as LocationIds above, but ordered exactly as")
+    lines.append("    // filler_content_data.LOCATIONS' Python dict iterates (both are")
+    lines.append("    // compiled from this same ordered content/filler.yaml by this")
+    lines.append("    // same generate_content.py invocation) -- a structural guarantee,")
+    lines.append("    // not a hand-maintained convention, so slicing the first N ids")
+    lines.append("    // here always matches Python's own")
+    lines.append("    // list(filler_content_data.LOCATIONS.items())[:needed] exactly.")
+    lines.append("    inline std::vector<int64_t> const OrderedLocationIds = {")
     for loc in data["locations"]:
         lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
     lines.append("    };")
