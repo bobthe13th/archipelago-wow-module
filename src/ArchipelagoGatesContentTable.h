@@ -57,6 +57,9 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PORTABLE_MAILBOX = 830046;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_EXP_BOOST = 830043;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_MOVE_SPEED_BOOST = 830044;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_SHATTRATH_CITY = 830047;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_ISLE_OF_QUEL_DANAS = 830048;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_DALARAN = 830049;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -104,6 +107,9 @@ namespace Archipelago::Gates
         { 830040, { "bag_slots", 4 } }, // Progressive Bag Slot: Slot 4
         { 830043, { "xp_boost", 1 } }, // Progressive EXP Boost
         { 830044, { "speed_boost", 1 } }, // Progressive Move Speed Boost
+        { 830047, { "zone_access_shattrath_city", 1 } }, // Zone Access: Shattrath City
+        { 830048, { "zone_access_isle_of_quel_danas", 1 } }, // Zone Access: Isle of Quel'Danas
+        { 830049, { "zone_access_dalaran", 1 } }, // Zone Access: Dalaran
     };
     inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {
         { 830046, 850104 }, // "Portable Mailbox"

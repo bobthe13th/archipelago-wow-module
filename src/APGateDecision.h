@@ -1,6 +1,7 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APGateDecision.h
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 namespace Archipelago::Gating
@@ -109,4 +110,68 @@ namespace Archipelago::Gating
     // accessors -- OnPlayerCanLearnTalent fires before the point being
     // learned is added to the player's used-talent count).
     bool ShouldSuppressTalentLearn(bool moduleEnabled, bool gateFamilyEnabled, uint32_t tier, uint32_t pointsAlreadySpent);
+
+    // M4.14.2 final review fix (I2): one row of the caller's gated-zone
+    // table, with the "is this gate currently locked" decision already
+    // resolved by the caller (i.e. ShouldSuppressGatedAction's result for
+    // that gate's flagKey) -- this struct carries only the zoneId + the
+    // resulting bool, not the flagKey/displayName themselves, so this file
+    // stays free of the live sArchipelagoRealmState singleton dependency
+    // per its own established discipline (see file-level comments above).
+    struct GatedZoneLockState
+    {
+        uint32_t zoneId;
+        bool locked;
+    };
+
+    // Given a zone id and a snapshot of the module's gated-zone table (one
+    // GatedZoneLockState per curated gate, "locked" already resolved by the
+    // caller), returns whether zoneId matches one of those gates AND that
+    // gate is currently locked. A zoneId that isn't in the table at all
+    // (not one of the module's curated gated zones) returns false -- i.e.
+    // "trust it".
+    //
+    // Used by ArchipelagoZoneAccessScript.cpp to decide whether a player's
+    // saved recall position (Player::m_recallMap/X/Y/Z) is itself a safe
+    // deferred-kick destination, or whether it resolves into a still-gated
+    // zone and the caller should fall back to homebind instead. Bug this
+    // guards against: Player::LoadFromDB calls SaveRecallPosition()
+    // unconditionally at login using the player's own just-loaded (saved-
+    // at-logout) position, with no gate check at all -- so a player who
+    // logged out (or whose gate got enabled) while standing inside a
+    // gated-and-locked zone has a recall position that is ALSO inside that
+    // same locked zone, making the existing deferred kick-back a no-op
+    // (it "kicks" them right back to where they already are).
+    bool IsZoneGatedAndLocked(uint32_t zoneId, GatedZoneLockState const* gates, size_t count);
+
+    // M4.14.2 final review fix (I2, round 2): the 3-tier kick-back
+    // destination choice for ArchipelagoZoneAccessScript.cpp's deferred
+    // kick. Tier 1 (recall) is used if it isn't itself gated-and-locked
+    // (see IsZoneGatedAndLocked above). If it is, tier 2 (homebind) is
+    // used instead -- UNLESS homebind is also gated-and-locked, which is a
+    // real, plausible case and not just theoretical: Dalaran and Shattrath
+    // City are both real WotLK player-hub cities specifically designed
+    // with functioning Inns (Dalaran is the max-level hub precisely
+    // because it has full amenities including an inn; Shattrath City
+    // likewise), so a player could genuinely have bound their hearthstone
+    // in either one before zone_gating was ever turned on, or before
+    // receiving that specific zone's AP item. In that case, fall back to
+    // tier 3: the player's real racial/class starting position, which by
+    // game design can never be one of these 3 curated endgame-hub zones --
+    // no playable race starts in an endgame hub city. This is the exact
+    // same real, already-established "known-safe teleport target" this
+    // codebase's own Player::LoadFromDB already falls back to for invalid
+    // saved coordinates (confirmed real call site,
+    // src/server/game/Entities/Player/PlayerStorage.cpp, immediately after
+    // sMapMgr->CreateMap(mapId, this) fails: `PlayerInfo const* info =
+    // sObjectMgr->GetPlayerInfo(getRace(true), getClass());`), not
+    // something invented for this fix.
+    enum class ZoneGateKickTarget
+    {
+        Recall,
+        Homebind,
+        RacialStart,
+    };
+
+    ZoneGateKickTarget ChooseZoneGateKickTarget(bool recallIsGatedAndLocked, bool homebindIsGatedAndLocked);
 }

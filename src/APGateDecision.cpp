@@ -72,4 +72,26 @@ namespace Archipelago::Gating
         uint32_t cap = (tier == 1) ? TALENT_TRANCHE_1_CAP : TALENT_TRANCHE_2_CAP;
         return pointsAlreadySpent >= cap;
     }
+
+    bool IsZoneGatedAndLocked(uint32_t zoneId, GatedZoneLockState const* gates, size_t count)
+    {
+        for (size_t i = 0; i < count; ++i)
+        {
+            if (gates[i].zoneId == zoneId)
+                return gates[i].locked;
+        }
+
+        return false;
+    }
+
+    ZoneGateKickTarget ChooseZoneGateKickTarget(bool recallIsGatedAndLocked, bool homebindIsGatedAndLocked)
+    {
+        if (!recallIsGatedAndLocked)
+            return ZoneGateKickTarget::Recall;
+
+        if (!homebindIsGatedAndLocked)
+            return ZoneGateKickTarget::Homebind;
+
+        return ZoneGateKickTarget::RacialStart;
+    }
 }
