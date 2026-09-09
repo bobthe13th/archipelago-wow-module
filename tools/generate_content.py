@@ -2367,7 +2367,7 @@ def _emit_cpp_filler(data: dict) -> str:
         lines.append(f'        {loc["location_id"]}, // {loc["name"]}')
     lines.append("    };")
     lines.append("")
-    lines.append("    // Same 151 ids as LocationIds above, but ordered exactly as")
+    lines.append("    // Same ids as LocationIds above, but ordered exactly as")
     lines.append("    // filler_content_data.LOCATIONS' Python dict iterates (both are")
     lines.append("    // compiled from this same ordered content/filler.yaml by this")
     lines.append("    // same generate_content.py invocation) -- a structural guarantee,")

@@ -185,7 +185,7 @@ namespace Archipelago::Filler
         740160, // Filler Check 161
     };
 
-    // Same 151 ids as LocationIds above, but ordered exactly as
+    // Same ids as LocationIds above, but ordered exactly as
     // filler_content_data.LOCATIONS' Python dict iterates (both are
     // compiled from this same ordered content/filler.yaml by this
     // same generate_content.py invocation) -- a structural guarantee,
