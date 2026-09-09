@@ -127,6 +127,15 @@ public:
     uint32_t GetCatchUpPercentPerLevel() const { return _catchUpPercentPerLevel; }
     void SetCatchUpPercentPerLevel(uint32_t percent) { _catchUpPercentPerLevel = percent; }
 
+    // M4.11.7 (Raidlogger): same indirection reason as CatchUpPolicy above --
+    // Archipelago.DeliveryCharacter is read once in ArchipelagoWorldScript.cpp
+    // and normally threaded through as a function parameter, but
+    // ArchipelagoInstanceScript.cpp's boss-kill hook (which needs it to
+    // re-apply a pending instant_level_set jump once a gating raid clears)
+    // has no parameter path to it, so it's mirrored here instead.
+    std::string GetDeliveryCharacter() const { return _deliveryCharacter; }
+    void SetDeliveryCharacter(std::string const& deliveryCharacter) { _deliveryCharacter = deliveryCharacter; }
+
     // Cached mirrors of Archipelago.DeathLink{Send,Receive}Enabled /
     // Archipelago.DeathLink{Send,Receive}CooldownSeconds (Task 19, design
     // spec Sec11), same not-persisted worldserver.conf-mirror convention as
@@ -372,6 +381,7 @@ private:
     std::unordered_map<uint32_t, uint64_t> _checkCountsByPlayer;
     std::unordered_map<std::string, bool> _gateFamiliesEnabled;
     std::string _catchUpPolicy = "Nothing";
+    std::string _deliveryCharacter;
     uint32_t _catchUpPercentPerLevel = 10;
     bool _deathLinkSendEnabled = false;
     bool _deathLinkReceiveEnabled = false;

@@ -145,6 +145,48 @@ class TestGatesFamily(unittest.TestCase):
                 load_family(path)
 
 
+class TestRaidloggerFamily(unittest.TestCase):
+    def _write(self, tmpdir: str, text: str) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "test.yaml"
+        path.write_text(textwrap.dedent(text), encoding="utf-8")
+        return path
+
+    def test_instant_level_set_delivery_emits_python_and_cpp(self) -> None:
+        data = {
+            "family": "raidlogger",
+            "constants": {},
+            "locations": [],
+            "items": [
+                {"name": "Raidlogger: Instant Level 70", "item_id": 15000000, "count": 1,
+                 "delivery": {"kind": "instant_level_set", "level": 70}},
+            ],
+        }
+        py_text = emit_python(data)
+        self.assertIn('"Raidlogger: Instant Level 70": (15000000, 1)', py_text)
+        self.assertIn("LEVEL_BY_ITEM_NAME", py_text)
+        self.assertIn('"Raidlogger: Instant Level 70": 70', py_text)
+
+        cpp_text = emit_cpp(data)
+        self.assertIn("Archipelago::Raidlogger", cpp_text)
+        self.assertIn("AP_ITEM_RAIDLOGGER_INSTANT_LEVEL_70 = 15000000", cpp_text)
+        self.assertIn("ApItemToLevel", cpp_text)
+        self.assertIn("{ 15000000, 70 }", cpp_text)
+
+    def test_raidlogger_family_rejects_unrecognized_delivery_kind(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: raidlogger
+                locations: []
+                items:
+                  - name: Bad Raidlogger Item
+                    item_id: 15000099
+                    count: 1
+                    delivery: {kind: mail, wow_item_entry: 1}
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+
 class TestEmitCpp(unittest.TestCase):
     def test_core_loop_family_emits_cpp_constants_and_maps(self) -> None:
         data = {

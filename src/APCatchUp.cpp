@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "APDelivery.h"
+#include "APRaidlogger.h"
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
 #include "DatabaseEnv.h"
@@ -99,6 +100,17 @@ namespace Archipelago::CatchUp
     {
         if (!sArchipelagoRealmState->IsEnabled())
             return;
+
+        // M4.11.7 (Raidlogger): re-check a pending instant_level_set jump on
+        // every login, not just a character's first-ever one -- unlike the
+        // AllMailedOnLogin/first-login-only policy below, a Raidlogger jump
+        // deferred because the delivery character was offline at receipt
+        // time should apply the moment they're back, regardless of
+        // Archipelago.CatchUpPolicy (which governs item delivery catch-up,
+        // not this). Resolves the delivery character itself via realm
+        // state, not the player parameter -- matches this module's
+        // single-delivery-character-slot convention.
+        Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
 
         Policy policy = ParsePolicy(sArchipelagoRealmState->GetCatchUpPolicy());
         // Only AllMailedOnLogin acts here, and only on a character's very first

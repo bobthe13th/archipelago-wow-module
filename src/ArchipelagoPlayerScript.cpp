@@ -14,6 +14,7 @@
 #include "APFillerRewardEffects.h"
 #include "APGating.h"
 #include "APProtocol.h"
+#include "APRaidlogger.h"
 #include "APSpellGrant.h"
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
@@ -33,6 +34,7 @@
 #include "ArchipelagoManager.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
+#include "ArchipelagoRaidloggerContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoRecipesContentTable.h"
@@ -256,6 +258,19 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             auto const& [flagKey, tier] = holidayIt->second;
             sArchipelagoRealmState->SetFlagTier(flagKey, tier);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // M4.11.7 (Raidlogger): instant_level_set delivery -- gated on the
+        // lower tier's raid-clear location having actually fired server-side
+        // (see APRaidlogger.cpp), not a generic realm-flag family, so it
+        // gets its own dispatch call rather than the ApItemToFlagKeyAndTier
+        // shape gates/holidaysanity use.
+        auto raidloggerLevelIt = Archipelago::Raidlogger::ApItemToLevel.find(received.item);
+        if (raidloggerLevelIt != Archipelago::Raidlogger::ApItemToLevel.end())
+        {
+            Archipelago::Raidlogger::ApplyOrDeferInstantLevelSet(raidloggerLevelIt->second);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

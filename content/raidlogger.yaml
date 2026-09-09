@@ -1,0 +1,14 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/raidlogger.yaml
+family: raidlogger
+
+locations: []
+
+items:
+  - name: "Raidlogger: Instant Level 70"
+    item_id: 15000000
+    count: 1
+    delivery: {kind: instant_level_set, level: 70}
+  - name: "Raidlogger: Instant Level 80"
+    item_id: 15000001
+    count: 1
+    delivery: {kind: instant_level_set, level: 80}

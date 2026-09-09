@@ -43,6 +43,10 @@ _FAMILIES = {
         "py_out": _ARCHIPELAGO_WOW_DIR / "holidaysanity_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoHOLIDAYSANITYContent.h",
     },
+    "raidlogger": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "raidlogger_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoRaidloggerContentTable.h",
+    },
     "filler": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerContentTable.h",
