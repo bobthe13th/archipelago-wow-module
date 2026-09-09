@@ -183,6 +183,9 @@ namespace Archipelago::Filler
         740158, // Filler Check 159
         740159, // Filler Check 160
         740160, // Filler Check 161
+        740161, // Filler Check 162
+        740162, // Filler Check 163
+        740163, // Filler Check 164
     };
 
     // Same ids as LocationIds above, but ordered exactly as
@@ -354,5 +357,8 @@ namespace Archipelago::Filler
         740158, // Filler Check 159
         740159, // Filler Check 160
         740160, // Filler Check 161
+        740161, // Filler Check 162
+        740162, // Filler Check 163
+        740163, // Filler Check 164
     };
 }

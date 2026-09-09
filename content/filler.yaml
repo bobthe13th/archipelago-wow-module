@@ -89,6 +89,18 @@ family: filler
 # milestone's whole-branch final review. Filler Check 152-161 / location_id
 # 740151-740160 are the +10 rows added for this resize.
 #
+# M4.14.2 (Task 2, "Granular Zone Gates"): Row count grown 161 -> 164 = 50
+# (gates, grown from 47) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (gathering, unchanged). Task 2 added 3 new gates.yaml
+# items with no location of their own (Zone Access: Shattrath City / Isle
+# of Quel'Danas / Dalaran), growing gates from 47 to 50 -- same
+# "gates.yaml grew, filler.yaml must grow with it" pattern as every prior
+# resize above. Caught immediately by this task's own full local test-
+# suite run (TestFillerPoolCoversWorstCaseGatesTrapsHolidaysanityAndGathering
+# SkillProgressionItems), not deferred to a whole-milestone final review.
+# Filler Check 162-164 / location_id 740161-740163 are the +3 rows added
+# for this resize.
+#
 # History of this file's prior sizings, kept for context:
 # - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
 #   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
@@ -617,4 +629,13 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 161"
     location_id: 740160
+    trigger: {kind: always_available}
+  - name: "Filler Check 162"
+    location_id: 740161
+    trigger: {kind: always_available}
+  - name: "Filler Check 163"
+    location_id: 740162
+    trigger: {kind: always_available}
+  - name: "Filler Check 164"
+    location_id: 740163
     trigger: {kind: always_available}

@@ -345,3 +345,24 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: speed_boost, tier: 1}
 
+  # Zone Access gating (M4.14.2, design spec Sec1 Sec2 -- optional, off by
+  # default; only pooled when the "zone_gating" apworld option is on).
+  # Real, hand-curated zone ids from AreaTable.dbc (see
+  # tools/extract_zone_names.py's CURATED_ZONE_IDS) -- deliberately NOT every
+  # WotLK zone, and deliberately excludes zones already covered by other
+  # mechanisms (Icecrown Citadel/Sunwell Plateau: instance-clear gating;
+  # Wintergrasp: excluded, own complex world-state mechanics not yet
+  # verified safe to gate this way).
+  - name: "Zone Access: Shattrath City"
+    item_id: 830047
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_shattrath_city, tier: 1}
+  - name: "Zone Access: Isle of Quel'Danas"
+    item_id: 830048
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_isle_of_quel_danas, tier: 1}
+  - name: "Zone Access: Dalaran"
+    item_id: 830049
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_dalaran, tier: 1}
+
