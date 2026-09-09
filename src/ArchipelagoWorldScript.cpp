@@ -224,6 +224,7 @@ public:
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
+        _zoneGating = sConfigMgr->GetOption<bool>("Archipelago.ZoneGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "SingleDeliveryCharacter"));
         _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
         _auctionHouseFactionMode = ParseAuctionHouseFactionMode(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseFactionMode", "Merged"));
@@ -330,6 +331,7 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("proficiency", _proficiencyGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("access", _accessGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("character_unlocks", _characterUnlockGating);
+        sArchipelagoRealmState->SetGateFamilyEnabled("zone_access", _zoneGating);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -717,6 +719,7 @@ private:
     bool _proficiencyGating = false;
     bool _accessGating = false;
     bool _characterUnlockGating = false;
+    bool _zoneGating = false;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.
