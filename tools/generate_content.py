@@ -2052,6 +2052,14 @@ def _emit_cpp_item_delivery_lookup(items: list, valid_delivery_kinds: set) -> li
         lines.append("    return result;")
         lines.append("}")
         lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();")
+    elif "mail" in valid_delivery_kinds:
+        # M4.14.1 final review fix (I5): same MSVC C3316 empty-array concern
+        # as the learn_spell/learn_next_chain_rank branches below -- gates
+        # is schema-eligible for "mail" (Task 5's Portable Mailbox) and C++
+        # dispatch code references Archipelago::Gates::ApItemIdToWowItemEntry
+        # unconditionally, so the symbol must exist even if a future edit
+        # ever removed the one real mail-kind row.
+        lines.append("inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = {};")
     if spell_items:
         lines.append("inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_SPELL_ID_RAW[] = {")
         for item in spell_items:
