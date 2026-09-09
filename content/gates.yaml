@@ -146,12 +146,20 @@ items:
   #     setter directly -- that function also copies/clears per-spec action
   #     bars and calls SendTalentsInfoData(false) to sync the client, which
   #     a bare setter call would skip.
-  #   - Talent Point Access (flag_key access_talent_points, tier 1 boolean):
-  #     the one item in this family that IS continuous suppression, not a
-  #     grant -- named "Access" (not "Progressive"/"Unlock") to match that.
-  #     Gated via PLAYERHOOK_CAN_LEARN_TALENT (Player::LearnTalent, confirmed
-  #     real and boolean-returning at Player.cpp:14281), blocking every
-  #     talent point spend realm-wide until received.
+  #   - Talent Point Access (flag_key access_talent_points, now 3 tranches --
+  #     M4.14.1 retrofit): the one item in this family that IS continuous
+  #     suppression, not a grant -- named "Access" (not "Progressive"/
+  #     "Unlock") to match that. Gated via PLAYERHOOK_CAN_LEARN_TALENT
+  #     (Player::LearnTalent, confirmed real and boolean-returning at
+  #     Player.cpp:14281), checking cumulative talent points already spent
+  #     (Player::CalculateTalentsPoints() - Player::GetFreeTalentPoints())
+  #     against a tier-derived cap, not a bare boolean. The originally-
+  #     shipped tier-1 item (830025) is kept as-is and reinterpreted as
+  #     Tranche 1 (points 1-25) for backward compatibility with
+  #     already-generated seeds; Tranche 2 (830041, points 1-50) and Tranche
+  #     3 (830042, no cap) are new. See APGateDecision.h's
+  #     ShouldSuppressTalentLearn for why Tranche 3 is expressed as "skip the
+  #     cap comparison" rather than a hardcoded max (RATE_TALENT-dependent).
   - name: "Progressive Bank Bag Slot: Slot 1"
     item_id: 830018
     count: 1
@@ -184,6 +192,14 @@ items:
     item_id: 830025
     count: 1
     delivery: {kind: flag, flag_key: access_talent_points, tier: 1}
+  - name: "Talent Point Access: Tranche 2"
+    item_id: 830041
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 2}
+  - name: "Talent Point Access: Tranche 3"
+    item_id: 830042
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 3}
   - name: "Dual Spec Unlock"
     item_id: 830026
     count: 1

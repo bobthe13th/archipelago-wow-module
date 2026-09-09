@@ -68,4 +68,25 @@ namespace Archipelago::Gating
     // re-tests ShouldSuppressGatedTier's own already-covered logic -- only
     // adds the notLoading short-circuit.
     bool ShouldSuppressBagSlotEquip(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
+
+    // Progressive Talent Tranches (M4.14.1): true means "block spending this
+    // talent point". Retrofits the originally-shipped "Talent Point Access"
+    // boolean gate (flag_key access_talent_points) into 3 tranches without
+    // breaking already-generated seeds -- the existing tier-1 item is kept
+    // as-is and reinterpreted as Tranche 1. Tier 0 always suppresses (no
+    // Talent Point Access item received at all yet). Tiers 1/2 cap
+    // cumulative points already spent at 25/50 respectively. Tier 3 (and any
+    // higher tier) applies no cap at all: deliberately NOT expressed as a
+    // hardcoded upper bound (e.g. the real default-RATE_TALENT level-80 max
+    // of 71, confirmed via Player::CalculateTalentsPoints/Player.cpp), since
+    // that would silently assume RATE_TALENT == 1.0 and could wrongly keep
+    // suppressing on a server configured with a higher rate -- "fully
+    // unlocked" is expressed by skipping the cap comparison entirely.
+    // pointsAlreadySpent must be the count *before* the point currently
+    // being attempted (Player::CalculateTalentsPoints() -
+    // Player::GetFreeTalentPoints(), read at
+    // PLAYERHOOK_CAN_LEARN_TALENT-fire-time, both real Player.h public
+    // accessors -- OnPlayerCanLearnTalent fires before the point being
+    // learned is added to the player's used-talent count).
+    bool ShouldSuppressTalentLearn(bool moduleEnabled, bool gateFamilyEnabled, uint32_t tier, uint32_t pointsAlreadySpent);
 }

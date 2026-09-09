@@ -42,4 +42,29 @@ namespace Archipelago::Gating
     {
         return notLoading && ShouldSuppressGatedTier(moduleEnabled, gateFamilyEnabled, requiredTier, grantedTier);
     }
+
+    namespace
+    {
+        // Tranche boundaries for Progressive Talent Tranches (M4.14.1). Tier
+        // 3+ has no entry here -- it is handled as "no cap" directly in
+        // ShouldSuppressTalentLearn, not as a third bound, per this file's
+        // own header-comment reasoning about RATE_TALENT.
+        constexpr uint32_t TALENT_TRANCHE_1_CAP = 25;
+        constexpr uint32_t TALENT_TRANCHE_2_CAP = 50;
+    }
+
+    bool ShouldSuppressTalentLearn(bool moduleEnabled, bool gateFamilyEnabled, uint32_t tier, uint32_t pointsAlreadySpent)
+    {
+        if (!moduleEnabled || !gateFamilyEnabled)
+            return false;
+
+        if (tier == 0)
+            return true;
+
+        if (tier >= 3)
+            return false;
+
+        uint32_t cap = (tier == 1) ? TALENT_TRANCHE_1_CAP : TALENT_TRANCHE_2_CAP;
+        return pointsAlreadySpent >= cap;
+    }
 }

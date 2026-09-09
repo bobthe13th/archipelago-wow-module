@@ -38,6 +38,8 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_6 = 830023;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_7 = 830024;
     inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS = 830025;
+    inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS_TRANCHE_2 = 830041;
+    inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS_TRANCHE_3 = 830042;
     inline constexpr int64_t AP_ITEM_DUAL_SPEC_UNLOCK = 830026;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_1 = 830031;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_2 = 830032;
@@ -81,6 +83,8 @@ namespace Archipelago::Gates
         { 830023, { "bank_bag_slots", 6 } }, // Progressive Bank Bag Slot: Slot 6
         { 830024, { "bank_bag_slots", 7 } }, // Progressive Bank Bag Slot: Slot 7
         { 830025, { "access_talent_points", 1 } }, // Talent Point Access
+        { 830041, { "access_talent_points", 2 } }, // Talent Point Access: Tranche 2
+        { 830042, { "access_talent_points", 3 } }, // Talent Point Access: Tranche 3
         { 830026, { "dual_spec", 1 } }, // Dual Spec Unlock
         { 830031, { "glyph_slots", 1 } }, // Progressive Glyph Slot: Slot 1
         { 830032, { "glyph_slots", 2 } }, // Progressive Glyph Slot: Slot 2

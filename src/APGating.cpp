@@ -360,6 +360,15 @@ public:
     }
 };
 
+// Progressive Talent Tranches (M4.14.1): retrofits the originally-shipped
+// all-or-nothing "Talent Point Access" boolean gate into 3 tranches,
+// backward-compatible with already-generated seeds (the tier-1 item is kept
+// as-is, reinterpreted as Tranche 1). Suppression now checks cumulative
+// talent points already spent against a tier-derived cap instead of a bare
+// unlocked/not-unlocked flag -- ShouldSuppressTalentLearn lives in
+// APGateDecision.h/.cpp (not here) so it's unit-testable in the standalone
+// doctest target without a live Player, matching this file's own
+// established discipline (see ArchipelagoBagSlotGateScript above).
 class ArchipelagoTalentPointGateScript : public PlayerScript
 {
 public:
@@ -367,16 +376,27 @@ public:
 
     bool OnPlayerCanLearnTalent(Player* player, TalentEntry const* /*talent*/, uint32 /*rank*/) override
     {
-        if (!sArchipelagoRealmState->IsEnabled())
+        uint32_t tier = sArchipelagoRealmState->GetFlagTier("access_talent_points");
+
+        // Player::CalculateTalentsPoints() (total real earned points for the
+        // player's current level/RATE_TALENT) minus GetFreeTalentPoints()
+        // (currently unspent) = points already spent. This hook fires before
+        // the point currently being attempted is added to the player's used-
+        // talent count (Player::LearnTalent, Player.cpp), so this correctly
+        // reflects "spent before this attempt".
+        uint32_t pointsAlreadySpent = player->CalculateTalentsPoints() - player->GetFreeTalentPoints();
+
+        if (!Archipelago::Gating::ShouldSuppressTalentLearn(
+                sArchipelagoRealmState->IsEnabled(),
+                sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                tier,
+                pointsAlreadySpent))
             return true;
 
-        if (!sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"))
-            return true;
-
-        if (sArchipelagoRealmState->IsFlagUnlocked("access_talent_points"))
-            return true;
-
-        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Talent Point Access to spend talent points.");
+        if (tier == 0)
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Talent Point Access to spend talent points.");
+        else
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need the next Talent Point Access tranche to spend more points.");
         return false;
     }
 };
