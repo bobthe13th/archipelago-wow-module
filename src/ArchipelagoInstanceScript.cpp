@@ -33,6 +33,7 @@
 #include "Creature.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APRaidlogger.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCoreLoopContentTable.h"
@@ -95,6 +96,12 @@ public:
                 {
                     sArchipelagoMgr->SendLocationChecks({ locIt->second });
                     sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+                    // M4.11.7 (Raidlogger): re-check a pending instant_level_set
+                    // jump the moment its gating raid's clear is actually sent --
+                    // only molten_core/sunwell ever gate a jump (icecrown_citadel
+                    // is Raidlogger's terminal goal, nothing jumps after it).
+                    if (instanceKey == "molten_core" || instanceKey == "sunwell")
+                        Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
                 }
                 return;
             }
@@ -113,6 +120,10 @@ public:
             {
                 sArchipelagoMgr->SendLocationChecks({ locIt->second });
                 sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+                // M4.11.7 (Raidlogger): same re-check as the all_bosses branch
+                // above, for realms configured with instance_clear_mode=final_boss_only.
+                if (instanceKey == "molten_core" || instanceKey == "sunwell")
+                    Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
             }
             return;
         }

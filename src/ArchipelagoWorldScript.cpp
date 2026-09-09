@@ -217,6 +217,7 @@ public:
         _password = sConfigMgr->GetOption<std::string>("Archipelago.Password", "");
         _useTls = sConfigMgr->GetOption<bool>("Archipelago.UseTLS", false);
         _deliveryCharacter = sConfigMgr->GetOption<std::string>("Archipelago.DeliveryCharacter", "");
+        sArchipelagoRealmState->SetDeliveryCharacter(_deliveryCharacter);
         _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
         _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
