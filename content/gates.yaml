@@ -300,3 +300,23 @@ items:
     count: 1
     delivery: {kind: grant_random_taxi_node}
 
+  # Portable Mailbox (Task 5, M4.14.1 "Useful Items"). A real, mailable
+  # consumable item (wow_item_entry 850104, a custom item_template row --
+  # see data/sql/updates/pending_db_world/) whose spellid_1 is bound to
+  # spell 5735 ("REUSE", a real, empirically-verified single-SPELL_EFFECT_
+  # DUMMY placeholder spell shipped in Blizzard's own Spell.dbc, unused by
+  # any other item_template row or src/server/scripts/ SpellScript in this
+  # checkout) -- see ArchipelagoPortableMailboxScript.cpp's
+  # spell_archipelago_portable_mailbox for the real on-use effect (summons
+  # gameobject_template entry 850200, a despawn-timed clone of the real
+  # static mailbox row 32349). Uses the same `mail` delivery kind every
+  # other "just hand over a real WoW item" family already uses; the
+  # "gates" family's own C++ emitter (_emit_cpp_gates) was extended to
+  # also emit Archipelago::Gates::ApItemIdToWowItemEntry for this and any
+  # future mail-kind gates item, since gates was otherwise an all-flag
+  # family with no such map before this task.
+  - name: "Portable Mailbox"
+    item_id: 830046
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 850104}
+

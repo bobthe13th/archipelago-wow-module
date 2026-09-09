@@ -299,6 +299,26 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
             continue;
         }
 
+        // Task 5 (M4.14.1 Portable Mailbox): gates is otherwise an all-flag
+        // family (ApItemToFlagKeyAndTier directly above), but Portable
+        // Mailbox is a real, mailable WoW item (wow_item_entry 850104), not
+        // a realm flag -- checked here, right after the gates flag lookup,
+        // so both of the gates family's lookup tables stay grouped together
+        // before falling through to unrelated families below. A gates item
+        // is never in both maps at once, so this placement doesn't affect
+        // correctness, only readability. Mirrors the Recipes/Trainer Spells
+        // dispatch shape above (plain DeliverItem + history insert, no
+        // per-item "received" flag -- unlike fish/collections, gates items
+        // are one-off unlocks, not "collect all N" completion-check content).
+        auto gatesEntryIt = Archipelago::Gates::ApItemIdToWowItemEntry.find(received.item);
+        if (gatesEntryIt != Archipelago::Gates::ApItemIdToWowItemEntry.end())
+        {
+            Archipelago::Delivery::DeliverItem(deliveryPolicy, gatesEntryIt->second, deliveryCharacter, auctionHouseCostTier, auctionHouseFactionMode, "Gates", batch, trans);
+            trans->Append("INSERT INTO archipelago_delivery_history (wow_item_entry) VALUES ({})", gatesEntryIt->second);
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
         // M4.10.7 final whole-branch review fix (C2): holidaysanity is the
         // FIFTH family to ship with a real, compiled lookup map that
         // nothing here consumed -- the same dispatch-wiring gap the

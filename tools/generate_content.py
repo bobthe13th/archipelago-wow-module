@@ -666,7 +666,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"level_milestone", "instance_clear"},
         valid_delivery_kinds={"realm_state"},
     ),
-    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag", "grant_random_taxi_node"}),
+    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag", "grant_random_taxi_node", "mail"}),
     "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "raidlogger": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"instant_level_set"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
@@ -2271,6 +2271,7 @@ def _emit_cpp_core_loop(data: dict) -> str:
 def _emit_cpp_gates(data: dict) -> str:
     family = data["family"]
     namespace = "Archipelago::" + family.title()
+    schema = FAMILY_SCHEMAS.get(family)
     lines = [
         _GENERATED_HEADER_CPP.format(source=f"content/{family}.yaml"),
         "#pragma once", "",
@@ -2291,6 +2292,19 @@ def _emit_cpp_gates(data: dict) -> str:
             continue
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
     lines.append("    };")
+    # Task 5 (M4.14.1 Portable Mailbox): "gates" is otherwise an all-flag
+    # family (ApItemToFlagKeyAndTier above), but Portable Mailbox is a real
+    # WoW item that needs mailing, not a realm-wide flag -- reuses the same
+    # shared _emit_cpp_item_delivery_lookup helper every generic "mail"
+    # family (fish/collections/recipes/...) already emits its own
+    # ApItemIdToWowItemEntry from, indented to match this hand-rolled
+    # emitter's namespace body (that helper is written for the top-level
+    # emit_cpp_generic's un-indented namespace body, so each returned line
+    # is re-indented by 4 spaces here to match this function's own style).
+    if schema is not None:
+        delivery_lines = _emit_cpp_item_delivery_lookup(data["items"], schema.valid_delivery_kinds)
+        for line in delivery_lines:
+            lines.append(("    " + line) if line else line)
     lines.append("}")
     lines.append("")
     return "\n".join(lines)

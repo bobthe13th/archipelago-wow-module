@@ -23,6 +23,7 @@ void AddArchipelagoLootSlotScripts();
 void AddArchipelagoRepsanityScripts();
 void AddArchipelagoItemFirstHeldScripts();
 void AddArchipelagoZonePoolScripts();
+void AddArchipelagoPortableMailboxScripts();
 
 // Folder name is "archipelago_wow" (no dashes) -> loader function is Addarchipelago_wowScripts,
 // called automatically by the core's generated AddModulesScripts() wrapper.
@@ -53,5 +54,6 @@ void Addarchipelago_wowScripts()
     AddArchipelagoRepsanityScripts();
     AddArchipelagoItemFirstHeldScripts();
     AddArchipelagoZonePoolScripts();
+    AddArchipelagoPortableMailboxScripts();
 }
 

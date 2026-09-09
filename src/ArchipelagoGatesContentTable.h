@@ -54,6 +54,7 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_3 = 830039;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_4 = 830040;
     inline constexpr int64_t AP_ITEM_RANDOM_FLIGHT_PATH_UNLOCK = 830045;
+    inline constexpr int64_t AP_ITEM_PORTABLE_MAILBOX = 830046;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -100,4 +101,15 @@ namespace Archipelago::Gates
         { 830039, { "bag_slots", 3 } }, // Progressive Bag Slot: Slot 3
         { 830040, { "bag_slots", 4 } }, // Progressive Bag Slot: Slot 4
     };
+    inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {
+        { 830046, 850104 }, // "Portable Mailbox"
+    };
+    inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
+    {
+        std::unordered_map<int64_t, uint32_t> result;
+        for (auto const& row : AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW)
+            result.emplace(row.first, row.second);
+        return result;
+    }
+    inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();
 }
