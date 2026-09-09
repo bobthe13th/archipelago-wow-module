@@ -288,3 +288,15 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: bag_slots, tier: 4}
 
+  # Random Flight Path Unlock (Task 4, M4.14.1 "Useful Items"). Grant-shaped,
+  # not flag-shaped: unlike every other item in this family, receipt
+  # immediately grants one uniformly-random previously-unknown real taxi
+  # node (sTaxiNodesStore) to the delivery character via
+  # PlayerTaxi::SetTaximaskNode -- see GrantRandomTaxiNode in
+  # ArchipelagoPlayerScript.cpp. item_id 830043-830044 are reserved for
+  # Task 6 (not yet implemented as of this commit) -- do not reuse them.
+  - name: "Random Flight Path Unlock"
+    item_id: 830045
+    count: 1
+    delivery: {kind: grant_random_taxi_node}
+

@@ -53,6 +53,7 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_2 = 830038;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_3 = 830039;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_4 = 830040;
+    inline constexpr int64_t AP_ITEM_RANDOM_FLIGHT_PATH_UNLOCK = 830045;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice

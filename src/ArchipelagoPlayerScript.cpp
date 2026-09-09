@@ -1,11 +1,15 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/ArchipelagoPlayerScript.cpp
 #include <algorithm>
+#include <vector>
 
 #include "CharacterCache.h"
+#include "Chat.h"
 #include "DatabaseEnv.h"
+#include "DBCStores.h"
 #include "Log.h"
 #include "ObjectAccessor.h"
 #include "Player.h"
+#include "Random.h"
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSessionMgr.h"
@@ -15,6 +19,7 @@
 #include "APGating.h"
 #include "APProtocol.h"
 #include "APRaidlogger.h"
+#include "APRandomTaxiNode.h"
 #include "APSpellGrant.h"
 #include "APTraps.h"
 #include "ArchipelagoAchievementsContentTable.h"
@@ -65,6 +70,45 @@ namespace
         if (g_lastItemIndex == -2)
             g_lastItemIndex = LoadLastItemIndexFromDB();
         return g_lastItemIndex;
+    }
+
+    // Random Flight Path Unlock (Task 4, M4.14.1 "Useful Items"). Grants one
+    // uniformly-random previously-unknown real taxi node
+    // (TaxiNodesEntry::ID, sTaxiNodesStore) to `player` via the real
+    // PlayerTaxi::SetTaximaskNode -- PlayerTaxi::IsTaximaskNodeKnown queries
+    // whether it's already known (both real, confirmed at PlayerTaxi.h:35,42;
+    // the design spec's guessed AddTaximaskNode does not exist). No-ops
+    // safely (logs and returns) if every real node is already known, rather
+    // than crashing or throwing. The set-difference itself is factored out
+    // into Archipelago::RandomTaxiNode::ComputeUnknownTaxiNodes
+    // (APRandomTaxiNode.h) purely so it's unit-testable without a live
+    // Player*/DBC store -- this function stays manually verified only, per
+    // this module's established discipline for anything Player*/DBC-coupled
+    // (see APGateDecision.h's own stated rationale).
+    void GrantRandomTaxiNode(Player* player)
+    {
+        std::vector<uint32_t> allNodeIds;
+        std::vector<uint32_t> knownNodeIds;
+        for (uint32 i = 1; i < sTaxiNodesStore.GetNumRows(); ++i)
+        {
+            TaxiNodesEntry const* node = sTaxiNodesStore.LookupEntry(i);
+            if (!node)
+                continue;
+            allNodeIds.push_back(node->ID);
+            if (player->m_taxi.IsTaximaskNodeKnown(node->ID))
+                knownNodeIds.push_back(node->ID);
+        }
+
+        std::vector<uint32_t> unknownNodes = Archipelago::RandomTaxiNode::ComputeUnknownTaxiNodes(allNodeIds, knownNodeIds);
+        if (unknownNodes.empty())
+        {
+            LOG_INFO("module.archipelago_wow", "Archipelago: {} already knows every real flight path node, Random Flight Path Unlock is a no-op", player->GetName());
+            return;
+        }
+
+        uint32 chosen = unknownNodes[urand(0, unknownNodes.size() - 1)];
+        player->m_taxi.SetTaximaskNode(chosen);
+        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You've learned a new flight path.");
     }
 }
 
@@ -187,6 +231,29 @@ void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items
         {
             sArchipelagoRealmState->GrantStatue();
             Archipelago::Goals::CheckAndSendGoalComplete();
+            highestSeen = std::max(highestSeen, received.index);
+            continue;
+        }
+
+        // Task 4 (M4.14.1 "Useful Items"): Random Flight Path Unlock grants
+        // one random previously-unknown real taxi node on receipt -- not a
+        // {kind: flag} item, so it's never in Archipelago::Gates::
+        // ApItemToFlagKeyAndTier below; a single-item identity check, same
+        // shape as AP_ITEM_DARK_PORTAL_ACCESS above, checked first per this
+        // dispatch's own convention of single-item checks before the
+        // generic per-family map lookup. Grants touch a live Player*, so
+        // this uses the same online-delivery-character resolution pattern
+        // as Traps/FillerRewardEffects above -- skipped (logged, not lost
+        // forever, matching those items' documented scope boundary) if the
+        // delivery character is offline right now.
+        if (received.item == Archipelago::Gates::AP_ITEM_RANDOM_FLIGHT_PATH_UNLOCK)
+        {
+            ObjectGuid receiverGuid = sCharacterCache->GetCharacterGuidByName(deliveryCharacter);
+            Player* onlineReceiver = receiverGuid.IsEmpty() ? nullptr : ObjectAccessor::FindPlayerByLowGUID(receiverGuid.GetCounter());
+            if (onlineReceiver)
+                GrantRandomTaxiNode(onlineReceiver);
+            else
+                LOG_INFO("module.archipelago_wow", "Archipelago: Random Flight Path Unlock skipped, delivery character '{}' is offline", deliveryCharacter);
             highestSeen = std::max(highestSeen, received.index);
             continue;
         }

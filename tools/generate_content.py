@@ -666,7 +666,7 @@ FAMILY_SCHEMAS: dict[str, FamilySchema] = {
         valid_trigger_kinds={"level_milestone", "instance_clear"},
         valid_delivery_kinds={"realm_state"},
     ),
-    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
+    "gates": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag", "grant_random_taxi_node"}),
     "holidaysanity": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"flag"}),
     "raidlogger": FamilySchema(valid_trigger_kinds=set(), valid_delivery_kinds={"instant_level_set"}),
     "filler": FamilySchema(valid_trigger_kinds={"always_available"}, valid_delivery_kinds=set()),
@@ -1141,11 +1141,15 @@ def _emit_python_gates(data: dict) -> str:
     lines.append("")
     lines.append("FLAG_KEY_BY_ITEM_NAME: dict[str, str] = {")
     for item in data["items"]:
+        if item["delivery"]["kind"] != "flag":
+            continue
         lines.append(f'    "{item["name"]}": "{item["delivery"]["flag_key"]}",')
     lines.append("}")
     lines.append("")
     lines.append("FLAG_TIER_BY_ITEM_NAME: dict[str, int] = {")
     for item in data["items"]:
+        if item["delivery"]["kind"] != "flag":
+            continue
         lines.append(f'    "{item["name"]}": {item["delivery"]["tier"]},')
     lines.append("}")
     lines.append("")
@@ -2283,6 +2287,8 @@ def _emit_cpp_gates(data: dict) -> str:
     lines.append("    inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {")
     for item in data["items"]:
         delivery = item["delivery"]
+        if delivery["kind"] != "flag":
+            continue
         lines.append(f'        {{ {item["item_id"]}, {{ "{delivery["flag_key"]}", {delivery["tier"]} }} }}, // {item["name"]}')
     lines.append("    };")
     lines.append("}")
