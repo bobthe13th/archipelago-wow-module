@@ -72,3 +72,42 @@ TEST_CASE("ShouldSuppressBagSlotEquip still respects module/family/tier when not
     CHECK(ShouldSuppressBagSlotEquip(true, true, false, 3, 0) == false); // family disabled
     CHECK(ShouldSuppressBagSlotEquip(true, false, true, 3, 0) == false); // module disabled
 }
+
+// M4.14.1 final review fix (I2): WorldSession::HandleAutoEquipItemOpcode
+// (right-click/shift-click auto-equip) calls Player::CanEquipItem with
+// slot=NULL_SLOT, before the real destination slot is resolved -- the
+// specific-slot check above (IsNonBackpackBagSlot/ShouldSuppressBagSlotEquip)
+// never engages for that path, so ArchipelagoBagSlotGateScript falls back to
+// counting the player's currently-equipped non-backpack bags instead.
+// ShouldSuppressBagSlotEquipByCount composes the same already-tested
+// ShouldSuppressGatedTier as ShouldSuppressBagSlotEquip does, just fed
+// (currentCount + 1) as the "tier this equip would require" -- only the new
+// composition is tested here.
+TEST_CASE("ShouldSuppressBagSlotEquipByCount suppresses only when adding one more bag would exceed the granted tier")
+{
+    using namespace Archipelago::Gating;
+
+    // 2 bags already equipped, tier 2 granted -- a 3rd bag would need tier 3.
+    CHECK(ShouldSuppressBagSlotEquipByCount(true, true, true, 2, 2) == true);
+    // 1 bag already equipped, tier 2 granted -- a 2nd bag fits within tier 2.
+    CHECK(ShouldSuppressBagSlotEquipByCount(true, true, true, 1, 2) == false);
+    // 0 bags equipped, tier 0 (nothing unlocked) -- even a 1st extra bag via
+    // this path is denied (matches the specific-slot check's own tier-0
+    // behavior for slot 19/tier 1).
+    CHECK(ShouldSuppressBagSlotEquipByCount(true, true, true, 0, 0) == true);
+}
+
+TEST_CASE("ShouldSuppressBagSlotEquipByCount never suppresses during inventory load (notLoading == false)")
+{
+    using namespace Archipelago::Gating;
+
+    CHECK(ShouldSuppressBagSlotEquipByCount(false, true, true, 5, 0) == false);
+}
+
+TEST_CASE("ShouldSuppressBagSlotEquipByCount still respects module/family when notLoading == true")
+{
+    using namespace Archipelago::Gating;
+
+    CHECK(ShouldSuppressBagSlotEquipByCount(true, true, false, 5, 0) == false); // family disabled
+    CHECK(ShouldSuppressBagSlotEquipByCount(true, false, true, 5, 0) == false); // module disabled
+}

@@ -69,6 +69,26 @@ namespace Archipelago::Gating
     // adds the notLoading short-circuit.
     bool ShouldSuppressBagSlotEquip(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t requiredTier, uint32_t grantedTier);
 
+    // M4.14.1 final review fix (I2): ShouldSuppressBagSlotEquip above only
+    // ever engages when the real AzerothCore hook fires with a specific
+    // non-backpack bag slot -- true for an explicit drag-to-slot equip, but
+    // NOT for WorldSession::HandleAutoEquipItemOpcode (right-click/shift-
+    // click auto-equip, real confirmed call site: ItemHandler.cpp:192),
+    // which calls Player::CanEquipItem(NULL_SLOT, ...) BEFORE resolving
+    // which real slot the item lands in -- so the gate silently never
+    // engaged for that path, letting a player bypass it entirely by right-
+    // clicking a bag instead of dragging it. Since the real destination
+    // slot isn't knowable at that call, this counts the player's CURRENT
+    // number of equipped non-backpack bags instead and suppresses if
+    // adding one more would exceed the granted tier. This is exact, not an
+    // approximation, specifically for bags: Player::FindEquipSlot (real,
+    // confirmed) is called with swap=false for a bag item in
+    // HandleAutoEquipItemOpcode, so auto-equipping a bag can ONLY ever
+    // resolve to a genuinely EMPTY non-backpack bag slot -- it never swaps
+    // into an already-occupied one -- so "current count + 1" is always the
+    // real resulting count, never an over- or under-estimate.
+    bool ShouldSuppressBagSlotEquipByCount(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t currentlyEquippedBagCount, uint32_t grantedTier);
+
     // Progressive Talent Tranches (M4.14.1): true means "block spending this
     // talent point". Retrofits the originally-shipped "Talent Point Access"
     // boolean gate (flag_key access_talent_points) into 3 tranches without

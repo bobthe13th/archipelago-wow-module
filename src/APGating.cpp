@@ -431,24 +431,62 @@ public:
 
     bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& /*dest*/, Item* pItem, bool /*swap*/, bool not_loading) override
     {
-        if (!Archipelago::Gating::IsNonBackpackBagSlot(slot))
-            return true;
-
         ItemTemplate const* proto = pItem ? pItem->GetTemplate() : nullptr;
         if (!proto || proto->InventoryType != INVTYPE_BAG)
             return true;
 
-        uint32_t requiredTier = Archipelago::Gating::BagSlotToTier(slot);
-        if (!Archipelago::Gating::ShouldSuppressBagSlotEquip(
-                not_loading,
-                sArchipelagoRealmState->IsEnabled(),
-                sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
-                requiredTier,
-                sArchipelagoRealmState->GetFlagTier("bag_slots")))
-            return true;
+        if (Archipelago::Gating::IsNonBackpackBagSlot(slot))
+        {
+            uint32_t requiredTier = Archipelago::Gating::BagSlotToTier(slot);
+            if (!Archipelago::Gating::ShouldSuppressBagSlotEquip(
+                    not_loading,
+                    sArchipelagoRealmState->IsEnabled(),
+                    sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                    requiredTier,
+                    sArchipelagoRealmState->GetFlagTier("bag_slots")))
+                return true;
 
-        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Bag Slot %u to use this bag slot.", requiredTier);
-        return false;
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Bag Slot %u to use this bag slot.", requiredTier);
+            return false;
+        }
+
+        // M4.14.1 final review fix (I2): WorldSession::HandleAutoEquipItemOpcode
+        // (right-click/shift-click auto-equip, real confirmed call site:
+        // ItemHandler.cpp:192) calls Player::CanEquipItem(NULL_SLOT, ...)
+        // before resolving which real slot the bag lands in, so the specific-
+        // slot check above never engages for that path -- see
+        // ShouldSuppressBagSlotEquipByCount's own header comment for why
+        // counting the player's currently-equipped non-backpack bags is exact
+        // (not an approximation) for this specific case.
+        if (slot == NULL_SLOT)
+        {
+            uint32_t equippedBagCount = CountEquippedNonBackpackBags(player);
+            if (!Archipelago::Gating::ShouldSuppressBagSlotEquipByCount(
+                    not_loading,
+                    sArchipelagoRealmState->IsEnabled(),
+                    sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                    equippedBagCount,
+                    sArchipelagoRealmState->GetFlagTier("bag_slots")))
+                return true;
+
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need another Progressive Bag Slot to equip another bag.");
+            return false;
+        }
+
+        return true;
+    }
+
+private:
+    static uint32_t CountEquippedNonBackpackBags(Player* player)
+    {
+        uint32_t count = 0;
+        for (uint8 bagSlot = INVENTORY_SLOT_BAG_START; bagSlot < INVENTORY_SLOT_BAG_END; ++bagSlot)
+        {
+            Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, bagSlot);
+            if (item && item->GetTemplate() && item->GetTemplate()->InventoryType == INVTYPE_BAG)
+                ++count;
+        }
+        return count;
     }
 };
 

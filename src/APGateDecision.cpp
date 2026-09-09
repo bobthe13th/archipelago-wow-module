@@ -43,6 +43,11 @@ namespace Archipelago::Gating
         return notLoading && ShouldSuppressGatedTier(moduleEnabled, gateFamilyEnabled, requiredTier, grantedTier);
     }
 
+    bool ShouldSuppressBagSlotEquipByCount(bool notLoading, bool moduleEnabled, bool gateFamilyEnabled, uint32_t currentlyEquippedBagCount, uint32_t grantedTier)
+    {
+        return notLoading && ShouldSuppressGatedTier(moduleEnabled, gateFamilyEnabled, currentlyEquippedBagCount + 1, grantedTier);
+    }
+
     namespace
     {
         // Tranche boundaries for Progressive Talent Tranches (M4.14.1). Tier
