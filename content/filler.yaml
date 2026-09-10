@@ -76,6 +76,31 @@ family: filler
 # this resize, see test_basic.py). Filler Check 140-151 / location_id
 # 740139-740150 are the +12 rows added for this resize.
 #
+# M4.14.1 ("Useful Items" final review fix, C3): Row count grown 151 -> 161 =
+# 47 (gates, grown from 37) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (gathering, unchanged). Tasks 1/2/4/5/6 of this milestone
+# added 10 new gates.yaml items with no location of their own (4 Progressive
+# Bag Slot tiers, 2 Talent Point Access tranches, Random Flight Path Unlock,
+# Portable Mailbox, Progressive EXP Boost, Progressive Move Speed Boost),
+# growing gates from 37 to 47 -- the same "gates.yaml grew, filler.yaml must
+# grow with it" pattern this header has documented at M4.9, M4.10.7, M4.11.1,
+# and M4.11.4.2. Missed at individual-task review time because no single
+# task's own diff shows the cumulative growth; only caught by this
+# milestone's whole-branch final review. Filler Check 152-161 / location_id
+# 740151-740160 are the +10 rows added for this resize.
+#
+# M4.14.2 (Task 2, "Granular Zone Gates"): Row count grown 161 -> 164 = 50
+# (gates, grown from 47) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (gathering, unchanged). Task 2 added 3 new gates.yaml
+# items with no location of their own (Zone Access: Shattrath City / Isle
+# of Quel'Danas / Dalaran), growing gates from 47 to 50 -- same
+# "gates.yaml grew, filler.yaml must grow with it" pattern as every prior
+# resize above. Caught immediately by this task's own full local test-
+# suite run (TestFillerPoolCoversWorstCaseGatesTrapsHolidaysanityAndGathering
+# SkillProgressionItems), not deferred to a whole-milestone final review.
+# Filler Check 162-164 / location_id 740161-740163 are the +3 rows added
+# for this resize.
+#
 # History of this file's prior sizings, kept for context:
 # - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
 #   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
@@ -574,4 +599,43 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 151"
     location_id: 740150
+    trigger: {kind: always_available}
+  - name: "Filler Check 152"
+    location_id: 740151
+    trigger: {kind: always_available}
+  - name: "Filler Check 153"
+    location_id: 740152
+    trigger: {kind: always_available}
+  - name: "Filler Check 154"
+    location_id: 740153
+    trigger: {kind: always_available}
+  - name: "Filler Check 155"
+    location_id: 740154
+    trigger: {kind: always_available}
+  - name: "Filler Check 156"
+    location_id: 740155
+    trigger: {kind: always_available}
+  - name: "Filler Check 157"
+    location_id: 740156
+    trigger: {kind: always_available}
+  - name: "Filler Check 158"
+    location_id: 740157
+    trigger: {kind: always_available}
+  - name: "Filler Check 159"
+    location_id: 740158
+    trigger: {kind: always_available}
+  - name: "Filler Check 160"
+    location_id: 740159
+    trigger: {kind: always_available}
+  - name: "Filler Check 161"
+    location_id: 740160
+    trigger: {kind: always_available}
+  - name: "Filler Check 162"
+    location_id: 740161
+    trigger: {kind: always_available}
+  - name: "Filler Check 163"
+    location_id: 740162
+    trigger: {kind: always_available}
+  - name: "Filler Check 164"
+    location_id: 740163
     trigger: {kind: always_available}

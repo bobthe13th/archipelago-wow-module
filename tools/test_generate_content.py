@@ -132,6 +132,13 @@ class TestGatesFamily(unittest.TestCase):
 
     def test_gates_family_rejects_unrecognized_delivery_kind(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
+            # NOTE (M4.14.1 Task 7 fix): "mail" used to be this fixture's example of an
+            # unrecognized kind, but Task 5 (Portable Mailbox) legitimately added "mail" to
+            # gates' own valid_delivery_kinds (FAMILY_SCHEMAS["gates"]), so it no longer
+            # exercises the rejection path. "learn_spell" is a real delivery-adjacent kind
+            # name (used as a trigger kind by collections/recipes) but is never a valid
+            # delivery kind for ANY family, and specifically never for gates -- so it stays
+            # genuinely unrecognized here regardless of future per-family schema changes.
             path = self._write(tmp, """
                 family: gates
                 locations: []
@@ -139,7 +146,7 @@ class TestGatesFamily(unittest.TestCase):
                   - name: Bad Gate
                     item_id: 830099
                     count: 1
-                    delivery: {kind: mail, wow_item_entry: 1}
+                    delivery: {kind: learn_spell, spell_id: 1}
             """)
             with self.assertRaises(ValidationError):
                 load_family(path)

@@ -10,6 +10,7 @@
 #include "DBCStructure.h"
 #include "GameObject.h"
 #include "GameTime.h"
+#include "Item.h"
 #include "ItemTemplate.h"
 #include "MiscScript.h"
 #include "ObjectGuid.h"
@@ -62,6 +63,21 @@ namespace Archipelago::Gating
 
         if (sArchipelagoRealmState->IsFlagUnlocked("dual_spec") && player->GetSpecsCount() < 2)
             player->UpdateSpecCount(2);
+
+        // Progressive EXP/Move-Speed Boost (Task 6, M4.14.1 "Useful Items"):
+        // permanent login-applied auras, real spell ids spot-verified against
+        // this checkout's Spell.dbc (single-effect shape, zero references
+        // across item_template.spellid_1..5/spell_script_names/
+        // playercreateinfo_cast_spell/spell_area/src/server/scripts/ -- see
+        // content/gates.yaml's comment on these two items for the full
+        // calibration). AddAura re-applying an already-present aura on every
+        // login is a harmless idempotent refresh for both: each is a simple
+        // flat-percentage passive aura (SPELL_AURA_MOD_XP_PCT /
+        // SPELL_AURA_MOD_INCREASE_SPEED) with no stacking/proc side effects.
+        if (sArchipelagoRealmState->IsFlagUnlocked("xp_boost"))
+            player->AddAura(42138, player); // "Brewfest Enthusiast", ~10% XP
+        if (sArchipelagoRealmState->IsFlagUnlocked("speed_boost"))
+            player->AddAura(22587, player); // "8% speed bonus"
     }
 
     void ApplyComboUnlockMasks()
@@ -378,6 +394,15 @@ public:
     }
 };
 
+// Progressive Talent Tranches (M4.14.1): retrofits the originally-shipped
+// all-or-nothing "Talent Point Access" boolean gate into 3 tranches,
+// backward-compatible with already-generated seeds (the tier-1 item is kept
+// as-is, reinterpreted as Tranche 1). Suppression now checks cumulative
+// talent points already spent against a tier-derived cap instead of a bare
+// unlocked/not-unlocked flag -- ShouldSuppressTalentLearn lives in
+// APGateDecision.h/.cpp (not here) so it's unit-testable in the standalone
+// doctest target without a live Player, matching this file's own
+// established discipline (see ArchipelagoBagSlotGateScript above).
 class ArchipelagoTalentPointGateScript : public PlayerScript
 {
 public:
@@ -385,21 +410,110 @@ public:
 
     bool OnPlayerCanLearnTalent(Player* player, TalentEntry const* /*talent*/, uint32 /*rank*/) override
     {
-        if (!sArchipelagoRealmState->IsEnabled())
-            return true;
+        uint32_t tier = sArchipelagoRealmState->GetFlagTier("access_talent_points");
 
-        if (!sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"))
+        // Player::CalculateTalentsPoints() (total real earned points for the
+        // player's current level/RATE_TALENT) minus GetFreeTalentPoints()
+        // (currently unspent) = points already spent. This hook fires before
+        // the point currently being attempted is added to the player's used-
+        // talent count (Player::LearnTalent, Player.cpp), so this correctly
+        // reflects "spent before this attempt".
+        uint32_t pointsAlreadySpent = player->CalculateTalentsPoints() - player->GetFreeTalentPoints();
+
+        if (!Archipelago::Gating::ShouldSuppressTalentLearn(
+                sArchipelagoRealmState->IsEnabled(),
+                sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                tier,
+                pointsAlreadySpent))
             return true;
 
         bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
         if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
             return true;
 
-        if (sArchipelagoRealmState->IsFlagUnlocked("access_talent_points"))
+        if (tier == 0)
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Talent Point Access to spend talent points.");
+        else
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need the next Talent Point Access tranche to spend more points.");
+        return false;
+    }
+};
+
+// Progressive Bag Slots (Task 1, M4.14.1): gates the 4 non-backpack
+// inventory bag slots via PLAYERHOOK_CAN_EQUIP_ITEM, distinct from the
+// already-shipped Progressive Bank Bag Slot (bank_bag_slots flag_key,
+// grant-based via SetBankBagSlotCount) above -- this one is continuous
+// suppression, like Talent Point Access, and never touches the bank.
+// IsNonBackpackBagSlot/BagSlotToTier live in APGateDecision.h/.cpp (not
+// here) so they're unit-testable in the standalone doctest target without
+// a live Player/Item.
+class ArchipelagoBagSlotGateScript : public PlayerScript
+{
+public:
+    ArchipelagoBagSlotGateScript() : PlayerScript("ArchipelagoBagSlotGateScript", { PLAYERHOOK_CAN_EQUIP_ITEM }) { }
+
+    bool OnPlayerCanEquipItem(Player* player, uint8 slot, uint16& /*dest*/, Item* pItem, bool /*swap*/, bool not_loading) override
+    {
+        ItemTemplate const* proto = pItem ? pItem->GetTemplate() : nullptr;
+        if (!proto || proto->InventoryType != INVTYPE_BAG)
             return true;
 
-        ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Talent Point Access to spend talent points.");
-        return false;
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return true;
+
+        if (Archipelago::Gating::IsNonBackpackBagSlot(slot))
+        {
+            uint32_t requiredTier = Archipelago::Gating::BagSlotToTier(slot);
+            if (!Archipelago::Gating::ShouldSuppressBagSlotEquip(
+                    not_loading,
+                    sArchipelagoRealmState->IsEnabled(),
+                    sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                    requiredTier,
+                    sArchipelagoRealmState->GetFlagTier("bag_slots")))
+                return true;
+
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Progressive Bag Slot %u to use this bag slot.", requiredTier);
+            return false;
+        }
+
+        // M4.14.1 final review fix (I2): WorldSession::HandleAutoEquipItemOpcode
+        // (right-click/shift-click auto-equip, real confirmed call site:
+        // ItemHandler.cpp:192) calls Player::CanEquipItem(NULL_SLOT, ...)
+        // before resolving which real slot the bag lands in, so the specific-
+        // slot check above never engages for that path -- see
+        // ShouldSuppressBagSlotEquipByCount's own header comment for why
+        // counting the player's currently-equipped non-backpack bags is exact
+        // (not an approximation) for this specific case.
+        if (slot == NULL_SLOT)
+        {
+            uint32_t equippedBagCount = CountEquippedNonBackpackBags(player);
+            if (!Archipelago::Gating::ShouldSuppressBagSlotEquipByCount(
+                    not_loading,
+                    sArchipelagoRealmState->IsEnabled(),
+                    sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
+                    equippedBagCount,
+                    sArchipelagoRealmState->GetFlagTier("bag_slots")))
+                return true;
+
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need another Progressive Bag Slot to equip another bag.");
+            return false;
+        }
+
+        return true;
+    }
+
+private:
+    static uint32_t CountEquippedNonBackpackBags(Player* player)
+    {
+        uint32_t count = 0;
+        for (uint8 bagSlot = INVENTORY_SLOT_BAG_START; bagSlot < INVENTORY_SLOT_BAG_END; ++bagSlot)
+        {
+            Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, bagSlot);
+            if (item && item->GetTemplate() && item->GetTemplate()->InventoryType == INVTYPE_BAG)
+                ++count;
+        }
+        return count;
     }
 };
 
@@ -500,6 +614,7 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoAuctionHouseGateScript();
     new ArchipelagoTalentPointGateScript();
     new ArchipelagoGatheringGateScript();
+    new ArchipelagoBagSlotGateScript();
 
     ArchipelagoShouldSuppressBankAccess = [](Player* player) {
         bool isBot = player && Archipelago::Bots::IsBotControlledPlayer(player);

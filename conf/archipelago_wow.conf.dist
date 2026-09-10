@@ -104,6 +104,24 @@ Archipelago.AccessGating = 0
 
 Archipelago.CharacterUnlockGating = 0
 
+#    Archipelago.ZoneGating
+#        Description: Enable walkable-entry suppression for three curated
+#                      notable zones -- Shattrath City, Isle of Quel'Danas,
+#                      Dalaran (M4.14.2 gate family). Only turn this on when
+#                      the connected seed's player YAML also has zone_gating
+#                      enabled -- this module has no way to read that option
+#                      from the AP server itself, so the two must be set to
+#                      match by hand. Leaving this off while the seed has
+#                      the option on just means those items behave as
+#                      filler; turning this on for a seed that does NOT have
+#                      the option is the dangerous direction, since it will
+#                      permanently block entry into all 3 zones for every
+#                      character on the realm (the flag can never reach
+#                      tier 1 -- the item was never placed in that seed).
+#        Default:     0 (disabled)
+
+Archipelago.ZoneGating = 0
+
 #    Archipelago.BotsSubjectToGating
 #        Description: Whether mod-playerbots-controlled bot characters are
 #                      subject to proficiency/access/character-unlock gating
