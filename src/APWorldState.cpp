@@ -27,6 +27,7 @@ namespace
     // for a table not in this map, rather than guessing a column name.
     std::unordered_map<std::string, std::string> const PK_COLUMN_BY_TABLE = {
         {"creature_template", "entry"},
+        {"creature", "guid"},
     };
 }
 
