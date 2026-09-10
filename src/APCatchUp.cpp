@@ -5,6 +5,8 @@
 #include <array>
 #include <cmath>
 
+#include "APBotDecision.h"
+#include "APBotSupport.h"
 #include "APDelivery.h"
 #include "APRaidlogger.h"
 #include "ArchipelagoRealmState.h"
@@ -112,6 +114,10 @@ namespace Archipelago::CatchUp
         // single-delivery-character-slot convention.
         Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
 
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsReceiveCatchUpEnabled()))
+            return;
+
         Policy policy = ParsePolicy(sArchipelagoRealmState->GetCatchUpPolicy());
         // Only AllMailedOnLogin acts here, and only on a character's very first
         // login ever -- PercentPerLevel/LevelScaledBundle grant incrementally as
@@ -126,6 +132,10 @@ namespace Archipelago::CatchUp
     void OnPlayerLevelChanged(Player* player, uint8_t oldLevel, uint8_t newLevel)
     {
         if (!sArchipelagoRealmState->IsEnabled())
+            return;
+
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsReceiveCatchUpEnabled()))
             return;
 
         Policy policy = ParsePolicy(sArchipelagoRealmState->GetCatchUpPolicy());
