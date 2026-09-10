@@ -17,10 +17,10 @@ namespace
     // Sec8's row_id BIGINT column snapshots exactly one table's worth of
     // PK per row -- apply/restore need to know which real column that
     // BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
-    // <pk column> = ?`. Only creature_template (M5.1 Mobs, PK `entry`) is
-    // wired up as of M5.0 -- extend this map, one line per table, the
-    // moment a later milestone's category snapshots a new single-PK
-    // table. A composite-keyed table (npc_vendor, the loot templates --
+    // <pk column> = ?`. creature_template (PK `entry`) and creature
+    // (PK `guid`) are wired up as of M5.0/M5.1.0 -- extend this map, one
+    // line per table, the moment a later milestone's category snapshots
+    // a new single-PK table. A composite-keyed table (npc_vendor, the loot templates --
     // Sec8's own documented caveat) needs a different resolution entirely
     // and is out of scope until whichever of M5.3-M5.5 first touches one;
     // Apply()/RestoreAllSnapshottedRows() below both log and skip any row

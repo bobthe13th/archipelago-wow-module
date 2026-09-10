@@ -71,7 +71,7 @@ def build_creature_spawn_row(row: tuple[str, ...]) -> dict:
 def _load_primary_spawn_positions() -> dict[int, list[tuple[int, float, float]]]:
     """entry -> every real (map, x, y) this template spawns at directly via
     creature.id (primary spawns only -- creature_multispawn's own alternate
-    assignments are folded in separately by _load_home_maps below, since
+    assignments are folded in separately by _load_multispawn_positions below, since
     zone_tags only needs REACHABLE positions, and an alternate-template
     spawn is exactly as reachable as its primary)."""
     rows = run_query("SELECT id, map, position_x, position_y FROM creature")
@@ -123,6 +123,13 @@ def extract() -> dict:
     return {"creature_templates": creature_templates, "creature_spawns": creature_spawns}
 
 
+def _write_dict_pretty(f, name: str, data: dict) -> None:
+    f.write(f"{name}: dict[int, dict] = {{\n")
+    for key in sorted(data.keys()):
+        f.write(f"    {key!r}: {data[key]!r},\n")
+    f.write("}\n")
+
+
 def compile_to_python(data: dict, py_out: pathlib.Path) -> None:
     """Writes mobs_snapshot_content_data.py directly from extract()'s own
     output shape -- no intermediate C++ header (Pipeline B's boot-time
@@ -138,8 +145,9 @@ def compile_to_python(data: dict, py_out: pathlib.Path) -> None:
         f.write("# GENERATED FILE - do not hand-edit.\n")
         f.write("# Regenerate with: python tools/extract_mobs_snapshot.py (from azerothcore-wotlk/modules/archipelago_wow/)\n")
         f.write("from __future__ import annotations\n\n")
-        f.write(f"CREATURE_TEMPLATES: dict[int, dict] = {templates_by_entry!r}\n\n")
-        f.write(f"CREATURE_SPAWNS: dict[int, dict] = {spawns_by_guid!r}\n")
+        _write_dict_pretty(f, "CREATURE_TEMPLATES", templates_by_entry)
+        f.write("\n")
+        _write_dict_pretty(f, "CREATURE_SPAWNS", spawns_by_guid)
 
 
 if __name__ == "__main__":
@@ -160,7 +168,7 @@ if __name__ == "__main__":
     py_out = (
         pathlib.Path(py_out_override) / "mobs_snapshot_content_data.py"
         if py_out_override
-        else pathlib.Path(__file__).parent.parent.parent.parent / "Archipelago" / "worlds" / "wow" / "mobs_snapshot_content_data.py"
+        else pathlib.Path(__file__).parent.parent.parent.parent.parent / "Archipelago" / "worlds" / "wow" / "mobs_snapshot_content_data.py"
     )
     compile_to_python(data, py_out)
     print(f"Compiled to {py_out}")

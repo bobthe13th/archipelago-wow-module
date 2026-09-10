@@ -1,6 +1,5 @@
 import importlib
 import pathlib
-import sys
 import tempfile
 import unittest
 
