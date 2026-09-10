@@ -207,7 +207,7 @@ class ArchipelagoWorldScript : public WorldScript
 {
 public:
     ArchipelagoWorldScript()
-        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_AFTER_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE })
+        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_AFTER_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE, WORLDHOOK_ON_LOAD_CUSTOM_DATABASE_TABLE })
     { }
 
     void OnBeforeConfigLoad(bool /*reload*/) override
@@ -374,6 +374,21 @@ public:
             ApplyRuntimeConfigOverrides();
     }
 
+    void OnLoadCustomDatabaseTable() override
+    {
+        // M5.0 Sec7 final review fix: OnStartup fires AFTER
+        // sWorld->SetInitialWorldSettings() has already loaded
+        // creature_template (and other content tables) into memory, so
+        // applying mutations there means they silently don't take effect
+        // until the NEXT boot. OnLoadCustomDatabaseTable fires after
+        // StartDB() but before those in-memory loads, so the DB rows are
+        // already correct by the time anything reads them. _enabled and
+        // _slotName are both already set by this point (read in
+        // OnBeforeConfigLoad, which always fires before StartDB).
+        if (_enabled)
+            sAPWorldState->ApplyIfNeeded(_slotName);
+    }
+
     void OnStartup() override
     {
         // Realm state (including the persisted level cap) must load
@@ -392,11 +407,6 @@ public:
         {
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
             ApplyRuntimeConfigOverrides();
-            // M5.0 Sec7: mutation application is gated behind _enabled,
-            // matching every other DB-mutating effect in this block --
-            // when this module is disabled, the realm must behave as if
-            // it does not exist at all, full vanilla, no DB rewrites.
-            sAPWorldState->ApplyIfNeeded(_slotName);
         }
 
         if (!_enabled)
@@ -630,7 +640,7 @@ public:
             // server with players already online is explicitly ruled
             // out).
             std::optional<std::string> appliedWorldSeed = sAPWorldState->GetAppliedWorldSeed();
-            if (!appliedWorldSeed || *appliedWorldSeed != *worldSeed)
+            if (appliedWorldSeed && *appliedWorldSeed != *worldSeed)
             {
                 LOG_ERROR("module.archipelago_wow", "Archipelago: connected seed's world_seed '{}' does not match this realm's applied mutation-data world_seed '{}' -- Pipeline B mutations are stale or were never applied. Fix the mismatch and restart; this module will not re-apply mutations live.",
                     *worldSeed, appliedWorldSeed ? *appliedWorldSeed : "<none>");

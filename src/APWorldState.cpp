@@ -131,24 +131,34 @@ void APWorldState::RestoreAllSnapshottedRows()
                 }
                 std::string valueStr = value.is_string() ? value.get<std::string>() : value.dump();
                 WorldDatabase.EscapeString(valueStr);
-                setClause << column << " = \"" << valueStr << "\"";
+                setClause << column << " = '" << valueStr << "'";
             }
-            WorldDatabase.Execute("UPDATE {} SET {} WHERE {} = {}", tableName, setClause.str(), pkIt->second, rowId);
+            WorldDatabase.DirectExecute("UPDATE {} SET {} WHERE {} = {}", tableName, setClause.str(), pkIt->second, rowId);
         } while (result->NextRow());
     }
 
-    WorldDatabase.Execute("DELETE FROM archipelago_world_mutation_snapshot");
+    WorldDatabase.DirectExecute("DELETE FROM archipelago_world_mutation_snapshot");
 }
 
 void APWorldState::Apply(std::string const& fileWorldSeed, std::string const& contentsJson)
 {
     json parsed = json::parse(contentsJson, nullptr, false);
-    json categories = parsed.value("categories", json::object());
+    json categories = json::object();
+    if (parsed.contains("categories"))
+    {
+        if (parsed["categories"].is_object())
+            categories = parsed["categories"];
+        else
+            LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState 'categories' field is not an object, treating as empty");
+    }
 
     for (auto const& [categoryKey, rows] : categories.items())
     {
         if (!rows.is_array())
+        {
+            LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState skipping non-array rows for category '{}'", categoryKey);
             continue;
+        }
         for (auto const& row : rows)
         {
             if (!row.is_array() || row.size() != 3 || !row[0].is_string() || !row[2].is_object())
@@ -217,8 +227,8 @@ void APWorldState::Apply(std::string const& fileWorldSeed, std::string const& co
             // targeting the same row must never overwrite that snapshot
             // with an already-mutated value, and must never hard-fail
             // the whole apply over a duplicate-key error.
-            WorldDatabase.Execute(
-                "INSERT IGNORE INTO archipelago_world_mutation_snapshot (table_name, row_id, original_data_json) VALUES (\"{}\", {}, \"{}\")",
+            WorldDatabase.DirectExecute(
+                "INSERT IGNORE INTO archipelago_world_mutation_snapshot (table_name, row_id, original_data_json) VALUES ('{}', {}, '{}')",
                 tableNameEscaped, rowId, escapedSnapshotJson);
 
             std::ostringstream setClause;
@@ -235,14 +245,14 @@ void APWorldState::Apply(std::string const& fileWorldSeed, std::string const& co
                 }
                 std::string valueStr = value.is_string() ? value.get<std::string>() : value.dump();
                 WorldDatabase.EscapeString(valueStr);
-                setClause << column << " = \"" << valueStr << "\"";
+                setClause << column << " = '" << valueStr << "'";
             }
-            WorldDatabase.Execute("UPDATE {} SET {} WHERE {} = {}", tableName, setClause.str(), pkColumn, rowId);
+            WorldDatabase.DirectExecute("UPDATE {} SET {} WHERE {} = {}", tableName, setClause.str(), pkColumn, rowId);
         }
     }
 
     std::string escapedSeed = fileWorldSeed;
     WorldDatabase.EscapeString(escapedSeed);
-    WorldDatabase.Execute("DELETE FROM archipelago_world_mutation_state WHERE id = 1");
-    WorldDatabase.Execute("INSERT INTO archipelago_world_mutation_state (id, world_seed, applied_at) VALUES (1, \"{}\", NOW())", escapedSeed);
+    WorldDatabase.DirectExecute("DELETE FROM archipelago_world_mutation_state WHERE id = 1");
+    WorldDatabase.DirectExecute("INSERT INTO archipelago_world_mutation_state (id, world_seed, applied_at) VALUES (1, '{}', NOW())", escapedSeed);
 }
