@@ -15,6 +15,7 @@
 #include "APFillerDecision.h"
 #include "APGating.h"
 #include "APItemDisplay.h"
+#include "APWorldState.h"
 #include "ArchipelagoDeathLink.h"
 #include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
@@ -391,6 +392,11 @@ public:
         {
             sWorld->setIntConfig(CONFIG_MAX_PLAYER_LEVEL, sArchipelagoRealmState->GetLevelCap());
             ApplyRuntimeConfigOverrides();
+            // M5.0 Sec7: mutation application is gated behind _enabled,
+            // matching every other DB-mutating effect in this block --
+            // when this module is disabled, the realm must behave as if
+            // it does not exist at all, full vanilla, no DB rewrites.
+            sAPWorldState->ApplyIfNeeded(_slotName);
         }
 
         if (!_enabled)
