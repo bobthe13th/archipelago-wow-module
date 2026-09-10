@@ -33,10 +33,10 @@ modes (Zone Leveler/BarrensBeater, Raidlogger), zone/area tagging, and
 ## Connection behavior
 
 - Supports both plain `ws://` and TLS `wss://` (`Archipelago.UseTLS`).
-  **TLS certificate validation is intentionally not performed** in this
-  milestone -- the client uses `ssl::verify_none`. This is a deliberate,
-  documented simplification for M2, not an oversight; a future milestone can
-  add proper certificate verification if/when it's needed.
+  **TLS certificate validation is intentionally not performed** -- the client
+  uses `ssl::verify_none`. This is a deliberate, documented simplification,
+  still current, not an oversight; a future milestone can add proper
+  certificate verification if/when it's needed.
 - The connection is held open indefinitely. If it drops (server restart,
   network blip, AP server down at startup, etc.) the module reconnects
   automatically, backing off exponentially between
@@ -86,8 +86,19 @@ round-trip.
 on the world thread every tick. Each item is resolved (via the same
 generated content table) to a WoW item entry, created, and mailed to the
 character named in `Archipelago.DeliveryCharacter` (from "Archipelago", via
-the Postmaster). If that character is online, they get the normal in-game
-new-mail notification immediately instead of only seeing it after a relog.
+the Postmaster) -- the baseline/fallback delivery path. If that character is
+online, they get the normal in-game new-mail notification immediately
+instead of only seeing it after a relog.
+
+Real, shipped delivery isn't limited to that one path, though: under
+`Policy::SingleDeliveryCharacter` an item is given directly into the
+recipient's bags if they're online right now, mailing only as a fallback
+(M4.11.5.0.2); items delivered to the same recipient in one drain of the AP
+item stream are batched into as few mails as the client allows, with mail
+text describing what was received and which family/finder it came from
+(M4.11.5.2.0); and `Archipelago.DeliveryPolicy = "AuctionHouse"` can deliver
+via independent per-faction (Alliance/Horde/Neutral) Auction House listings
+instead of a single neutral one (M4.11.5.2.1).
 
 Delivery is deduplicated and restart-safe: the highest processed AP item
 index is tracked both in memory and in the `archipelago_state` database
@@ -168,6 +179,10 @@ Config keys:
   reconnect attempts (default `60`; clamped to at least
   `ReconnectMinSeconds` at runtime).
 
+This is not the full list -- see `conf/archipelago_wow.conf.dist` for every
+config key, including the per-family gating toggles, DeathLink options, and
+per-game-mode goal settings added across M4.9-M4.14.
+
 ## Commands
 
 - `.ap status` -- reports the current connection state:
@@ -228,8 +243,8 @@ The failure mode this section used to describe -- a fresh
 resolve its own `archipelago_wow` submodule pointer -- was caused by
 forgetting to push a pending bump commit before a fresh clone was needed,
 not by any structural inability to push. **Fixed for real** by pushing the
-stranded commits on both repos (M4.15 Task 1: keeping both repos' `main`
-branches pushed).
+stranded commits on both repos (M4.15 Task 1: keeping both repos'
+`azerothcore-archipelago-m3` branches pushed).
 
 As defense-in-depth against the same class of mistake recurring,
 `bootstrap/setup.ps1` / `bootstrap/setup.sh` (M4.15 Task 2, at the outer
