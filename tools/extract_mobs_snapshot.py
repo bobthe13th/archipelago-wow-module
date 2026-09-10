@@ -123,14 +123,44 @@ def extract() -> dict:
     return {"creature_templates": creature_templates, "creature_spawns": creature_spawns}
 
 
+def compile_to_python(data: dict, py_out: pathlib.Path) -> None:
+    """Writes mobs_snapshot_content_data.py directly from extract()'s own
+    output shape -- no intermediate C++ header (Pipeline B's boot-time
+    application only ever reads the final mutation-data JSON, never this
+    raw snapshot; see design spec Sec2). Deliberately a plain dict literal
+    per table, keyed by each row's own real primary key, matching every
+    other *_content_data.py module's "generated, never hand-edit"
+    convention."""
+    templates_by_entry = {row["entry"]: {k: v for k, v in row.items() if k != "entry"} for row in data["creature_templates"]}
+    spawns_by_guid = {row["guid"]: {k: v for k, v in row.items() if k != "guid"} for row in data["creature_spawns"]}
+
+    with open(py_out, "w", encoding="utf-8") as f:
+        f.write("# GENERATED FILE - do not hand-edit.\n")
+        f.write("# Regenerate with: python tools/extract_mobs_snapshot.py (from azerothcore-wotlk/modules/archipelago_wow/)\n")
+        f.write("from __future__ import annotations\n\n")
+        f.write(f"CREATURE_TEMPLATES: dict[int, dict] = {templates_by_entry!r}\n\n")
+        f.write(f"CREATURE_SPAWNS: dict[int, dict] = {spawns_by_guid!r}\n")
+
+
 if __name__ == "__main__":
+    import os
+
     data = extract()
-    out_path = pathlib.Path(__file__).parent.parent / "content" / "mobs_snapshot.yaml"
-    with open(out_path, "w", encoding="utf-8") as f:
+    yaml_out = pathlib.Path(__file__).parent.parent / "content" / "mobs_snapshot.yaml"
+    with open(yaml_out, "w", encoding="utf-8") as f:
         f.write("# GENERATED FILE - do not hand-edit.\n")
         f.write(f"# Regenerate with: python tools/{pathlib.Path(__file__).name}\n")
         yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
     print(
         f"Wrote {len(data['creature_templates'])} creature templates and "
-        f"{len(data['creature_spawns'])} creature spawns to {out_path}"
+        f"{len(data['creature_spawns'])} creature spawns to {yaml_out}"
     )
+
+    py_out_override = os.environ.get("ARCHIPELAGO_WOW_WORLDS_DIR")
+    py_out = (
+        pathlib.Path(py_out_override) / "mobs_snapshot_content_data.py"
+        if py_out_override
+        else pathlib.Path(__file__).parent.parent.parent.parent / "Archipelago" / "worlds" / "wow" / "mobs_snapshot_content_data.py"
+    )
+    compile_to_python(data, py_out)
+    print(f"Compiled to {py_out}")

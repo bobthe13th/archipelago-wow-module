@@ -1,0 +1,4 @@
+# GENERATED FILE - do not hand-edit.
+# Regenerate with: python tools/extract_mobs_snapshot.py
+creature_templates: []
+creature_spawns: []

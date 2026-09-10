@@ -1,6 +1,10 @@
+import importlib
+import pathlib
+import sys
+import tempfile
 import unittest
 
-from extract_mobs_snapshot import build_creature_template_row, build_creature_spawn_row, extract
+from extract_mobs_snapshot import build_creature_template_row, build_creature_spawn_row, extract, compile_to_python
 
 
 class TestBuildCreatureTemplateRow(unittest.TestCase):
@@ -91,3 +95,48 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(data["creature_templates"][0]["entry"], 148)
         self.assertEqual(len(data["creature_spawns"]), 1)
         self.assertEqual(data["creature_spawns"][0]["guid"], 51235)
+
+
+class TestCompileToPython(unittest.TestCase):
+    def test_writes_creature_templates_keyed_by_entry(self):
+        data = {
+            "creature_templates": [
+                {
+                    "entry": 148, "minlevel": 3, "maxlevel": 4, "rank": 0,
+                    "ai_name": "", "script_name": "", "health_modifier": 1.0,
+                    "mana_modifier": 1.0, "damage_modifier": 1.0, "armor_modifier": 1.0,
+                    "base_attack_time": 2000, "speed_walk": 1.0, "speed_run": 1.0,
+                    "speed_swim": 1.0, "speed_flight": 1.0, "detection_range": 20.0,
+                    "zone_tags": ["elwynn_forest"], "home_maps": [0],
+                },
+            ],
+            "creature_spawns": [
+                {"guid": 51235, "template_entry": 148, "map": 0},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            py_out = pathlib.Path(tmp_dir) / "mobs_snapshot_content_data.py"
+            compile_to_python(data, py_out)
+
+            spec = importlib.util.spec_from_file_location("mobs_snapshot_content_data_test", py_out)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            self.assertIn(148, module.CREATURE_TEMPLATES)
+            self.assertEqual(module.CREATURE_TEMPLATES[148]["minlevel"], 3)
+            self.assertEqual(module.CREATURE_TEMPLATES[148]["zone_tags"], ["elwynn_forest"])
+            self.assertIn(51235, module.CREATURE_SPAWNS)
+            self.assertEqual(module.CREATURE_SPAWNS[51235]["template_entry"], 148)
+
+    def test_empty_input_produces_empty_dicts(self):
+        data = {"creature_templates": [], "creature_spawns": []}
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            py_out = pathlib.Path(tmp_dir) / "mobs_snapshot_content_data.py"
+            compile_to_python(data, py_out)
+
+            spec = importlib.util.spec_from_file_location("mobs_snapshot_content_data_empty_test", py_out)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            self.assertEqual(module.CREATURE_TEMPLATES, {})
+            self.assertEqual(module.CREATURE_SPAWNS, {})
