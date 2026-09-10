@@ -453,6 +453,10 @@ public:
             std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
             _pendingInstanceClearMode = mode;
         };
+        callbacks.onWorldSeedReceived = [this](std::string const& worldSeed) {
+            std::lock_guard<std::mutex> lock(_pendingWorldSeedMutex);
+            _pendingWorldSeed = worldSeed;
+        };
         callbacks.onLootSlotCheckRepeatBehaviorReceived = [this](std::string const& behavior) {
             std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
             _pendingLootSlotCheckRepeatBehavior = behavior;
@@ -607,6 +611,30 @@ public:
                 sArchipelagoRealmState->SetInstanceClearMode(*instanceClearMode);
             else
                 LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized instance_clear_mode '{}' from slot_data, keeping existing value", *instanceClearMode);
+        }
+
+        std::optional<std::string> worldSeed;
+        {
+            std::lock_guard<std::mutex> lock(_pendingWorldSeedMutex);
+            if (!_worldSeedApplied && _pendingWorldSeed)
+            {
+                worldSeed = _pendingWorldSeed;
+                _worldSeedApplied = true;
+            }
+        }
+        if (worldSeed)
+        {
+            // M5.0 Sec9: detection only. A mismatch means an operator
+            // error (wrong file copied, or .conf/seed drifted) to be
+            // fixed by a restart -- never a live re-apply (re-mutating a
+            // server with players already online is explicitly ruled
+            // out).
+            std::optional<std::string> appliedWorldSeed = sAPWorldState->GetAppliedWorldSeed();
+            if (!appliedWorldSeed || *appliedWorldSeed != *worldSeed)
+            {
+                LOG_ERROR("module.archipelago_wow", "Archipelago: connected seed's world_seed '{}' does not match this realm's applied mutation-data world_seed '{}' -- Pipeline B mutations are stale or were never applied. Fix the mismatch and restart; this module will not re-apply mutations live.",
+                    *worldSeed, appliedWorldSeed ? *appliedWorldSeed : "<none>");
+            }
         }
 
         std::optional<std::string> lootSlotCheckRepeatBehavior;
@@ -789,6 +817,17 @@ private:
     std::mutex _pendingInstanceClearModeMutex;
     std::optional<std::string> _pendingInstanceClearMode;
     bool _instanceClearModeApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingInstanceClearMode/_instanceClearModeApplied above, for the
+    // one-shot world_seed slot_data string (M5.0 Sec9). Unlike every other
+    // one-shot slot_data value above, this is NEVER applied to live state --
+    // OnUpdate only compares it against sAPWorldState->GetAppliedWorldSeed()
+    // and logs a mismatch; _worldSeedApplied just guards against re-logging
+    // on every subsequent tick after the one comparison.
+    std::mutex _pendingWorldSeedMutex;
+    std::optional<std::string> _pendingWorldSeed;
+    bool _worldSeedApplied = false;
 
     // Same io-thread-producer/world-thread-consumer, apply-once shape as
     // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied

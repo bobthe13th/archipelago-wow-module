@@ -81,6 +81,10 @@ namespace Archipelago
         std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr;
         std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr;
         std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
+        // M5.0 Sec9: Connected's slot_data["world_seed"] -- the live
+        // cross-check against sAPWorldState->GetAppliedWorldSeed() at first
+        // connect (detection only, never a live re-apply).
+        std::function<void(std::string const&)> onWorldSeedReceived = nullptr;
         std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
         // bool is a primitive, so passed by value rather than by const& (M4.10.7),
         // unlike the string-valued slot_data callbacks above.
@@ -182,6 +186,16 @@ namespace Archipelago
     // Archipelago.InstanceClearMode manual worldserver.conf mirror outright
     // -- see ArchipelagoWorldScript.cpp's OnUpdate for the consumer.
     std::optional<std::string> ParseInstanceClearModeFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["world_seed"] (a single string option,
+    // M5.0 Sec9) -- mirrors ParseInstanceClearModeFromSlotData's exact
+    // shape: "don't crash the connection state machine on a shape it
+    // doesn't recognize". Returns std::nullopt (never throws) if
+    // slot_data or the key is absent/malformed. Consumed by
+    // ArchipelagoWorldScript.cpp's OnUpdate to cross-check against
+    // APWorldState's sAPWorldState->GetAppliedWorldSeed() -- detection
+    // only, never a live re-apply.
+    std::optional<std::string> ParseWorldSeedFromSlotData(std::string const& raw);
 
     // Parses Connected's slot_data["loot_slot_check_repeat_behavior"] (a
     // single string option, M4.10.1) -- mirrors

@@ -377,6 +377,12 @@ namespace Archipelago
                 _callbacks.onInstanceClearModeReceived(*instanceClearMode);
 
             // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
+            // ParseInstanceClearModeFromSlotData above (M5.0 Sec9).
+            auto worldSeed = ParseWorldSeedFromSlotData(message);
+            if (worldSeed && _callbacks.onWorldSeedReceived)
+                _callbacks.onWorldSeedReceived(*worldSeed);
+
+            // Same unconditional-parse rationale as ParseApItemDisplayFromSlotData/
             // ParseVendorCheckRepeatBehaviorFromSlotData above (M4.10.1).
             auto lootSlotCheckRepeatBehavior = ParseLootSlotCheckRepeatBehaviorFromSlotData(message);
             if (lootSlotCheckRepeatBehavior && _callbacks.onLootSlotCheckRepeatBehaviorReceived)
