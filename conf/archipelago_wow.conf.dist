@@ -104,6 +104,55 @@ Archipelago.AccessGating = 0
 
 Archipelago.CharacterUnlockGating = 0
 
+#    Archipelago.BotsSubjectToGating
+#        Description: Whether mod-playerbots-controlled bot characters are
+#                      subject to proficiency/access/character-unlock gating
+#                      (M6.0 Playerbots Integration). Off (default): bots
+#                      bypass all three gate families regardless of whether
+#                      they're enabled for real players. On: bots are checked
+#                      exactly like real players. Has no effect in a build
+#                      with no mod-playerbots module present.
+#        Default:     0 (disabled)
+
+Archipelago.BotsSubjectToGating = 0
+
+#    Archipelago.BotChecksCount
+#        Description: Whether a bot's own kill/turn-in/loot/craft/learn/etc.
+#                      fires an AP location check (M6.0 Playerbots
+#                      Integration). Off (default): only a real player's own
+#                      actions ever record/send AP location checks -- bots
+#                      help with combat/utility but don't earn checks, and a
+#                      bot leveling to a milestone does not complete that
+#                      milestone's goal either (same guard -- see
+#                      ArchipelagoLevelScript.cpp). On: a bot's actions count
+#                      exactly like a real player's.
+#        Default:     0 (disabled)
+
+Archipelago.BotChecksCount = 0
+
+#    Archipelago.BotDeathsTriggerDeathLink
+#        Description: Whether a bot dying sends a DeathLink Bounce (M6.0
+#                      Playerbots Integration). Off (default): a bot dying
+#                      never sends DeathLink, even with
+#                      Archipelago.DeathLinkSendEnabled on -- combat bots die
+#                      far more often than a careful human player. On: bot
+#                      deaths send exactly like real player deaths. Separate
+#                      from Archipelago.BotChecksCount -- this is about an
+#                      outgoing multiworld-wide signal, not check-crediting.
+#        Default:     0 (disabled)
+
+Archipelago.BotDeathsTriggerDeathLink = 0
+
+#    Archipelago.BotsReceiveCatchUp
+#        Description: Whether a freshly-logged-in or leveling-up bot triggers
+#                      Archipelago.CatchUpPolicy delivery (M6.0 Playerbots
+#                      Integration). Off (default): a bot login/level-up never
+#                      triggers catch-up delivery. On: bots catch up like any
+#                      new character.
+#        Default:     0 (disabled)
+
+Archipelago.BotsReceiveCatchUp = 0
+
 #    Archipelago.DeliveryPolicy
 #        Description: How Archipelago-granted items reach players (M4 Sec7).
 #                      Only turn this away from the default when the

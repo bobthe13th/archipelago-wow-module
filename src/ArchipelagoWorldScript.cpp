@@ -246,6 +246,17 @@ public:
         sArchipelagoRealmState->SetDeathLinkSendCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkSendCooldownSeconds", 15));
         sArchipelagoRealmState->SetDeathLinkReceiveCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkReceiveCooldownSeconds", 15));
 
+        // M6.0 (Playerbots Integration): four independent bot-awareness
+        // toggles, all off (safe/vanilla) by default -- see
+        // ArchipelagoRealmState.h's own comment on IsBotsSubjectToGating for
+        // why these are cached here rather than read directly at each hook's
+        // call site (consumed from APGating.cpp, ~16 different check-firing
+        // hook files, ArchipelagoDeathLinkScript.cpp, and APCatchUp.cpp).
+        sArchipelagoRealmState->SetBotsSubjectToGating(sConfigMgr->GetOption<bool>("Archipelago.BotsSubjectToGating", false));
+        sArchipelagoRealmState->SetBotChecksCountEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotChecksCount", false));
+        sArchipelagoRealmState->SetBotDeathsTriggerDeathLinkEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotDeathsTriggerDeathLink", false));
+        sArchipelagoRealmState->SetBotsReceiveCatchUpEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotsReceiveCatchUp", false));
+
         // Task 20: same not-persisted mirror-toggle discipline as DeathLink above.
         // suppressResSickness feeds ArchipelagoDeathLinkScript's OnPlayerResurrect
         // veto hook; suppressDurabilityLoss feeds this class's own OnStartup rate
