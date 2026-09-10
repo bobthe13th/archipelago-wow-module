@@ -1,6 +1,8 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APGating.cpp
 #include "APGating.h"
 
+#include "APBotDecision.h"
+#include "APBotSupport.h"
 #include "APGateDecision.h"
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
@@ -249,6 +251,10 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("proficiency"))
             return true;
 
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return true;
+
         std::string const* flagKey = ProficiencyFlagKeyForSkill(proto->GetSkill());
         if (!flagKey)
             return true;
@@ -297,6 +303,10 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
             return true;
 
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return true;
+
         if (proto->ItemId != ITEM_HEARTHSTONE)
             return true;
 
@@ -329,6 +339,10 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
             return true;
 
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return true;
+
         if (Archipelago::Gating::IsAccessUnlocked("access_mailbox"))
             return true;
 
@@ -350,10 +364,15 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
             return true;
 
+        Player* player = session->GetPlayer();
+        bool isBot = player && Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return true;
+
         if (Archipelago::Gating::IsAccessUnlocked("access_auction_house"))
             return true;
 
-        if (Player* player = session->GetPlayer())
+        if (player)
             ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Auction House Access to use this.");
         return false;
     }
@@ -370,6 +389,10 @@ public:
             return true;
 
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"))
+            return true;
+
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
             return true;
 
         if (sArchipelagoRealmState->IsFlagUnlocked("access_talent_points"))
@@ -408,6 +431,15 @@ public:
         if (!sArchipelagoRealmState->IsGateFamilyEnabled("access"))
             return true;
 
+        Unit* caster = spell->GetCaster();
+        Player* player = caster ? caster->ToPlayer() : nullptr;
+        if (player)
+        {
+            bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+            if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+                return true;
+        }
+
         SpellInfo const* spellInfo = spell->GetSpellInfo();
         if (!spellInfo)
             return true;
@@ -443,11 +475,8 @@ public:
         if (Archipelago::Gating::IsAccessUnlocked("access_gathering"))
             return true;
 
-        if (Unit* caster = spell->GetCaster())
-        {
-            if (Player* player = caster->ToPlayer())
-                ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Gathering Access to use this.");
-        }
+        if (player)
+            ChatHandler(player->GetSession()).PSendSysMessage("Archipelago: You need Gathering Access to use this.");
         return false;
     }
 };
@@ -457,8 +486,8 @@ public:
 // src's only coupling to this module is this one bare function-pointer
 // symbol. See this plan's Global Constraints for why a hard #include
 // wasn't used instead.
-extern bool (*ArchipelagoShouldSuppressBankAccess)();
-extern bool (*ArchipelagoShouldSuppressGlyphSlot)(uint32 order);
+extern bool (*ArchipelagoShouldSuppressBankAccess)(Player* player);
+extern bool (*ArchipelagoShouldSuppressGlyphSlot)(uint32 order, Player* player);
 
 void AddArchipelagoGatingScripts()
 {
@@ -472,14 +501,20 @@ void AddArchipelagoGatingScripts()
     new ArchipelagoTalentPointGateScript();
     new ArchipelagoGatheringGateScript();
 
-    ArchipelagoShouldSuppressBankAccess = []() {
+    ArchipelagoShouldSuppressBankAccess = [](Player* player) {
+        bool isBot = player && Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return false; // bot exempt -- never suppress
         return Archipelago::Gating::ShouldSuppressGatedAction(
             sArchipelagoRealmState->IsEnabled(),
             sArchipelagoRealmState->IsGateFamilyEnabled("access"),
             Archipelago::Gating::IsAccessUnlocked("access_bank"));
     };
 
-    ArchipelagoShouldSuppressGlyphSlot = [](uint32 order) {
+    ArchipelagoShouldSuppressGlyphSlot = [](uint32 order, Player* player) {
+        bool isBot = player && Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsSubjectToGating()))
+            return false; // bot exempt -- never suppress
         return Archipelago::Gating::ShouldSuppressGatedTier(
             sArchipelagoRealmState->IsEnabled(),
             sArchipelagoRealmState->IsGateFamilyEnabled("character_unlocks"),
