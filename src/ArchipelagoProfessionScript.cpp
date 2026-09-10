@@ -19,6 +19,7 @@
 
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoProfessionsContentTable.h"
 #include "ArchipelagoRealmState.h"
@@ -30,6 +31,8 @@ public:
 
     void OnPlayerSetSkill(Player* player, uint32 skillId, uint32 value, uint32 /*max*/, uint32 /*step*/, uint32 newValue) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = Archipelago::Professions::ThresholdsBySkillId.find(skillId);
         if (it == Archipelago::Professions::ThresholdsBySkillId.end())
             return; // not one of the 14 curated professions

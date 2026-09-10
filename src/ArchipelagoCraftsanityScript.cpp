@@ -11,6 +11,7 @@
 #include "Item.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoCRAFTSANITYContent.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -23,6 +24,8 @@ public:
     void OnPlayerCreateItem(Player* player, Item* item, uint32 /*count*/) override
     {
         if (!item)
+            return;
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
             return;
 
         auto it = ArchipelagoCRAFTSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.find(item->GetEntry());

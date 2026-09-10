@@ -18,6 +18,7 @@
 #include "Item.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -29,6 +30,8 @@ public:
 
     void OnPlayerLootItem(Player* player, Item* item, uint32 /*count*/, ObjectGuid /*lootguid*/) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = Archipelago::Fish::ItemEntryToLocationId.find(item->GetEntry());
         if (it != Archipelago::Fish::ItemEntryToLocationId.end())
         {

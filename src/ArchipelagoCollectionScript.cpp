@@ -15,6 +15,7 @@
 // discipline every other lookup-table hook in this module already uses.
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoCollectionsContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -26,6 +27,8 @@ public:
 
     void OnPlayerLearnSpell(Player* player, uint32 spellID) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = Archipelago::Collections::SpellIdToLocationId.find(spellID);
         if (it != Archipelago::Collections::SpellIdToLocationId.end())
         {
