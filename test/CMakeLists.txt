@@ -5,7 +5,7 @@ project(archipelago_wow_tests CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(archipelago_wow_tests test_APProtocol.cpp test_APItemDisplay.cpp test_APTraps.cpp test_APGating.cpp test_APFillerRewardEffects.cpp test_AllLocationNames.cpp test_ArchipelagoGoalsPure.cpp test_ArchipelagoGatheringSkillItems.cpp test_APInterception.cpp test_APGateDecision.cpp test_ArchipelagoRaidloggerContentTable.cpp test_APFillerDecision.cpp test_bag_slot_gate.cpp test_random_taxi_node.cpp test_zone_access_gate.cpp ../src/APProtocol.cpp ../src/APInterception.cpp ../src/APGateDecision.cpp ../src/APFillerDecision.cpp ../src/APRandomTaxiNode.cpp)
+add_executable(archipelago_wow_tests test_APProtocol.cpp test_APItemDisplay.cpp test_APTraps.cpp test_APGating.cpp test_APFillerRewardEffects.cpp test_AllLocationNames.cpp test_ArchipelagoGoalsPure.cpp test_ArchipelagoGatheringSkillItems.cpp test_APInterception.cpp test_APGateDecision.cpp test_ArchipelagoRaidloggerContentTable.cpp test_APFillerDecision.cpp test_bag_slot_gate.cpp test_random_taxi_node.cpp test_zone_access_gate.cpp test_APBotDecision.cpp test_APBotSupport.cpp ../src/APProtocol.cpp ../src/APInterception.cpp ../src/APGateDecision.cpp ../src/APFillerDecision.cpp ../src/APRandomTaxiNode.cpp ../src/APBotSupport.cpp)
 target_include_directories(archipelago_wow_tests PRIVATE vendor ../src)
 
 # test_AllLocationNames.cpp (M4.13) pulls in every real generated content-table
