@@ -1,14 +1,34 @@
 # archipelago_wow
 
-Archipelago multiworld client for a WoW 3.3.5a AzerothCore server. This is the
-**Milestone 2** client: it builds as an AzerothCore module, loads, reads its
-config, exposes a `.ap status` GM command, and maintains a **persistent**
-connection to an Archipelago server -- reconnecting automatically with
-exponential backoff if the connection drops or the initial connect fails. It
-sends `LocationChecks` when a player completes one of a curated set of
-Northshire/Goldshire quests, and delivers `ReceivedItems` as real mailed
-in-game items to a configured delivery character, with restart-safe
-deduplication.
+Archipelago multiworld client for a WoW 3.3.5a AzerothCore server. It builds
+as an AzerothCore module, loads, reads its config, and maintains a
+**persistent** connection to an Archipelago server -- reconnecting
+automatically with exponential backoff if the connection drops or the
+initial connect fails. It sends `LocationChecks` from real, family-specific
+runtime hooks (see "Sending location checks" below) and delivers
+`ReceivedItems` as real in-game items, with restart-safe deduplication.
+
+As of M4.15, this is well past its original Milestone 2 scope (quest-only
+checks, `.ap status` only): it covers **14 game modes** (`GameMode` 0-14 --
+Sprint/Key Hunt/Classic/Burning Crusade/Wrath/Completionist/Artisan/
+Collector/Achievement Hunt/Explorer/Fishing Quest/100%/Zone Leveler
+("BarrensBeater")/Raidlogger -- the never-buildable Gladiator slot was
+retired, M4.9.4) and **24 real content families** (`content/*.yaml`: Quest
+Rewards, Vendor Inventories, Recipes, Trainer Spells & Abilities,
+Containersanity, Gathersanity, Enemysanity, Repsanity, Craftsanity,
+Itemsanity, Achievement Hunt/Explorer, Holidaysanity, Key Hunt rares, Golden
+Boar Statues, Raidlogger, Gates, Traps, Filler and its reward-item/
+reward-effect pools, Collections, Professions, Fish, and the always-on core
+loop). Built on M4.7's real in-game item-synthesis/interception mechanism
+(see "Sending location checks" below), M4.8's tag-based sub-filtering
+(expansion/type/class/profession pools per family, plus an `always_present`
+exemption), M4.9's traps/recipes/trainer-spells/per-level-milestone work,
+M4.10's sanity-family expansion (Containersanity/Gathersanity/Enemysanity/
+Repsanity/Craftsanity/Itemsanity/Holidaysanity), and M4.11-M4.14's new game
+modes (Zone Leveler/BarrensBeater, Raidlogger), zone/area tagging, and
+"Useful"-item/zone-gate content. The in-game command surface now covers
+`.ap status`, `.ap leaderboard`, `.ap missing`, `.ap hint <item>`, and
+`.ap port <n>` -- see "Commands" below.
 
 ## Connection behavior
 
@@ -23,25 +43,42 @@ deduplication.
   `Archipelago.ReconnectMinSeconds` and `Archipelago.ReconnectMaxSeconds`;
   the backoff resets to the minimum after any period of being genuinely
   connected again.
-- **Known gap:** a location check sent while the connection is down (during
-  the reconnect backoff window, or while the AP server happens to be
-  unreachable) is dropped and is **not** queued or resent once the
-  connection comes back -- the Archipelago protocol has no server-side
-  memory of checks the client never actually transmitted. This means a quest
-  completed during an outage permanently never releases its item to
-  whoever picked up that location. The drop is logged as an error so it's at
-  least visible in the server log; building a durable, re-sent-on-reconnect
-  checked-location set is out of scope for this milestone and deferred to a
-  future one.
 
 ## Sending location checks
 
-`ArchipelagoQuestRewardScript` hooks `PLAYERHOOK_ON_QUEST_REWARD_ITEM`,
-intercepting item synthesis at quest turn-in. This is the mechanism for all
-`quest_rewards` locations, including the 19 curated Northshire/Goldshire
-starting-quest locations (mapped via a generated content table, see below),
-which are always-present rows in that same family rather than a separate
-hook.
+Location checks are sent through several real, family-specific runtime
+hooks, not a single mechanism:
+
+- `ArchipelagoQuestRewardScript` (`PLAYERHOOK_ON_QUEST_REWARD_ITEM`) --
+  Quest Rewards, including the 19 curated Northshire/Goldshire
+  starting-quest locations (always-present rows in that same family, not a
+  separate hook) and each multi-choice reward slot's own separately
+  shuffled location/item pair (M4.11.5.0.6).
+- `ArchipelagoLootSlotScript` (`OnPlayerLootItem`) -- the shared, generic
+  loot-slot interception hook behind Containersanity (chest loot) and
+  Gathersanity (gathering-node/skinning/disenchant loot); also drives the
+  abstracted, per-zone `zone_pool_credit` checks (`ArchipelagoZonePoolScript`,
+  `AllGameObjectScript::OnGameObjectLootStateChanged`) both families were
+  migrated onto for Zone Leveler (M4.11.4.1/M4.11.4.2).
+- `ArchipelagoLearnSpellScript` (`OnPlayerLearnSpell`) -- Recipes and
+  Trainer Spells & Abilities.
+- `ArchipelagoItemFirstHeldScript` (`Player::StoreItem`, covering ordinary
+  acquisition, mail retrieval, and trade) -- Itemsanity, one check per item
+  first held.
+- `ArchipelagoCraftsanityScript` (`OnPlayerCreateItem`) -- Craftsanity.
+- `ArchipelagoInstanceScript` (`OnPlayerCreatureKill`) -- Enemysanity
+  (per-species first kill) and instance-clear locations.
+- `ArchipelagoRepsanityScript` (`OnPlayerReputationRankChange`) --
+  Repsanity.
+- `ArchipelagoAchievementScript` (`OnPlayerAchievementComplete`) --
+  Achievement Hunt and Explorer.
+- `ArchipelagoInterceptionScript` -- vendor-purchase interception for
+  Vendor Inventories, sharing the same delivery pipeline as loot.
+
+Every family's real check-and-item pair is presented in-game as a
+synthesized, classification-iconed item via `APItemDisplay.cpp`'s
+`SynthesizeAndRewireLocations` (the M4.7 mechanism), not a live AP network
+round-trip.
 
 ## Receiving items
 
@@ -143,6 +180,22 @@ Config keys:
     the connection (e.g. bad slot/password).
   - `Archipelago: not connected.` -- disconnected and not currently
     attempting to connect (or module disabled).
+- `.ap leaderboard` (M4.11.5.6) -- two real check-count breakdowns: per-slot
+  totals observed multiworld-wide from real `ItemSend` broadcasts this
+  realm's client receives while connected, and per-WoW-character totals
+  scoped to this realm's own slot, resolved to real character names via
+  `sCharacterCache`.
+- `.ap missing` (M4.13) -- a paginated list of this slot's unchecked
+  locations, each resolved to a real display name (M4.7's synthesized names
+  for Quest Rewards/Vendor Inventories where applicable, a merged
+  `AllLocationNames` reverse lookup otherwise).
+- `.ap hint <item>` (M4.13) -- a real AP `Say`-command round trip
+  (`{"cmd": "Say", "text": "!hint <item>"}`), broadcasting the resulting
+  `PrintJSON` response to every currently-online player (AP's hint response
+  isn't scoped to only the asking player).
+- `.ap port <n>` (M4.13, `SEC_GAMEMASTER` only) -- reconnects to a different
+  AP room/port, reusing the existing automatic-reconnect machinery rather
+  than a bespoke teardown path.
 
 ## Testing
 
@@ -157,35 +210,31 @@ test/build/Debug/archipelago_wow_tests.exe
 
 `test/build/` is gitignored.
 
-## Known limitation -- repo is not currently clonable by a second machine
+## Repo layout note: nested submodule, both repos are the project owner's own forks
 
 This module repo (`archipelago-wow-module`, remote
 `https://github.com/bobthe13th/archipelago-wow-module.git`) is nested as a
-git submodule inside `azerothcore-wotlk`, which is itself a submodule of the
-outer project repo. `azerothcore-wotlk` is deliberately left as an unforked
-clone of upstream AzerothCore (no core files are ever modified) -- which
-means the commits on the `azerothcore-wotlk` side that register this
-module's submodule entry (`.gitmodules` addition, and the subsequent
-pointer-bump commits each time this module's `main` branch advances) are
-**local-only and can never be pushed** to the AzerothCore remote.
+git submodule inside `azerothcore-wotlk/modules/`, which is itself a
+submodule of the outer project repo. **Both `archipelago_wow` and
+`azerothcore-wotlk` are the project owner's own forks, with real push
+access** -- `azerothcore-wotlk` is not an unforked clone of upstream
+AzerothCore (an earlier version of this file was wrong about that). The
+commits that register/bump this module's submodule pointer on the
+`azerothcore-wotlk` side are ordinary, pushable commits like any other.
 
-The practical consequence: a fresh `git clone --recursive` of the outer
-project repo, by anyone else or by CI, will currently **fail to resolve the
-`azerothcore-wotlk` submodule pointer**, because that commit only exists on
-this one machine.
+The failure mode this section used to describe -- a fresh
+`git clone --recursive` of the outer repo failing to resolve the
+`azerothcore-wotlk` submodule pointer, or `azerothcore-wotlk` failing to
+resolve its own `archipelago_wow` submodule pointer -- was caused by
+forgetting to push a pending bump commit before a fresh clone was needed,
+not by any structural inability to push. **Fixed for real** by pushing the
+stranded commits on both repos (M4.15 Task 1: keeping both repos' `main`
+branches pushed).
 
-This is a known, structural tradeoff from the project's original
-repo-scaffolding design, already discussed and accepted by the project
-owner. It is not fixed here. Options for resolving it later, in no
-particular order (the choice belongs to the project owner):
-
-- **(a) Fork AzerothCore after all**, and push the `.gitmodules`/pointer-bump
-  commits to that fork.
-- **(b) Restructure this module as a top-level submodule of the outer
-  project repo** instead of nesting it inside the AzerothCore checkout, with
-  a small bootstrap script that symlinks or copies it into
-  `azerothcore-wotlk/modules/` after clone -- the more common pattern for
-  AzerothCore module projects.
-- **(c) Accept the limitation for now**, and provide a documented bootstrap
-  script that recreates the necessary local AzerothCore-side commit after a
-  fresh clone.
+As defense-in-depth against the same class of mistake recurring,
+`bootstrap/setup.ps1` / `bootstrap/setup.sh` (M4.15 Task 2, at the outer
+project repo's root) clone `archipelago_wow` at its pinned commit
+(`bootstrap/module-pins.json`) into `azerothcore-wotlk/modules/` if it
+isn't already present after a fresh outer-repo clone -- safe to re-run, a
+no-op if the module is already there. See `docs/guides/dev-cheat-sheet.md`'s
+repo-layout section (outer repo) for the first-time-setup step this adds.
