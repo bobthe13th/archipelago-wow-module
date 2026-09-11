@@ -7,6 +7,7 @@
 
 #include "APWorldStatePure.h"
 #include "DatabaseEnv.h"
+#include "QueryResult.h"
 #include "Log.h"
 #include "vendor/json.hpp"
 

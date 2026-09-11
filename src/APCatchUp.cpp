@@ -13,6 +13,7 @@
 #include "Chat.h"
 #include "DatabaseEnv.h"
 #include "Player.h"
+#include "QueryResult.h"
 #include "WorldSession.h"
 
 namespace
