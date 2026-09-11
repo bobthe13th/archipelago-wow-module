@@ -14,7 +14,14 @@ shared C++/Python compiler.
 Safe to regenerate against a played-on realm with no special precaution:
 creature_template/creature/creature_multispawn are not among this module's
 five live-play interception columns (see tools/README.md's own
-"Regenerating against a played-on realm" section)."""
+"Regenerating against a played-on realm" section).
+
+M5.1.1 (design spec docs/superpowers/specs/2026-09-11-archipelago-wow-m5.1.1-mob-randomizer-exclusions-design.md)
+adds `shuffle_excluded` to every template/spawn row -- computed once here,
+from real DB queries, never re-derived by mobs_spawns.py at mutation time.
+See that spec for the exact category list and the corrections made against
+this project's real schema (several tables/columns named in the original
+ask don't exist in this AzerothCore fork)."""
 from __future__ import annotations
 
 import pathlib
@@ -27,25 +34,113 @@ from db_extract import (
 )
 
 _TEMPLATE_COLUMNS = (
-    "entry", "minlevel", "maxlevel", "rank", "AIName", "ScriptName",
+    "entry", "minlevel", "maxlevel", "`rank`", "`type`", "AIName", "ScriptName",
     "HealthModifier", "ManaModifier", "DamageModifier", "ArmorModifier",
     "BaseAttackTime", "speed_walk", "speed_run", "speed_swim", "speed_flight",
     "detection_range",
 )
 
+# Column/table names below are verified against this project's own live
+# acore_world schema (DESCRIBE/SHOW TABLES), not guessed -- see the M5.1.1
+# spec's exclusion-category table for the reasoning behind each one,
+# including two corrections against the original ask (creature_linking*/
+# taxi_nodes don't exist in this fork; `type IN (7, 8, 11)` would have
+# excluded every Humanoid, corrected to (8, 11, 12, 13)).
+_ENTRY_EXCLUSION_CATALOG_QUERY = """
+    SELECT entry FROM creature_template
+    WHERE flags_extra & 1 != 0
+       OR `type` = 0
+       OR VehicleId != 0
+       OR npcflag != 0
+       OR type_flags & 2 != 0
+       OR `type` IN (8, 11, 12, 13)
+       OR `rank` = 3
+       OR unit_flags & 0x02000102 != 0
+"""
+_ENTRY_EXCLUSION_DISTINCT_TABLES = (
+    ("vehicle_accessory", "accessory_entry"),
+    ("vehicle_template_accessory", "accessory_entry"),
+    ("npc_vendor", "entry"),
+    ("npc_trainer", "ID"),
+    ("creature_queststarter", "id"),
+    ("creature_questender", "id"),
+)
+_QUEST_REQUIRED_NPC_OR_GO_COLUMNS = (
+    "RequiredNpcOrGo1", "RequiredNpcOrGo2", "RequiredNpcOrGo3", "RequiredNpcOrGo4",
+)
 
-def build_creature_template_row(row: tuple[str, ...], zone_tags: frozenset[str], home_maps: frozenset[int]) -> dict:
+
+def _load_excluded_entries() -> frozenset[int]:
+    """Entries that may never be the NEW value written into any spawn's
+    `id`, and whose OWN spawn(s) may never be reassigned away from them
+    either (mobs_spawns.candidate_rows enforces the second half by
+    checking each spawn's current template, not this function). See the
+    M5.1.1 spec's "Entry-level" table for what each category is and why."""
+    excluded: set[int] = set()
+
+    rows = run_query(_ENTRY_EXCLUSION_CATALOG_QUERY)
+    excluded.update(int(r[0]) for r in rows)
+
+    for table, column in _ENTRY_EXCLUSION_DISTINCT_TABLES:
+        rows = run_query(f"SELECT DISTINCT {column} FROM {table}")
+        excluded.update(int(r[0]) for r in rows)
+
+    rows = run_query("SELECT DISTINCT entryorguid FROM smart_scripts WHERE source_type = 0 AND entryorguid > 0")
+    excluded.update(int(r[0]) for r in rows)
+
+    rows = run_query("""
+        SELECT entry FROM creature_template_addon
+        WHERE (auras IS NOT NULL AND auras != '') OR path_id != 0
+    """)
+    excluded.update(int(r[0]) for r in rows)
+
+    for column in _QUEST_REQUIRED_NPC_OR_GO_COLUMNS:
+        rows = run_query(f"SELECT DISTINCT {column} FROM quest_template WHERE {column} > 0")
+        excluded.update(int(r[0]) for r in rows)
+
+    return frozenset(excluded)
+
+
+def _load_excluded_guids() -> frozenset[int]:
+    """Spawn guids that may never have their `id` reassigned, regardless of
+    what entry currently occupies them. See the M5.1.1 spec's "Spawn-level"
+    table."""
+    excluded: set[int] = set()
+
+    rows = run_query("SELECT leaderGUID FROM creature_formations")
+    excluded.update(int(r[0]) for r in rows)
+    rows = run_query("SELECT memberGUID FROM creature_formations")
+    excluded.update(int(r[0]) for r in rows)
+
+    rows = run_query("SELECT guid FROM creature WHERE phaseMask > 1 OR phaseMask = 0")
+    excluded.update(int(r[0]) for r in rows)
+
+    rows = run_query("""
+        SELECT guid FROM creature_addon
+        WHERE (auras IS NOT NULL AND auras != '') OR path_id != 0
+    """)
+    excluded.update(int(r[0]) for r in rows)
+
+    return frozenset(excluded)
+
+
+def build_creature_template_row(
+    row: tuple[str, ...], zone_tags: frozenset[str], home_maps: frozenset[int],
+    excluded_entries: frozenset[int],
+) -> dict:
     (
-        entry, minlevel, maxlevel, rank, ai_name, script_name,
+        entry, minlevel, maxlevel, rank, type_, ai_name, script_name,
         health_modifier, mana_modifier, damage_modifier, armor_modifier,
         base_attack_time, speed_walk, speed_run, speed_swim, speed_flight,
         detection_range,
     ) = row
+    entry_int = int(entry)
     return {
-        "entry": int(entry),
+        "entry": entry_int,
         "minlevel": int(minlevel),
         "maxlevel": int(maxlevel),
         "rank": int(rank),
+        "type": int(type_),
         "ai_name": ai_name,
         "script_name": script_name,
         "health_modifier": float(health_modifier),
@@ -60,12 +155,19 @@ def build_creature_template_row(row: tuple[str, ...], zone_tags: frozenset[str],
         "detection_range": float(detection_range),
         "zone_tags": sorted(zone_tags),
         "home_maps": sorted(home_maps),
+        "shuffle_excluded": entry_int in excluded_entries,
     }
 
 
-def build_creature_spawn_row(row: tuple[str, ...]) -> dict:
+def build_creature_spawn_row(row: tuple[str, ...], excluded_guids: frozenset[int]) -> dict:
     guid, template_entry, map_id = row
-    return {"guid": int(guid), "template_entry": int(template_entry), "map": int(map_id)}
+    guid_int = int(guid)
+    return {
+        "guid": guid_int,
+        "template_entry": int(template_entry),
+        "map": int(map_id),
+        "shuffle_excluded": guid_int in excluded_guids,
+    }
 
 
 def _load_primary_spawn_positions() -> dict[int, list[tuple[int, float, float]]]:
@@ -105,6 +207,8 @@ def extract() -> dict:
 
     primary_positions = _load_primary_spawn_positions()
     multispawn_positions = _load_multispawn_positions()
+    excluded_entries = _load_excluded_entries()
+    excluded_guids = _load_excluded_guids()
 
     template_rows = run_query(f"SELECT {', '.join(_TEMPLATE_COLUMNS)} FROM creature_template ORDER BY entry")
     creature_templates = []
@@ -115,10 +219,10 @@ def extract() -> dict:
             positions, world_map_areas, area_zone_ids, area_names, {}, {},
         ) if positions else frozenset()
         home_maps = frozenset(map_id for map_id, _x, _y in positions)
-        creature_templates.append(build_creature_template_row(row, zone_tags, home_maps))
+        creature_templates.append(build_creature_template_row(row, zone_tags, home_maps, excluded_entries))
 
     spawn_rows = run_query("SELECT guid, id, map FROM creature ORDER BY guid")
-    creature_spawns = [build_creature_spawn_row(row) for row in spawn_rows]
+    creature_spawns = [build_creature_spawn_row(row, excluded_guids) for row in spawn_rows]
 
     return {"creature_templates": creature_templates, "creature_spawns": creature_spawns}
 
