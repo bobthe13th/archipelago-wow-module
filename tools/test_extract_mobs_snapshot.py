@@ -161,13 +161,13 @@ class TestExtract(unittest.TestCase):
                 return []
             if "FROM creature_addon" in sql:
                 return []
-            if "FROM creature" in sql:
-                return spawn_rows
             if any(name in sql for name in (
                 "vehicle_accessory", "vehicle_template_accessory", "npc_vendor", "npc_trainer",
                 "creature_queststarter", "creature_questender", "smart_scripts", "RequiredNpcOrGo",
             )):
                 return []
+            if "FROM creature" in sql:
+                return spawn_rows
             raise AssertionError(f"unexpected query: {sql}")
 
         with patch("extract_mobs_snapshot.run_query", side_effect=fake_run_query), \

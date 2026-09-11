@@ -45,7 +45,10 @@ _TEMPLATE_COLUMNS = (
 # spec's exclusion-category table for the reasoning behind each one,
 # including two corrections against the original ask (creature_linking*/
 # taxi_nodes don't exist in this fork; `type IN (7, 8, 11)` would have
-# excluded every Humanoid, corrected to (8, 11, 12, 13)).
+# excluded every Humanoid, corrected to (8, 11, 12, 13)). Note: type_flags
+# & 2 checks the CREATURE_TYPE_FLAG_VISIBLE_TO_GHOSTS bit (spirit-healer-
+# adjacent, ghost-interactible NPCs), kept out of shuffle pool as a
+# conservative measure against edge cases, not a boss/civilian flag.
 _ENTRY_EXCLUSION_CATALOG_QUERY = """
     SELECT entry FROM creature_template
     WHERE flags_extra & 1 != 0
