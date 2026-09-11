@@ -51,7 +51,7 @@ _TEMPLATE_COLUMNS = (
 # conservative measure against edge cases, not a boss/civilian flag.
 _ENTRY_EXCLUSION_CATALOG_QUERY = """
     SELECT entry FROM creature_template
-    WHERE flags_extra & 1 != 0
+    WHERE flags_extra & 0x81 != 0
        OR `type` = 0
        OR VehicleId != 0
        OR npcflag != 0
@@ -116,6 +116,9 @@ def _load_excluded_guids() -> frozenset[int]:
     excluded.update(int(r[0]) for r in rows)
 
     rows = run_query("SELECT guid FROM creature WHERE phaseMask > 1 OR phaseMask = 0")
+    excluded.update(int(r[0]) for r in rows)
+
+    rows = run_query("SELECT DISTINCT -entryorguid FROM smart_scripts WHERE source_type = 0 AND entryorguid < 0")
     excluded.update(int(r[0]) for r in rows)
 
     rows = run_query("""

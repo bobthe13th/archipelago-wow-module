@@ -121,6 +121,8 @@ class TestLoadExcludedGuids(unittest.TestCase):
                 return [("101",)]
             if "phaseMask" in sql:
                 return [("102",)]
+            if "entryorguid < 0" in sql:
+                return [("104",)]
             if "creature_addon" in sql:
                 return [("103",)]
             raise AssertionError(f"unexpected query: {sql}")
@@ -128,7 +130,7 @@ class TestLoadExcludedGuids(unittest.TestCase):
         with patch("extract_mobs_snapshot.run_query", side_effect=fake_run_query):
             result = _load_excluded_guids()
 
-        self.assertEqual(result, frozenset({100, 101, 102, 103}))
+        self.assertEqual(result, frozenset({100, 101, 102, 103, 104}))
 
 
 class TestExtract(unittest.TestCase):
@@ -148,7 +150,7 @@ class TestExtract(unittest.TestCase):
             if "FROM creature_template_addon" in sql:
                 return []
             if "flags_extra" in sql:
-                return []  # _ENTRY_EXCLUSION_CATALOG_QUERY -- no matches
+                return [("148",)]  # _ENTRY_EXCLUSION_CATALOG_QUERY -- entry 148 matches
             if "ORDER BY entry" in sql:
                 return template_rows  # Main template query
             if "FROM creature_multispawn" in sql:
@@ -158,7 +160,7 @@ class TestExtract(unittest.TestCase):
             if "leaderGUID" in sql or "memberGUID" in sql:
                 return []
             if "phaseMask" in sql:
-                return []
+                return [("51235",)]  # Guid 51235 has special phaseMask
             if "FROM creature_addon" in sql:
                 return []
             if any(name in sql for name in (
@@ -180,10 +182,10 @@ class TestExtract(unittest.TestCase):
         self.assertIn("creature_spawns", data)
         self.assertEqual(len(data["creature_templates"]), 1)
         self.assertEqual(data["creature_templates"][0]["entry"], 148)
-        self.assertFalse(data["creature_templates"][0]["shuffle_excluded"])
+        self.assertTrue(data["creature_templates"][0]["shuffle_excluded"])
         self.assertEqual(len(data["creature_spawns"]), 1)
         self.assertEqual(data["creature_spawns"][0]["guid"], 51235)
-        self.assertFalse(data["creature_spawns"][0]["shuffle_excluded"])
+        self.assertTrue(data["creature_spawns"][0]["shuffle_excluded"])
 
 
 class TestCompileToPython(unittest.TestCase):
