@@ -225,6 +225,7 @@ public:
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
+        _zoneGating = sConfigMgr->GetOption<bool>("Archipelago.ZoneGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "SingleDeliveryCharacter"));
         _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
         _auctionHouseFactionMode = ParseAuctionHouseFactionMode(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseFactionMode", "Merged"));
@@ -246,6 +247,17 @@ public:
         sArchipelagoRealmState->SetDeathLinkReceiveEnabled(sConfigMgr->GetOption<bool>("Archipelago.DeathLinkReceiveEnabled", false));
         sArchipelagoRealmState->SetDeathLinkSendCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkSendCooldownSeconds", 15));
         sArchipelagoRealmState->SetDeathLinkReceiveCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkReceiveCooldownSeconds", 15));
+
+        // M6.0 (Playerbots Integration): four independent bot-awareness
+        // toggles, all off (safe/vanilla) by default -- see
+        // ArchipelagoRealmState.h's own comment on IsBotsSubjectToGating for
+        // why these are cached here rather than read directly at each hook's
+        // call site (consumed from APGating.cpp, ~16 different check-firing
+        // hook files, ArchipelagoDeathLinkScript.cpp, and APCatchUp.cpp).
+        sArchipelagoRealmState->SetBotsSubjectToGating(sConfigMgr->GetOption<bool>("Archipelago.BotsSubjectToGating", false));
+        sArchipelagoRealmState->SetBotChecksCountEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotChecksCount", false));
+        sArchipelagoRealmState->SetBotDeathsTriggerDeathLinkEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotDeathsTriggerDeathLink", false));
+        sArchipelagoRealmState->SetBotsReceiveCatchUpEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotsReceiveCatchUp", false));
 
         // Task 20: same not-persisted mirror-toggle discipline as DeathLink above.
         // suppressResSickness feeds ArchipelagoDeathLinkScript's OnPlayerResurrect
@@ -331,6 +343,7 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("proficiency", _proficiencyGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("access", _accessGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("character_unlocks", _characterUnlockGating);
+        sArchipelagoRealmState->SetGateFamilyEnabled("zone_access", _zoneGating);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -761,6 +774,7 @@ private:
     bool _proficiencyGating = false;
     bool _accessGating = false;
     bool _characterUnlockGating = false;
+    bool _zoneGating = false;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.

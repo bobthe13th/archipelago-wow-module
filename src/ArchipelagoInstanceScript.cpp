@@ -33,6 +33,7 @@
 #include "Creature.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "APRaidlogger.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -70,6 +71,8 @@ public:
     // "recorded at least once, order doesn't matter" model.
     void OnPlayerCreatureKill(Player* killer, Creature* killed) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(killer))
+            return;
         uint32_t entry = killed->GetEntry();
 
         if (sArchipelagoRealmState->GetInstanceClearMode() == "all_bosses")

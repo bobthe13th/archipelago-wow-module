@@ -20,6 +20,7 @@
 #include "GameObject.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCONTAINERSANITYContent.h"
@@ -85,6 +86,8 @@ public:
             return;
         Player* player = unit->ToPlayer();
         if (!sArchipelagoRealmState->IsEnabled())
+            return;
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
             return;
 
         uint64_t spawnId = static_cast<uint64_t>(go->GetSpawnId());

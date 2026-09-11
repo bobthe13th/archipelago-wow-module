@@ -21,6 +21,7 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "SharedDefines.h"
+#include "APBotSupport.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoREPSANITYContent.h"
 #include "ArchipelagoRealmState.h"
@@ -33,6 +34,8 @@ public:
     void OnPlayerReputationRankChange(Player* player, uint32 factionID, ReputationRank newRank,
         ReputationRank oldRank, bool /*increased*/) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         // A single reputation-changing event can cross more than one rank at
         // once (see file header) -- scan every rank in (oldRank, newRank]
         // rather than only checking newRank. When newRank <= oldRank (a

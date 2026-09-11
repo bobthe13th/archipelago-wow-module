@@ -148,6 +148,23 @@ public:
     bool GetDeathLinkReceiveEnabled() const { return _deathLinkReceiveEnabled; }
     void SetDeathLinkReceiveEnabled(bool enabled) { _deathLinkReceiveEnabled = enabled; }
     void SetDeathLinkSendCooldownSeconds(uint32_t seconds) { _deathLinkSendCooldownSeconds = seconds; }
+
+    // M6.0 (Playerbots Integration): four independent bot-awareness config
+    // levers, each sharing APBotDecision.h's ShouldApplyToBot(isBot, toggle)
+    // shape -- off (default) exempts bot-controlled players from the matching
+    // normal behavior, on treats them identically to real players. Mirrored
+    // here from worldserver.conf the same read-once-and-cache way as every
+    // other M4/M6 toggle above (see ArchipelagoWorldScript::OnBeforeConfigLoad),
+    // consumed from APGating.cpp, the location-check hook files,
+    // ArchipelagoDeathLinkScript.cpp, and APCatchUp.cpp.
+    bool IsBotsSubjectToGating() const { return _botsSubjectToGating; }
+    void SetBotsSubjectToGating(bool enabled) { _botsSubjectToGating = enabled; }
+    bool IsBotChecksCountEnabled() const { return _botChecksCountEnabled; }
+    void SetBotChecksCountEnabled(bool enabled) { _botChecksCountEnabled = enabled; }
+    bool IsBotDeathsTriggerDeathLinkEnabled() const { return _botDeathsTriggerDeathLinkEnabled; }
+    void SetBotDeathsTriggerDeathLinkEnabled(bool enabled) { _botDeathsTriggerDeathLinkEnabled = enabled; }
+    bool IsBotsReceiveCatchUpEnabled() const { return _botsReceiveCatchUpEnabled; }
+    void SetBotsReceiveCatchUpEnabled(bool enabled) { _botsReceiveCatchUpEnabled = enabled; }
     void SetDeathLinkReceiveCooldownSeconds(uint32_t seconds) { _deathLinkReceiveCooldownSeconds = seconds; }
 
     // Sec11: "send-side prevents a raid wipe spamming the multiworld" /
@@ -386,6 +403,10 @@ private:
     bool _deathLinkSendEnabled = false;
     bool _deathLinkReceiveEnabled = false;
     uint32_t _deathLinkSendCooldownSeconds = 15;
+    bool _botsSubjectToGating = false;
+    bool _botChecksCountEnabled = false;
+    bool _botDeathsTriggerDeathLinkEnabled = false;
+    bool _botsReceiveCatchUpEnabled = false;
     uint32_t _deathLinkReceiveCooldownSeconds = 15;
     int64_t _lastDeathLinkSentAt = 0;
     int64_t _lastDeathLinkReceivedAt = 0;

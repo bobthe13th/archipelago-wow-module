@@ -38,6 +38,8 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_6 = 830023;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_BANK_BAG_SLOT_SLOT_7 = 830024;
     inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS = 830025;
+    inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS_TRANCHE_2 = 830041;
+    inline constexpr int64_t AP_ITEM_TALENT_POINT_ACCESS_TRANCHE_3 = 830042;
     inline constexpr int64_t AP_ITEM_DUAL_SPEC_UNLOCK = 830026;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_1 = 830031;
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_2 = 830032;
@@ -47,6 +49,17 @@ namespace Archipelago::Gates
     inline constexpr int64_t AP_ITEM_PROGRESSIVE_GLYPH_SLOT_SLOT_6 = 830036;
     inline constexpr int64_t AP_ITEM_TBC_COMBO_UNLOCK = 830027;
     inline constexpr int64_t AP_ITEM_WOTLK_COMBO_UNLOCK = 830028;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_1 = 830037;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_2 = 830038;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_3 = 830039;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_BAG_SLOT_SLOT_4 = 830040;
+    inline constexpr int64_t AP_ITEM_RANDOM_FLIGHT_PATH_UNLOCK = 830045;
+    inline constexpr int64_t AP_ITEM_PORTABLE_MAILBOX = 830046;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_EXP_BOOST = 830043;
+    inline constexpr int64_t AP_ITEM_PROGRESSIVE_MOVE_SPEED_BOOST = 830044;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_SHATTRATH_CITY = 830047;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_ISLE_OF_QUEL_DANAS = 830048;
+    inline constexpr int64_t AP_ITEM_ZONE_ACCESS_DALARAN = 830049;
 
     inline std::unordered_map<int64_t, std::pair<std::string, uint32_t>> const ApItemToFlagKeyAndTier = {
         { 830000, { "riding", 1 } }, // Progressive Riding: Apprentice
@@ -77,6 +90,8 @@ namespace Archipelago::Gates
         { 830023, { "bank_bag_slots", 6 } }, // Progressive Bank Bag Slot: Slot 6
         { 830024, { "bank_bag_slots", 7 } }, // Progressive Bank Bag Slot: Slot 7
         { 830025, { "access_talent_points", 1 } }, // Talent Point Access
+        { 830041, { "access_talent_points", 2 } }, // Talent Point Access: Tranche 2
+        { 830042, { "access_talent_points", 3 } }, // Talent Point Access: Tranche 3
         { 830026, { "dual_spec", 1 } }, // Dual Spec Unlock
         { 830031, { "glyph_slots", 1 } }, // Progressive Glyph Slot: Slot 1
         { 830032, { "glyph_slots", 2 } }, // Progressive Glyph Slot: Slot 2
@@ -86,5 +101,25 @@ namespace Archipelago::Gates
         { 830036, { "glyph_slots", 6 } }, // Progressive Glyph Slot: Slot 6
         { 830027, { "combo_unlock_tbc", 1 } }, // TBC Combo Unlock
         { 830028, { "combo_unlock_wotlk", 1 } }, // WotLK Combo Unlock
+        { 830037, { "bag_slots", 1 } }, // Progressive Bag Slot: Slot 1
+        { 830038, { "bag_slots", 2 } }, // Progressive Bag Slot: Slot 2
+        { 830039, { "bag_slots", 3 } }, // Progressive Bag Slot: Slot 3
+        { 830040, { "bag_slots", 4 } }, // Progressive Bag Slot: Slot 4
+        { 830043, { "xp_boost", 1 } }, // Progressive EXP Boost
+        { 830044, { "speed_boost", 1 } }, // Progressive Move Speed Boost
+        { 830047, { "zone_access_shattrath_city", 1 } }, // Zone Access: Shattrath City
+        { 830048, { "zone_access_isle_of_quel_danas", 1 } }, // Zone Access: Isle of Quel'Danas
+        { 830049, { "zone_access_dalaran", 1 } }, // Zone Access: Dalaran
     };
+    inline constexpr std::pair<int64_t, uint32_t> AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW[] = {
+        { 830046, 850104 }, // "Portable Mailbox"
+    };
+    inline std::unordered_map<int64_t, uint32_t> BuildApItemIdToWowItemEntry()
+    {
+        std::unordered_map<int64_t, uint32_t> result;
+        for (auto const& row : AP_ITEM_ID_TO_WOW_ITEM_ENTRY_RAW)
+            result.emplace(row.first, row.second);
+        return result;
+    }
+    inline const std::unordered_map<int64_t, uint32_t> ApItemIdToWowItemEntry = BuildApItemIdToWowItemEntry();
 }

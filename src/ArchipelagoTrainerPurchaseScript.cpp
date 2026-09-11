@@ -12,6 +12,7 @@
 // in practice today; it's kept as a real, checked condition anyway -- same
 // "never silently assume, always check" discipline this family already
 // follows elsewhere -- rather than assumed true/false.
+#include "APBotSupport.h"
 #include "APGateDecision.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -32,7 +33,7 @@ public:
             return true; // not one of this family's gated spells -- vanilla behavior
 
         uint64_t locationId = static_cast<uint64_t>(locationIt->second);
-        if (!sArchipelagoRealmState->HasSentLocationCheck(locationId))
+        if (!sArchipelagoRealmState->HasSentLocationCheck(locationId) && Archipelago::Bots::ShouldRecordLocationCheck(player))
         {
             sArchipelagoMgr->SendLocationChecks({ locationIt->second });
             sArchipelagoRealmState->RecordLocationCheckAttribution(locationId, player->GetGUID().GetCounter());

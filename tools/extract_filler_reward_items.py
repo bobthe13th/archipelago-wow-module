@@ -107,6 +107,11 @@ _CATEGORY_QUERIES = {
           AND glt.Item > 0 AND glt.{_TEST_POLLUTION_FILTER.replace("entry", "Item")}
         ORDER BY glt.Item
     """,
+    "heirloom": f"""
+        SELECT entry, name FROM item_template
+        WHERE Quality = 7 AND {_TEST_POLLUTION_FILTER}
+        ORDER BY entry
+    """,
 }
 
 # Real "toy" candidates: WotLK 3.3.5a has no systematic Toy Box/IsToy

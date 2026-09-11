@@ -18,6 +18,7 @@
 // can never silently drop or overwrite a real entry.
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoRecipesContentTable.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -49,6 +50,8 @@ public:
 
     void OnPlayerLearnSpell(Player* player, uint32 spellID) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = CombinedSpellIdToLocationId.find(spellID);
         if (it != CombinedSpellIdToLocationId.end())
         {

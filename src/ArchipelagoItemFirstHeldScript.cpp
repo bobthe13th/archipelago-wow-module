@@ -18,6 +18,7 @@
 // through completely normal, unmutated gameplay.
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoITEMSANITYContent.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -29,6 +30,8 @@ public:
 
     void OnPlayerStoreNewItem(Player* player, Item* item, uint32 /*count*/) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = ArchipelagoITEMSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.find(item->GetEntry());
         if (it != ArchipelagoITEMSANITYContent::ITEM_ENTRY_TO_LOCATION_ID.end())
         {

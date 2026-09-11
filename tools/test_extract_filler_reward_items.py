@@ -38,7 +38,7 @@ class TestExtractElevenSimpleCategories(unittest.TestCase):
         # real run_query calls _extract_mount_or_pet_category makes.
         mock_extract_mount_or_pet.return_value = []
         mock_load_rules.return_value = {"name_denylist": []}
-        # 11 categories queried in this task (10 pre-existing + container_loot,
+        # 12 categories queried in this task (10 pre-existing + container_loot + heirloom,
         # in _CATEGORY_QUERIES dict order); one fixture row each.
         mock_run_query.side_effect = [
             [("40752", "Emblem of Heroism")],       # badge_currency
@@ -52,6 +52,7 @@ class TestExtractElevenSimpleCategories(unittest.TestCase):
             [("5976", "Guild Tabard")],                # tabard
             [("2895", "Creeping Pain")],                # reagent
             [("2589", "Linen Cloth")],                  # container_loot
+            [("23174", "Fluff's Silky Snare")],        # heirloom
         ]
         result = extract()
         self.assertEqual(result["family"], "filler_reward_items")
@@ -62,6 +63,7 @@ class TestExtractElevenSimpleCategories(unittest.TestCase):
         categories = {item["tags"]["category"][0] for item in result["items"]}
         self.assertIn("badge_currency", categories)
         self.assertIn("container_loot", categories)
+        self.assertIn("heirloom", categories)
 
     def test_toy_category_is_hardcoded_not_queried(self) -> None:
         # The 6 real toy candidates are curated directly, not via a broad
@@ -100,6 +102,7 @@ class TestCrossCategoryDeduplication(unittest.TestCase):
             [],  # tabard
             [],  # reagent
             [("38", "Recruit's Shirt"), ("2589", "Linen Cloth")],  # container_loot
+            [],  # heirloom
         ]
         result = extract()
         entries = [item["item_id"] - _ITEM_ID_BASE for item in result["items"]]
@@ -140,6 +143,19 @@ class TestMountPetExcludeCollections(unittest.TestCase):
         rows = _extract_mount_or_pet_category(subclass=5, category="mount")
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["entry"], 12303)
+
+
+class TestHeirloomCategory(unittest.TestCase):
+    def test_heirloom_category_present_in_extracted_rows(self) -> None:
+        rows = extract()
+        heirloom_rows = [r for r in rows["items"] if r["tags"]["category"] == ["heirloom"]]
+        self.assertGreater(len(heirloom_rows), 0)
+
+    def test_heirloom_item_ids_use_the_shared_item_id_base(self) -> None:
+        rows = extract()
+        heirloom_rows = [r for r in rows["items"] if r["tags"]["category"] == ["heirloom"]]
+        for row in heirloom_rows:
+            self.assertGreaterEqual(row["item_id"], 8_000_000)
 
 
 if __name__ == "__main__":

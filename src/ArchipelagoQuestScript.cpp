@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "QuestDef.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoQuestRewardsContentTable.h"
@@ -49,8 +50,11 @@ public:
         // this checkout's location pool (repeatable-quest rewards are rare
         // in this content family and out of scope for a repeat-behavior
         // option per the design spec's §8) -- always send-and-destroy.
-        sArchipelagoMgr->SendLocationChecks({ locationId });
-        sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
+        if (Archipelago::Bots::ShouldRecordLocationCheck(player))
+        {
+            sArchipelagoMgr->SendLocationChecks({ locationId });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
+        }
         player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
     }
 };
@@ -77,6 +81,8 @@ public:
     void OnPlayerCompleteQuest(Player* player, Quest const* quest) override
     {
         if (quest == nullptr)
+            return;
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
             return;
         auto it = ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_CHOICE_LOCATION_IDS.find(quest->GetQuestId());
         if (it == ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_CHOICE_LOCATION_IDS.end())

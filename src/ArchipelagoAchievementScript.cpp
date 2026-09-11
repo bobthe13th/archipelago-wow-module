@@ -17,6 +17,7 @@
 // module (ArchipelagoLootScript.cpp, ArchipelagoCollectionScript.cpp).
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "DBCStructure.h"
 #include "ArchipelagoAchievementsContentTable.h"
 #include "ArchipelagoManager.h"
@@ -29,6 +30,8 @@ public:
 
     void OnPlayerAchievementComplete(Player* player, AchievementEntry const* achievement) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = Archipelago::Achievements::AchievementIdToLocationId.find(achievement->ID);
         if (it != Archipelago::Achievements::AchievementIdToLocationId.end())
         {
