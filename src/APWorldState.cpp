@@ -19,7 +19,8 @@ namespace
     // PK per row -- apply/restore need to know which real column that
     // BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
     // <pk column> = ?`. creature_template (PK `entry`) and creature
-    // (PK `guid`) are wired up as of M5.0/M5.1.0 -- extend this map, one
+    // (PK `guid`) are wired up as of M5.0/M5.1.0, and game_weather
+    // (PK `zone`) as of M5.6.0 -- extend this map, one
     // line per table, the moment a later milestone's category snapshots
     // a new single-PK table. A composite-keyed table (npc_vendor, the loot templates --
     // Sec8's own documented caveat) needs a different resolution entirely
