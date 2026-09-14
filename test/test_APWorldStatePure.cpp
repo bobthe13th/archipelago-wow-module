@@ -27,3 +27,31 @@ TEST_CASE("DecideMutationApplyAction: mismatched marker and file world_seed appl
 {
     CHECK(DecideMutationApplyAction(true, "old-seed", "new-seed") == MutationApplyAction::Apply);
 }
+
+TEST_CASE("ColumnsMissingFromSnapshot: all new columns missing when existing is empty")
+{
+    std::vector<std::string> existing = {};
+    std::vector<std::string> incoming = {"name", "subname"};
+    CHECK(ColumnsMissingFromSnapshot(existing, incoming) == std::vector<std::string>{"name", "subname"});
+}
+
+TEST_CASE("ColumnsMissingFromSnapshot: no columns missing when all already present")
+{
+    std::vector<std::string> existing = {"minlevel", "maxlevel"};
+    std::vector<std::string> incoming = {"minlevel", "maxlevel"};
+    CHECK(ColumnsMissingFromSnapshot(existing, incoming).empty());
+}
+
+TEST_CASE("ColumnsMissingFromSnapshot: only the genuinely-missing columns are returned, in incoming order")
+{
+    std::vector<std::string> existing = {"name", "subname"};
+    std::vector<std::string> incoming = {"minlevel", "name", "maxlevel"};
+    CHECK(ColumnsMissingFromSnapshot(existing, incoming) == std::vector<std::string>{"minlevel", "maxlevel"});
+}
+
+TEST_CASE("ColumnsMissingFromSnapshot: empty incoming returns empty regardless of existing")
+{
+    std::vector<std::string> existing = {"name"};
+    std::vector<std::string> incoming = {};
+    CHECK(ColumnsMissingFromSnapshot(existing, incoming).empty());
+}

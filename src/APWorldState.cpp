@@ -173,6 +173,24 @@ void APWorldState::RestoreAllSnapshottedRows()
                 WorldDatabase.EscapeString(valueStr);
                 setClause << column << " = '" << valueStr << "'";
             }
+
+            // Fix 2 (M5.6.2's own final review, same rationale as Apply()'s
+            // capture-side guard): never blindly UPDATE a row when the PK
+            // filter doesn't match exactly one live row -- a table like
+            // creature_template_model has a composite real PK, and a
+            // schema-drifted extra row sharing this rowId's single-column
+            // PK value would otherwise get silently overwritten alongside
+            // the intended row.
+            if (QueryResult countResult = WorldDatabase.Query("SELECT COUNT(*) FROM {} WHERE {} = {}", tableName, pkIt->second, rowId))
+            {
+                uint64_t matchingRowCount = countResult->Fetch()[0].Get<uint64_t>();
+                if (matchingRowCount != 1)
+                {
+                    LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState found {} rows for {}#{} (expected exactly 1, PK column '{}' may not uniquely identify this row for this table) -- skipping restore to avoid corrupting multiple rows", matchingRowCount, tableName, rowId, pkIt->second);
+                    continue;
+                }
+            }
+
             WorldDatabase.DirectExecute("UPDATE {} SET {} WHERE {} = {}", tableName, setClause.str(), pkIt->second, rowId);
         } while (result->NextRow());
     }
@@ -227,49 +245,100 @@ void APWorldState::Apply(std::string const& fileWorldSeed, std::string const& co
             for (auto const& [column, _value] : payload.items())
                 columnNames.push_back(column);
 
-            std::ostringstream selectCols;
-            for (size_t i = 0; i < columnNames.size(); ++i)
-            {
-                if (i > 0)
-                    selectCols << ", ";
-                selectCols << columnNames[i];
-            }
-
-            // NULL-safe capture: Field::Get<std::string>() on a NULL
-            // column silently returns "" (not JSON null), which would
-            // permanently lose a true SQL NULL the moment it's captured
-            // -- check IsNull() explicitly and store JSON null instead.
-            json snapshotColumns = json::object();
-            if (QueryResult result = WorldDatabase.Query("SELECT {} FROM {} WHERE {} = {}", selectCols.str(), tableName, pkColumn, rowId))
-            {
-                Field* fields = result->Fetch();
-                for (size_t i = 0; i < columnNames.size(); ++i)
-                {
-                    if (fields[i].IsNull())
-                        snapshotColumns[columnNames[i]] = nullptr;
-                    else
-                        snapshotColumns[columnNames[i]] = fields[i].Get<std::string>();
-                }
-            }
-            else
-            {
-                LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState found no row {}#{} to mutate, skipping", tableName, rowId);
-                continue;
-            }
-
-            std::string escapedSnapshotJson = snapshotColumns.dump();
-            WorldDatabase.EscapeString(escapedSnapshotJson);
             std::string tableNameEscaped = tableName;
             WorldDatabase.EscapeString(tableNameEscaped);
-            // INSERT IGNORE: two categories in the same mutation-data file
-            // could target the same (table_name, row_id) -- the FIRST
-            // capture is the true pristine value; a later category
-            // targeting the same row must never overwrite that snapshot
-            // with an already-mutated value, and must never hard-fail
-            // the whole apply over a duplicate-key error.
-            WorldDatabase.DirectExecute(
-                "INSERT IGNORE INTO archipelago_world_mutation_snapshot (table_name, row_id, original_data_json) VALUES ('{}', {}, '{}')",
-                tableNameEscaped, rowId, escapedSnapshotJson);
+
+            // Sec8 cross-category fix (M5.6.2's own final review): a
+            // (table_name, row_id) may already have a snapshot captured by
+            // an EARLIER category in this same categories loop (categories
+            // are processed in the JSON's own key order -- alphabetical,
+            // per mutation_output.py's sort_keys=True). If so, only the
+            // columns THIS category's payload needs that are NOT already
+            // in that snapshot get captured and merged in -- an already-
+            // captured column's value is never overwritten (it's already
+            // the true pristine value for that column), and a later
+            // category's own columns are never silently dropped the way a
+            // plain INSERT IGNORE would drop them. See
+            // ColumnsMissingFromSnapshot (APWorldStatePure.h) for the pure
+            // set-difference this relies on.
+            std::vector<std::string> existingColumnNames;
+            std::string existingSnapshotJson;
+            bool hasExistingSnapshot = false;
+            if (QueryResult existingResult = WorldDatabase.Query(
+                    "SELECT original_data_json FROM archipelago_world_mutation_snapshot WHERE table_name = '{}' AND row_id = {}",
+                    tableNameEscaped, rowId))
+            {
+                hasExistingSnapshot = true;
+                existingSnapshotJson = existingResult->Fetch()[0].Get<std::string>();
+                json existingParsed = json::parse(existingSnapshotJson, nullptr, false);
+                if (!existingParsed.is_discarded() && existingParsed.is_object())
+                    for (auto const& [column, _value] : existingParsed.items())
+                        existingColumnNames.push_back(column);
+            }
+
+            std::vector<std::string> columnsToCapture = hasExistingSnapshot
+                ? Archipelago::WorldState::ColumnsMissingFromSnapshot(existingColumnNames, columnNames)
+                : columnNames;
+
+            if (!columnsToCapture.empty())
+            {
+                std::ostringstream captureSelectCols;
+                for (size_t i = 0; i < columnsToCapture.size(); ++i)
+                {
+                    if (i > 0)
+                        captureSelectCols << ", ";
+                    captureSelectCols << columnsToCapture[i];
+                }
+
+                // NULL-safe capture: Field::Get<std::string>() on a NULL
+                // column silently returns "" (not JSON null), which would
+                // permanently lose a true SQL NULL the moment it's captured
+                // -- check IsNull() explicitly and store JSON null instead.
+                json capturedColumns = json::object();
+                if (QueryResult result = WorldDatabase.Query("SELECT {} FROM {} WHERE {} = {}", captureSelectCols.str(), tableName, pkColumn, rowId))
+                {
+                    if (result->GetRowCount() != 1)
+                    {
+                        LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState found {} rows for {}#{} (expected exactly 1, PK column '{}' may not uniquely identify this row for this table) -- skipping to avoid corrupting multiple rows", result->GetRowCount(), tableName, rowId, pkColumn);
+                        continue;
+                    }
+                    Field* fields = result->Fetch();
+                    for (size_t i = 0; i < columnsToCapture.size(); ++i)
+                    {
+                        if (fields[i].IsNull())
+                            capturedColumns[columnsToCapture[i]] = nullptr;
+                        else
+                            capturedColumns[columnsToCapture[i]] = fields[i].Get<std::string>();
+                    }
+                }
+                else
+                {
+                    LOG_ERROR("module.archipelago_wow", "Archipelago: APWorldState found no row {}#{} to mutate, skipping", tableName, rowId);
+                    continue;
+                }
+
+                if (hasExistingSnapshot)
+                {
+                    json mergedColumns = json::parse(existingSnapshotJson, nullptr, false);
+                    if (mergedColumns.is_discarded() || !mergedColumns.is_object())
+                        mergedColumns = json::object();
+                    for (auto const& [column, value] : capturedColumns.items())
+                        mergedColumns[column] = value;
+                    std::string escapedMergedJson = mergedColumns.dump();
+                    WorldDatabase.EscapeString(escapedMergedJson);
+                    WorldDatabase.DirectExecute(
+                        "UPDATE archipelago_world_mutation_snapshot SET original_data_json = '{}' WHERE table_name = '{}' AND row_id = {}",
+                        escapedMergedJson, tableNameEscaped, rowId);
+                }
+                else
+                {
+                    std::string escapedSnapshotJson = capturedColumns.dump();
+                    WorldDatabase.EscapeString(escapedSnapshotJson);
+                    WorldDatabase.DirectExecute(
+                        "INSERT INTO archipelago_world_mutation_snapshot (table_name, row_id, original_data_json) VALUES ('{}', {}, '{}')",
+                        tableNameEscaped, rowId, escapedSnapshotJson);
+                }
+            }
 
             std::ostringstream setClause;
             bool first = true;

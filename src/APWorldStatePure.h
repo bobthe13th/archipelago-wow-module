@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace Archipelago::WorldState
 {
@@ -28,4 +29,15 @@ namespace Archipelago::WorldState
     };
 
     MutationApplyAction DecideMutationApplyAction(bool markerPresent, std::string const& markerWorldSeed, std::string const& fileWorldSeed);
+
+    // Sec8 cross-category fix (M5.6.2's own final review): identifies
+    // which of `newColumns` are NOT already present in `existingColumns`.
+    // Used when two Pipeline B categories target the same
+    // (table_name, row_id): the pristine snapshot must capture EVERY
+    // category's own columns, not just whichever category's INSERT ran
+    // first, or a later category's own mutation becomes permanently
+    // unrestorable (RestoreAllSnapshottedRows can only ever restore
+    // columns present in the stored JSON). Preserves newColumns' own
+    // relative order in the returned vector.
+    std::vector<std::string> ColumnsMissingFromSnapshot(std::vector<std::string> const& existingColumns, std::vector<std::string> const& newColumns);
 }
