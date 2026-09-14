@@ -294,9 +294,26 @@ bool APWorldState::ResolveDayNight(float& outSpeed, time_t& outGameTime)
 
     outSpeed = Archipelago::DayNight::ResolveGameSpeed(_dayNightState);
 
+    // SpeedMultiplier doesn't touch tm_hour/tm_min (ResolveTimeBreakdown is a pure
+    // passthrough for it), so outGameTime is just liveNow unchanged -- skip the
+    // breakdown/mktime round-trip entirely rather than pay for a no-op conversion.
+    if (_dayNightState.mode == Archipelago::DayNight::DayNightMode::SpeedMultiplier)
+    {
+        outGameTime = GameTime::GetGameTime().count();
+        return true;
+    }
+
     time_t liveNow = GameTime::GetGameTime().count();
     std::tm liveBreakdown = Acore::Time::TimeBreakdown(liveNow);
     std::tm resolvedBreakdown = Archipelago::DayNight::ResolveTimeBreakdown(_dayNightState, liveBreakdown);
+    // NOTE: mktime() normalizes resolvedBreakdown as local time, which includes
+    // resolving DST. On the ~2 days/year of a DST transition, an ambiguous
+    // (fall-back) or nonexistent (spring-forward) local hour could in theory make
+    // mktime() return a value slightly off from a naive hour-of-day expectation.
+    // Only PermaDay/PermaNight reach this line (Vanilla returns early above,
+    // SpeedMultiplier short-circuits just above), and the exact instant within
+    // the target hour isn't gameplay-significant for either, so this is noted
+    // here rather than worked around.
     outGameTime = mktime(&resolvedBreakdown);
     return true;
 }
