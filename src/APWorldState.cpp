@@ -10,6 +10,8 @@
 #include "QueryResult.h"
 #include "Log.h"
 #include "vendor/json.hpp"
+#include "Timer.h"       // Acore::Time::TimeBreakdown
+#include "GameTime.h"    // GameTime::GetGameTime
 
 using json = nlohmann::json;
 
@@ -33,6 +35,13 @@ namespace
         {"game_weather", "zone"},
     };
 }
+
+// Declared (not defined) directly in Player.cpp, next to its own patched
+// call site (M5.6.1) -- deliberately no shared header, same
+// deliberately-no-shared-header shape as
+// ArchipelagoShouldSuppressBankAccess/ArchipelagoShouldSuppressGlyphSlot.
+// See this plan's Global Constraints for why a hard #include wasn't used.
+extern bool (*ArchipelagoResolveDayNight)(float& outSpeed, time_t& outGameTime);
 
 APWorldState* APWorldState::instance()
 {
@@ -74,6 +83,23 @@ void APWorldState::ApplyIfNeeded(std::string const& slotName)
         return;
     }
     std::string fileWorldSeed = parsed["world_seed"].get<std::string>();
+
+    // M5.6.1: day/night has no DB row to snapshot/restore/skip -- resolve
+    // it on EVERY successful parse, independent of the category
+    // marker/skip decision below (which only governs DB-row re-application).
+    // Wiring the weak hook here too (idempotent, cheap to repeat) guarantees
+    // it's set before any player can log in and hit
+    // SendInitialPacketsBeforeAddToMap(), without needing a second,
+    // separate module-init call site.
+    if (parsed.contains("day_night") && parsed["day_night"].is_object())
+    {
+        std::string modeStr = parsed["day_night"].value("mode", "vanilla");
+        double speedPercent = parsed["day_night"].value("speed_percent", 100.0);
+        _dayNightState = Archipelago::DayNight::ParseDayNightState(modeStr, speedPercent);
+    }
+    ArchipelagoResolveDayNight = [](float& outSpeed, time_t& outGameTime) {
+        return sAPWorldState->ResolveDayNight(outSpeed, outGameTime);
+    };
 
     bool markerPresent = false;
     std::string markerWorldSeed;
@@ -259,4 +285,18 @@ void APWorldState::Apply(std::string const& fileWorldSeed, std::string const& co
     WorldDatabase.EscapeString(escapedSeed);
     WorldDatabase.DirectExecute("DELETE FROM archipelago_world_mutation_state WHERE id = 1");
     WorldDatabase.DirectExecute("INSERT INTO archipelago_world_mutation_state (id, world_seed, applied_at) VALUES (1, '{}', NOW())", escapedSeed);
+}
+
+bool APWorldState::ResolveDayNight(float& outSpeed, time_t& outGameTime)
+{
+    if (_dayNightState.mode == Archipelago::DayNight::DayNightMode::Vanilla)
+        return false;
+
+    outSpeed = Archipelago::DayNight::ResolveGameSpeed(_dayNightState);
+
+    time_t liveNow = GameTime::GetGameTime().count();
+    std::tm liveBreakdown = Acore::Time::TimeBreakdown(liveNow);
+    std::tm resolvedBreakdown = Archipelago::DayNight::ResolveTimeBreakdown(_dayNightState, liveBreakdown);
+    outGameTime = mktime(&resolvedBreakdown);
+    return true;
 }

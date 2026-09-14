@@ -1,8 +1,11 @@
 // azerothcore-wotlk/modules/archipelago_wow/src/APWorldState.h
 #pragma once
 
+#include <ctime>
 #include <optional>
 #include <string>
+
+#include "DayNightPure.h"
 
 // M5.0 Sec7-8: applies the generation-time mutation-data file
 // (<slot_name>_mutations.json) to WorldDatabase at server boot, tracked
@@ -26,9 +29,18 @@ public:
     // exists yet (fresh install, no mutation-data ever applied).
     std::optional<std::string> GetAppliedWorldSeed();
 
+    // M5.6.1: resolves this seed's day/night override, if any. Returns
+    // false (out-params untouched) when the resolved mode is Vanilla --
+    // callers must fall back to their own stock behavior in that case,
+    // exactly like every other weak-hook consumer in this codebase
+    // (ArchipelagoShouldSuppressBankAccess et al.).
+    bool ResolveDayNight(float& outSpeed, time_t& outGameTime);
+
 private:
     void Apply(std::string const& fileWorldSeed, std::string const& contentsJson);
     void RestoreAllSnapshottedRows();
+
+    Archipelago::DayNight::DayNightState _dayNightState;
 };
 
 #define sAPWorldState APWorldState::instance()
