@@ -21,18 +21,28 @@ namespace
     // PK per row -- apply/restore need to know which real column that
     // BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
     // <pk column> = ?`. creature_template (PK `entry`) and creature
-    // (PK `guid`) are wired up as of M5.0/M5.1.0, and game_weather
-    // (PK `zone`) as of M5.6.0 -- extend this map, one
-    // line per table, the moment a later milestone's category snapshots
-    // a new single-PK table. A composite-keyed table (npc_vendor, the loot templates --
-    // Sec8's own documented caveat) needs a different resolution entirely
-    // and is out of scope until whichever of M5.3-M5.5 first touches one;
+    // (PK `guid`) are wired up as of M5.0/M5.1.0, game_weather
+    // (PK `zone`) as of M5.6.0, and creature_template_model as of M5.6.2 -- extend
+    // this map, one line per table, the moment a later milestone's category snapshots
+    // a new single-PK table. IMPORTANT: creature_template_model has a COMPOSITE primary
+    // key (CreatureID, Idx) in the schema, but registering CreatureID alone is ONLY
+    // SAFE because M5.6.2's extraction step (in a separate Python repository) restricts
+    // candidates to creatures with exactly one creature_template_model row -- for that
+    // specific subset, CreatureID alone uniquely identifies the one row. This map has
+    // no way to express "single-column PK for restricted subset only" -- the safety
+    // boundary lives entirely in the Python layer, not here. A future developer reusing
+    // creature_template_model for another purpose (without the single-row restriction)
+    // could silently corrupt data. See M5.6.2's Global Constraints for context.
+    // Composite-keyed tables without such restrictions (npc_vendor, the loot templates --
+    // Sec8's own documented caveat) need a different resolution entirely and are out of
+    // scope until whichever milestone first touches one;
     // Apply()/RestoreAllSnapshottedRows() below both log and skip any row
     // for a table not in this map, rather than guessing a column name.
     std::unordered_map<std::string, std::string> const PK_COLUMN_BY_TABLE = {
         {"creature_template", "entry"},
         {"creature", "guid"},
         {"game_weather", "zone"},
+        {"creature_template_model", "CreatureID"},
     };
 }
 
