@@ -29,6 +29,7 @@ namespace
     std::unordered_map<std::string, std::string> const PK_COLUMN_BY_TABLE = {
         {"creature_template", "entry"},
         {"creature", "guid"},
+        {"game_weather", "zone"},
     };
 }
 
