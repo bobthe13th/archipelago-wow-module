@@ -13,10 +13,10 @@ class TestBuildEquipmentRow(unittest.TestCase):
 
 class TestBuildAddonRow(unittest.TestCase):
     def test_maps_every_field(self):
-        row = ("148", "1234", "16777216", "1", "5", "26400,17252")
+        row = ("148", "1234", "16777216", "1", "5", "26400 17252")
         result = build_addon_row(row)
         self.assertEqual(result, {
-            "entry": 148, "mount": 1234, "bytes1": 16777216, "bytes2": 1, "emote": 5, "auras": "26400,17252",
+            "entry": 148, "mount": 1234, "bytes1": 16777216, "bytes2": 1, "emote": 5, "auras": "26400 17252",
         })
 
     def test_null_auras_becomes_empty_string(self):
