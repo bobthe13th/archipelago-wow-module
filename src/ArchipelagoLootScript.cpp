@@ -18,19 +18,26 @@
 #include "Item.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoFishContentTable.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 class ArchipelagoLootScript : public PlayerScript
 {
 public:
     ArchipelagoLootScript() : PlayerScript("ArchipelagoLootScript", { PLAYERHOOK_ON_LOOT_ITEM }) { }
 
-    void OnPlayerLootItem(Player* /*player*/, Item* item, uint32 /*count*/, ObjectGuid /*lootguid*/) override
+    void OnPlayerLootItem(Player* player, Item* item, uint32 /*count*/, ObjectGuid /*lootguid*/) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = Archipelago::Fish::ItemEntryToLocationId.find(item->GetEntry());
         if (it != Archipelago::Fish::ItemEntryToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

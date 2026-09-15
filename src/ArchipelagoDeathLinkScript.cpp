@@ -45,6 +45,8 @@
 #include "Player.h"
 #include "ScriptMgr.h"
 #include "WorldSessionMgr.h"
+#include "APBotDecision.h"
+#include "APBotSupport.h"
 #include "ArchipelagoDeathLink.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -148,6 +150,11 @@ public:
             return;
         if (!sArchipelagoRealmState->GetDeathLinkSendEnabled())
             return;
+
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotDeathsTriggerDeathLinkEnabled()))
+            return;
+
         if (!sArchipelagoRealmState->TryConsumeDeathLinkSendCooldown())
         {
             LOG_INFO("module.archipelago_wow", "Archipelago: DeathLink send suppressed by cooldown for {}", player->GetName());

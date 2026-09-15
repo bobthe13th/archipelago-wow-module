@@ -77,33 +77,99 @@ Archipelago.ReconnectMaxSeconds = 60
 Archipelago.ProficiencyGating = 0
 
 #    Archipelago.AccessGating
-#        Description: Enable Auction House / Hearthstone / mailbox-send
-#                      access suppression (M4 gate family). Only turn this
-#                      on when the connected seed's player YAML also has
-#                      access_gating enabled -- same manual-sync
-#                      requirement and same "off is the safe direction" as
-#                      Archipelago.ProficiencyGating above. Note this only
-#                      covers 3 of the design's 5 access types: bank access
-#                      and gathering (mining/herbalism/skinning) have no
-#                      suppression hook in this AzerothCore checkout and are
-#                      not gated by this module (see content/gates.yaml's
-#                      comment for the research behind that).
+#        Description: Enable Auction House / Hearthstone / mailbox-send /
+#                      Bank / gathering (mining, herbalism, skinning, gated
+#                      as one access type) access suppression (M4 gate
+#                      family). Only turn this on when the connected seed's
+#                      player YAML also has access_gating enabled -- same
+#                      manual-sync requirement and same "off is the safe
+#                      direction" as Archipelago.ProficiencyGating above.
+#                      All 5 of the design's access types are gated when
+#                      this is on.
 #        Default:     0 (disabled)
 
 Archipelago.AccessGating = 0
 
 #    Archipelago.CharacterUnlockGating
-#        Description: Enable bank bag slot / dual spec / talent point
-#                      suppression (M4 gate family). Only turn this on when
-#                      the connected seed's player YAML also has
-#                      character_unlock_gating enabled -- same manual-sync
-#                      requirement and same "off is the safe direction" as
-#                      the other gate toggles above. Glyph Slot gating
-#                      (named in the design spec) is not implemented by
-#                      this module -- see content/gates.yaml's comment.
+#        Description: Enable bank bag slot / talent point / dual spec /
+#                      Glyph Slot suppression (M4 gate family). Only turn
+#                      this on when the connected seed's player YAML also
+#                      has character_unlock_gating enabled -- same
+#                      manual-sync requirement and same "off is the safe
+#                      direction" as the other gate toggles above. All four
+#                      character-unlock types named in the design (bank bag
+#                      slots, talent points, dual spec, Glyph Slots) are
+#                      gated when this is on.
 #        Default:     0 (disabled)
 
 Archipelago.CharacterUnlockGating = 0
+
+#    Archipelago.ZoneGating
+#        Description: Enable walkable-entry suppression for three curated
+#                      notable zones -- Shattrath City, Isle of Quel'Danas,
+#                      Dalaran (M4.14.2 gate family). Only turn this on when
+#                      the connected seed's player YAML also has zone_gating
+#                      enabled -- this module has no way to read that option
+#                      from the AP server itself, so the two must be set to
+#                      match by hand. Leaving this off while the seed has
+#                      the option on just means those items behave as
+#                      filler; turning this on for a seed that does NOT have
+#                      the option is the dangerous direction, since it will
+#                      permanently block entry into all 3 zones for every
+#                      character on the realm (the flag can never reach
+#                      tier 1 -- the item was never placed in that seed).
+#        Default:     0 (disabled)
+
+Archipelago.ZoneGating = 0
+
+#    Archipelago.BotsSubjectToGating
+#        Description: Whether mod-playerbots-controlled bot characters are
+#                      subject to proficiency/access/character-unlock gating
+#                      (M6.0 Playerbots Integration). Off (default): bots
+#                      bypass all three gate families regardless of whether
+#                      they're enabled for real players. On: bots are checked
+#                      exactly like real players. Has no effect in a build
+#                      with no mod-playerbots module present.
+#        Default:     0 (disabled)
+
+Archipelago.BotsSubjectToGating = 0
+
+#    Archipelago.BotChecksCount
+#        Description: Whether a bot's own kill/turn-in/loot/craft/learn/etc.
+#                      fires an AP location check (M6.0 Playerbots
+#                      Integration). Off (default): only a real player's own
+#                      actions ever record/send AP location checks -- bots
+#                      help with combat/utility but don't earn checks, and a
+#                      bot leveling to a milestone does not complete that
+#                      milestone's goal either (same guard -- see
+#                      ArchipelagoLevelScript.cpp). On: a bot's actions count
+#                      exactly like a real player's.
+#        Default:     0 (disabled)
+
+Archipelago.BotChecksCount = 0
+
+#    Archipelago.BotDeathsTriggerDeathLink
+#        Description: Whether a bot dying sends a DeathLink Bounce (M6.0
+#                      Playerbots Integration). Off (default): a bot dying
+#                      never sends DeathLink, even with
+#                      Archipelago.DeathLinkSendEnabled on -- combat bots die
+#                      far more often than a careful human player. On: bot
+#                      deaths send exactly like real player deaths. Separate
+#                      from Archipelago.BotChecksCount -- this is about an
+#                      outgoing multiworld-wide signal, not check-crediting.
+#        Default:     0 (disabled)
+
+Archipelago.BotDeathsTriggerDeathLink = 0
+
+#    Archipelago.BotsReceiveCatchUp
+#        Description: Whether a freshly-logged-in or leveling-up bot triggers
+#                      Archipelago.CatchUpPolicy delivery (M6.0 Playerbots
+#                      Integration). Off (default): a bot login/level-up never
+#                      triggers catch-up delivery. On: bots catch up like any
+#                      new character.
+#        Default:     0 (disabled)
+
+Archipelago.BotsReceiveCatchUp = 0
 
 #    Archipelago.DeliveryPolicy
 #        Description: How Archipelago-granted items reach players (M4 Sec7).
@@ -156,6 +222,32 @@ Archipelago.DeliveryPolicy = "SingleDeliveryCharacter"
 #        Default:     "Market"
 
 Archipelago.AuctionHouseCostTier = "Market"
+
+#    Archipelago.AuctionHouseFactionMode
+#        Description: Only used when Archipelago.DeliveryPolicy is
+#                      "AuctionHouse" -- which real Auction House(s) a
+#                      delivered item is listed on (M4.11.5.2.1). Merged
+#                      matches today's original behavior exactly: one
+#                      listing, the neutral house. PerFaction lists three
+#                      genuinely independent copies -- one each on the
+#                      Alliance, Horde, and neutral houses, each its own
+#                      real item and independently buyable/rollable
+#                      (a Random CostTier rolls separately per copy) --
+#                      UNLESS the real, separate worldserver.conf setting
+#                      AllowTwoSide.Interaction.Auction is enabled (default
+#                      off): AzerothCore's own AuctionHouseMgr routes every
+#                      house lookup to the neutral house whenever that
+#                      setting is on, so all three PerFaction copies land
+#                      on the neutral house as three duplicate listings
+#                      instead of one per faction. This module never reads
+#                      or writes that setting itself -- if you want
+#                      PerFaction's real three-house split, leave
+#                      worldserver.conf's AllowTwoSide.Interaction.Auction
+#                      at its own default (off).
+#        Values:      "Merged" (default) | "PerFaction"
+#        Default:     "Merged"
+
+Archipelago.AuctionHouseFactionMode = "Merged"
 
 #    Archipelago.CatchUpPolicy
 #        Description: How a brand-new character catches up on WoW items the
@@ -275,34 +367,6 @@ Archipelago.SpiritHealerVariant = "Vanilla"
 Archipelago.ComboUnlocksScope = "Off"
 ###################################################################################################
 
-#    Archipelago.InstanceClearMode
-#        Description: How much of Molten Core/Sunwell Plateau/Icecrown
-#                      Citadel (Task 23, M4 Sec5.4) must die before that
-#                      raid's instance-clear location check fires.
-#                      "AllBosses" (default) requires every boss configured
-#                      for that raid to have died at least once, across
-#                      however many attempts/raid nights it takes --
-#                      resurrection-prone or multi-phase fights (Sunwell's
-#                      Eredar Twins, Kalecgos, M'uru) are handled correctly
-#                      regardless of kill order. "FinalBossOnly" fires the
-#                      instant the raid's own final boss dies, matching how
-#                      the two M2 dungeons (Ragefire Chasm, Deadmines)
-#                      already behave -- those two dungeons are NOT affected
-#                      by this setting either way, since they have no
-#                      configured boss roster to track. Realm-wide, not
-#                      per-character; re-applied on both startup and
-#                      `.reload config` has no effect here since this value
-#                      is read live on every boss kill, not cached into a
-#                      pushed sWorld config value like ComboUnlocksScope
-#                      above. Only turn this away from the default when the
-#                      connected seed's player YAML also has a matching
-#                      instance_clear_mode option.
-#        Values:      "AllBosses" (default) | "FinalBossOnly"
-#        Default:     "AllBosses"
-
-Archipelago.InstanceClearMode = "AllBosses"
-###################################################################################################
-
 #    Archipelago.GameMode
 #        Description: Which goal-mode the connected AP seed is generated
 #                      for. Found necessary during Task 23/24's own review,
@@ -316,15 +380,14 @@ Archipelago.InstanceClearMode = "AllBosses"
 #                      goal-complete status update for anything but Sprint,
 #                      even if the connected seed's own game_mode option (and
 #                      its completion_condition) says otherwise. Modes with
-#                      no real content yet (KeyHunt, Artisan, Collector,
-#                      AchievementHunt, Gladiator, Explorer, FishingQuest) are
+#                      no real content yet (KeyHunt, Artisan, Collector) are
 #                      accepted here without error but never report
-#                      completion, matching the apworld's own
-#                      goals.py deferral for those modes.
+#                      completion, matching the apworld's own goals.py
+#                      deferral for those modes.
 #        Values:      "Sprint" (default) | "KeyHunt" | "Classic" |
 #                      "BurningCrusade" | "Wrath" | "Completionist" |
 #                      "Artisan" | "Collector" | "AchievementHunt" |
-#                      "Gladiator" | "Explorer" | "FishingQuest"
+#                      "Explorer" | "FishingQuest" | "ZoneLeveler"
 #        Default:     "Sprint"
 
 Archipelago.GameMode = "Sprint"
@@ -400,4 +463,31 @@ Archipelago.ArtisanPrimaryProfessionsRequired = 2
 #        Default:     264
 
 Archipelago.CollectorItemsRequired = 264
+###################################################################################################
+
+#
+#    Archipelago.AchievementHuntTier
+#        Description: Only relevant when Archipelago.GameMode is
+#                      "AchievementHunt" (M4.9) -- which of the three
+#                      curated tiers the completion rule requires.
+#                      Must match the connected seed's own
+#                      achievement_hunt_tier option.
+#        Values:      "HundredPercent" (default) | "NinetyNinePercent" |
+#                      "NamedSubset"
+#        Default:     "HundredPercent"
+
+Archipelago.AchievementHuntTier = "HundredPercent"
+
+#    Archipelago.AchievementHuntSubset
+#        Description: Only relevant when Archipelago.GameMode is
+#                      "AchievementHunt" and Archipelago.AchievementHuntTier
+#                      is "NamedSubset" -- which of the six real,
+#                      Achievement.dbc-category-derived thematic subsets is
+#                      required. Must match the connected seed's own
+#                      achievement_hunt_subset option.
+#        Values:      "Explorer" (default) | "Dungeons" | "Raids" |
+#                      "Professions" | "Reputation" | "Pvp"
+#        Default:     "Explorer"
+
+Archipelago.AchievementHuntSubset = "Explorer"
 ###################################################################################################

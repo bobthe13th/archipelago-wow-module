@@ -1,0 +1,73 @@
+# azerothcore-wotlk/modules/archipelago_wow/content/holidaysanity.yaml
+# GENERATED-FROM-CURATION, hand-authored (not DB-extracted): the 14 rows
+# below are a curated subset of real game_event/game_event_seasonal_
+# questrelation/game_event_creature/game_event_gameobject data, decided
+# once during design (see docs/superpowers/specs/2026-08-24-archipelago-
+# wow-m4.10-sanity-expansions-design.md §8a's include/exclude tables), not
+# something an extraction script re-derives on every run. Regenerate the
+# COMPILED output (holidaysanity_content_data.py / ArchipelagoHOLIDAYSANITYContent.h)
+# with generate_content.py exactly like every other family; only THIS
+# source file is hand-edited, and only when the curated roster itself
+# changes (re-run tools/verify_holidaysanity_roster.py first -- Task 2 --
+# to confirm the referenced game_event ids/names still exist).
+family: holidaysanity
+
+locations: []
+
+items:
+  - name: "Holiday Unlock: Midsummer Fire Festival"
+    item_id: 831000
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_midsummer, tier: 1}
+  - name: "Holiday Unlock: Hallow's End"
+    item_id: 831001
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_hallows_end, tier: 1}
+  - name: "Holiday Unlock: Lunar Festival"
+    item_id: 831002
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_lunar_festival, tier: 1}
+  - name: "Holiday Unlock: Love is in the Air"
+    item_id: 831003
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_love_is_in_the_air, tier: 1}
+  - name: "Holiday Unlock: Children's Week"
+    item_id: 831004
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_childrens_week, tier: 1}
+  - name: "Holiday Unlock: Brewfest"
+    item_id: 831005
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_brewfest, tier: 1}
+  - name: "Holiday Unlock: Pilgrim's Bounty"
+    item_id: 831006
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_pilgrims_bounty, tier: 1}
+  - name: "Holiday Unlock: Winter Veil"
+    item_id: 831007
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_winter_veil, tier: 1}
+  - name: "Holiday Unlock: Day of the Dead"
+    item_id: 831008
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_day_of_the_dead, tier: 1}
+  - name: "Holiday Unlock: Noblegarden"
+    item_id: 831009
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_noblegarden, tier: 1}
+  - name: "Holiday Unlock: Harvest Festival"
+    item_id: 831010
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_harvest_festival, tier: 1}
+  - name: "Holiday Unlock: New Year's Eve"
+    item_id: 831011
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_new_years_eve, tier: 1}
+  - name: "Holiday Unlock: Darkmoon Faire"
+    item_id: 831012
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_darkmoon_faire, tier: 1}
+  - name: "Holiday Unlock: Scourge Invasion"
+    item_id: 831013
+    count: 1
+    delivery: {kind: flag, flag_key: holiday_scourge_invasion, tier: 1}

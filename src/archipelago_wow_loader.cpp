@@ -8,13 +8,23 @@ void AddArchipelagoDarkPortalScripts();
 void AddArchipelagoNorthrendPassageScripts();
 void AddArchipelagoGatingScripts();
 void AddArchipelagoCacheKeeperScripts();
+void AddArchipelagoHolidayHeraldScripts();
 void AddArchipelagoTrapScripts();
 void AddArchipelagoDeathLinkScripts();
 void AddArchipelagoLootScripts();
 void AddArchipelagoProfessionScripts();
 void AddArchipelagoCollectionScripts();
 void AddArchipelagoLearnSpellScripts();
+void AddArchipelagoTrainerPurchaseScripts();
+void AddArchipelagoCraftsanityScripts();
 void AddArchipelagoInterceptionScripts();
+void AddArchipelagoAchievementScripts();
+void AddArchipelagoLootSlotScripts();
+void AddArchipelagoRepsanityScripts();
+void AddArchipelagoItemFirstHeldScripts();
+void AddArchipelagoZonePoolScripts();
+void AddArchipelagoPortableMailboxScripts();
+void AddArchipelagoZoneAccessScripts();
 
 // Folder name is "archipelago_wow" (no dashes) -> loader function is Addarchipelago_wowScripts,
 // called automatically by the core's generated AddModulesScripts() wrapper.
@@ -30,12 +40,22 @@ void Addarchipelago_wowScripts()
     AddArchipelagoNorthrendPassageScripts();
     AddArchipelagoGatingScripts();
     AddArchipelagoCacheKeeperScripts();
+    AddArchipelagoHolidayHeraldScripts();
     AddArchipelagoTrapScripts();
     AddArchipelagoDeathLinkScripts();
     AddArchipelagoLootScripts();
     AddArchipelagoProfessionScripts();
     AddArchipelagoCollectionScripts();
     AddArchipelagoLearnSpellScripts();
+    AddArchipelagoTrainerPurchaseScripts();
+    AddArchipelagoCraftsanityScripts();
     AddArchipelagoInterceptionScripts();
+    AddArchipelagoAchievementScripts();
+    AddArchipelagoLootSlotScripts();
+    AddArchipelagoRepsanityScripts();
+    AddArchipelagoItemFirstHeldScripts();
+    AddArchipelagoZonePoolScripts();
+    AddArchipelagoPortableMailboxScripts();
+    AddArchipelagoZoneAccessScripts();
 }
 

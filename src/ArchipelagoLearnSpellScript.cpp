@@ -18,18 +18,24 @@
 // can never silently drop or overwrite a real entry.
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "ArchipelagoRecipesContentTable.h"
-#include "ArchipelagoTrainerSpellsContentTable.h"
 #include "ArchipelagoManager.h"
+#include "ArchipelagoRealmState.h"
 
 namespace
 {
     std::unordered_map<uint32_t, int64_t> BuildCombinedSpellIdToLocationId()
     {
+        // trainer_spells no longer belongs here (M-next): that family's
+        // location now fires from ArchipelagoTrainerPurchaseScript's own
+        // OnPlayerCanTrainerTeachSpell hook, BEFORE the vanilla learn is
+        // ever allowed to happen -- merging its map back in here would
+        // make the same check fire a second time the moment the matching
+        // Progressive item's grant calls learnSpell(), since that call
+        // fires this same OnPlayerLearnSpell hook too (Player.cpp:3426).
         std::unordered_map<uint32_t, int64_t> result;
         for (auto const& row : ArchipelagoRECIPESContent::SPELL_ID_TO_LOCATION_ID)
-            result.emplace(row.first, row.second);
-        for (auto const& row : ArchipelagoTRAINER_SPELLSContent::SPELL_ID_TO_LOCATION_ID)
             result.emplace(row.first, row.second);
         return result;
     }
@@ -42,11 +48,16 @@ class ArchipelagoLearnSpellScript : public PlayerScript
 public:
     ArchipelagoLearnSpellScript() : PlayerScript("ArchipelagoLearnSpellScript", { PLAYERHOOK_ON_LEARN_SPELL }) { }
 
-    void OnPlayerLearnSpell(Player* /*player*/, uint32 spellID) override
+    void OnPlayerLearnSpell(Player* player, uint32 spellID) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(player))
+            return;
         auto it = CombinedSpellIdToLocationId.find(spellID);
         if (it != CombinedSpellIdToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ it->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(it->second), player->GetGUID().GetCounter());
+        }
     }
 };
 

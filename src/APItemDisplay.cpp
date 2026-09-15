@@ -23,15 +23,16 @@ namespace
         return 850103; // unreachable, keeps MSVC's exhaustiveness warning quiet
     }
 
-    // Builds an unordered_map<int64_t /*location_id*/, uint32_t /*original quest_id*/>
-    // reversed from QUEST_ID_TO_LOCATION_ID -- SynthesizeAndRewireLocations iterates
-    // `display` by location_id and needs to go the OTHER direction (location -> trigger
-    // fields) to know which quest_template row to touch.
-    std::unordered_map<int64_t, uint32_t> BuildLocationIdToQuestId()
+    // Reversed from QUEST_REWARD_SLOT_TO_LOCATION_ID (M4.11.5.0.6) --
+    // SynthesizeAndRewireLocations iterates `display` by location_id and
+    // needs to go the OTHER direction (location -> its own exact quest_id +
+    // column_index) to know which single quest_template column this
+    // location's own reward slot is.
+    std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> BuildLocationIdToQuestRewardSlot()
     {
-        std::unordered_map<int64_t, uint32_t> result;
-        for (auto const& [questId, locationId] : ArchipelagoQUEST_REWARDSContent::QUEST_ID_TO_LOCATION_ID)
-            result[locationId] = questId;
+        std::unordered_map<int64_t, std::pair<uint32_t, uint32_t>> result;
+        for (auto const& [questIdAndColumn, locationId] : ArchipelagoQUEST_REWARDSContent::QUEST_REWARD_SLOT_TO_LOCATION_ID)
+            result[locationId] = questIdAndColumn;
         return result;
     }
 
@@ -90,12 +91,29 @@ namespace
     }
 }
 
+namespace
+{
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> g_synthesizedDisplayData;
+}
+
 namespace Archipelago::ItemDisplay
 {
+    std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& GetSynthesizedDisplayData()
+    {
+        return g_synthesizedDisplayData;
+    }
+
+    void SetSynthesizedDisplayData(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display)
+    {
+        g_synthesizedDisplayData = display;
+    }
+
     void SynthesizeAndRewireLocations(std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display)
     {
-        auto locationToQuestId = BuildLocationIdToQuestId();
+        auto locationToQuestRewardSlot = BuildLocationIdToQuestRewardSlot();
         auto locationToVendorSlot = BuildLocationIdToVendorSlot();
+        auto locationToSkinningLootSlot = BuildLocationIdToSkinningLootSlot();
+        auto locationToDisenchantLootSlot = BuildLocationIdToDisenchantLootSlot();
         uint32_t newlySynthesizedCount = 0;
 
         for (auto const& [locationId, itemDisplay] : display)
@@ -128,90 +146,47 @@ namespace Archipelago::ItemDisplay
             auto itemClass = Archipelago::Interception::ClassifyItem(itemDisplay.flags);
             SynthesizeItemTemplateRow(entry, itemDisplay.name, IconEntryFor(itemClass));
 
-            if (auto it = locationToQuestId.find(locationId); it != locationToQuestId.end())
+            if (auto it = locationToQuestRewardSlot.find(locationId); it != locationToQuestRewardSlot.end())
             {
-                uint32_t questId = it->second;
+                auto const& [questId, columnIndex] = it->second;
+                std::string column = Archipelago::ItemDisplay::QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER[columnIndex];
 
-                // QUEST_ID_TO_LOCATION_ID doesn't carry which of the 10
-                // reward-item columns held the real trigger item (unlike the
-                // vendor map below, which does), so that column has to be
-                // re-derived at runtime -- via the exact same preference
-                // order pick_representative_reward() used at generation
-                // time (see PickRewardColumn's doc comment). Blindly setting
-                // all 10 columns unconditionally would corrupt the fixed
-                // RewardItem1-4 slots, which are separate items always
-                // granted together, not mutually-exclusive alternatives.
-                // (The 6 RewardChoiceItemID columns are handled deliberately
-                // below -- see Finding I5's comment after PickRewardColumn.)
-                std::array<uint32_t, 10> columnValues{};
-                bool questRowFound = false;
                 if (QueryResult result = WorldDatabase.Query(
-                        "SELECT RewardItem1, RewardItem2, RewardItem3, RewardItem4, "
-                        "RewardChoiceItemID1, RewardChoiceItemID2, RewardChoiceItemID3, "
-                        "RewardChoiceItemID4, RewardChoiceItemID5, RewardChoiceItemID6 "
-                        "FROM quest_template WHERE ID = {}",
-                        questId))
+                        "SELECT {}, RewardAmount1 FROM quest_template WHERE ID = {}", column, questId))
                 {
-                    questRowFound = true;
                     Field* fields = result->Fetch();
-                    for (size_t i = 0; i < columnValues.size(); ++i)
-                        columnValues[i] = fields[i].Get<uint32_t>();
-                }
-
-                if (auto picked = Archipelago::ItemDisplay::PickRewardColumn(columnValues))
-                {
-                    // Finding I5 (M4.7 final review): RewardColumnsToRewrite
-                    // returns just the one picked (column, originalValue)
-                    // pair for a fixed-slot quest, or that pair PLUS every
-                    // other non-zero choice column when the picked column is
-                    // itself a player-choice column -- see its own doc
-                    // comment in APItemDisplay.h for why the latter is
-                    // necessary (a player who picks a different real choice
-                    // must still trigger the synthesized reward). Each pair
-                    // is matched on its own original value per this task's
-                    // idempotency constraint -- after a given UPDATE runs
-                    // once, that column no longer equals originalValue, so a
-                    // second run of the same statement matches zero rows and
-                    // is a safe no-op.
-                    for (auto const& [column, originalValue] :
-                         Archipelago::ItemDisplay::RewardColumnsToRewrite(*picked, columnValues))
+                    uint32_t originalValue = fields[0].Get<uint32_t>();
+                    uint32_t rewardAmount1 = fields[1].Get<uint32_t>();
+                    if (columnIndex == 0 && rewardAmount1 == 0)
+                    {
+                        // M4.11.5.0.6: the is_filler_reward fallback case (a
+                        // quest with no real reward at all) always lands here
+                        // as column_index 0 (RewardItem1) with its own real
+                        // RewardAmount1 still at 0 -- force it to 1 in the
+                        // same UPDATE, same "RewardItemId != 0 with count ==
+                        // 0 means don't actually reward it" bug this project
+                        // already found and fixed once (M4.7.1.3). A genuine
+                        // real RewardItem1 fixed-slot reward never has
+                        // RewardAmount1 == 0 in real vanilla data, so this
+                        // branch never fires for a real reward by
+                        // construction.
+                        WorldDatabase.Execute(
+                            "UPDATE quest_template SET {} = {}, RewardAmount1 = 1 WHERE ID = {} AND {} = {}",
+                            column, entry, questId, column, originalValue);
+                    }
+                    else
                     {
                         WorldDatabase.Execute(
                             "UPDATE quest_template SET {} = {} WHERE ID = {} AND {} = {}",
-                            column, entry, questId, column, originalValue
-                        );
+                            column, entry, questId, column, originalValue);
                     }
-                }
-                else if (!questRowFound)
-                {
-                    LOG_ERROR("module.archipelago_wow",
-                        "Archipelago: quest {} (location {}) has no quest_template row at all "
-                        "-- content/data desync, no trigger column to rewrite, skipped",
-                        questId, locationId);
                 }
                 else
                 {
-                    // M4.7.1.3: no longer an error case -- a quest with
-                    // zero real reward columns is now expected for any
-                    // is_filler_reward-tagged location (extract_quest_rewards.py).
-                    // Give it a real reward: RewardItem1, matched on its
-                    // own current value 0. RewardAmount1 MUST also be set
-                    // to a nonzero count in the same statement -- AzerothCore
-                    // treats RewardItemId != 0 with RewardItemIdCount == 0 as
-                    // "don't actually reward this item" (ObjectMgr.cpp's
-                    // LoadQuests validation), which cascades to
-                    // Item::CreateItem returning nullptr and this module's
-                    // own OnPlayerQuestRewardItem hook silently no-op'ing on
-                    // a null item -- the location would never be checkable.
-                    // Confirmed the hard way: this bug shipped once already
-                    // and left all 5,504 filler-tagged locations uncheckable
-                    // before this fix (caught in M4.7.1.3's final review).
-                    auto const& [column, originalValue] =
-                        Archipelago::ItemDisplay::FallbackRewardColumnForFillerQuest();
-                    WorldDatabase.Execute(
-                        "UPDATE quest_template SET {} = {}, RewardAmount1 = 1 WHERE ID = {} AND {} = {}",
-                        column, entry, questId, column, originalValue
-                    );
+                    LOG_ERROR("module.archipelago_wow",
+                        "Archipelago: quest {} slot {} (location {}) has no quest_template row at all "
+                        "-- content/data desync, no trigger column to rewrite, skipped",
+                        questId, columnIndex, locationId);
                 }
                 continue;
             }
@@ -298,9 +273,69 @@ namespace Archipelago::ItemDisplay
                 continue;
             }
 
+            // M4.11.4.2: the gameobject_loot branch that used to live here
+            // (Gathersanity's own gathering_node rows, keyed through
+            // BuildLocationIdToGameobjectLootSlot) was removed once
+            // gathering_node was rewritten to zone_pool_credit -- see
+            // APItemDisplay.h's comment on the removed
+            // BuildLocationIdToGameobjectLootSlot for the full history. No
+            // family emits a gameobject_loot-triggered row anymore.
+
+            if (auto it = locationToSkinningLootSlot.find(locationId); it != locationToSkinningLootSlot.end())
+            {
+                auto const& [lootId, originalItemEntry] = it->second;
+
+                // skinning_loot_template's real PK is (Entry, Item, GroupId),
+                // but GroupId is deliberately NOT in this WHERE clause --
+                // confirmed live during planning that GroupId is AzerothCore's
+                // normal multi-group loot mechanic here (most real rows use
+                // GroupId=1, not 0) and that zero real (Entry, Item) pairs
+                // span more than one GroupId, so matching on (Entry, Item)
+                // alone is safe, unambiguous, and correctly reaches every real
+                // row regardless of its GroupId -- same idempotent shape as
+                // every other synthesis branch here.
+                WorldDatabase.Execute(
+                    "UPDATE skinning_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
+                    entry, lootId, originalItemEntry
+                );
+
+                // Persist the ORIGINAL wow item entry, same rationale/shape
+                // as the gameobject-loot branch above -- ArchipelagoLootSlotScript.cpp's
+                // repeat-loot behaviors need it back after Item has been
+                // overwritten to point at the synthesized entry.
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, originalItemEntry
+                );
+                continue;
+            }
+
+            if (auto it = locationToDisenchantLootSlot.find(locationId); it != locationToDisenchantLootSlot.end())
+            {
+                auto const& [lootId, originalItemEntry] = it->second;
+
+                // Same GroupId reasoning as the skinning branch above --
+                // disenchant_loot_template's real rows split 18/GroupId=0 vs
+                // 105/GroupId=1, zero (Entry, Item) collisions across groups,
+                // so GroupId is deliberately omitted from this WHERE clause too.
+                WorldDatabase.Execute(
+                    "UPDATE disenchant_loot_template SET Item = {} WHERE Entry = {} AND Item = {}",
+                    entry, lootId, originalItemEntry
+                );
+
+                WorldDatabase.Execute(
+                    "INSERT INTO archipelago_lootslot_original_items (location_id, original_item_id) "
+                    "VALUES ({}, {}) ON DUPLICATE KEY UPDATE original_item_id = VALUES(original_item_id)",
+                    locationId, originalItemEntry
+                );
+                continue;
+            }
+
             LOG_ERROR("module.archipelago_wow",
                 "Archipelago: slot_data ap_item_display had location {} with no matching "
-                "quest_reward or vendor_purchase trigger -- skipped, no row to rewrite",
+                "quest_reward, vendor_purchase, gameobject_loot, skinning_loot, or "
+                "disenchant_loot trigger -- skipped, no row to rewrite",
                 locationId);
         }
 
@@ -309,11 +344,21 @@ namespace Archipelago::ItemDisplay
         // SetInitialWorldSettings() has already loaded item_template/
         // npc_vendor/quest_template into their in-memory caches at startup.
         // The DB rows just written above are correct, but this AzerothCore
-        // checkout has no live-reload path for any of those three tables
-        // (no bare `.reload item_template`, confirmed against
-        // src/server/scripts/Commands/cs_reload.cpp), so the vendor/quest
-        // slot this run just rewrote still shows the REAL WoW item in-game
-        // until the process restarts and reloads those caches from disk.
+        // checkout has no live-reload path for any of those tables (no bare
+        // `.reload item_template`, confirmed against
+        // src/server/scripts/Commands/cs_reload.cpp), so the vendor/quest/
+        // loot slot this run just rewrote still shows the REAL WoW item
+        // in-game until the process restarts and reloads those caches from
+        // disk. skinning_loot_template/disenchant_loot_template (M4.10.2's
+        // Gathersanity synthesis branches above) are cached in-memory too,
+        // same restart requirement. gameobject_loot_template is NOT among
+        // these anymore as of M4.11.4.2: Containersanity's own rewrite to
+        // abstract zone-pool locations already retired its synthesis branch
+        // in M4.11.4.1, and Gathersanity's own gathering_node sub-family
+        // (M4.10.2's original gameobject_loot consumer) was rewritten the
+        // same way in M4.11.4.2 -- no family emits a gameobject_loot-kind
+        // location, and no branch in this function writes to that table,
+        // anymore.
         // Without this log, that looks like the feature silently did
         // nothing rather than "worked, but needs a restart to show." M4.7.1
         // finding #2: this used to fire on EVERY connection with non-empty
@@ -323,10 +368,10 @@ namespace Archipelago::ItemDisplay
         if (newlySynthesizedCount > 0)
         {
             LOG_WARN("module.archipelago_wow",
-                "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward "
-                "data -- a worldserver RESTART is required before these changes take effect "
-                "(item_template/npc_vendor/quest_template are cached in memory and have no live-"
-                "reload path)",
+                "Archipelago: synthesized {} AP-display item(s) and rewrote vendor/quest reward/"
+                "loot slot data -- a worldserver RESTART is required before these changes take "
+                "effect (item_template/npc_vendor/quest_template/skinning_loot_template/"
+                "disenchant_loot_template are cached in memory and have no live-reload path)",
                 newlySynthesizedCount);
         }
         else if (!display.empty())

@@ -33,10 +33,14 @@
 #include "Creature.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
+#include "APRaidlogger.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
 #include "ArchipelagoCoreLoopContentTable.h"
 #include "ArchipelagoRaresContentTable.h"
+#include "ArchipelagoENEMYSANITYContent.h"
+#include "ArchipelagoGoldenBoarStatuesContentTable.h"
 
 class ArchipelagoInstanceKillScript : public PlayerScript
 {
@@ -50,10 +54,12 @@ public:
     // fire for the owner, so a pet-tanked/pet-finished final boss kill will
     // not send the instance-clear location check.
     //
-    // Task 23: Archipelago.InstanceClearMode splits behavior in two.
-    // final_boss_only (and every instance with no `bosses:` list at all --
-    // Ragefire Chasm/Deadmines, unconditionally, regardless of the operator's
-    // InstanceClearMode setting) keeps the original M2.1 behavior below:
+    // Task 23: instance_clear_mode (read from the connected seed's own
+    // slot_data at connect time -- no manual worldserver.conf mirror exists
+    // for this anymore) splits behavior in two. final_boss_only (and every
+    // instance with no `bosses:` list at all -- Ragefire Chasm/Deadmines,
+    // unconditionally, regardless of the connected seed's instance_clear_mode
+    // value) keeps the original M2.1 behavior below:
     // fire immediately the instant the configured final-boss entry dies, no
     // other boss kill matters. all_bosses instead records every recognized
     // boss kill into archipelago_boss_kills (realm-wide, survives restarts)
@@ -63,8 +69,10 @@ public:
     // Entropius phase -- see core_loop.yaml's own header comment for why
     // those specific entries were chosen) are all handled correctly by this
     // "recorded at least once, order doesn't matter" model.
-    void OnPlayerCreatureKill(Player* /*killer*/, Creature* killed) override
+    void OnPlayerCreatureKill(Player* killer, Creature* killed) override
     {
+        if (!Archipelago::Bots::ShouldRecordLocationCheck(killer))
+            return;
         uint32_t entry = killed->GetEntry();
 
         if (sArchipelagoRealmState->GetInstanceClearMode() == "all_bosses")
@@ -88,7 +96,16 @@ public:
                 sArchipelagoRealmState->SetFlagTier(sentFlagKey, 1);
                 auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
                 if (locIt != Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.end())
+                {
                     sArchipelagoMgr->SendLocationChecks({ locIt->second });
+                    sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+                    // M4.11.7 (Raidlogger): re-check a pending instant_level_set
+                    // jump the moment its gating raid's clear is actually sent --
+                    // only molten_core/sunwell ever gate a jump (icecrown_citadel
+                    // is Raidlogger's terminal goal, nothing jumps after it).
+                    if (instanceKey == "molten_core" || instanceKey == "sunwell")
+                        Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
+                }
                 return;
             }
             // entry matched no all_bosses-tracked roster -- fall through to
@@ -103,7 +120,14 @@ public:
 
             auto locIt = Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.find(instanceKey);
             if (locIt != Archipelago::CoreLoop::INSTANCE_CLEAR_LOCATIONS.end())
+            {
                 sArchipelagoMgr->SendLocationChecks({ locIt->second });
+                sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locIt->second), killer->GetGUID().GetCounter());
+                // M4.11.7 (Raidlogger): same re-check as the all_bosses branch
+                // above, for realms configured with instance_clear_mode=final_boss_only.
+                if (instanceKey == "molten_core" || instanceKey == "sunwell")
+                    Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
+            }
             return;
         }
 
@@ -117,7 +141,51 @@ public:
         // safe (the AP server silently ignores an unrecognized location id).
         auto rareIt = Archipelago::Rares::CreatureEntryToLocationId.find(entry);
         if (rareIt != Archipelago::Rares::CreatureEntryToLocationId.end())
+        {
             sArchipelagoMgr->SendLocationChecks({ rareIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(rareIt->second), killer->GetGUID().GetCounter());
+        }
+
+        // M4.10.3 (Enemysanity): one location per real mob SPECIES,
+        // released on every kill of that species -- sent unconditionally,
+        // same safety argument as the Rares lookup immediately above (the
+        // AP server silently ignores a location id that was never sampled
+        // into this seed's pool, and tolerates a location being checked
+        // more than once across a species' many kills -- see this
+        // milestone's plan for the M4 finding this cites). No "first kill"
+        // bookkeeping is needed here for the same reason none exists for
+        // the Rares lookup or ArchipelagoLearnSpellScript's spell-learned
+        // hook: AP's own dedup on the multiworld server side already makes
+        // repeat sends a no-op.
+        //
+        // Namespace note: unlike the older, hand-written
+        // Archipelago::Rares nested namespace above, every generated
+        // content header (ArchipelagoGATHERSANITYContent,
+        // ArchipelagoCONTAINERSANITYContent, and this one) uses a flat
+        // top-level ArchipelagoENEMYSANITYContent namespace, confirmed
+        // against the real generated header and ArchipelagoPlayerScript.cpp's
+        // existing ArchipelagoGATHERSANITYContent::/
+        // ArchipelagoCONTAINERSANITYContent:: usage -- not nested under
+        // Archipelago::.
+        auto enemysanityIt = ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.find(entry);
+        if (enemysanityIt != ArchipelagoENEMYSANITYContent::CREATURE_ENTRY_TO_LOCATION_ID.end())
+        {
+            sArchipelagoMgr->SendLocationChecks({ enemysanityIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(enemysanityIt->second), killer->GetGUID().GetCounter());
+        }
+
+        // M4.11.1 (Golden Boar Statues): 20 curated Barrens rares, one
+        // location per creature entry -- sent unconditionally on a matching
+        // kill regardless of whether this generation actually sampled the
+        // location, same safety argument as the Rares lookup above (the AP
+        // server silently ignores a location id outside a slot's actual
+        // location table).
+        auto goldenBoarStatueIt = Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.find(entry);
+        if (goldenBoarStatueIt != Archipelago::GoldenBoarStatues::CreatureEntryToLocationId.end())
+        {
+            sArchipelagoMgr->SendLocationChecks({ goldenBoarStatueIt->second });
+            sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(goldenBoarStatueIt->second), killer->GetGUID().GetCounter());
+        }
     }
 };
 
@@ -151,7 +219,7 @@ public:
             { 389, Archipelago::CoreLoop::INSTANCE_KEY_RAGEFIRE_CHASM },
             { 36, Archipelago::CoreLoop::INSTANCE_KEY_DEADMINES },
             { 409, Archipelago::CoreLoop::INSTANCE_KEY_MOLTEN_CORE },
-            { 580, Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL_PLATEAU },
+            { 580, Archipelago::CoreLoop::INSTANCE_KEY_SUNWELL },
             { 631, Archipelago::CoreLoop::INSTANCE_KEY_ICECROWN_CITADEL },
         };
 

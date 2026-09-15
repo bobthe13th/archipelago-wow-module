@@ -2,9 +2,33 @@
 family: core_loop
 
 constants:
-  STARTING_LEVEL_CAP: 10
-  LEVEL_CAP_STEP: 5
+  LEVEL_CAP_STEP: 1
   SPRINT_GOAL_LEVEL: 60
+  # STARTING_LEVEL_CAP removed as a single flat value -- now derived
+  # per-track (level_cap_tracks below) since Zone Leveler's own track
+  # (Task 9) needs a different starting cap/ceiling than the shared
+  # standard/death_knight tracks. See generate_content.py's
+  # _emit_python_core_loop / _emit_cpp_core_loop for the STARTING_LEVEL_CAP_BY_TRACK
+  # / LEVEL_CAP_TOTAL_BY_TRACK dicts this produces.
+
+# M4.11.1 (Task 3): per-track starting Progressive Level Cap value. Each
+# track's own ceiling (used to compute LEVEL_CAP_TOTAL_BY_TRACK) is derived
+# from that track's own max level_milestone level in `locations:` below --
+# only the starting cap needs authoring here, since a track's lowest
+# level_milestone location is NOT reliably one-above the starting cap (the
+# standard/death_knight tracks both still emit "Reach Level N" locations
+# for every level from 1 (standard) / 55 (death_knight) upward, including
+# levels below the real starting cap, as free/no-item-required checks).
+level_cap_tracks:
+  standard: {starting_level_cap: 10}
+  death_knight: {starting_level_cap: 10}
+  # M4.11.1 (Task 9): Zone Leveler's Barrens track. Its own min_level is 10
+  # (zone_leveler_content_data.ZONES["barrens"].min_level) -- matches the
+  # starting cap used by standard/death_knight above, purely coincidentally
+  # (Barrens' own design spec calls for a level-10 floor). The track's total
+  # pooled-copy count is derived automatically from this starting cap and
+  # the track's own max level_milestone row below (30): 30 - 10 = 20.
+  zone_leveler_barrens: {starting_level_cap: 10}
 
 # Task 24 (Completionist mode, design spec Sec5.4): instance_clear rows now
 # carry an `expansion: vanilla|tbc|wotlk` field, driving
@@ -14,48 +38,444 @@ constants:
 # added, not restructured), but every instance_clear row here has one in
 # practice as of this task.
 locations:
-  - name: Reach Level 5
-    location_id: 710000
-    trigger: {kind: level_milestone, level: 5}
-  - name: Reach Level 10
+  # M4.9 (spec Sec3): every-level granularity (was every 5th level: 5,
+  # 10, 15, ... 60) plus a real per-class track split. Two tracks now
+  # exist, each row's trigger carrying a `track: standard|death_knight`
+  # field: "standard" (every class except Death Knight, levels 1-80)
+  # and "death_knight" (Death Knight only, levels 55-80, matching the
+  # class's real Player::Create starting level). generate_content.py
+  # groups these into LEVEL_LOCATIONS_BY_TRACK (Python) /
+  # LEVEL_LOCATIONS_STANDARD + LEVEL_LOCATIONS_DEATH_KNIGHT (C++),
+  # mirroring the INSTANCES_BY_EXPANSION grouping precedent below.
+  # Location ids were fully renumbered (710000+level for standard,
+  # 711000+level for death_knight) rather than preserving the old
+  # 710000-710011 range -- the granularity change alone already forced a
+  # full regeneration of this block, so a clean, self-documenting id
+  # scheme was chosen over preserving now-meaningless old ids for 12 of
+  # the new 106 rows.
+  - name: Reach Level 1
     location_id: 710001
-    trigger: {kind: level_milestone, level: 10}
-  - name: Reach Level 15
+    trigger: {kind: level_milestone, level: 1, track: standard}
+  - name: Reach Level 2
     location_id: 710002
-    trigger: {kind: level_milestone, level: 15}
-  - name: Reach Level 20
+    trigger: {kind: level_milestone, level: 2, track: standard}
+  - name: Reach Level 3
     location_id: 710003
-    trigger: {kind: level_milestone, level: 20}
-  - name: Reach Level 25
+    trigger: {kind: level_milestone, level: 3, track: standard}
+  - name: Reach Level 4
     location_id: 710004
-    trigger: {kind: level_milestone, level: 25}
-  - name: Reach Level 30
+    trigger: {kind: level_milestone, level: 4, track: standard}
+  - name: Reach Level 5
     location_id: 710005
-    trigger: {kind: level_milestone, level: 30}
-  - name: Reach Level 35
+    trigger: {kind: level_milestone, level: 5, track: standard}
+  - name: Reach Level 6
     location_id: 710006
-    trigger: {kind: level_milestone, level: 35}
-  - name: Reach Level 40
+    trigger: {kind: level_milestone, level: 6, track: standard}
+  - name: Reach Level 7
     location_id: 710007
-    trigger: {kind: level_milestone, level: 40}
-  - name: Reach Level 45
+    trigger: {kind: level_milestone, level: 7, track: standard}
+  - name: Reach Level 8
     location_id: 710008
-    trigger: {kind: level_milestone, level: 45}
-  - name: Reach Level 50
+    trigger: {kind: level_milestone, level: 8, track: standard}
+  - name: Reach Level 9
     location_id: 710009
-    trigger: {kind: level_milestone, level: 50}
-  - name: Reach Level 55
+    trigger: {kind: level_milestone, level: 9, track: standard}
+  - name: Reach Level 10
     location_id: 710010
-    trigger: {kind: level_milestone, level: 55}
-  - name: Reach Level 60
+    trigger: {kind: level_milestone, level: 10, track: standard}
+  - name: Reach Level 11
     location_id: 710011
-    trigger: {kind: level_milestone, level: 60}
+    trigger: {kind: level_milestone, level: 11, track: standard}
+  - name: Reach Level 12
+    location_id: 710012
+    trigger: {kind: level_milestone, level: 12, track: standard}
+  - name: Reach Level 13
+    location_id: 710013
+    trigger: {kind: level_milestone, level: 13, track: standard}
+  - name: Reach Level 14
+    location_id: 710014
+    trigger: {kind: level_milestone, level: 14, track: standard}
+  - name: Reach Level 15
+    location_id: 710015
+    trigger: {kind: level_milestone, level: 15, track: standard}
+  - name: Reach Level 16
+    location_id: 710016
+    trigger: {kind: level_milestone, level: 16, track: standard}
+  - name: Reach Level 17
+    location_id: 710017
+    trigger: {kind: level_milestone, level: 17, track: standard}
+  - name: Reach Level 18
+    location_id: 710018
+    trigger: {kind: level_milestone, level: 18, track: standard}
+  - name: Reach Level 19
+    location_id: 710019
+    trigger: {kind: level_milestone, level: 19, track: standard}
+  - name: Reach Level 20
+    location_id: 710020
+    trigger: {kind: level_milestone, level: 20, track: standard}
+  - name: Reach Level 21
+    location_id: 710021
+    trigger: {kind: level_milestone, level: 21, track: standard}
+  - name: Reach Level 22
+    location_id: 710022
+    trigger: {kind: level_milestone, level: 22, track: standard}
+  - name: Reach Level 23
+    location_id: 710023
+    trigger: {kind: level_milestone, level: 23, track: standard}
+  - name: Reach Level 24
+    location_id: 710024
+    trigger: {kind: level_milestone, level: 24, track: standard}
+  - name: Reach Level 25
+    location_id: 710025
+    trigger: {kind: level_milestone, level: 25, track: standard}
+  - name: Reach Level 26
+    location_id: 710026
+    trigger: {kind: level_milestone, level: 26, track: standard}
+  - name: Reach Level 27
+    location_id: 710027
+    trigger: {kind: level_milestone, level: 27, track: standard}
+  - name: Reach Level 28
+    location_id: 710028
+    trigger: {kind: level_milestone, level: 28, track: standard}
+  - name: Reach Level 29
+    location_id: 710029
+    trigger: {kind: level_milestone, level: 29, track: standard}
+  - name: Reach Level 30
+    location_id: 710030
+    trigger: {kind: level_milestone, level: 30, track: standard}
+  - name: Reach Level 31
+    location_id: 710031
+    trigger: {kind: level_milestone, level: 31, track: standard}
+  - name: Reach Level 32
+    location_id: 710032
+    trigger: {kind: level_milestone, level: 32, track: standard}
+  - name: Reach Level 33
+    location_id: 710033
+    trigger: {kind: level_milestone, level: 33, track: standard}
+  - name: Reach Level 34
+    location_id: 710034
+    trigger: {kind: level_milestone, level: 34, track: standard}
+  - name: Reach Level 35
+    location_id: 710035
+    trigger: {kind: level_milestone, level: 35, track: standard}
+  - name: Reach Level 36
+    location_id: 710036
+    trigger: {kind: level_milestone, level: 36, track: standard}
+  - name: Reach Level 37
+    location_id: 710037
+    trigger: {kind: level_milestone, level: 37, track: standard}
+  - name: Reach Level 38
+    location_id: 710038
+    trigger: {kind: level_milestone, level: 38, track: standard}
+  - name: Reach Level 39
+    location_id: 710039
+    trigger: {kind: level_milestone, level: 39, track: standard}
+  - name: Reach Level 40
+    location_id: 710040
+    trigger: {kind: level_milestone, level: 40, track: standard}
+  - name: Reach Level 41
+    location_id: 710041
+    trigger: {kind: level_milestone, level: 41, track: standard}
+  - name: Reach Level 42
+    location_id: 710042
+    trigger: {kind: level_milestone, level: 42, track: standard}
+  - name: Reach Level 43
+    location_id: 710043
+    trigger: {kind: level_milestone, level: 43, track: standard}
+  - name: Reach Level 44
+    location_id: 710044
+    trigger: {kind: level_milestone, level: 44, track: standard}
+  - name: Reach Level 45
+    location_id: 710045
+    trigger: {kind: level_milestone, level: 45, track: standard}
+  - name: Reach Level 46
+    location_id: 710046
+    trigger: {kind: level_milestone, level: 46, track: standard}
+  - name: Reach Level 47
+    location_id: 710047
+    trigger: {kind: level_milestone, level: 47, track: standard}
+  - name: Reach Level 48
+    location_id: 710048
+    trigger: {kind: level_milestone, level: 48, track: standard}
+  - name: Reach Level 49
+    location_id: 710049
+    trigger: {kind: level_milestone, level: 49, track: standard}
+  - name: Reach Level 50
+    location_id: 710050
+    trigger: {kind: level_milestone, level: 50, track: standard}
+  - name: Reach Level 51
+    location_id: 710051
+    trigger: {kind: level_milestone, level: 51, track: standard}
+  - name: Reach Level 52
+    location_id: 710052
+    trigger: {kind: level_milestone, level: 52, track: standard}
+  - name: Reach Level 53
+    location_id: 710053
+    trigger: {kind: level_milestone, level: 53, track: standard}
+  - name: Reach Level 54
+    location_id: 710054
+    trigger: {kind: level_milestone, level: 54, track: standard}
+  - name: Reach Level 55
+    location_id: 710055
+    trigger: {kind: level_milestone, level: 55, track: standard}
+  - name: Reach Level 56
+    location_id: 710056
+    trigger: {kind: level_milestone, level: 56, track: standard}
+  - name: Reach Level 57
+    location_id: 710057
+    trigger: {kind: level_milestone, level: 57, track: standard}
+  - name: Reach Level 58
+    location_id: 710058
+    trigger: {kind: level_milestone, level: 58, track: standard}
+  - name: Reach Level 59
+    location_id: 710059
+    trigger: {kind: level_milestone, level: 59, track: standard}
+  - name: Reach Level 60
+    location_id: 710060
+    trigger: {kind: level_milestone, level: 60, track: standard}
+  - name: Reach Level 61
+    location_id: 710061
+    trigger: {kind: level_milestone, level: 61, track: standard}
+  - name: Reach Level 62
+    location_id: 710062
+    trigger: {kind: level_milestone, level: 62, track: standard}
+  - name: Reach Level 63
+    location_id: 710063
+    trigger: {kind: level_milestone, level: 63, track: standard}
+  - name: Reach Level 64
+    location_id: 710064
+    trigger: {kind: level_milestone, level: 64, track: standard}
+  - name: Reach Level 65
+    location_id: 710065
+    trigger: {kind: level_milestone, level: 65, track: standard}
+  - name: Reach Level 66
+    location_id: 710066
+    trigger: {kind: level_milestone, level: 66, track: standard}
+  - name: Reach Level 67
+    location_id: 710067
+    trigger: {kind: level_milestone, level: 67, track: standard}
+  - name: Reach Level 68
+    location_id: 710068
+    trigger: {kind: level_milestone, level: 68, track: standard}
+  - name: Reach Level 69
+    location_id: 710069
+    trigger: {kind: level_milestone, level: 69, track: standard}
+  - name: Reach Level 70
+    location_id: 710070
+    trigger: {kind: level_milestone, level: 70, track: standard}
+  - name: Reach Level 71
+    location_id: 710071
+    trigger: {kind: level_milestone, level: 71, track: standard}
+  - name: Reach Level 72
+    location_id: 710072
+    trigger: {kind: level_milestone, level: 72, track: standard}
+  - name: Reach Level 73
+    location_id: 710073
+    trigger: {kind: level_milestone, level: 73, track: standard}
+  - name: Reach Level 74
+    location_id: 710074
+    trigger: {kind: level_milestone, level: 74, track: standard}
+  - name: Reach Level 75
+    location_id: 710075
+    trigger: {kind: level_milestone, level: 75, track: standard}
+  - name: Reach Level 76
+    location_id: 710076
+    trigger: {kind: level_milestone, level: 76, track: standard}
+  - name: Reach Level 77
+    location_id: 710077
+    trigger: {kind: level_milestone, level: 77, track: standard}
+  - name: Reach Level 78
+    location_id: 710078
+    trigger: {kind: level_milestone, level: 78, track: standard}
+  - name: Reach Level 79
+    location_id: 710079
+    trigger: {kind: level_milestone, level: 79, track: standard}
+  - name: Reach Level 80
+    location_id: 710080
+    trigger: {kind: level_milestone, level: 80, track: standard}
+  - name: Reach Level 55 (Death Knight)
+    location_id: 711055
+    trigger: {kind: level_milestone, level: 55, track: death_knight}
+  - name: Reach Level 56 (Death Knight)
+    location_id: 711056
+    trigger: {kind: level_milestone, level: 56, track: death_knight}
+  - name: Reach Level 57 (Death Knight)
+    location_id: 711057
+    trigger: {kind: level_milestone, level: 57, track: death_knight}
+  - name: Reach Level 58 (Death Knight)
+    location_id: 711058
+    trigger: {kind: level_milestone, level: 58, track: death_knight}
+  - name: Reach Level 59 (Death Knight)
+    location_id: 711059
+    trigger: {kind: level_milestone, level: 59, track: death_knight}
+  - name: Reach Level 60 (Death Knight)
+    location_id: 711060
+    trigger: {kind: level_milestone, level: 60, track: death_knight}
+  - name: Reach Level 61 (Death Knight)
+    location_id: 711061
+    trigger: {kind: level_milestone, level: 61, track: death_knight}
+  - name: Reach Level 62 (Death Knight)
+    location_id: 711062
+    trigger: {kind: level_milestone, level: 62, track: death_knight}
+  - name: Reach Level 63 (Death Knight)
+    location_id: 711063
+    trigger: {kind: level_milestone, level: 63, track: death_knight}
+  - name: Reach Level 64 (Death Knight)
+    location_id: 711064
+    trigger: {kind: level_milestone, level: 64, track: death_knight}
+  - name: Reach Level 65 (Death Knight)
+    location_id: 711065
+    trigger: {kind: level_milestone, level: 65, track: death_knight}
+  - name: Reach Level 66 (Death Knight)
+    location_id: 711066
+    trigger: {kind: level_milestone, level: 66, track: death_knight}
+  - name: Reach Level 67 (Death Knight)
+    location_id: 711067
+    trigger: {kind: level_milestone, level: 67, track: death_knight}
+  - name: Reach Level 68 (Death Knight)
+    location_id: 711068
+    trigger: {kind: level_milestone, level: 68, track: death_knight}
+  - name: Reach Level 69 (Death Knight)
+    location_id: 711069
+    trigger: {kind: level_milestone, level: 69, track: death_knight}
+  - name: Reach Level 70 (Death Knight)
+    location_id: 711070
+    trigger: {kind: level_milestone, level: 70, track: death_knight}
+  - name: Reach Level 71 (Death Knight)
+    location_id: 711071
+    trigger: {kind: level_milestone, level: 71, track: death_knight}
+  - name: Reach Level 72 (Death Knight)
+    location_id: 711072
+    trigger: {kind: level_milestone, level: 72, track: death_knight}
+  - name: Reach Level 73 (Death Knight)
+    location_id: 711073
+    trigger: {kind: level_milestone, level: 73, track: death_knight}
+  - name: Reach Level 74 (Death Knight)
+    location_id: 711074
+    trigger: {kind: level_milestone, level: 74, track: death_knight}
+  - name: Reach Level 75 (Death Knight)
+    location_id: 711075
+    trigger: {kind: level_milestone, level: 75, track: death_knight}
+  - name: Reach Level 76 (Death Knight)
+    location_id: 711076
+    trigger: {kind: level_milestone, level: 76, track: death_knight}
+  - name: Reach Level 77 (Death Knight)
+    location_id: 711077
+    trigger: {kind: level_milestone, level: 77, track: death_knight}
+  - name: Reach Level 78 (Death Knight)
+    location_id: 711078
+    trigger: {kind: level_milestone, level: 78, track: death_knight}
+  - name: Reach Level 79 (Death Knight)
+    location_id: 711079
+    trigger: {kind: level_milestone, level: 79, track: death_knight}
+  - name: Reach Level 80 (Death Knight)
+    location_id: 711080
+    trigger: {kind: level_milestone, level: 80, track: death_knight}
+
+  # M4.11.1 (Task 9): Zone Leveler's Barrens track -- levels 11-30 only (the
+  # mode's own min_level is 10, so level 10 itself needs zero Progressive
+  # Level Cap copies, matching the standard/death_knight tracks' own
+  # "starting level needs nothing" shape). Location ids in the 712000+
+  # range, parallel to standard's 710000+ and death_knight's 711000+.
+  - name: Reach Level 11 (Zone Leveler)
+    location_id: 712011
+    trigger: {kind: level_milestone, level: 11, track: zone_leveler_barrens}
+  - name: Reach Level 12 (Zone Leveler)
+    location_id: 712012
+    trigger: {kind: level_milestone, level: 12, track: zone_leveler_barrens}
+  - name: Reach Level 13 (Zone Leveler)
+    location_id: 712013
+    trigger: {kind: level_milestone, level: 13, track: zone_leveler_barrens}
+  - name: Reach Level 14 (Zone Leveler)
+    location_id: 712014
+    trigger: {kind: level_milestone, level: 14, track: zone_leveler_barrens}
+  - name: Reach Level 15 (Zone Leveler)
+    location_id: 712015
+    trigger: {kind: level_milestone, level: 15, track: zone_leveler_barrens}
+  - name: Reach Level 16 (Zone Leveler)
+    location_id: 712016
+    trigger: {kind: level_milestone, level: 16, track: zone_leveler_barrens}
+  - name: Reach Level 17 (Zone Leveler)
+    location_id: 712017
+    trigger: {kind: level_milestone, level: 17, track: zone_leveler_barrens}
+  - name: Reach Level 18 (Zone Leveler)
+    location_id: 712018
+    trigger: {kind: level_milestone, level: 18, track: zone_leveler_barrens}
+  - name: Reach Level 19 (Zone Leveler)
+    location_id: 712019
+    trigger: {kind: level_milestone, level: 19, track: zone_leveler_barrens}
+  - name: Reach Level 20 (Zone Leveler)
+    location_id: 712020
+    trigger: {kind: level_milestone, level: 20, track: zone_leveler_barrens}
+  - name: Reach Level 21 (Zone Leveler)
+    location_id: 712021
+    trigger: {kind: level_milestone, level: 21, track: zone_leveler_barrens}
+  - name: Reach Level 22 (Zone Leveler)
+    location_id: 712022
+    trigger: {kind: level_milestone, level: 22, track: zone_leveler_barrens}
+  - name: Reach Level 23 (Zone Leveler)
+    location_id: 712023
+    trigger: {kind: level_milestone, level: 23, track: zone_leveler_barrens}
+  - name: Reach Level 24 (Zone Leveler)
+    location_id: 712024
+    trigger: {kind: level_milestone, level: 24, track: zone_leveler_barrens}
+  - name: Reach Level 25 (Zone Leveler)
+    location_id: 712025
+    trigger: {kind: level_milestone, level: 25, track: zone_leveler_barrens}
+  - name: Reach Level 26 (Zone Leveler)
+    location_id: 712026
+    trigger: {kind: level_milestone, level: 26, track: zone_leveler_barrens}
+  - name: Reach Level 27 (Zone Leveler)
+    location_id: 712027
+    trigger: {kind: level_milestone, level: 27, track: zone_leveler_barrens}
+  - name: Reach Level 28 (Zone Leveler)
+    location_id: 712028
+    trigger: {kind: level_milestone, level: 28, track: zone_leveler_barrens}
+  - name: Reach Level 29 (Zone Leveler)
+    location_id: 712029
+    trigger: {kind: level_milestone, level: 29, track: zone_leveler_barrens}
+  - name: Reach Level 30 (Zone Leveler)
+    location_id: 712030
+    trigger: {kind: level_milestone, level: 30, track: zone_leveler_barrens}
+
   - name: Clear Ragefire Chasm
     location_id: 720000
     trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520, expansion: vanilla}
   - name: Clear Deadmines
     location_id: 720001
     trigger: {kind: instance_clear, instance_key: deadmines, final_boss_entry: 639, expansion: vanilla}
+
+  # M4.11.1 (Task 4, BarrensBeater): three more classic 5-mans, matching
+  # Ragefire Chasm/Deadmines' simple no-`bosses:`-sublist shape rather than
+  # Molten Core's, since InstanceClearMode's all_bosses/final_boss_only
+  # distinction only applies to the 3 raids that already have one.
+  # final_boss_entry values verified against this checkout's own data, not
+  # assumed from upstream wiki data:
+  #   - Wailing Caverns: this checkout's own instance script header
+  #     (src/server/scripts/Kalimdor/WailingCaverns/wailing_caverns.h)
+  #     defines a DataTypes enum with TYPE_MUTANUS = 4 as the last of 5
+  #     tracked encounter slots (MAX_ENCOUNTERS = 5) and does NOT track the
+  #     alternate-path boss Verdan the Everliving (creature entry 5775) as
+  #     an instance-data encounter at all -- confirming Mutanus the
+  #     Devourer (creature_template.entry 3654) is the canonical tracked
+  #     final boss in this specific checkout.
+  #   - Razorfen Kraul has no instance script under
+  #     src/server/scripts/Kalimdor/RazorfenKraul/ -- final boss confirmed
+  #     directly via creature_template: (4421, 'Charlga Razorflank', 27).
+  #   - Razorfen Downs: creature_template confirms (7358, 'Amnennar the
+  #     Coldbringer', 37); its instance script
+  #     (src/server/scripts/Kalimdor/RazorfenDowns/razorfen_downs.h) tracks
+  #     other encounter NPCs but not a DataTypes encounter enum, so this is
+  #     likewise sourced directly from creature_template.
+  - name: Clear Wailing Caverns
+    location_id: 720005
+    trigger: {kind: instance_clear, instance_key: wailing_caverns, final_boss_entry: 3654, expansion: vanilla}
+  - name: Clear Razorfen Kraul
+    location_id: 720006
+    trigger: {kind: instance_clear, instance_key: razorfen_kraul, final_boss_entry: 4421, expansion: vanilla}
+  - name: Clear Razorfen Downs
+    location_id: 720007
+    trigger: {kind: instance_clear, instance_key: razorfen_downs, final_boss_entry: 7358, expansion: vanilla}
 
   # Task 23 (design spec Sec5.4, Tier 1: Classic/Burning Crusade/Wrath modes)
   # -- the first three rows to actually carry a `bosses:` sub-list, driving
@@ -128,7 +548,19 @@ locations:
     location_id: 720003
     trigger:
       kind: instance_clear
-      instance_key: sunwell_plateau
+      # M4.11.4.2 (final review, source-of-truth fix): was "sunwell_plateau"
+      # -- the one real instance_key here that didn't match its own Map.dbc
+      # slug (every other instance_key in this file is the bare DBC slug,
+      # no suffix). M4.11.3's final review already found and hand-patched
+      # the GENERATED worlds/wow/core_loop_content_data.py to say "sunwell"
+      # (matching instance_entrance_data.py's own real Map.dbc-derived key,
+      # and closing a real bug where zone_leveler_content_data.py's
+      # curated_instance_keys silently dropped this instance from every
+      # zone that should reach it) -- but explicitly left THIS source file
+      # unfixed as out of scope for that review (a different submodule).
+      # Fixing it here for real, at the root, so future regenerations no
+      # longer need that hand-patch at all.
+      instance_key: sunwell
       final_boss_entry: 25315
       expansion: tbc
       bosses:
@@ -161,10 +593,21 @@ locations:
         - {name: "The Lich King", entry: 36597, final: true}
 
 items:
+  # M4.11.1 (Task 3): count raised from 14 to 70 -- LEVEL_CAP_STEP dropped
+  # from 5 to 1 (one copy now raises the cap by exactly 1 level instead of
+  # 5), so the standard track's own pooled total
+  # (LEVEL_CAP_TOTAL_BY_TRACK["standard"], generate_content.py) is now
+  # level_cap_tracks.standard.starting_level_cap (10) subtracted from the
+  # standard track's own level-milestone ceiling of 80: 80 - 10 = 70.
+  # (Previously: STARTING_LEVEL_CAP (10) + 14 * LEVEL_CAP_STEP (5) = 80,
+  # under the old every-5th-level granularity.) Sprint's own goal is
+  # unaffected -- it still only requires reaching level 60, not all 70
+  # copies; see goals.py's _set_completion_rule_sprint for the real
+  # level-60-specific threshold this change required.
   - name: Progressive Level Cap
     item_id: 810000
-    count: 10
-    delivery: {kind: realm_state, effect: raise_level_cap, step: 5}
+    count: 70
+    delivery: {kind: realm_state, effect: raise_level_cap, step: 1}
   - name: "Instance Unlock: Ragefire Chasm"
     item_id: 810001
     count: 1
@@ -188,8 +631,20 @@ items:
   - name: "Instance Unlock: Sunwell Plateau"
     item_id: 810006
     count: 1
-    delivery: {kind: realm_state, effect: unlock_instance, instance_key: sunwell_plateau}
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: sunwell}
   - name: "Instance Unlock: Icecrown Citadel"
     item_id: 810007
     count: 1
     delivery: {kind: realm_state, effect: unlock_instance, instance_key: icecrown_citadel}
+  - name: "Instance Unlock: Wailing Caverns"
+    item_id: 810008
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: wailing_caverns}
+  - name: "Instance Unlock: Razorfen Kraul"
+    item_id: 810009
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: razorfen_kraul}
+  - name: "Instance Unlock: Razorfen Downs"
+    item_id: 810010
+    count: 1
+    delivery: {kind: realm_state, effect: unlock_instance, instance_key: razorfen_downs}

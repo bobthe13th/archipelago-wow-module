@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -60,6 +61,57 @@ namespace Archipelago
     {
         std::string name;
         int32_t flags = 0;
+    };
+
+    // Forward declaration: ItemSendEvent (full definition below, near
+    // ParseItemSendEvents) is referenced by ArchipelagoCallbacks::
+    // onItemSendEventsReceived immediately below, before its own point of
+    // definition in this file (M4.11.5.6).
+    struct ItemSendEvent;
+
+    // Bundles every APClient/ArchipelagoManager callback. Introduced M4.13 when
+    // adding a 7th callback (onPrintJsonReceived) would have made Initialize's
+    // positional-lambda parameter list unreadable -- see the M4.13 plan's "Real
+    // corrections" section for the real parameter count this replaces.
+    struct ArchipelagoCallbacks
+    {
+        std::function<void(std::vector<ReceivedItem> const&)> onItemsReceived = nullptr;
+        std::function<void()> onConnected = nullptr;
+        std::function<void(std::vector<IncomingDeathLink> const&)> onDeathLinkReceived = nullptr;
+        std::function<void(std::unordered_map<int64_t, ApItemDisplay> const&)> onSlotDataReceived = nullptr;
+        std::function<void(std::string const&)> onVendorCheckRepeatBehaviorReceived = nullptr;
+        std::function<void(std::string const&)> onInstanceClearModeReceived = nullptr;
+        // M5.0 Sec9: Connected's slot_data["world_seed"] -- the live
+        // cross-check against sAPWorldState->GetAppliedWorldSeed() at first
+        // connect (detection only, never a live re-apply).
+        std::function<void(std::string const&)> onWorldSeedReceived = nullptr;
+        std::function<void(std::string const&)> onLootSlotCheckRepeatBehaviorReceived = nullptr;
+        // bool is a primitive, so passed by value rather than by const& (M4.10.7),
+        // unlike the string-valued slot_data callbacks above.
+        std::function<void(bool)> onHolidaysanityStackingReceived = nullptr;
+        // M4.11.1 Task 15: zone_leveler_zone_key/goals/statues_required/
+        // instances_required/instance_keys -- the goal-completion side's own
+        // slot_data. uint32_t is a primitive (passed by value, matching
+        // onHolidaysanityStackingReceived's own bool convention); the vector
+        // fields are real containers, passed by const& like every other
+        // container-valued callback above.
+        std::function<void(std::string const&)> onZoneLevelerZoneKeyReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onZoneLevelerGoalsReceived = nullptr;
+        std::function<void(uint32_t)> onZoneLevelerStatuesRequiredReceived = nullptr;
+        std::function<void(uint32_t)> onZoneLevelerInstancesRequiredReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onZoneLevelerInstanceKeysReceived = nullptr;
+        std::function<void(std::vector<std::string> const&)> onPrintJsonReceived = nullptr;
+        std::function<void(std::vector<ItemSendEvent> const&)> onItemSendEventsReceived = nullptr;
+        // Connected's top-level missing_locations array (M4.13, ".ap missing" --
+        // see ArchipelagoManager::GetLastKnownMissingLocations/
+        // SetLastKnownMissingLocations and ArchipelagoCommandScript.cpp's consumer).
+        std::function<void(std::vector<int64_t> const&)> onMissingLocationsReceived = nullptr;
+        // Connected's real slot_data["filler_needed_count"] (M4.11.6): the
+        // exact per-seed count of Filler Check locations this seed actually
+        // placed (Archipelago/worlds/wow/slot_data.py's
+        // _add_filler_needed_count) -- replaces sending the full compiled
+        // 151-id Filler set unconditionally at OnStartup.
+        std::function<void(uint32_t)> onFillerNeededCountReceived = nullptr;
     };
 
     // Uses nlohmann::json (vendor/json.hpp) to build/parse the Archipelago
@@ -125,4 +177,138 @@ namespace Archipelago
     // slot_data or the key is absent/malformed (wrong type, missing, no
     // Connected command in the frame).
     std::optional<std::string> ParseVendorCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["instance_clear_mode"] (a single string
+    // option, M4.9) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's
+    // exact shape (M4.7 Task 8): "don't crash the connection state machine
+    // on a shape it doesn't recognize". Returns std::nullopt (never throws)
+    // if slot_data or the key is absent/malformed. Replaces the
+    // Archipelago.InstanceClearMode manual worldserver.conf mirror outright
+    // -- see ArchipelagoWorldScript.cpp's OnUpdate for the consumer.
+    std::optional<std::string> ParseInstanceClearModeFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["world_seed"] (a single string option,
+    // M5.0 Sec9) -- mirrors ParseInstanceClearModeFromSlotData's exact
+    // shape: "don't crash the connection state machine on a shape it
+    // doesn't recognize". Returns std::nullopt (never throws) if
+    // slot_data or the key is absent/malformed. Consumed by
+    // ArchipelagoWorldScript.cpp's OnUpdate to cross-check against
+    // APWorldState's sAPWorldState->GetAppliedWorldSeed() -- detection
+    // only, never a live re-apply.
+    std::optional<std::string> ParseWorldSeedFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["loot_slot_check_repeat_behavior"] (a
+    // single string option, M4.10.1) -- mirrors
+    // ParseVendorCheckRepeatBehaviorFromSlotData's exact shape (M4.7 Task
+    // 8): "don't crash the connection state machine on a shape it doesn't
+    // recognize". Returns std::nullopt (never throws) if slot_data or the
+    // key is absent/malformed. Consumed by ArchipelagoLootSlotScript.cpp
+    // (Task 7), shared with M4.10.2's Gathersanity gather-node slots.
+    std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["holidaysanity_stacking"] (a single
+    // boolean option, M4.10.7) -- mirrors
+    // ParseLootSlotCheckRepeatBehaviorFromSlotData's exact shape (M4.10.1),
+    // adapted for a bool instead of a string: "don't crash the connection
+    // state machine on a shape it doesn't recognize". Returns std::nullopt
+    // (never throws) if slot_data or the key is absent/malformed. Consumed
+    // by ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic.
+    std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_zone_key"] (a single string
+    // option, M4.11.1 Task 15) -- mirrors
+    // ParseVendorCheckRepeatBehaviorFromSlotData's exact shape. Returns
+    // std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete to resolve the connected slot's own
+    // "zone_leveler_<zone_key>" LEVEL_CAP_TOTAL_BY_TRACK entry.
+    std::optional<std::string> ParseZoneLevelerZoneKeyFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_goals"] (a JSON array of
+    // strings, M4.11.1 Task 15) -- mirrors
+    // ParseZoneLevelerInstanceKeysFromSlotData's exact "scan the array,
+    // skip a non-string element rather than throwing" discipline. Returns
+    // std::nullopt (never throws) if slot_data or the key is
+    // absent/malformed; an empty-but-present array parses to an empty
+    // (non-nullopt) vector.
+    std::optional<std::vector<std::string>> ParseZoneLevelerGoalsFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_statues_required"] /
+    // ["zone_leveler_instances_required"] (single integer options, M4.11.1
+    // Task 15) -- mirrors ParseVendorCheckRepeatBehaviorFromSlotData's exact
+    // shape (M4.7 Task 8), adapted for a uint32_t instead of a string:
+    // "don't crash the connection state machine on a shape it doesn't
+    // recognize" (rejecting negative values). Returns std::nullopt (never
+    // throws) if slot_data or the key is absent/malformed.
+    std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw);
+
+    // Parses Connected's real slot_data["filler_needed_count"] (M4.11.6):
+    // the exact per-seed count of Filler Check locations this seed actually
+    // placed (Archipelago/worlds/wow/slot_data.py's
+    // _add_filler_needed_count). Mirrors
+    // ParseZoneLevelerStatuesRequiredFromSlotData's exact shape. Returns
+    // nullopt (never throws) if Connected/slot_data/the key is absent or
+    // malformed, matching every other Parse* function's discipline.
+    std::optional<uint32_t> ParseFillerNeededCountFromSlotData(std::string const& raw);
+    std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw);
+
+    // Parses Connected's slot_data["zone_leveler_instance_keys"] (a JSON
+    // array of strings, M4.11.1 Task 15) -- mirrors
+    // ParseZoneLevelerGoalsFromSlotData's exact shape.
+    std::optional<std::vector<std::string>> ParseZoneLevelerInstanceKeysFromSlotData(std::string const& raw);
+
+    // Builds a Say command (M4.13): AP's real hint mechanism is a chat command
+    // interpreted server-side ("!hint <item name>"), sent as a plain Say. Mirrors
+    // BuildLocationChecksPacket's exact shape.
+    std::string BuildSayPacket(std::string const& text);
+
+    // Parses Connected's real, top-level "missing_locations" array (a sibling of
+    // slot_data, NOT nested under it -- confirmed against Archipelago/MultiServer.py's
+    // real connected_packet shape) into location ids. Returns an empty vector
+    // (never throws) if Connected/missing_locations is absent or malformed,
+    // matching every other Parse* function's discipline.
+    std::vector<int64_t> ParseMissingLocationsFromConnected(std::string const& raw);
+
+    // Parses every "PrintJSON" command in a (possibly batched) frame into one
+    // combined display string per message -- concatenating each data part's
+    // literal "text" field in order. NOTE: for player_id/item_id/location_id-typed
+    // parts, AP's own wire format carries a raw numeric id in "text" (real client
+    // name resolution requires a per-game DataPackage this module doesn't cache)
+    // -- those ids are surfaced as-is, not resolved to names. Returns an empty
+    // vector (never throws) on malformed JSON.
+    std::vector<std::string> ParsePrintJSONText(std::string const& raw);
+
+    // One real "ItemSend" PrintJSON event (a real location check was found
+    // and its item sent onward to a recipient slot, per the real
+    // Archipelago network protocol's own PrintJsonType enum) -- the
+    // structured fields this project's own ParsePrintJSONText already
+    // discards in favor of flattened display text (M4.11.5.6). sourceSlot is
+    // the real slot id that FOUND the check (item.player, per the protocol's
+    // own NetworkItem shape); destinationSlot is the real slot id the item
+    // was SENT TO (the message's own top-level "receiving" field) -- these
+    // are genuinely different slots whenever one player's world places an
+    // item in another player's world, the normal case in a real multiworld.
+    struct ItemSendEvent
+    {
+        int64_t sourceSlot = 0;
+        // Not yet consumed by any caller -- parsed and stored for a future
+        // per-recipient breakdown.
+        int64_t destinationSlot = 0;
+    };
+
+    // Scans every element of a (possibly batched) frame and collects one
+    // ItemSendEvent per real "PrintJSON" command whose own "type" field is
+    // exactly "ItemSend" -- every other PrintJSON type (Chat, Hint, Join,
+    // ...) is skipped, along with any PrintJSON message missing "type",
+    // "item", or "receiving" entirely (most real PrintJSON traffic has none
+    // of these fields at all). Returns an empty vector (never throws) on
+    // malformed JSON or a message missing the fields this function needs,
+    // matching every other Parse* function's "don't crash the connection
+    // state machine on a shape it doesn't recognize" discipline. This is a
+    // genuinely different parse path from ParsePrintJSONText above (which
+    // extracts flattened display TEXT for every PrintJSON type
+    // unconditionally) -- the two are called independently, from the same
+    // raw frame, for two different real consumers (chat display vs. the
+    // check-leaderboard command's per-slot totals, M4.11.5.6).
+    std::vector<ItemSendEvent> ParseItemSendEvents(std::string const& raw);
 }

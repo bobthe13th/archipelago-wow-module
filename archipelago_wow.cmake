@@ -14,3 +14,15 @@
 if (MSVC)
     target_compile_options(modules PRIVATE /bigobj)
 endif()
+
+# M6.0 (Playerbots Integration): detects whether the mod-playerbots module (a
+# separate, independently-cloned sibling under modules/mod-playerbots -- see
+# the M6.0 Phase 1 fork/merge plan) is present in this checkout, and if so
+# defines AC_MODULE_PLAYERBOTS_AVAILABLE so APBotSupport.cpp compiles its real
+# sPlayerbotMgr->GetPlayerbotAI() path instead of always returning false.
+# Harmless when mod-playerbots isn't present (the state of every checkout
+# until Phase 1 runs) -- the macro is simply never defined and archipelago_wow
+# builds exactly as it does today.
+if (EXISTS "${CMAKE_SOURCE_DIR}/modules/mod-playerbots")
+    target_compile_definitions(modules PUBLIC AC_MODULE_PLAYERBOTS_AVAILABLE=1)
+endif()

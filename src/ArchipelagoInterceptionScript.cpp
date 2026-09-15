@@ -24,6 +24,7 @@
 #include "Item.h"
 #include "Player.h"
 #include "ScriptMgr.h"
+#include "APBotSupport.h"
 #include "APItemDisplay.h"
 #include "ArchipelagoManager.h"
 #include "ArchipelagoRealmState.h"
@@ -186,7 +187,11 @@ public:
 
         if (!LocationAlreadyChecked(locationId))
         {
-            sArchipelagoMgr->SendLocationChecks({ locationId });
+            if (Archipelago::Bots::ShouldRecordLocationCheck(player))
+            {
+                sArchipelagoMgr->SendLocationChecks({ locationId });
+                sArchipelagoRealmState->RecordLocationCheckAttribution(static_cast<uint64_t>(locationId), player->GetGUID().GetCounter());
+            }
             return;
         }
 

@@ -10,9 +10,12 @@
 #include "Log.h"
 #include "ScriptMgr.h"
 #include "World.h"
+#include "WorldSessionMgr.h"
 #include "APDelivery.h"
+#include "APFillerDecision.h"
 #include "APGating.h"
 #include "APItemDisplay.h"
+#include "APWorldState.h"
 #include "ArchipelagoDeathLink.h"
 #include "ArchipelagoFillerContentTable.h"
 #include "ArchipelagoManager.h"
@@ -20,7 +23,7 @@
 
 // Defined in ArchipelagoPlayerScript.cpp. Touches Player/CharacterCache/
 // CharacterDatabase, so it must only ever be invoked from the world thread.
-void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier);
+void DeliverArchipelagoItems(std::vector<Archipelago::ReceivedItem> const& items, std::string const& deliveryCharacter, Archipelago::Delivery::Policy deliveryPolicy, Archipelago::Delivery::CostTier auctionHouseCostTier, Archipelago::Delivery::AuctionHouseFactionMode auctionHouseFactionMode);
 
 namespace
 {
@@ -60,6 +63,21 @@ namespace
         if (value != "Market")
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseCostTier '{}', falling back to Market", value);
         return Archipelago::Delivery::CostTier::Market;
+    }
+
+    // M4.11.5.2.1: same manual-sync mirror as ParseCostTier above, for the new
+    // AuctionHouseFactionMode setting. This module never reads or writes the
+    // real, separate worldserver.conf setting AllowTwoSide.Interaction.Auction
+    // -- but see ListOnAuctionHouse's own comment (APDelivery.cpp) for the
+    // real consequence when that OTHER setting is on: it collapses
+    // PerFaction's three copies onto one house.
+    Archipelago::Delivery::AuctionHouseFactionMode ParseAuctionHouseFactionMode(std::string const& value)
+    {
+        if (value == "PerFaction")
+            return Archipelago::Delivery::AuctionHouseFactionMode::PerFaction;
+        if (value != "Merged")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AuctionHouseFactionMode '{}', falling back to Merged", value);
+        return Archipelago::Delivery::AuctionHouseFactionMode::Merged;
     }
 
     // Task 20: parses the apworld's SpiritHealerVariant Choice into its two
@@ -124,9 +142,9 @@ namespace
             { "Artisan", "artisan" },
             { "Collector", "collector" },
             { "AchievementHunt", "achievement_hunt" },
-            { "Gladiator", "gladiator" },
             { "Explorer", "explorer" },
             { "FishingQuest", "fishing_quest" },
+            { "ZoneLeveler", "zone_leveler" },
         };
         auto it = modes.find(value);
         if (it != modes.end())
@@ -150,13 +168,46 @@ namespace
             LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.CompletionistExpansion '{}', falling back to Vanilla", value);
         return "vanilla";
     }
+
+    // Values are PascalCase (this module's own conf convention), parsed into
+    // the bare snake_case strings the apworld's AchievementHuntTier/
+    // AchievementHuntSubset Choices use as current_key. Only meaningful when
+    // Archipelago.GameMode is AchievementHunt.
+    std::string ParseAchievementHuntTier(std::string const& value)
+    {
+        if (value == "NinetyNinePercent")
+            return "ninety_nine_percent";
+        if (value == "NamedSubset")
+            return "named_subset";
+        if (value != "HundredPercent")
+            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AchievementHuntTier '{}', falling back to HundredPercent", value);
+        return "hundred_percent";
+    }
+
+    std::string ParseAchievementHuntSubset(std::string const& value)
+    {
+        static std::unordered_map<std::string, std::string> const subsets = {
+            { "Explorer", "explorer" },
+            { "Dungeons", "dungeons" },
+            { "Raids", "raids" },
+            { "Professions", "professions" },
+            { "Reputation", "reputation" },
+            { "Pvp", "pvp" },
+            { "PvP", "pvp" },
+        };
+        auto it = subsets.find(value);
+        if (it != subsets.end())
+            return it->second;
+        LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.AchievementHuntSubset '{}', falling back to Explorer", value);
+        return "explorer";
+    }
 }
 
 class ArchipelagoWorldScript : public WorldScript
 {
 public:
     ArchipelagoWorldScript()
-        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_AFTER_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE })
+        : WorldScript("ArchipelagoWorldScript", { WORLDHOOK_ON_BEFORE_CONFIG_LOAD, WORLDHOOK_ON_AFTER_CONFIG_LOAD, WORLDHOOK_ON_STARTUP, WORLDHOOK_ON_SHUTDOWN, WORLDHOOK_ON_UPDATE, WORLDHOOK_ON_LOAD_CUSTOM_DATABASE_TABLE })
     { }
 
     void OnBeforeConfigLoad(bool /*reload*/) override
@@ -168,13 +219,16 @@ public:
         _password = sConfigMgr->GetOption<std::string>("Archipelago.Password", "");
         _useTls = sConfigMgr->GetOption<bool>("Archipelago.UseTLS", false);
         _deliveryCharacter = sConfigMgr->GetOption<std::string>("Archipelago.DeliveryCharacter", "");
+        sArchipelagoRealmState->SetDeliveryCharacter(_deliveryCharacter);
         _reconnectMinSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMinSeconds", 2);
         _reconnectMaxSeconds = sConfigMgr->GetOption<int32_t>("Archipelago.ReconnectMaxSeconds", 60);
         _proficiencyGating = sConfigMgr->GetOption<bool>("Archipelago.ProficiencyGating", false);
         _accessGating = sConfigMgr->GetOption<bool>("Archipelago.AccessGating", false);
         _characterUnlockGating = sConfigMgr->GetOption<bool>("Archipelago.CharacterUnlockGating", false);
+        _zoneGating = sConfigMgr->GetOption<bool>("Archipelago.ZoneGating", false);
         _deliveryPolicy = ParseDeliveryPolicy(sConfigMgr->GetOption<std::string>("Archipelago.DeliveryPolicy", "SingleDeliveryCharacter"));
         _auctionHouseCostTier = ParseCostTier(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseCostTier", "Market"));
+        _auctionHouseFactionMode = ParseAuctionHouseFactionMode(sConfigMgr->GetOption<std::string>("Archipelago.AuctionHouseFactionMode", "Merged"));
 
         // Task 16 (design spec Sec7.2): same manual-sync mirror-toggle discipline as
         // every other option above -- mirrored into ArchipelagoRealmState rather than
@@ -193,6 +247,17 @@ public:
         sArchipelagoRealmState->SetDeathLinkReceiveEnabled(sConfigMgr->GetOption<bool>("Archipelago.DeathLinkReceiveEnabled", false));
         sArchipelagoRealmState->SetDeathLinkSendCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkSendCooldownSeconds", 15));
         sArchipelagoRealmState->SetDeathLinkReceiveCooldownSeconds(sConfigMgr->GetOption<uint32_t>("Archipelago.DeathLinkReceiveCooldownSeconds", 15));
+
+        // M6.0 (Playerbots Integration): four independent bot-awareness
+        // toggles, all off (safe/vanilla) by default -- see
+        // ArchipelagoRealmState.h's own comment on IsBotsSubjectToGating for
+        // why these are cached here rather than read directly at each hook's
+        // call site (consumed from APGating.cpp, ~16 different check-firing
+        // hook files, ArchipelagoDeathLinkScript.cpp, and APCatchUp.cpp).
+        sArchipelagoRealmState->SetBotsSubjectToGating(sConfigMgr->GetOption<bool>("Archipelago.BotsSubjectToGating", false));
+        sArchipelagoRealmState->SetBotChecksCountEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotChecksCount", false));
+        sArchipelagoRealmState->SetBotDeathsTriggerDeathLinkEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotDeathsTriggerDeathLink", false));
+        sArchipelagoRealmState->SetBotsReceiveCatchUpEnabled(sConfigMgr->GetOption<bool>("Archipelago.BotsReceiveCatchUp", false));
 
         // Task 20: same not-persisted mirror-toggle discipline as DeathLink above.
         // suppressResSickness feeds ArchipelagoDeathLinkScript's OnPlayerResurrect
@@ -215,23 +280,6 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_tbc", tbcScopeActive);
         sArchipelagoRealmState->SetGateFamilyEnabled("combo_unlock_wotlk", wotlkScopeActive);
 
-        // Task 23: consumed directly as a string by
-        // ArchipelagoInstanceScript.cpp's kill hook -- unlike DeliveryPolicy/
-        // CostTier, there is no C++ enum for this value anywhere else in the
-        // module, so no Parse* helper is needed, just validate it and warn on
-        // an unrecognized value the same way every Parse* helper's fallback
-        // branch does.
-        std::string instanceClearMode = sConfigMgr->GetOption<std::string>("Archipelago.InstanceClearMode", "AllBosses");
-        if (instanceClearMode == "AllBosses")
-            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
-        else if (instanceClearMode == "FinalBossOnly")
-            sArchipelagoRealmState->SetInstanceClearMode("final_boss_only");
-        else
-        {
-            LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized Archipelago.InstanceClearMode '{}', falling back to AllBosses", instanceClearMode);
-            sArchipelagoRealmState->SetInstanceClearMode("all_bosses");
-        }
-
         // Found needed during Task 23/24's own review, not originally planned
         // for either task: ArchipelagoGoals.cpp's CheckAndSendGoalComplete
         // needs to know which mode is active to report completion at all
@@ -240,6 +288,12 @@ public:
         // seed's own YAML.
         sArchipelagoRealmState->SetGameMode(ParseGameMode(sConfigMgr->GetOption<std::string>("Archipelago.GameMode", "Sprint")));
         sArchipelagoRealmState->SetCompletionistExpansion(ParseCompletionistExpansion(sConfigMgr->GetOption<std::string>("Archipelago.CompletionistExpansion", "Vanilla")));
+
+        // M4.9 Sec4 (Achievement Hunt): must match the connected seed's own
+        // achievement_hunt_tier/achievement_hunt_subset options -- same
+        // manual-sync requirement as GameMode/CompletionistExpansion above.
+        sArchipelagoRealmState->SetAchievementHuntTier(ParseAchievementHuntTier(sConfigMgr->GetOption<std::string>("Archipelago.AchievementHuntTier", "HundredPercent")));
+        sArchipelagoRealmState->SetAchievementHuntSubset(ParseAchievementHuntSubset(sConfigMgr->GetOption<std::string>("Archipelago.AchievementHuntSubset", "Explorer")));
 
         // Task 25 (Key Hunt): must match the connected seed's own
         // key_hunt_keys_required/key_hunt_instances_required options -- same
@@ -289,6 +343,7 @@ public:
         sArchipelagoRealmState->SetGateFamilyEnabled("proficiency", _proficiencyGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("access", _accessGating);
         sArchipelagoRealmState->SetGateFamilyEnabled("character_unlocks", _characterUnlockGating);
+        sArchipelagoRealmState->SetGateFamilyEnabled("zone_access", _zoneGating);
 
         LOG_INFO("module.archipelago_wow", "Archipelago: config loaded (Enabled={}, ServerAddress={}, ServerPort={})",
             _enabled, _serverAddress, _serverPort);
@@ -332,6 +387,21 @@ public:
             ApplyRuntimeConfigOverrides();
     }
 
+    void OnLoadCustomDatabaseTable() override
+    {
+        // M5.0 Sec7 final review fix: OnStartup fires AFTER
+        // sWorld->SetInitialWorldSettings() has already loaded
+        // creature_template (and other content tables) into memory, so
+        // applying mutations there means they silently don't take effect
+        // until the NEXT boot. OnLoadCustomDatabaseTable fires after
+        // StartDB() but before those in-memory loads, so the DB rows are
+        // already correct by the time anything reads them. _enabled and
+        // _slotName are both already set by this point (read in
+        // OnBeforeConfigLoad, which always fires before StartDB).
+        if (_enabled)
+            sAPWorldState->ApplyIfNeeded(_slotName);
+    }
+
     void OnStartup() override
     {
         // Realm state (including the persisted level cap) must load
@@ -355,26 +425,15 @@ public:
         if (!_enabled)
             return;
 
-        // Fix (post-Task 17 review): Task 11's filler locations carry no access
-        // rule, so distribute_items_restrictive can and does place progression
-        // items on them (a Progressive Level Cap copy included) -- nothing in
-        // this module ever sent these checks, so any progression item that
-        // landed on one would be permanently unobtainable in real play, a live
-        // softlock. Since these locations have no real in-game trigger by
-        // design, the correct trigger is "this realm exists" -- send every
-        // filler location id, unconditionally, once per startup.
-        // ArchipelagoManager::SendLocationChecks only *inserts* new ids into
-        // ArchipelagoRealmState's persisted sent-check set (already-sent ids
-        // are a no-op), and the AP server silently ignores any id that isn't
-        // part of this slot's actual location table (MultiServer.py's
-        // register_location_checks: "ignore location IDs unknown to this
-        // multidata") -- so sending the full worst-case id set here is safe
-        // regardless of how many this seed's options actually used, and the
-        // Initialize() callback below (ResendAllChecksAndGoal) will redeliver
-        // them once the AP session actually connects, exactly like every
-        // other check recorded before a (re)connect completes.
-        sArchipelagoMgr->SendLocationChecks(std::vector<int64_t>(
-            Archipelago::Filler::LocationIds.begin(), Archipelago::Filler::LocationIds.end()));
+        // M4.11.6: Filler's location-check send moved off OnStartup entirely
+        // -- sending the full, seed-independent 151-id compiled set here
+        // over-reported every id this seed's own options didn't actually
+        // place as a completed check on every single startup (a real,
+        // observed bug, not hypothetical -- see
+        // docs/guides/realm-refresh-methodology.md and this fix's own design
+        // spec). The real per-seed send now happens in OnUpdate below, once
+        // slot_data's filler_needed_count arrives (same apply-once pattern
+        // as every other one-shot slot_data value in this class).
 
         Archipelago::ClientOptions options;
         options.host = _serverAddress;
@@ -396,23 +455,81 @@ public:
         // only ever push the received items into this lock-guarded queue; the
         // actual mail/DB work happens in OnUpdate below, which always runs on
         // the world thread.
-        sArchipelagoMgr->Initialize(options,
-            [this](std::vector<Archipelago::ReceivedItem> const& items) {
-                std::lock_guard<std::mutex> lock(_pendingItemsMutex);
-                _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
-            },
-            [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
-                std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
-                _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
-            },
-            [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
-                std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
-                _pendingSlotData = display;
-            },
-            [this](std::string const& behavior) {
-                std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
-                _pendingVendorCheckRepeatBehavior = behavior;
-            });
+        Archipelago::ArchipelagoCallbacks callbacks;
+        callbacks.onItemsReceived = [this](std::vector<Archipelago::ReceivedItem> const& items) {
+            std::lock_guard<std::mutex> lock(_pendingItemsMutex);
+            _pendingItems.insert(_pendingItems.end(), items.begin(), items.end());
+        };
+        callbacks.onDeathLinkReceived = [this](std::vector<Archipelago::IncomingDeathLink> const& deathLinks) {
+            std::lock_guard<std::mutex> lock(_pendingDeathLinksMutex);
+            _pendingDeathLinks.insert(_pendingDeathLinks.end(), deathLinks.begin(), deathLinks.end());
+        };
+        callbacks.onSlotDataReceived = [this](std::unordered_map<int64_t, Archipelago::ApItemDisplay> const& display) {
+            std::lock_guard<std::mutex> lock(_pendingSlotDataMutex);
+            _pendingSlotData = display;
+        };
+        callbacks.onVendorCheckRepeatBehaviorReceived = [this](std::string const& behavior) {
+            std::lock_guard<std::mutex> lock(_pendingVendorCheckRepeatBehaviorMutex);
+            _pendingVendorCheckRepeatBehavior = behavior;
+        };
+        callbacks.onInstanceClearModeReceived = [this](std::string const& mode) {
+            std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
+            _pendingInstanceClearMode = mode;
+        };
+        callbacks.onWorldSeedReceived = [this](std::string const& worldSeed) {
+            std::lock_guard<std::mutex> lock(_pendingWorldSeedMutex);
+            _pendingWorldSeed = worldSeed;
+        };
+        callbacks.onLootSlotCheckRepeatBehaviorReceived = [this](std::string const& behavior) {
+            std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
+            _pendingLootSlotCheckRepeatBehavior = behavior;
+        };
+        callbacks.onHolidaysanityStackingReceived = [this](bool stacking) {
+            std::lock_guard<std::mutex> lock(_pendingHolidaysanityStackingMutex);
+            _pendingHolidaysanityStacking = stacking;
+        };
+        // M4.11.1 Task 15: goal-completion side's own zone_leveler slot_data
+        // -- shares _pendingZoneLevelerMutex below (all five keys always
+        // arrive together in the same _add_zone_leveler_data Connected
+        // payload and must be applied to ArchipelagoRealmState as one
+        // atomic unit).
+        callbacks.onZoneLevelerZoneKeyReceived = [this](std::string const& key) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerZoneKey = key;
+        };
+        callbacks.onZoneLevelerGoalsReceived = [this](std::vector<std::string> const& goals) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerGoals = goals;
+        };
+        callbacks.onZoneLevelerStatuesRequiredReceived = [this](uint32_t required) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerStatuesRequired = required;
+        };
+        callbacks.onZoneLevelerInstancesRequiredReceived = [this](uint32_t required) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerInstancesRequired = required;
+        };
+        callbacks.onZoneLevelerInstanceKeysReceived = [this](std::vector<std::string> const& keys) {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            _pendingZoneLevelerInstanceKeys = keys;
+        };
+        callbacks.onPrintJsonReceived = [this](std::vector<std::string> const& texts) {
+            std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
+            _pendingPrintJsonText.insert(_pendingPrintJsonText.end(), texts.begin(), texts.end());
+        };
+        callbacks.onItemSendEventsReceived = [this](std::vector<Archipelago::ItemSendEvent> const& events) {
+            std::lock_guard<std::mutex> lock(_pendingItemSendEventsMutex);
+            _pendingItemSendEvents.insert(_pendingItemSendEvents.end(), events.begin(), events.end());
+        };
+        callbacks.onMissingLocationsReceived = [this](std::vector<int64_t> const& locations) {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            _pendingMissingLocations = locations;
+        };
+        callbacks.onFillerNeededCountReceived = [this](uint32_t neededCount) {
+            std::lock_guard<std::mutex> lock(_pendingFillerNeededCountMutex);
+            _pendingFillerNeededCount = neededCount;
+        };
+        sArchipelagoMgr->Initialize(options, std::move(callbacks));
     }
 
     void OnShutdown() override
@@ -431,7 +548,7 @@ public:
             items.swap(_pendingItems);
         }
         if (!items.empty())
-            DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier);
+            DeliverArchipelagoItems(items, _deliveryCharacter, _deliveryPolicy, _auctionHouseCostTier, _auctionHouseFactionMode);
 
         std::vector<Archipelago::IncomingDeathLink> deathLinks;
         {
@@ -451,7 +568,10 @@ public:
             }
         }
         if (!slotData.empty())
+        {
             Archipelago::ItemDisplay::SynthesizeAndRewireLocations(slotData);
+            Archipelago::ItemDisplay::SetSynthesizedDisplayData(slotData);
+        }
 
         std::optional<std::string> vendorCheckRepeatBehavior;
         {
@@ -464,6 +584,178 @@ public:
         }
         if (vendorCheckRepeatBehavior)
             sArchipelagoRealmState->SetVendorCheckRepeatBehavior(*vendorCheckRepeatBehavior);
+
+        std::optional<uint32_t> fillerNeededCount;
+        {
+            std::lock_guard<std::mutex> lock(_pendingFillerNeededCountMutex);
+            // Re-apply whenever the pending value differs from the last one
+            // actually sent, not merely "has this ever been applied" -- a
+            // bare apply-once bool (this class's usual pattern for a
+            // slot_data value that can't change without a full worldserver
+            // restart) would silently stop resending Filler's per-seed set
+            // the moment a *different*, regenerated seed connects to a
+            // still-running worldserver with a larger `needed` than the
+            // first seed it saw, stranding any progression item on the
+            // newly-added Filler Check ids -- the exact softlock this
+            // milestone's design spec says reseeding-in-place must not
+            // regress.
+            if (_pendingFillerNeededCount && _pendingFillerNeededCount != _lastAppliedFillerNeededCount)
+            {
+                fillerNeededCount = _pendingFillerNeededCount;
+                _lastAppliedFillerNeededCount = _pendingFillerNeededCount;
+            }
+        }
+        if (fillerNeededCount)
+        {
+            LOG_INFO("module.archipelago_wow", "Archipelago: sending {} of {} Filler checks for the connected seed",
+                *fillerNeededCount, Archipelago::Filler::OrderedLocationIds.size());
+            sArchipelagoMgr->SendLocationChecks(
+                Archipelago::Filler::SliceNeededLocationIds(Archipelago::Filler::OrderedLocationIds, *fillerNeededCount));
+        }
+
+        std::optional<std::string> instanceClearMode;
+        {
+            std::lock_guard<std::mutex> lock(_pendingInstanceClearModeMutex);
+            if (!_instanceClearModeApplied && _pendingInstanceClearMode)
+            {
+                instanceClearMode = _pendingInstanceClearMode;
+                _instanceClearModeApplied = true;
+            }
+        }
+        if (instanceClearMode)
+        {
+            // M4.9.5 final review fix: restore the same validation discipline
+            // the old manual worldserver.conf mirror used to have (only
+            // recognized values accepted, logged error + fallback to the
+            // existing value otherwise) now that the raw string comes
+            // straight from slot_data instead -- adapted to the new
+            // snake_case value spellings.
+            if (*instanceClearMode == "all_bosses" || *instanceClearMode == "final_boss_only")
+                sArchipelagoRealmState->SetInstanceClearMode(*instanceClearMode);
+            else
+                LOG_ERROR("module.archipelago_wow", "Archipelago: unrecognized instance_clear_mode '{}' from slot_data, keeping existing value", *instanceClearMode);
+        }
+
+        std::optional<std::string> worldSeed;
+        {
+            std::lock_guard<std::mutex> lock(_pendingWorldSeedMutex);
+            if (!_worldSeedApplied && _pendingWorldSeed)
+            {
+                worldSeed = _pendingWorldSeed;
+                _worldSeedApplied = true;
+            }
+        }
+        if (worldSeed)
+        {
+            // M5.0 Sec9: detection only. A mismatch means an operator
+            // error (wrong file copied, or .conf/seed drifted) to be
+            // fixed by a restart -- never a live re-apply (re-mutating a
+            // server with players already online is explicitly ruled
+            // out).
+            std::optional<std::string> appliedWorldSeed = sAPWorldState->GetAppliedWorldSeed();
+            if (appliedWorldSeed && *appliedWorldSeed != *worldSeed)
+            {
+                LOG_ERROR("module.archipelago_wow", "Archipelago: connected seed's world_seed '{}' does not match this realm's applied mutation-data world_seed '{}' -- Pipeline B mutations are stale or were never applied. Fix the mismatch and restart; this module will not re-apply mutations live.",
+                    *worldSeed, appliedWorldSeed ? *appliedWorldSeed : "<none>");
+            }
+        }
+
+        std::optional<std::string> lootSlotCheckRepeatBehavior;
+        {
+            std::lock_guard<std::mutex> lock(_pendingLootSlotCheckRepeatBehaviorMutex);
+            if (!_lootSlotCheckRepeatBehaviorApplied && _pendingLootSlotCheckRepeatBehavior)
+            {
+                lootSlotCheckRepeatBehavior = _pendingLootSlotCheckRepeatBehavior;
+                _lootSlotCheckRepeatBehaviorApplied = true;
+            }
+        }
+        if (lootSlotCheckRepeatBehavior)
+            sArchipelagoRealmState->SetLootSlotCheckRepeatBehavior(*lootSlotCheckRepeatBehavior);
+
+        std::optional<bool> holidaysanityStacking;
+        {
+            std::lock_guard<std::mutex> lock(_pendingHolidaysanityStackingMutex);
+            if (!_holidaysanityStackingApplied && _pendingHolidaysanityStacking)
+            {
+                holidaysanityStacking = _pendingHolidaysanityStacking;
+                _holidaysanityStackingApplied = true;
+            }
+        }
+        if (holidaysanityStacking)
+            sArchipelagoRealmState->SetHolidaysanityStacking(*holidaysanityStacking);
+
+        // Zone Leveler goal-completion slot_data (M4.11.1 Task 15): apply
+        // once, gated on _pendingZoneLevelerZoneKey specifically (the
+        // primary key of this bundle) having arrived -- the other four
+        // values default to "no goal-completion data yet" (empty
+        // string/empty vector/0) via value_or() below if for some reason
+        // they weren't set alongside it (shouldn't happen in real play;
+        // _add_zone_leveler_data always emits all five keys together). An
+        // empty ZoneLevelerGoals here (either from this fallback, or simply
+        // because slot_data hasn't arrived yet at all -- game_mode is set at
+        // worldserver boot, independent of any live AP connection, and a
+        // level-up can occur before Connected ever fires) is why
+        // IsZoneLevelerComplete (ArchipelagoGoalsPure.h) has an explicit
+        // empty-set guard returning false: without it, the
+        // AND-of-zero-conditions loop there would vacuously report complete
+        // (final whole-branch review Important 3).
+        bool applyZoneLeveler = false;
+        std::string zoneLevelerZoneKey;
+        std::vector<std::string> zoneLevelerGoals;
+        uint32_t zoneLevelerStatuesRequired = 0;
+        uint32_t zoneLevelerInstancesRequired = 0;
+        std::vector<std::string> zoneLevelerInstanceKeys;
+        {
+            std::lock_guard<std::mutex> lock(_pendingZoneLevelerMutex);
+            if (!_zoneLevelerApplied && _pendingZoneLevelerZoneKey)
+            {
+                zoneLevelerZoneKey = _pendingZoneLevelerZoneKey.value_or(std::string());
+                zoneLevelerGoals = _pendingZoneLevelerGoals.value_or(std::vector<std::string>());
+                zoneLevelerStatuesRequired = _pendingZoneLevelerStatuesRequired.value_or(0);
+                zoneLevelerInstancesRequired = _pendingZoneLevelerInstancesRequired.value_or(0);
+                zoneLevelerInstanceKeys = _pendingZoneLevelerInstanceKeys.value_or(std::vector<std::string>());
+                _zoneLevelerApplied = true;
+                applyZoneLeveler = true;
+            }
+        }
+        if (applyZoneLeveler)
+        {
+            sArchipelagoRealmState->SetZoneLevelerZoneKey(zoneLevelerZoneKey);
+            sArchipelagoRealmState->SetZoneLevelerGoals(
+                std::unordered_set<std::string>(zoneLevelerGoals.begin(), zoneLevelerGoals.end()));
+            sArchipelagoRealmState->SetZoneLevelerStatuesRequired(zoneLevelerStatuesRequired);
+            sArchipelagoRealmState->SetZoneLevelerInstancesRequired(zoneLevelerInstancesRequired);
+            sArchipelagoRealmState->SetZoneLevelerInstanceKeys(zoneLevelerInstanceKeys);
+        }
+
+        std::vector<std::string> printJsonText;
+        {
+            std::lock_guard<std::mutex> lock(_pendingPrintJsonTextMutex);
+            printJsonText.swap(_pendingPrintJsonText);
+        }
+        // Broadcast to all online players, per spec Sec2.
+        for (std::string const& text : printJsonText)
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, text);
+
+        std::vector<Archipelago::ItemSendEvent> itemSendEvents;
+        {
+            std::lock_guard<std::mutex> lock(_pendingItemSendEventsMutex);
+            itemSendEvents.swap(_pendingItemSendEvents);
+        }
+        for (Archipelago::ItemSendEvent const& event : itemSendEvents)
+            sArchipelagoRealmState->RecordSlotItemSend(event.sourceSlot);
+
+        std::optional<std::vector<int64_t>> missingLocations;
+        {
+            std::lock_guard<std::mutex> lock(_pendingMissingLocationsMutex);
+            if (_pendingMissingLocations)
+            {
+                missingLocations = std::move(_pendingMissingLocations);
+                _pendingMissingLocations.reset();
+            }
+        }
+        if (missingLocations)
+            sArchipelagoMgr->SetLastKnownMissingLocations(*missingLocations);
     }
 
 private:
@@ -476,11 +768,13 @@ private:
     std::string _deliveryCharacter;
     Archipelago::Delivery::Policy _deliveryPolicy = Archipelago::Delivery::Policy::SingleDeliveryCharacter;
     Archipelago::Delivery::CostTier _auctionHouseCostTier = Archipelago::Delivery::CostTier::Market;
+    Archipelago::Delivery::AuctionHouseFactionMode _auctionHouseFactionMode = Archipelago::Delivery::AuctionHouseFactionMode::Merged;
     int32_t _reconnectMinSeconds = 2;
     int32_t _reconnectMaxSeconds = 60;
     bool _proficiencyGating = false;
     bool _accessGating = false;
     bool _characterUnlockGating = false;
+    bool _zoneGating = false;
 
     // Populated (push_back only) from the APClient io thread inside the
     // Initialize() callback above; drained on the world thread in OnUpdate.
@@ -519,6 +813,104 @@ private:
     std::mutex _pendingVendorCheckRepeatBehaviorMutex;
     std::optional<std::string> _pendingVendorCheckRepeatBehavior;
     bool _vendorCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer shape as
+    // _pendingVendorCheckRepeatBehavior above, for the filler_needed_count
+    // slot_data value (M4.11.6) -- closes the phantom-filler-check gap
+    // docs/guides/realm-refresh-methodology.md's investigation found: the
+    // full compiled 151 Filler Check ids are no longer sent unconditionally
+    // at OnStartup, only the real per-seed count, once slot_data arrives.
+    // Deliberately NOT a bare apply-once bool like this class's other
+    // slot_data values: those can't change without a full worldserver
+    // restart, but a *different* regenerated seed can connect to a
+    // still-running worldserver with a different `needed` -- tracking the
+    // last-applied value (re-applying only when it genuinely changes) is
+    // what lets reseeding-in-place resend the correct, possibly-larger set
+    // instead of permanently silencing it after the first seed connects.
+    std::mutex _pendingFillerNeededCountMutex;
+    std::optional<uint32_t> _pendingFillerNeededCount;
+    std::optional<uint32_t> _lastAppliedFillerNeededCount;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
+    // above, for the one-shot instance_clear_mode slot_data string (M4.9).
+    // Unlike vendor_check_repeat_behavior this REPLACES a previously manual
+    // Archipelago.InstanceClearMode conf mirror outright -- see the removed
+    // block above and ArchipelagoRealmState's own "all_bosses" default,
+    // which now serves as the sole fallback until slot_data arrives.
+    std::mutex _pendingInstanceClearModeMutex;
+    std::optional<std::string> _pendingInstanceClearMode;
+    bool _instanceClearModeApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingInstanceClearMode/_instanceClearModeApplied above, for the
+    // one-shot world_seed slot_data string (M5.0 Sec9). Unlike every other
+    // one-shot slot_data value above, this is NEVER applied to live state --
+    // OnUpdate only compares it against sAPWorldState->GetAppliedWorldSeed()
+    // and logs a mismatch; _worldSeedApplied just guards against re-logging
+    // on every subsequent tick after the one comparison.
+    std::mutex _pendingWorldSeedMutex;
+    std::optional<std::string> _pendingWorldSeed;
+    bool _worldSeedApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingVendorCheckRepeatBehavior/_vendorCheckRepeatBehaviorApplied
+    // above, for the one-shot loot_slot_check_repeat_behavior slot_data
+    // string (M4.10.1). A separate mutex/optional rather than folding into
+    // an existing queue's: logically unrelated slot_data key, parsed by a
+    // completely separate Parse* function
+    // (ParseLootSlotCheckRepeatBehaviorFromSlotData), so no reason to let
+    // one queue's lock contention block another.
+    std::mutex _pendingLootSlotCheckRepeatBehaviorMutex;
+    std::optional<std::string> _pendingLootSlotCheckRepeatBehavior;
+    bool _lootSlotCheckRepeatBehaviorApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingLootSlotCheckRepeatBehavior/_lootSlotCheckRepeatBehaviorApplied
+    // above, for the one-shot holidaysanity_stacking slot_data bool (M4.10.7).
+    std::mutex _pendingHolidaysanityStackingMutex;
+    std::optional<bool> _pendingHolidaysanityStacking;
+    bool _holidaysanityStackingApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer, apply-once shape as
+    // _pendingHolidaysanityStacking/_holidaysanityStackingApplied above, for
+    // the Zone Leveler goal-completion slot_data bundle: zone_leveler_zone_key/
+    // zone_leveler_goals/zone_leveler_statues_required/
+    // zone_leveler_instances_required/zone_leveler_instance_keys (M4.11.1
+    // Task 15). One shared mutex/applied-flag rather than one per key (unlike
+    // every other slot_data queue above) -- all five always arrive together
+    // in the same _add_zone_leveler_data Connected payload and must apply to
+    // ArchipelagoRealmState as one atomic unit; see the Initialize()
+    // callback registration above and OnUpdate's apply block for the full
+    // reasoning.
+    std::mutex _pendingZoneLevelerMutex;
+    std::optional<std::string> _pendingZoneLevelerZoneKey;
+    std::optional<std::vector<std::string>> _pendingZoneLevelerGoals;
+    std::optional<uint32_t> _pendingZoneLevelerStatuesRequired;
+    std::optional<uint32_t> _pendingZoneLevelerInstancesRequired;
+    std::optional<std::vector<std::string>> _pendingZoneLevelerInstanceKeys;
+    bool _zoneLevelerApplied = false;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingItems above,
+    // for incoming PrintJSON display text (M4.13, ".ap hint"'s response). Unlike
+    // the "apply-once" queues above, this is drained and re-broadcast every
+    // OnUpdate tick -- a PrintJSON message (e.g. a hint result) can legitimately
+    // arrive many times over a realm's lifetime, not just once at connect.
+    std::mutex _pendingPrintJsonTextMutex;
+    std::vector<std::string> _pendingPrintJsonText;
+
+    std::mutex _pendingItemSendEventsMutex;
+    std::vector<Archipelago::ItemSendEvent> _pendingItemSendEvents;
+
+    // Same io-thread-producer/world-thread-consumer shape as _pendingPrintJsonText
+    // above, for Connected/RoomUpdate's missing_locations snapshot (M4.13,
+    // ".ap missing"). std::optional (rather than a bare vector) distinguishes "no
+    // new snapshot arrived this tick" from "the new snapshot is a real empty
+    // vector" (all locations checked) -- the latter must still overwrite
+    // ArchipelagoManager's stored snapshot via SetLastKnownMissingLocations below,
+    // not be mistaken for "nothing to drain".
+    std::mutex _pendingMissingLocationsMutex;
+    std::optional<std::vector<int64_t>> _pendingMissingLocations;
 };
 
 void AddArchipelagoWorldScripts()

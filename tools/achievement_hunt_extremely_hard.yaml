@@ -1,0 +1,74 @@
+# Hand-maintained "extremely hard" denylist for Achievement Hunt's 99% tier
+# (M4.9 Sec4) -- same hand-edited pattern as exclusion_rules.yaml in this
+# same directory, but a curated list of real achievement ids rather than
+# name regexes, since "extremely hard" is a design judgment call, not a
+# DBC-derivable property. The 99% tier is the 100% tier's pool (every real,
+# non-counter, non-Feats-of-Strength achievement) minus every id listed
+# here.
+#
+# Every id below was looked up against this checkout's real Achievement.dbc/
+# Achievement_Category.dbc (var/extractors/dbc/) during M4.9 planning -- see
+# the plan's Global Constraints for the exact lookup method.
+#
+# Realm-first achievements (e.g. "Realm First! Level 80") and "Insane in
+# the Membrane" are NOT listed here even though they fit this list's spirit
+# -- they are all real Feats of Strength (categoryId 81) already, so
+# extract_achievements.py's FoS rule excludes them from every tier before
+# this file is even consulted; listing them here would be a dead entry.
+#
+# "Salty", named in the M4.9 spec's own illustrative text as an example
+# long-grind achievement, does not exist anywhere in this checkout's real
+# Achievement.dbc (confirmed via a full-text search across all 1,817 real
+# rows' name fields) -- it is a Cataclysm-era achievement, not present in
+# 3.3.5a WotLK client data, so it cannot be listed here either.
+#
+# "Most factions at Exalted" (id 377) is also deliberately NOT listed --
+# despite its name and its real parent chain resolving toward the
+# Reputation category, its own real categoryId (147) carries
+# ACHIEVEMENT_FLAG_COUNTER (flags=1, confirmed against the real DBC row),
+# so it is already excluded from every tier by the counter-flag rule before
+# reaching this file; listing it here would also be a dead entry.
+extremely_hard_achievement_ids:
+  # Arena personal-rating achievements (Achievement_Category.dbc id 165,
+  # "Arena", a real leaf category under Player vs. Player/95) -- every one
+  # of the 25 real achievements in this category, from "win your first
+  # rated arena match" up through the 2v2/3v3/5v5 rating-threshold and
+  # rating-title achievements (Challenger/Duelist/Rival/Gladiator).
+  - 397   # Step Into The Arena
+  - 398   # Mercilessly Dedicated
+  - 399   # Just the Two of Us: 1550
+  - 400   # Just the Two of Us: 1750
+  - 401   # Just the Two of Us: 2000
+  - 402   # Three's Company: 1550
+  - 403   # Three's Company: 1750
+  - 404   # High Five: 2000
+  - 405   # Three's Company: 2000
+  - 406   # High Five: 1550
+  - 407   # High Five: 1750
+  - 408   # Hot Streak
+  - 409   # Last Man Standing
+  - 699   # World Wide Winner
+  - 875   # Vengefully Dedicated
+  - 876   # Brutally Dedicated
+  - 1159  # Just the Two of Us: 2200
+  - 1160  # Three's Company: 2200
+  - 1161  # High Five: 2200
+  - 1162  # Hotter Streak
+  - 1174  # The Arena Master
+  - 2090  # Challenger
+  - 2091  # Gladiator
+  - 2092  # Duelist
+  - 2093  # Rival
+  # Long reputation-grind chain (Achievement_Category.dbc root 201,
+  # "Reputation") -- each tier requires exalting an increasing number of
+  # the game's real factions at once, a genuinely long, essentially
+  # unbounded-by-content-availability grind (unlike a single "reach exalted
+  # with faction X" achievement, which stays in the 99% pool).
+  - 523   # 5 Exalted Reputations
+  - 524   # 10 Exalted Reputations
+  - 521   # 15 Exalted Reputations
+  - 520   # 20 Exalted Reputations
+  - 519   # 25 Exalted Reputations
+  - 518   # 30 Exalted Reputations
+  - 1014  # 35 Exalted Reputations
+  - 1015  # 40 Exalted Reputations

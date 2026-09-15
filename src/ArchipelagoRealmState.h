@@ -2,9 +2,11 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 // Realm-wide Archipelago core-loop progression state. One realm = one AP
 // slot (spec core commitment), so this is a single cached row/set, not
@@ -53,6 +55,49 @@ public:
     void RecordLocationCheckSent(uint64_t locationId);
     std::unordered_set<uint64_t> const& GetSentLocationChecks() const { return _sentLocationChecks; }
 
+    // M4.11.5.6: per-slot running check-found totals, passively built from
+    // real "ItemSend" PrintJSON broadcasts this client already receives
+    // (Archipelago::ParseItemSendEvents, APProtocol.h) -- fed from
+    // ArchipelagoWorldScript::OnUpdate's own PrintJSON-draining code (Task
+    // 3), never a new AP-server query. Not deduplicated by any real event
+    // id (the real protocol carries none for ItemSend) -- every observed
+    // broadcast increments its own source slot's own total by 1, matching
+    // "one real check found" per broadcast, the real protocol's own
+    // guarantee (confirmed live, Archipelago/docs/network protocol.md: one
+    // ItemSend broadcast per real location check found, multiworld-wide).
+    // Offline-gap limitation: this realm only observes ItemSend broadcasts
+    // while its AP client is connected -- checks found by other slots while
+    // this realm was disconnected are never recorded and cannot be
+    // reconstructed after the fact.
+    void RecordSlotItemSend(int64_t sourceSlot);
+    std::map<int64_t, uint64_t> const& GetSlotTotals() const { return _slotTotals; }
+
+    // M4.11.5.6: which real WoW character (by low GUID) triggered each of
+    // this realm's own sent checks -- called alongside (never instead of)
+    // RecordLocationCheckSent above, at every one of this module's own real
+    // SendLocationChecks call sites that has a real, live acting Player* in
+    // scope (see the M4.11.5.6 plan's own Task 4 for the full real call-site
+    // enumeration and the one deliberate exception, ArchipelagoWorldScript's
+    // startup filler-location bootstrap, which has none). Idempotent per
+    // locationId -- gated by an in-memory `_attributedLocations` set (exact
+    // mirror of `_sentLocationChecks`'s own gate) so the DB INSERT IGNORE
+    // (and the `_checkCountsByPlayer` cache increment below) only fire the
+    // FIRST time a given location id is attributed; the DB's own
+    // `location_id` PRIMARY KEY remains the ultimate backstop. A location
+    // whose check somehow gets re-sent (e.g. after ResendAllChecksAndGoal)
+    // keeps its FIRST real attribution, never overwritten by a later resend.
+    void RecordLocationCheckAttribution(uint64_t locationId, uint32_t playerGuidLow);
+    // Real per-WoW-player totals for this realm's own slot, built from the
+    // in-memory `_checkCountsByPlayer` cache (populated in Load() and
+    // incrementally maintained by RecordLocationCheckAttribution above --
+    // no DB query on this path, matching every other `.ap` command's
+    // cached-in-memory-state contract) -- see
+    // ArchipelagoCommandScript.cpp's own .ap leaderboard handler (Task 5),
+    // the only real consumer. Returns player_guid -> real check count,
+    // ordered by count descending (highest first), matching a real
+    // leaderboard's own natural display order.
+    std::vector<std::pair<uint32_t, uint64_t>> GetCheckCountsByPlayer() const;
+
     bool IsGoalComplete() const { return _goalComplete; }
     void SetGoalComplete();
 
@@ -82,6 +127,15 @@ public:
     uint32_t GetCatchUpPercentPerLevel() const { return _catchUpPercentPerLevel; }
     void SetCatchUpPercentPerLevel(uint32_t percent) { _catchUpPercentPerLevel = percent; }
 
+    // M4.11.7 (Raidlogger): same indirection reason as CatchUpPolicy above --
+    // Archipelago.DeliveryCharacter is read once in ArchipelagoWorldScript.cpp
+    // and normally threaded through as a function parameter, but
+    // ArchipelagoInstanceScript.cpp's boss-kill hook (which needs it to
+    // re-apply a pending instant_level_set jump once a gating raid clears)
+    // has no parameter path to it, so it's mirrored here instead.
+    std::string GetDeliveryCharacter() const { return _deliveryCharacter; }
+    void SetDeliveryCharacter(std::string const& deliveryCharacter) { _deliveryCharacter = deliveryCharacter; }
+
     // Cached mirrors of Archipelago.DeathLink{Send,Receive}Enabled /
     // Archipelago.DeathLink{Send,Receive}CooldownSeconds (Task 19, design
     // spec Sec11), same not-persisted worldserver.conf-mirror convention as
@@ -94,6 +148,23 @@ public:
     bool GetDeathLinkReceiveEnabled() const { return _deathLinkReceiveEnabled; }
     void SetDeathLinkReceiveEnabled(bool enabled) { _deathLinkReceiveEnabled = enabled; }
     void SetDeathLinkSendCooldownSeconds(uint32_t seconds) { _deathLinkSendCooldownSeconds = seconds; }
+
+    // M6.0 (Playerbots Integration): four independent bot-awareness config
+    // levers, each sharing APBotDecision.h's ShouldApplyToBot(isBot, toggle)
+    // shape -- off (default) exempts bot-controlled players from the matching
+    // normal behavior, on treats them identically to real players. Mirrored
+    // here from worldserver.conf the same read-once-and-cache way as every
+    // other M4/M6 toggle above (see ArchipelagoWorldScript::OnBeforeConfigLoad),
+    // consumed from APGating.cpp, the location-check hook files,
+    // ArchipelagoDeathLinkScript.cpp, and APCatchUp.cpp.
+    bool IsBotsSubjectToGating() const { return _botsSubjectToGating; }
+    void SetBotsSubjectToGating(bool enabled) { _botsSubjectToGating = enabled; }
+    bool IsBotChecksCountEnabled() const { return _botChecksCountEnabled; }
+    void SetBotChecksCountEnabled(bool enabled) { _botChecksCountEnabled = enabled; }
+    bool IsBotDeathsTriggerDeathLinkEnabled() const { return _botDeathsTriggerDeathLinkEnabled; }
+    void SetBotDeathsTriggerDeathLinkEnabled(bool enabled) { _botDeathsTriggerDeathLinkEnabled = enabled; }
+    bool IsBotsReceiveCatchUpEnabled() const { return _botsReceiveCatchUpEnabled; }
+    void SetBotsReceiveCatchUpEnabled(bool enabled) { _botsReceiveCatchUpEnabled = enabled; }
     void SetDeathLinkReceiveCooldownSeconds(uint32_t seconds) { _deathLinkReceiveCooldownSeconds = seconds; }
 
     // Sec11: "send-side prevents a raid wipe spamming the multiworld" /
@@ -135,9 +206,10 @@ public:
     bool IsBossKillRecorded(std::string const& instanceKey, uint32_t bossEntry) const;
     void RecordBossKill(std::string const& instanceKey, uint32_t bossEntry);
 
-    // Cached mirror of Archipelago.InstanceClearMode (Task 23), same
-    // not-persisted worldserver.conf-mirror convention as CatchUpPolicy
-    // above -- consumed from ArchipelagoInstanceScript.cpp's kill hook.
+    // Cached value of instance_clear_mode (Task 23), read from the connected
+    // seed's own slot_data at connect time (M4.9.5 removed the old manual
+    // worldserver.conf mirror this used to have) -- consumed from
+    // ArchipelagoInstanceScript.cpp's kill hook.
     std::string GetInstanceClearMode() const { return _instanceClearMode; }
     void SetInstanceClearMode(std::string const& mode) { _instanceClearMode = mode; }
 
@@ -206,6 +278,112 @@ public:
     std::string GetVendorCheckRepeatBehavior() const { return _vendorCheckRepeatBehavior; }
     void SetVendorCheckRepeatBehavior(std::string behavior) { _vendorCheckRepeatBehavior = std::move(behavior); }
 
+    // Cached mirror of slot_data["loot_slot_check_repeat_behavior"]
+    // (M4.10.1), same not-persisted, set-once-from-slot_data convention as
+    // GetVendorCheckRepeatBehavior above -- consumed from
+    // ArchipelagoLootSlotScript.cpp's loot hook to decide what happens on
+    // a REPEAT loot of an already-checked Containersanity/Gathersanity
+    // slot. Defaults to "suppress_entirely" (matching the apworld option's
+    // own default).
+    std::string GetLootSlotCheckRepeatBehavior() const { return _lootSlotCheckRepeatBehavior; }
+    void SetLootSlotCheckRepeatBehavior(std::string behavior) { _lootSlotCheckRepeatBehavior = std::move(behavior); }
+
+    // Cached mirror of slot_data["holidaysanity_stacking"] (M4.10.7), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetLootSlotCheckRepeatBehavior above -- consumed by
+    // ArchipelagoHolidayHeraldScript.cpp's gossip toggle logic to decide
+    // whether activating a new holiday deactivates the currently-running
+    // one. Defaults to false (only one holiday active at a time), matching
+    // the apworld option's own off-by-default.
+    bool GetHolidaysanityStacking() const { return _holidaysanityStacking; }
+    void SetHolidaysanityStacking(bool stacking) { _holidaysanityStacking = stacking; }
+
+    // Cached mirror of Archipelago.AchievementHuntTier/AchievementHuntSubset
+    // (M4.9 Sec4), same not-persisted worldserver.conf-mirror convention as
+    // GameMode/CompletionistExpansion above -- consumed from
+    // ArchipelagoGoals.cpp's IsAchievementHuntComplete.
+    std::string GetAchievementHuntTier() const { return _achievementHuntTier; }
+    void SetAchievementHuntTier(std::string const& tier) { _achievementHuntTier = tier; }
+    std::string GetAchievementHuntSubset() const { return _achievementHuntSubset; }
+    void SetAchievementHuntSubset(std::string const& subset) { _achievementHuntSubset = subset; }
+
+    // Cached mirror of slot_data["zone_leveler_zone_key"] (M4.11.1 Task 15) --
+    // the connected zone's own short key (e.g. "barrens"), same
+    // not-persisted, set-once-from-slot_data convention as every other
+    // slot_data mirror above. Needed IN ADDITION TO the numeric zone id:
+    // Archipelago::CoreLoop::LEVEL_CAP_TOTAL_BY_TRACK (Task 3) is keyed by
+    // the STRING "zone_leveler_<zone_key>", and this C++ module has no
+    // zone_id -> zone_key reverse map of its own (unlike Python's
+    // zone_leveler_content_data.ZONES) -- without this, IsZoneLevelerComplete's
+    // reach_zone_level_cap check would have to hardcode "zone_leveler_barrens"
+    // literally, which would silently stop matching the moment a second zone
+    // is curated (M4.11.2). Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete.
+    std::string GetZoneLevelerZoneKey() const { return _zoneLevelerZoneKey; }
+    void SetZoneLevelerZoneKey(std::string const& key) { _zoneLevelerZoneKey = key; }
+
+    // Cached mirror of slot_data["zone_leveler_goals"] (M4.11.1 Task 15) --
+    // the connected slot's own selected win conditions (options.py's
+    // ZoneLevelerGoals OptionSet: any of reach_zone_level_cap,
+    // clear_all_zone_quests, golden_boar_statues, instance_clears), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneKey above. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete to decide which goal-kind sub-checks apply, the
+    // same role GetGameMode plays for CheckAndSendGoalComplete's own
+    // top-level dispatch.
+    std::unordered_set<std::string> const& GetZoneLevelerGoals() const { return _zoneLevelerGoals; }
+    void SetZoneLevelerGoals(std::unordered_set<std::string> goals) { _zoneLevelerGoals = std::move(goals); }
+
+    // Cached mirrors of slot_data["zone_leveler_statues_required"] /
+    // ["zone_leveler_instances_required"] (M4.11.1 Task 15), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneKey above -- consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete for the golden_boar_statues/instance_clears goal
+    // kinds respectively.
+    uint32_t GetZoneLevelerStatuesRequired() const { return _zoneLevelerStatuesRequired; }
+    void SetZoneLevelerStatuesRequired(uint32_t required) { _zoneLevelerStatuesRequired = required; }
+    uint32_t GetZoneLevelerInstancesRequired() const { return _zoneLevelerInstancesRequired; }
+    void SetZoneLevelerInstancesRequired(uint32_t required) { _zoneLevelerInstancesRequired = required; }
+
+    // Cached mirror of slot_data["zone_leveler_instance_keys"] (M4.11.1 Task
+    // 15) -- the connected zone's own curated instance_keys tuple (e.g.
+    // Barrens' wailing_caverns/razorfen_kraul/razorfen_downs), same
+    // not-persisted, set-once-from-slot_data convention as
+    // GetZoneLevelerZoneKey above. Consumed by ArchipelagoGoals.cpp's
+    // IsZoneLevelerComplete's instance_clears check, which counts how many
+    // of THESE SPECIFIC keys (not every realm-unlocked instance) are
+    // unlocked -- mirrors goals.py's own instance_item_names, built from the
+    // same zone_data.instance_keys.
+    std::vector<std::string> const& GetZoneLevelerInstanceKeys() const { return _zoneLevelerInstanceKeys; }
+    void SetZoneLevelerInstanceKeys(std::vector<std::string> keys) { _zoneLevelerInstanceKeys = std::move(keys); }
+
+    // M4.11.1 Task 15 (reach_zone_level_cap): realm-wide count of
+    // "Progressive Level Cap" items ever received -- exact same generic
+    // flag-store mechanism as GetKeyCount()/GrantKey() above (Task 25),
+    // under its own dedicated flag key. Deliberately distinct from
+    // GetLevelCap() itself (the realm's CURRENT max level, e.g. starting cap
+    // + copies*LEVEL_CAP_STEP): goals.py's real completion condition for
+    // this goal kind (_set_completion_rule_zone_leveler,
+    // state.has("Progressive Level Cap", count=total_caps)) counts copies
+    // RECEIVED, not the resulting cap value, so this needs its own counter
+    // rather than reverse-deriving a copy count from GetLevelCap() and a
+    // per-track starting cap. Incremented alongside RaiseLevelCap in
+    // ArchipelagoPlayerScript.cpp's AP_ITEM_PROGRESSIVE_LEVEL_CAP delivery
+    // block.
+    uint32_t GetLevelCapCopiesReceived() const { return GetFlagTier("progressive_level_cap_copies_received"); }
+    void GrantLevelCapCopy() { SetFlagTier("progressive_level_cap_copies_received", GetFlagTier("progressive_level_cap_copies_received") + 1); }
+
+    // M4.11.1 Task 15 (golden_boar_statues): realm-wide count of "Golden
+    // Boar Statue" items ever received -- exact same generic flag-store
+    // mechanism as GetKeyCount()/GrantKey() above (Task 25), under its own
+    // dedicated flag key (golden_boar_statues.yaml's own header comment: "a
+    // new `grant_statue` realm_state effect... needs its OWN distinct
+    // realm-state counter, not a silent alias of Key Hunt's"). Incremented
+    // from ArchipelagoPlayerScript.cpp's AP_ITEM_GOLDEN_BOAR_STATUE delivery
+    // block, the exact analog of the AP_ITEM_KEY_HUNT_KEY block.
+    uint32_t GetGoldenBoarStatueCount() const { return GetFlagTier("golden_boar_statue_count"); }
+    void GrantStatue() { SetFlagTier("golden_boar_statue_count", GetFlagTier("golden_boar_statue_count") + 1); }
+
 private:
     bool _enabled = false;
     uint32_t _levelCap = 10;
@@ -215,12 +393,20 @@ private:
     std::unordered_set<std::string> _unlockedInstances;
     std::unordered_map<std::string, uint32_t> _flagTiers;
     std::unordered_set<uint64_t> _sentLocationChecks;
+    std::map<int64_t, uint64_t> _slotTotals;
+    std::unordered_set<uint64_t> _attributedLocations;
+    std::unordered_map<uint32_t, uint64_t> _checkCountsByPlayer;
     std::unordered_map<std::string, bool> _gateFamiliesEnabled;
     std::string _catchUpPolicy = "Nothing";
+    std::string _deliveryCharacter;
     uint32_t _catchUpPercentPerLevel = 10;
     bool _deathLinkSendEnabled = false;
     bool _deathLinkReceiveEnabled = false;
     uint32_t _deathLinkSendCooldownSeconds = 15;
+    bool _botsSubjectToGating = false;
+    bool _botChecksCountEnabled = false;
+    bool _botDeathsTriggerDeathLinkEnabled = false;
+    bool _botsReceiveCatchUpEnabled = false;
     uint32_t _deathLinkReceiveCooldownSeconds = 15;
     int64_t _lastDeathLinkSentAt = 0;
     int64_t _lastDeathLinkReceivedAt = 0;
@@ -235,6 +421,15 @@ private:
     uint32_t _artisanPrimaryProfessionsRequired = 2;
     uint32_t _collectorItemsRequired = 264;
     std::string _vendorCheckRepeatBehavior = "suppress_entirely";
+    std::string _lootSlotCheckRepeatBehavior = "suppress_entirely";
+    bool _holidaysanityStacking = false;
+    std::string _achievementHuntTier = "hundred_percent";
+    std::string _achievementHuntSubset = "explorer";
+    std::string _zoneLevelerZoneKey;
+    std::unordered_set<std::string> _zoneLevelerGoals;
+    uint32_t _zoneLevelerStatuesRequired = 0;
+    uint32_t _zoneLevelerInstancesRequired = 0;
+    std::vector<std::string> _zoneLevelerInstanceKeys;
 };
 
 #define sArchipelagoRealmState ArchipelagoRealmState::instance()

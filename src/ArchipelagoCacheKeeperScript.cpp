@@ -23,6 +23,7 @@
 #include "CreatureScript.h"
 #include "DatabaseEnv.h"
 #include "Player.h"
+#include "QueryResult.h"
 #include "ScriptedGossip.h"
 #include "WorldSession.h"
 #include "APDelivery.h"

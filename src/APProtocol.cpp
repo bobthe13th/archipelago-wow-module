@@ -247,4 +247,328 @@ namespace Archipelago
         }
         return std::nullopt;
     }
+
+    std::optional<std::string> ParseInstanceClearModeFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("instance_clear_mode") || !slotData["instance_clear_mode"].is_string())
+                continue;
+            return slotData["instance_clear_mode"].get<std::string>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::string> ParseWorldSeedFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                    element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("world_seed") || !slotData["world_seed"].is_string())
+                continue;
+            return slotData["world_seed"].get<std::string>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::string> ParseLootSlotCheckRepeatBehaviorFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("loot_slot_check_repeat_behavior") ||
+                !slotData["loot_slot_check_repeat_behavior"].is_string())
+                continue;
+            return slotData["loot_slot_check_repeat_behavior"].get<std::string>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<bool> ParseHolidaysanityStackingFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("holidaysanity_stacking") || !slotData["holidaysanity_stacking"].is_boolean())
+                continue;
+            return slotData["holidaysanity_stacking"].get<bool>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::string> ParseZoneLevelerZoneKeyFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_zone_key") || !slotData["zone_leveler_zone_key"].is_string())
+                continue;
+            return slotData["zone_leveler_zone_key"].get<std::string>();
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<std::string>> ParseZoneLevelerGoalsFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_goals") || !slotData["zone_leveler_goals"].is_array())
+                continue;
+
+            std::vector<std::string> goals;
+            for (json const& goalJson : slotData["zone_leveler_goals"])
+            {
+                if (!goalJson.is_string())
+                    continue;
+                goals.push_back(goalJson.get<std::string>());
+            }
+            return goals;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t> ParseZoneLevelerStatuesRequiredFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_statues_required") ||
+                !slotData["zone_leveler_statues_required"].is_number_integer())
+                continue;
+            int64_t required = slotData["zone_leveler_statues_required"].get<int64_t>();
+            if (required < 0)
+                continue;
+            return static_cast<uint32_t>(required);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t> ParseFillerNeededCountFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("filler_needed_count") ||
+                !slotData["filler_needed_count"].is_number_integer())
+                continue;
+            int64_t needed = slotData["filler_needed_count"].get<int64_t>();
+            if (needed < 0)
+                continue;
+            return static_cast<uint32_t>(needed);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<uint32_t> ParseZoneLevelerInstancesRequiredFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_instances_required") ||
+                !slotData["zone_leveler_instances_required"].is_number_integer())
+                continue;
+            int64_t required = slotData["zone_leveler_instances_required"].get<int64_t>();
+            if (required < 0)
+                continue;
+            return static_cast<uint32_t>(required);
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::vector<std::string>> ParseZoneLevelerInstanceKeysFromSlotData(std::string const& raw)
+    {
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return std::nullopt;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("slot_data") || !element["slot_data"].is_object())
+                continue;
+            json const& slotData = element["slot_data"];
+            if (!slotData.contains("zone_leveler_instance_keys") || !slotData["zone_leveler_instance_keys"].is_array())
+                continue;
+
+            std::vector<std::string> keys;
+            for (json const& keyJson : slotData["zone_leveler_instance_keys"])
+            {
+                if (!keyJson.is_string())
+                    continue;
+                keys.push_back(keyJson.get<std::string>());
+            }
+            return keys;
+        }
+        return std::nullopt;
+    }
+
+    std::string BuildSayPacket(std::string const& text)
+    {
+        json packet = json::array({ json{
+            { "cmd", "Say" },
+            { "text", text }
+        } });
+        return packet.dump();
+    }
+
+    std::vector<int64_t> ParseMissingLocationsFromConnected(std::string const& raw)
+    {
+        std::vector<int64_t> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "Connected")
+                continue;
+            if (!element.contains("missing_locations") || !element["missing_locations"].is_array())
+                continue;
+
+            for (json const& idJson : element["missing_locations"])
+                if (idJson.is_number_integer())
+                    result.push_back(idJson.get<int64_t>());
+        }
+        return result;
+    }
+
+    std::vector<std::string> ParsePrintJSONText(std::string const& raw)
+    {
+        std::vector<std::string> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "PrintJSON")
+                continue;
+            if (!element.contains("data") || !element["data"].is_array())
+                continue;
+
+            std::string combined;
+            for (json const& part : element["data"])
+                if (part.is_object() && part.contains("text") && part["text"].is_string())
+                    combined += part["text"].get<std::string>();
+            result.push_back(std::move(combined));
+        }
+        return result;
+    }
+
+    std::vector<ItemSendEvent> ParseItemSendEvents(std::string const& raw)
+    {
+        std::vector<ItemSendEvent> result;
+        json parsed = json::parse(raw, nullptr, false /* don't throw */);
+        if (parsed.is_discarded() || !parsed.is_array())
+            return result;
+
+        for (json const& element : parsed)
+        {
+            if (!element.is_object() || !element.contains("cmd") || !element["cmd"].is_string() ||
+                element["cmd"].get<std::string>() != "PrintJSON")
+                continue;
+            if (!element.contains("type") || !element["type"].is_string() ||
+                element["type"].get<std::string>() != "ItemSend")
+                continue;
+            if (!element.contains("item") || !element["item"].is_object() ||
+                !element.contains("receiving") || !element["receiving"].is_number_integer())
+                continue;
+            json const& item = element["item"];
+            if (!item.contains("player") || !item["player"].is_number_integer())
+                continue;
+
+            ItemSendEvent event;
+            event.sourceSlot = item["player"].get<int64_t>();
+            event.destinationSlot = element["receiving"].get<int64_t>();
+            result.push_back(event);
+        }
+        return result;
+    }
 }

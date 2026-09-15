@@ -2,11 +2,13 @@
 family: filler
 
 # Sink locations restoring item=location parity after Group 1's gate items
-# (Task 11, §16's "gate-item sphere-0 test") and Group 3's trap items (Task
-# 17). A single generation only USES as many of these rows as items.py's
-# count_enabled_gates_items + count_enabled_trap_items finds pooled for
-# that generation's options (locations.py's create_filler_locations slices
-# this list to that combined count). AP's generation pipeline has no
+# (Task 11, §16's "gate-item sphere-0 test"), Group 3's trap items (Task
+# 17), and M4.10.7's Holidaysanity items (no location of their own, same
+# shape as gates/traps). A single generation only USES as many of these
+# rows as items.py's count_enabled_gates_items + count_enabled_trap_items +
+# count_enabled_holidaysanity_items finds pooled for that generation's
+# options (locations.py's create_filler_locations slices this list to that
+# combined count). AP's generation pipeline has no
 # generic step that pads a short itempool to match location count (the
 # only itempool<->create_filler() interaction in Main.py is a fixed-size
 # 1:1 swap for start_inventory_from_pool removals, not padding), so every
@@ -16,21 +18,111 @@ family: filler
 # reverse. A fixed "worst-case slack" location count (every row always
 # created) was tried first and was wrong for exactly this reason.
 #
-# Row count: 65 = 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task
-# 21's 2 combo-unlock items) + 36 (the absolute ceiling on
-# count_enabled_trap_items -- Task 17's trap_percentage_of_filler Range tops
-# out at 100, and _trap_baseline_location_count() sums
-# len(content_data.LOCATIONS) [19 quest locations] +
-# len(core_loop_content_data.LEVEL_LOCATIONS) [12] +
-# len(core_loop_content_data.INSTANCE_CLEAR_LOCATIONS) [5, grown from 2 by
-# Task 23's three new raid instance-clear rows -- this baseline is NOT fixed,
-# it grows whenever core_loop.yaml gains an instance_clear row, so 36 is not
-# the last time this needs to move either], so 36 is the largest total
-# items.py's create_trap_item_pool can produce in one generation today. Any
-# future optional item family, OR any future core_loop.yaml growth (Group 6's
-# new content, per Task 11's outcome note and Task 23's real discovery of
-# this cross-family coupling), must extend this ceiling by its own worst-case
-# count the same way, not assume 65 is permanent.
+# Row count: 122 = 37 (len(gates_content_data.ITEMS), real count as of
+# M4.10.1) + 85 (the trap ceiling as of M4.10.1 -- see below). This is a
+# 73->122 resize (+49 rows, Filler Check 74-122 / location_id 740073-740121)
+# fixing the drift M4.9's header note above had already flagged as
+# out-of-scope-for-that-plan-but-expected: M4.9.3's per-level-milestone
+# granularity grew the standard track's core_loop level-milestone count
+# to 80 (from 12), which pushed _trap_baseline_location_count()'s standard-
+# track total to 85 (80 level milestones + 5 instance clears) -- the larger
+# of the two tracks (death_knight: 26 + 5 = 31) and therefore the one that
+# sets the ceiling, per _trap_baseline_location_count()'s own
+# track-max-of-standard-vs-dk sizing. That 85, combined with gates growing
+# from 29 to 37 since this file was last resized (M4.9's 8 new gate items:
+# Bank Access, Gathering Access, 6x Progressive Glyph Slot), is what
+# TestFillerPoolCoversWorstCaseGatesAndTraps caught as a 73-vs-122 (-49)
+# shortfall.
+#
+# M4.10.7: Row count grown 122 -> 136 = 37 (gates) + 85 (traps, unchanged)
+# + 14 (len(holidaysanity_content_data.ITEMS), Holidaysanity's own worst
+# case when combo_unlocks_scope is "both" -- every Holiday Unlock item
+# pooled, including the 5 combo-scope-gated ones). Filler Check 123-136 /
+# location_id 740122-740135 are the +14 rows added for this resize. See
+# items.py's count_enabled_holidaysanity_items docstring for why
+# Holidaysanity needs the exact same sink-location treatment as gates/traps.
+#
+# M4.11.1 (Task 4, BarrensBeater): Row count grown 136 -> 139 = 37 (gates)
+# + 88 (traps, grown from 85) + 14 (holidaysanity, unchanged). The trap
+# ceiling grew because _trap_baseline_location_count() (items.py) sizes
+# itself off len(core_loop_content_data.INSTANCE_CLEAR_LOCATIONS), which
+# this task grew from 5 to 8 (Wailing Caverns/Razorfen Kraul/Razorfen Downs
+# added to core_loop.yaml) -- exactly the "any future core_loop.yaml...
+# instance-clear count" drift this file's own trip-wire note above already
+# anticipated. Standard track's own baseline is still the larger of the two
+# (88 = 80 level milestones + 8 instance clears vs. death_knight's 34 = 26 +
+# 8), so it remains the one that sets count_enabled_trap_items's ceiling.
+# Filler Check 137-139 / location_id 740136-740138 are the +3 rows added for
+# this resize.
+#
+# M4.11.4.2 (Task 4 final-review fix wave 2, Fix 4): Row count grown
+# 139 -> 151 = 37 (gates) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (Progressive Mining/Herbalism, items.py's
+# count_gathering_skill_progression_items -- one copy per real skill tier
+# with at least one real gathering_node location, 6 tiers x 2 professions
+# in this checkout's real regenerated content). Neither Progressive item
+# has an AP location of its own (same "no location of its own" shape as
+# gates/traps/holidaysanity), so locations.py's create_filler_locations
+# already added a 5th `needed` term for this family (M4.11.4.2 fix round 1)
+# -- but this row-count resize was missed at the time, so every generation
+# silently truncated 12 filler locations short of that `needed` total
+# (`list(...)[:needed]` on a too-short list truncates rather than raising),
+# breaking item/location parity by exactly 12 the moment Task 5 regenerated
+# real zone_pool_credit content. Caught by the whole-milestone final review's
+# full local pytest run (TestTrapsGatesAndHolidaysanityCombinedParity /
+# TestNorthshireGeneration::test_default_item_pool_size), not by
+# TestFillerPoolCoversWorstCaseGatesTrapsAndHolidaysanity -- that trip-wire's
+# own assertion also didn't have a term for this family yet (fixed alongside
+# this resize, see test_basic.py). Filler Check 140-151 / location_id
+# 740139-740150 are the +12 rows added for this resize.
+#
+# M4.14.1 ("Useful Items" final review fix, C3): Row count grown 151 -> 161 =
+# 47 (gates, grown from 37) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (gathering, unchanged). Tasks 1/2/4/5/6 of this milestone
+# added 10 new gates.yaml items with no location of their own (4 Progressive
+# Bag Slot tiers, 2 Talent Point Access tranches, Random Flight Path Unlock,
+# Portable Mailbox, Progressive EXP Boost, Progressive Move Speed Boost),
+# growing gates from 37 to 47 -- the same "gates.yaml grew, filler.yaml must
+# grow with it" pattern this header has documented at M4.9, M4.10.7, M4.11.1,
+# and M4.11.4.2. Missed at individual-task review time because no single
+# task's own diff shows the cumulative growth; only caught by this
+# milestone's whole-branch final review. Filler Check 152-161 / location_id
+# 740151-740160 are the +10 rows added for this resize.
+#
+# M4.14.2 (Task 2, "Granular Zone Gates"): Row count grown 161 -> 164 = 50
+# (gates, grown from 47) + 88 (traps, unchanged) + 14 (holidaysanity,
+# unchanged) + 12 (gathering, unchanged). Task 2 added 3 new gates.yaml
+# items with no location of their own (Zone Access: Shattrath City / Isle
+# of Quel'Danas / Dalaran), growing gates from 47 to 50 -- same
+# "gates.yaml grew, filler.yaml must grow with it" pattern as every prior
+# resize above. Caught immediately by this task's own full local test-
+# suite run (TestFillerPoolCoversWorstCaseGatesTrapsHolidaysanityAndGathering
+# SkillProgressionItems), not deferred to a whole-milestone final review.
+# Filler Check 162-164 / location_id 740161-740163 are the +3 rows added
+# for this resize.
+#
+# History of this file's prior sizings, kept for context:
+# - 29 (len(gates_content_data.ITEMS) as of Tasks 5-10 + Task 21's 2
+#   combo-unlock items) + 33 (trap ceiling as of Task 17, before Task 23's
+#   instance-clear growth) = 62.
+# - Task 23 grew core_loop.yaml's INSTANCE_CLEAR_LOCATIONS from 2 to 5
+#   (Molten Core/Sunwell Plateau/Icecrown Citadel), raising the trap
+#   ceiling from 33 to 36 (29 + 36 = 65).
+# - M4.9's 8 new gate items raised gates from 29 to 37, but the trap
+#   ceiling's own drift (36 -> 85, from M4.9.3's per-level-milestone
+#   granularity) was NOT applied at that time, leaving the pool sized to
+#   an already-stale 73 (37 + 36) instead of the true 122 (37 + 85) --
+#   the gap this M4.10.1 resize closes.
+#
+# _trap_baseline_location_count() (items.py) is track-aware and takes
+# max(standard, death_knight) implicitly by construction -- whichever
+# track's core_loop.yaml location count is larger at generation time sets
+# count_enabled_trap_items's ceiling at trap_percentage_of_filler's Range
+# max of 100. Any future optional item family, OR any future core_loop.yaml
+# growth (per-track level-milestone count or instance-clear count), must
+# extend this ceiling by its own worst-case count the same way, not assume
+# 136 is permanent -- TestFillerPoolCoversWorstCaseGatesAndTraps is the
+# trip-wire test that catches the next drift.
 #
 # items: [] always for this family (a filler location has no matching item
 # of its own, by definition) -- kept for schema-shape parity with
@@ -245,4 +337,305 @@ locations:
     trigger: {kind: always_available}
   - name: "Filler Check 65"
     location_id: 740064
+    trigger: {kind: always_available}
+  - name: "Filler Check 66"
+    location_id: 740065
+    trigger: {kind: always_available}
+  - name: "Filler Check 67"
+    location_id: 740066
+    trigger: {kind: always_available}
+  - name: "Filler Check 68"
+    location_id: 740067
+    trigger: {kind: always_available}
+  - name: "Filler Check 69"
+    location_id: 740068
+    trigger: {kind: always_available}
+  - name: "Filler Check 70"
+    location_id: 740069
+    trigger: {kind: always_available}
+  - name: "Filler Check 71"
+    location_id: 740070
+    trigger: {kind: always_available}
+  - name: "Filler Check 72"
+    location_id: 740071
+    trigger: {kind: always_available}
+  - name: "Filler Check 73"
+    location_id: 740072
+    trigger: {kind: always_available}
+  # M4.10.1: resizing the pool from 73 to 122 to close the 49-row gap
+  # TestFillerPoolCoversWorstCaseGatesAndTraps caught (see this file's own
+  # header comment above for the full drift history) -- Filler Check
+  # 74-122 / location_id 740073-740121.
+  - name: "Filler Check 74"
+    location_id: 740073
+    trigger: {kind: always_available}
+  - name: "Filler Check 75"
+    location_id: 740074
+    trigger: {kind: always_available}
+  - name: "Filler Check 76"
+    location_id: 740075
+    trigger: {kind: always_available}
+  - name: "Filler Check 77"
+    location_id: 740076
+    trigger: {kind: always_available}
+  - name: "Filler Check 78"
+    location_id: 740077
+    trigger: {kind: always_available}
+  - name: "Filler Check 79"
+    location_id: 740078
+    trigger: {kind: always_available}
+  - name: "Filler Check 80"
+    location_id: 740079
+    trigger: {kind: always_available}
+  - name: "Filler Check 81"
+    location_id: 740080
+    trigger: {kind: always_available}
+  - name: "Filler Check 82"
+    location_id: 740081
+    trigger: {kind: always_available}
+  - name: "Filler Check 83"
+    location_id: 740082
+    trigger: {kind: always_available}
+  - name: "Filler Check 84"
+    location_id: 740083
+    trigger: {kind: always_available}
+  - name: "Filler Check 85"
+    location_id: 740084
+    trigger: {kind: always_available}
+  - name: "Filler Check 86"
+    location_id: 740085
+    trigger: {kind: always_available}
+  - name: "Filler Check 87"
+    location_id: 740086
+    trigger: {kind: always_available}
+  - name: "Filler Check 88"
+    location_id: 740087
+    trigger: {kind: always_available}
+  - name: "Filler Check 89"
+    location_id: 740088
+    trigger: {kind: always_available}
+  - name: "Filler Check 90"
+    location_id: 740089
+    trigger: {kind: always_available}
+  - name: "Filler Check 91"
+    location_id: 740090
+    trigger: {kind: always_available}
+  - name: "Filler Check 92"
+    location_id: 740091
+    trigger: {kind: always_available}
+  - name: "Filler Check 93"
+    location_id: 740092
+    trigger: {kind: always_available}
+  - name: "Filler Check 94"
+    location_id: 740093
+    trigger: {kind: always_available}
+  - name: "Filler Check 95"
+    location_id: 740094
+    trigger: {kind: always_available}
+  - name: "Filler Check 96"
+    location_id: 740095
+    trigger: {kind: always_available}
+  - name: "Filler Check 97"
+    location_id: 740096
+    trigger: {kind: always_available}
+  - name: "Filler Check 98"
+    location_id: 740097
+    trigger: {kind: always_available}
+  - name: "Filler Check 99"
+    location_id: 740098
+    trigger: {kind: always_available}
+  - name: "Filler Check 100"
+    location_id: 740099
+    trigger: {kind: always_available}
+  - name: "Filler Check 101"
+    location_id: 740100
+    trigger: {kind: always_available}
+  - name: "Filler Check 102"
+    location_id: 740101
+    trigger: {kind: always_available}
+  - name: "Filler Check 103"
+    location_id: 740102
+    trigger: {kind: always_available}
+  - name: "Filler Check 104"
+    location_id: 740103
+    trigger: {kind: always_available}
+  - name: "Filler Check 105"
+    location_id: 740104
+    trigger: {kind: always_available}
+  - name: "Filler Check 106"
+    location_id: 740105
+    trigger: {kind: always_available}
+  - name: "Filler Check 107"
+    location_id: 740106
+    trigger: {kind: always_available}
+  - name: "Filler Check 108"
+    location_id: 740107
+    trigger: {kind: always_available}
+  - name: "Filler Check 109"
+    location_id: 740108
+    trigger: {kind: always_available}
+  - name: "Filler Check 110"
+    location_id: 740109
+    trigger: {kind: always_available}
+  - name: "Filler Check 111"
+    location_id: 740110
+    trigger: {kind: always_available}
+  - name: "Filler Check 112"
+    location_id: 740111
+    trigger: {kind: always_available}
+  - name: "Filler Check 113"
+    location_id: 740112
+    trigger: {kind: always_available}
+  - name: "Filler Check 114"
+    location_id: 740113
+    trigger: {kind: always_available}
+  - name: "Filler Check 115"
+    location_id: 740114
+    trigger: {kind: always_available}
+  - name: "Filler Check 116"
+    location_id: 740115
+    trigger: {kind: always_available}
+  - name: "Filler Check 117"
+    location_id: 740116
+    trigger: {kind: always_available}
+  - name: "Filler Check 118"
+    location_id: 740117
+    trigger: {kind: always_available}
+  - name: "Filler Check 119"
+    location_id: 740118
+    trigger: {kind: always_available}
+  - name: "Filler Check 120"
+    location_id: 740119
+    trigger: {kind: always_available}
+  - name: "Filler Check 121"
+    location_id: 740120
+    trigger: {kind: always_available}
+  - name: "Filler Check 122"
+    location_id: 740121
+    trigger: {kind: always_available}
+  - name: "Filler Check 123"
+    location_id: 740122
+    trigger: {kind: always_available}
+  - name: "Filler Check 124"
+    location_id: 740123
+    trigger: {kind: always_available}
+  - name: "Filler Check 125"
+    location_id: 740124
+    trigger: {kind: always_available}
+  - name: "Filler Check 126"
+    location_id: 740125
+    trigger: {kind: always_available}
+  - name: "Filler Check 127"
+    location_id: 740126
+    trigger: {kind: always_available}
+  - name: "Filler Check 128"
+    location_id: 740127
+    trigger: {kind: always_available}
+  - name: "Filler Check 129"
+    location_id: 740128
+    trigger: {kind: always_available}
+  - name: "Filler Check 130"
+    location_id: 740129
+    trigger: {kind: always_available}
+  - name: "Filler Check 131"
+    location_id: 740130
+    trigger: {kind: always_available}
+  - name: "Filler Check 132"
+    location_id: 740131
+    trigger: {kind: always_available}
+  - name: "Filler Check 133"
+    location_id: 740132
+    trigger: {kind: always_available}
+  - name: "Filler Check 134"
+    location_id: 740133
+    trigger: {kind: always_available}
+  - name: "Filler Check 135"
+    location_id: 740134
+    trigger: {kind: always_available}
+  - name: "Filler Check 136"
+    location_id: 740135
+    trigger: {kind: always_available}
+  - name: "Filler Check 137"
+    location_id: 740136
+    trigger: {kind: always_available}
+  - name: "Filler Check 138"
+    location_id: 740137
+    trigger: {kind: always_available}
+  - name: "Filler Check 139"
+    location_id: 740138
+    trigger: {kind: always_available}
+  - name: "Filler Check 140"
+    location_id: 740139
+    trigger: {kind: always_available}
+  - name: "Filler Check 141"
+    location_id: 740140
+    trigger: {kind: always_available}
+  - name: "Filler Check 142"
+    location_id: 740141
+    trigger: {kind: always_available}
+  - name: "Filler Check 143"
+    location_id: 740142
+    trigger: {kind: always_available}
+  - name: "Filler Check 144"
+    location_id: 740143
+    trigger: {kind: always_available}
+  - name: "Filler Check 145"
+    location_id: 740144
+    trigger: {kind: always_available}
+  - name: "Filler Check 146"
+    location_id: 740145
+    trigger: {kind: always_available}
+  - name: "Filler Check 147"
+    location_id: 740146
+    trigger: {kind: always_available}
+  - name: "Filler Check 148"
+    location_id: 740147
+    trigger: {kind: always_available}
+  - name: "Filler Check 149"
+    location_id: 740148
+    trigger: {kind: always_available}
+  - name: "Filler Check 150"
+    location_id: 740149
+    trigger: {kind: always_available}
+  - name: "Filler Check 151"
+    location_id: 740150
+    trigger: {kind: always_available}
+  - name: "Filler Check 152"
+    location_id: 740151
+    trigger: {kind: always_available}
+  - name: "Filler Check 153"
+    location_id: 740152
+    trigger: {kind: always_available}
+  - name: "Filler Check 154"
+    location_id: 740153
+    trigger: {kind: always_available}
+  - name: "Filler Check 155"
+    location_id: 740154
+    trigger: {kind: always_available}
+  - name: "Filler Check 156"
+    location_id: 740155
+    trigger: {kind: always_available}
+  - name: "Filler Check 157"
+    location_id: 740156
+    trigger: {kind: always_available}
+  - name: "Filler Check 158"
+    location_id: 740157
+    trigger: {kind: always_available}
+  - name: "Filler Check 159"
+    location_id: 740158
+    trigger: {kind: always_available}
+  - name: "Filler Check 160"
+    location_id: 740159
+    trigger: {kind: always_available}
+  - name: "Filler Check 161"
+    location_id: 740160
+    trigger: {kind: always_available}
+  - name: "Filler Check 162"
+    location_id: 740161
+    trigger: {kind: always_available}
+  - name: "Filler Check 163"
+    location_id: 740162
+    trigger: {kind: always_available}
+  - name: "Filler Check 164"
+    location_id: 740163
     trigger: {kind: always_available}

@@ -1,10 +1,30 @@
+import contextlib
+import io
 import pathlib
 import tempfile
 import textwrap
 import unittest
 
 import generate_content
-from generate_content import load_family, emit_python, emit_cpp, emit_python_generic, emit_cpp_generic, ValidationError, FAMILY_SCHEMAS
+from generate_content import (
+    load_family,
+    emit_python,
+    emit_cpp,
+    emit_python_generic,
+    emit_cpp_generic,
+    validate_family,
+    _emit_cpp_trigger_lookup,
+    _emit_cpp_trigger_lookup_one_kind,
+    _emit_cpp_trigger_lookup_learn_spell,
+    _validate_recipe_craft_rows,
+    _validate_gameobject_loot_rows,
+    _emit_cpp_trigger_lookup_recipe_craft,
+    _emit_cpp_trigger_lookup_zone_pool_credit,
+    _emit_cpp_zone_pool_spawn_zones,
+    _emit_cpp_zone_pool_node_tiers,
+    ValidationError,
+    FAMILY_SCHEMAS,
+)
 
 
 class TestLoadFamily(unittest.TestCase):
@@ -112,12 +132,61 @@ class TestGatesFamily(unittest.TestCase):
 
     def test_gates_family_rejects_unrecognized_delivery_kind(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
+            # NOTE (M4.14.1 Task 7 fix): "mail" used to be this fixture's example of an
+            # unrecognized kind, but Task 5 (Portable Mailbox) legitimately added "mail" to
+            # gates' own valid_delivery_kinds (FAMILY_SCHEMAS["gates"]), so it no longer
+            # exercises the rejection path. "learn_spell" is a real delivery-adjacent kind
+            # name (used as a trigger kind by collections/recipes) but is never a valid
+            # delivery kind for ANY family, and specifically never for gates -- so it stays
+            # genuinely unrecognized here regardless of future per-family schema changes.
             path = self._write(tmp, """
                 family: gates
                 locations: []
                 items:
                   - name: Bad Gate
                     item_id: 830099
+                    count: 1
+                    delivery: {kind: learn_spell, spell_id: 1}
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+
+class TestRaidloggerFamily(unittest.TestCase):
+    def _write(self, tmpdir: str, text: str) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "test.yaml"
+        path.write_text(textwrap.dedent(text), encoding="utf-8")
+        return path
+
+    def test_instant_level_set_delivery_emits_python_and_cpp(self) -> None:
+        data = {
+            "family": "raidlogger",
+            "constants": {},
+            "locations": [],
+            "items": [
+                {"name": "Raidlogger: Instant Level 70", "item_id": 15000000, "count": 1,
+                 "delivery": {"kind": "instant_level_set", "level": 70}},
+            ],
+        }
+        py_text = emit_python(data)
+        self.assertIn('"Raidlogger: Instant Level 70": (15000000, 1)', py_text)
+        self.assertIn("LEVEL_BY_ITEM_NAME", py_text)
+        self.assertIn('"Raidlogger: Instant Level 70": 70', py_text)
+
+        cpp_text = emit_cpp(data)
+        self.assertIn("Archipelago::Raidlogger", cpp_text)
+        self.assertIn("AP_ITEM_RAIDLOGGER_INSTANT_LEVEL_70 = 15000000", cpp_text)
+        self.assertIn("ApItemToLevel", cpp_text)
+        self.assertIn("{ 15000000, 70 }", cpp_text)
+
+    def test_raidlogger_family_rejects_unrecognized_delivery_kind(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: raidlogger
+                locations: []
+                items:
+                  - name: Bad Raidlogger Item
+                    item_id: 15000099
                     count: 1
                     delivery: {kind: mail, wow_item_entry: 1}
             """)
@@ -130,9 +199,15 @@ class TestEmitCpp(unittest.TestCase):
         data = {
             "family": "core_loop",
             "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
             "locations": [
-                {"name": "Reach Level 5", "location_id": 710000,
-                 "trigger": {"kind": "level_milestone", "level": 5}},
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
                 {"name": "Clear Ragefire Chasm", "location_id": 720000,
                  "trigger": {"kind": "instance_clear", "instance_key": "ragefire_chasm",
                              "final_boss_entry": 11520}},
@@ -148,11 +223,195 @@ class TestEmitCpp(unittest.TestCase):
         text = emit_cpp(data)
         self.assertIn("AP_ITEM_PROGRESSIVE_LEVEL_CAP = 810000", text)
         self.assertIn("AP_ITEM_INSTANCE_UNLOCK_RAGEFIRE_CHASM = 810001", text)
-        self.assertIn("STARTING_LEVEL_CAP = 10", text)
+        # M4.11.1 fix-round: the bare STARTING_LEVEL_CAP constant was retired
+        # in favor of two per-track maps (STARTING_LEVEL_CAP_BY_TRACK,
+        # LEVEL_CAP_TOTAL_BY_TRACK), sourced from this fixture's own
+        # level_cap_tracks block above rather than a single flat value --
+        # confirms both maps are populated per track, not just present.
+        self.assertIn("STARTING_LEVEL_CAP_BY_TRACK", text)
+        self.assertIn('{ "standard", 0 }', text)
+        self.assertIn('{ "death_knight", 54 }', text)
+        self.assertIn("LEVEL_CAP_TOTAL_BY_TRACK", text)
+        self.assertIn('{ "standard", 5 }', text)  # ceiling 5 - starting_cap 0
+        self.assertIn('{ "death_knight", 1 }', text)  # ceiling 55 - starting_cap 54
         self.assertIn('INSTANCE_KEY_RAGEFIRE_CHASM = "ragefire_chasm"', text)
         self.assertIn("{ INSTANCE_KEY_RAGEFIRE_CHASM, 11520 }", text)
-        self.assertIn("{ 5, 710000 }", text)
+        self.assertIn("LEVEL_LOCATIONS_STANDARD", text)
+        self.assertIn("LEVEL_LOCATIONS_DEATH_KNIGHT", text)
+        self.assertIn("{ 5, 710005 }", text)
+        self.assertIn("{ 55, 711055 }", text)
         self.assertIn('{ INSTANCE_KEY_RAGEFIRE_CHASM, 720000 }', text)
+
+    def test_core_loop_death_knight_track_row_is_excluded_from_standard_map(self) -> None:
+        data = {
+            "family": "core_loop",
+            "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
+            ],
+            "items": [],
+        }
+        text = emit_cpp(data)
+        standard_block = text.split("LEVEL_LOCATIONS_STANDARD = {")[1].split("};")[0]
+        self.assertNotIn("711055", standard_block)
+        dk_block = text.split("LEVEL_LOCATIONS_DEATH_KNIGHT = {")[1].split("};")[0]
+        self.assertNotIn("710005", dk_block)
+
+
+class TestEmitPythonCoreLoopTracks(unittest.TestCase):
+    def test_emits_level_locations_and_names_grouped_by_track(self) -> None:
+        data = {
+            "family": "core_loop",
+            "constants": {"STARTING_LEVEL_CAP": 10, "LEVEL_CAP_STEP": 5, "SPRINT_GOAL_LEVEL": 60},
+            "level_cap_tracks": {
+                "standard": {"starting_level_cap": 0},
+                "death_knight": {"starting_level_cap": 54},
+            },
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+                {"name": "Reach Level 55 (Death Knight)", "location_id": 711055,
+                 "trigger": {"kind": "level_milestone", "level": 55, "track": "death_knight"}},
+            ],
+            "items": [],
+        }
+        text = emit_python(data)
+        compile(text, "<test>", "exec")
+        namespace: dict = {}
+        exec(text, namespace)
+        self.assertEqual(namespace["LEVEL_LOCATIONS_BY_TRACK"]["standard"], {5: 710005})
+        self.assertEqual(namespace["LEVEL_LOCATIONS_BY_TRACK"]["death_knight"], {55: 711055})
+        self.assertEqual(namespace["LEVEL_LOCATION_NAMES_BY_TRACK"]["standard"], {5: "Reach Level 5"})
+        self.assertEqual(
+            namespace["LEVEL_LOCATION_NAMES_BY_TRACK"]["death_knight"],
+            {55: "Reach Level 55 (Death Knight)"},
+        )
+
+
+class TestCoreLoopMissingLevelCapTrackEntry(unittest.TestCase):
+    """M4.11.1 fix-round: a level_milestone track with no matching entry in
+    core_loop.yaml's level_cap_tracks: block used to raise a bare KeyError
+    from deep inside _emit_python_core_loop/_emit_cpp_core_loop's dict
+    indexing -- caught by test review as a real regression this task
+    introduced (this suite's own pre-existing core_loop fixtures never got a
+    level_cap_tracks block added to match). Both emitters now raise a clear
+    ValidationError instead (via the shared _track_starting_level_cap
+    helper), so a genuine content-authoring mistake (a new track's
+    locations added without a matching level_cap_tracks entry) fails loudly
+    with an actionable message rather than an unhelpful traceback."""
+
+    def _data_missing_level_cap_tracks(self) -> dict:
+        return {
+            "family": "core_loop",
+            "constants": {"LEVEL_CAP_STEP": 1, "SPRINT_GOAL_LEVEL": 60},
+            # Deliberately omit "level_cap_tracks" entirely -- the real gap
+            # this fix-round addresses.
+            "locations": [
+                {"name": "Reach Level 5", "location_id": 710005,
+                 "trigger": {"kind": "level_milestone", "level": 5, "track": "standard"}},
+            ],
+            "items": [],
+        }
+
+    def test_emit_python_raises_validation_error_not_key_error(self) -> None:
+        with self.assertRaises(ValidationError) as ctx:
+            emit_python(self._data_missing_level_cap_tracks())
+        self.assertIn("standard", str(ctx.exception))
+        self.assertIn("level_cap_tracks", str(ctx.exception))
+
+    def test_emit_cpp_raises_validation_error_not_key_error(self) -> None:
+        with self.assertRaises(ValidationError) as ctx:
+            emit_cpp(self._data_missing_level_cap_tracks())
+        self.assertIn("standard", str(ctx.exception))
+        self.assertIn("level_cap_tracks", str(ctx.exception))
+
+
+class TestLoadFamilyLevelMilestoneTrack(unittest.TestCase):
+    def _write(self, tmpdir: str, text: str) -> pathlib.Path:
+        path = pathlib.Path(tmpdir) / "test.yaml"
+        path.write_text(textwrap.dedent(text), encoding="utf-8")
+        return path
+
+    def test_level_milestone_missing_track_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5}
+                items: []
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_level_milestone_unrecognized_track_raises(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5, track: nonsense}
+                items: []
+            """)
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_level_milestone_valid_track_loads_successfully(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                level_cap_tracks:
+                  standard: {starting_level_cap: 10}
+                locations:
+                  - name: Reach Level 5
+                    location_id: 710005
+                    trigger: {kind: level_milestone, level: 5, track: standard}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
+
+    def test_level_milestone_track_valid_only_via_level_cap_tracks_block(self) -> None:
+        # M4.11.1 (Task 9): the valid-track set is now derived from the
+        # YAML's own level_cap_tracks: block (not a hardcoded
+        # {"standard", "death_knight"} pair) -- a brand-new track name is
+        # accepted as long as it has a matching level_cap_tracks entry, with
+        # zero generate_content.py code changes.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                level_cap_tracks:
+                  zone_leveler_barrens: {starting_level_cap: 10}
+                locations:
+                  - name: Reach Level 11 (Zone Leveler)
+                    location_id: 712011
+                    trigger: {kind: level_milestone, level: 11, track: zone_leveler_barrens}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
+
+    def test_instance_clear_rows_are_unaffected_by_the_track_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write(tmp, """
+                family: core_loop
+                locations:
+                  - name: Clear Ragefire Chasm
+                    location_id: 720000
+                    trigger: {kind: instance_clear, instance_key: ragefire_chasm, final_boss_entry: 11520}
+                items: []
+            """)
+            data = load_family(path)
+            self.assertEqual(len(data["locations"]), 1)
 
 
 class TestGenericEmitter(unittest.TestCase):
@@ -197,7 +456,7 @@ class TestGenericEmitter(unittest.TestCase):
         data = {
             "family": "quest_rewards",
             "locations": [{"name": 'Quest: Wanted:  "Hogger" Reward (#176)', "location_id": 750176,
-                           "trigger": {"kind": "quest_reward", "quest_id": 176, "min_level": 1}}],
+                           "trigger": {"kind": "quest_reward", "quest_id": 176, "column_index": 0, "min_level": 1}}],
             "items": [],
             "constants": {},
         }
@@ -252,23 +511,31 @@ class TestGenericEmitter(unittest.TestCase):
 
 
 class TestEmitCppGenericTriggers(unittest.TestCase):
-    def test_quest_reward_family_emits_quest_id_to_location_id_via_raw_array_builder(self) -> None:
+    def test_quest_reward_family_emits_composite_slot_map_via_raw_array_builder(self) -> None:
+        # M4.11.5.0.6: QUEST_ID_TO_LOCATION_ID (bare quest_id key) was
+        # replaced by QUEST_REWARD_SLOT_TO_LOCATION_ID (composite (quest_id,
+        # column_index) key) now that every real reward slot is its own
+        # location -- see TestQuestRewardSlotTriggerLookup below for full
+        # coverage of the new shape; this test only pins that the raw-array
+        # -plus-builder pattern itself is still used (M4.7.1 stack-overflow
+        # safety), same as it always has been for this family.
         data = {
             "family": "quest_rewards",
             "locations": [
                 {"name": "Quest: A Reward (#1)", "location_id": 1000001,
-                 "trigger": {"kind": "quest_reward", "quest_id": 1, "min_level": 1, "prev_quest_id": None}},
+                 "trigger": {"kind": "quest_reward", "quest_id": 1, "column_index": 0, "min_level": 1, "prev_quest_id": None}},
             ],
             "items": [],
         }
         cpp = emit_cpp_generic(data)
-        self.assertIn("QUEST_ID_TO_LOCATION_ID_RAW[]", cpp)
-        self.assertIn("inline std::unordered_map<uint32_t, int64_t> BuildQUEST_ID_TO_LOCATION_ID()", cpp)
+        self.assertIn("QUEST_REWARD_SLOT_TO_LOCATION_ID_RAW[]", cpp)
+        self.assertIn("inline std::map<std::pair<uint32_t, uint32_t>, int64_t> BuildQUEST_REWARD_SLOT_TO_LOCATION_ID()", cpp)
         self.assertIn(
-            "inline const std::unordered_map<uint32_t, int64_t> QUEST_ID_TO_LOCATION_ID = BuildQUEST_ID_TO_LOCATION_ID();",
+            "inline const std::map<std::pair<uint32_t, uint32_t>, int64_t> QUEST_REWARD_SLOT_TO_LOCATION_ID = "
+            "BuildQUEST_REWARD_SLOT_TO_LOCATION_ID();",
             cpp,
         )
-        self.assertIn("{ 1, 1000001 }", cpp)
+        self.assertIn("{ { 1, 0 }, 1000001 }", cpp)
 
     def test_vendor_purchase_family_emits_slot_to_location_id_via_raw_array_builder(self) -> None:
         data = {
@@ -349,10 +616,23 @@ class TestLegacyEmitterSizeGuard(unittest.TestCase):
 
     LEGACY_FAMILY_ROW_LIMIT = 2000
 
+    # Families whose hand-rolled (non-generic) emitter already uses the safe
+    # raw-array-plus-runtime-builder pattern (not a bare aggregate
+    # initializer) despite not being dispatched via emit_*_generic --
+    # achievements (M4.9.4 Task 5) hand-rolls _emit_python_achievements/
+    # _emit_cpp_achievements (rather than opting into generic=True) because
+    # it needs bespoke exports (WORLD_EXPLORER_*, ACHIEVEMENTS_BY_SUBSET,
+    # EXTREMELY_HARD_ITEM_NAMES) the generic emitter doesn't produce, but its
+    # C++ side follows exactly the same raw-array-plus-builder pattern as
+    # _emit_cpp_trigger_lookup_quest_reward -- just as safe from the M4.7.1
+    # stack-overflow class as any generic=True family, at 1,162 rows each
+    # for LOCATIONS/ITEMS (2,324 combined, over this guard's 2000-row margin).
+    _SAFE_HAND_ROLLED_FAMILIES = {"achievements"}
+
     def test_no_legacy_family_exceeds_the_safe_row_count(self) -> None:
         content_dir = pathlib.Path(__file__).parent.parent / "content"
         for family, schema in FAMILY_SCHEMAS.items():
-            if schema.generic:
+            if schema.generic or family in self._SAFE_HAND_ROLLED_FAMILIES:
                 continue  # already on the safe raw-array-plus-builder pattern regardless of size
             yaml_path = content_dir / f"{family}.yaml"
             if not yaml_path.exists():
@@ -445,10 +725,11 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
             FAMILY_SCHEMAS["quest_rewards"] = original_schema
 
     def test_load_family_rejects_missing_tags_block_when_export_tags_is_on(self) -> None:
-        # As of this task, the REAL FAMILY_SCHEMAS["quest_rewards"] still has
-        # export_tags=False (flipped in Task 3, alongside real tags data) --
-        # temporarily override it here so this test exercises the validator
-        # gate itself, not the real registry's current (pre-Task-3) state.
+        # The REAL FAMILY_SCHEMAS["quest_rewards"] already has export_tags=True
+        # (since Task 3) -- temporarily override it here anyway so this test
+        # exercises the validator gate itself in isolation, not incidentally
+        # depending on the registry's current real config (same pattern as
+        # TestAlwaysPresentAndTags's own export_tags override tests).
         original_schema = FAMILY_SCHEMAS["quest_rewards"]
         FAMILY_SCHEMAS["quest_rewards"] = type(original_schema)(
             valid_trigger_kinds=original_schema.valid_trigger_kinds,
@@ -463,7 +744,7 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
                     locations:
                       - name: 'Quest: No Tags Reward (#1)'
                         location_id: 1000001
-                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                        trigger: {kind: quest_reward, quest_id: 1, column_index: 0, min_level: 1}
                     items: []
                 """), encoding="utf-8")
                 with self.assertRaises(ValidationError):
@@ -486,7 +767,7 @@ class TestAlwaysPresentAndTags(unittest.TestCase):
                     locations:
                       - name: 'Quest: Empty Dim Reward (#1)'
                         location_id: 1000001
-                        trigger: {kind: quest_reward, quest_id: 1, min_level: 1}
+                        trigger: {kind: quest_reward, quest_id: 1, column_index: 0, min_level: 1}
                         tags: {type: [], expansion: [vanilla]}
                     items: []
                 """), encoding="utf-8")
@@ -538,5 +819,970 @@ class TestLearnSpellTriggerLookup(unittest.TestCase):
             generate_content._validate_learn_spell_rows(locations, pathlib.Path("test.yaml"))
 
 
+class TestTrainerPurchaseAttemptTriggerLookup(unittest.TestCase):
+    """M4.11.5.6 (Task 4) introduced trainer_spells' own trigger.kind,
+    "trainer_purchase_attempt", replacing "learn_spell" for this family
+    only -- but left _emit_cpp_trigger_lookup_one_kind (Task 8's bundled
+    prerequisite fix) without a dispatch branch for it, which would make
+    generate_content.py raise ValidationError (see its own
+    "add a branch for it" message) the moment it's run against real
+    trainer_spells.yaml content. The trigger dict's fields are unchanged
+    (still spell_id/min_level), so the fix reuses
+    _emit_cpp_trigger_lookup_learn_spell verbatim rather than duplicating
+    it -- these tests confirm both the dispatch and the reuse."""
+
+    def test_emits_spell_id_to_location_id_map_for_trainer_purchase_attempt(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        lines = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        cpp = "\n".join(lines)
+        self.assertIn("SPELL_ID_TO_LOCATION_ID", cpp)
+        self.assertIn("{ 116, 7000001 }", cpp)
+
+    def test_reuses_learn_spell_emission_function_rather_than_duplicating_it(self) -> None:
+        locations = [
+            {"name": "Trainer: Frostbolt Rank 1", "location_id": 7000001,
+             "trigger": {"kind": "trainer_purchase_attempt", "spell_id": 116, "min_level": 1}},
+        ]
+        via_dispatch = _emit_cpp_trigger_lookup_one_kind(
+            {"family": "trainer_spells"}, "trainer_purchase_attempt", locations
+        )
+        via_direct_call = _emit_cpp_trigger_lookup_learn_spell(locations)
+        self.assertEqual(via_dispatch, via_direct_call)
+
+    def test_unregistered_trigger_kind_still_raises(self) -> None:
+        # Guards against the fix accidentally becoming a catch-all: an
+        # actually-unregistered kind must still hit the ValidationError at
+        # the bottom of _emit_cpp_trigger_lookup_one_kind.
+        locations = [{"name": "x", "location_id": 1, "trigger": {"kind": "not_a_real_kind"}}]
+        with self.assertRaises(ValidationError):
+            _emit_cpp_trigger_lookup_one_kind({"family": "trainer_spells"}, "not_a_real_kind", locations)
+
+
+class TestEmitCppItemDeliveryLookup(unittest.TestCase):
+    def test_emits_ap_item_id_to_wow_item_entry_map_when_flag_set(self) -> None:
+        data = {
+            "family": "recipes",
+            "locations": [
+                {"name": "Recipe: Westfall Stew (#728)", "location_id": 6000728,
+                 "trigger": {"kind": "learn_spell", "spell_id": 2543},
+                 "tags": {"profession": ["cooking"], "expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Recipe Item: Westfall Stew (#728)", "item_id": 6500728,
+                 "delivery": {"kind": "mail", "wow_item_entry": 728}},
+            ],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("ApItemIdToWowItemEntry", cpp)
+        self.assertIn("{ 6500728, 728 }", cpp)
+
+    def test_no_map_emitted_when_flag_unset(self) -> None:
+        data = {
+            "family": "vendor_stock",
+            "locations": [
+                {"name": "Vendor: Fake NPC - Fake Item (#1)", "location_id": 2000001,
+                 "trigger": {"kind": "vendor_purchase", "npc_entry": 1, "item_slot": 0},
+                 "tags": {"expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Vendor Item: Fake NPC - Fake Item (#1)", "item_id": 2500001,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1}},
+            ],
+        }
+        # vendor_stock's real FAMILY_SCHEMAS entry now sets
+        # export_item_delivery=True (cross-world mail-delivery dispatch fix --
+        # quest_rewards/vendor_stock items were compiled with no
+        # ApItemIdToWowItemEntry map at all, so an item assigned to a
+        # different player's world than the one that unlocked it silently
+        # vanished instead of ever being mailed). Temporarily override the
+        # registry entry here so this test still exercises emit_cpp_generic's
+        # OWN gate in isolation, same pattern as TestAlwaysPresentAndTags's
+        # export_tags override tests above.
+        original_schema = FAMILY_SCHEMAS["vendor_stock"]
+        FAMILY_SCHEMAS["vendor_stock"] = type(original_schema)(
+            valid_trigger_kinds=original_schema.valid_trigger_kinds,
+            valid_delivery_kinds=original_schema.valid_delivery_kinds,
+            generic=True, export_triggers=True, export_tags=True, export_item_delivery=False,
+        )
+        try:
+            cpp = emit_cpp_generic(data)
+            self.assertNotIn("ApItemIdToWowItemEntry", cpp)
+        finally:
+            FAMILY_SCHEMAS["vendor_stock"] = original_schema
+
+
+class TestItemLevelTags(unittest.TestCase):
+    def test_validate_tags_rows_checks_items_when_locations_empty(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_tags_rows(
+                "filler_reward_items", [],
+                [{"name": "Filler: Test Item (#1)", "item_id": 8000001, "delivery": {"kind": "mail", "wow_item_entry": 1}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_validate_tags_rows_passes_with_a_real_item_tag(self) -> None:
+        generate_content._validate_tags_rows(
+            "filler_reward_items", [],
+            [{"name": "Filler: Test Item (#1)", "item_id": 8000001,
+              "delivery": {"kind": "mail", "wow_item_entry": 1}, "tags": {"category": ["consumable"]}}],
+            pathlib.Path("test.yaml"),
+        )
+
+    def test_validate_tags_rows_still_checks_locations_when_present(self) -> None:
+        # Unchanged behavior for every existing location-tagged family --
+        # confirms this extension doesn't regress quest_rewards/vendor_stock/
+        # recipes/trainer_spells' own existing location-keyed tags.
+        with self.assertRaises(ValidationError):
+            generate_content._validate_tags_rows(
+                "recipes",
+                [{"name": "Recipe: X (#1)", "location_id": 6000001, "trigger": {"kind": "learn_spell", "spell_id": 1}}],
+                [], pathlib.Path("test.yaml"),
+            )
+
+    def test_emit_python_generic_emits_item_keyed_tags_when_locations_empty(self) -> None:
+        data = {
+            "family": "filler_reward_items",
+            "locations": [],
+            "items": [
+                {"name": "Filler: Test Item (#1)", "item_id": 8000001,
+                 "delivery": {"kind": "mail", "wow_item_entry": 1}, "tags": {"category": ["consumable"]}},
+            ],
+        }
+        text = emit_python_generic(data)
+        self.assertIn('"Filler: Test Item (#1)": {"category": frozenset({"consumable"})}', text)
+
+
+class TestFillerRewardEffectsEmitter(unittest.TestCase):
+    def test_emits_param_by_item_name_and_pair_valued_cpp_map(self) -> None:
+        data = {
+            "family": "filler_reward_effects",
+            "items": [
+                {"name": "Filler: Random Buff - Rejuvenation (#774)", "item_id": 8500000, "count": 1,
+                 "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": 774}},
+            ],
+        }
+        py = emit_python(data)
+        self.assertIn('"Filler: Random Buff - Rejuvenation (#774)": "cast_spell"', py)
+        self.assertIn('"Filler: Random Buff - Rejuvenation (#774)": 774', py)
+        cpp = emit_cpp(data)
+        self.assertIn("ApItemToEffect", cpp)
+        self.assertIn("std::pair<std::string, int32_t>", cpp)
+        self.assertIn('{ 8500000, { "cast_spell", 774 } }', cpp)
+
+
+class TestValidateFillerEffectRows(unittest.TestCase):
+    def test_raises_when_filler_effect_delivery_is_missing_param(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_filler_effect_rows(
+                [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell"}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_raises_when_param_is_not_an_int(self) -> None:
+        with self.assertRaises(ValidationError):
+            generate_content._validate_filler_effect_rows(
+                [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": "774"}}],
+                pathlib.Path("test.yaml"),
+            )
+
+    def test_passes_with_a_real_int_param(self) -> None:
+        generate_content._validate_filler_effect_rows(
+            [{"name": "Filler: X", "delivery": {"kind": "filler_effect", "effect": "cast_spell", "param": 774}}],
+            pathlib.Path("test.yaml"),
+        )
+
+    def test_ignores_non_filler_effect_delivery_kinds(self) -> None:
+        generate_content._validate_filler_effect_rows(
+            [{"name": "Gate: X", "delivery": {"kind": "flag", "flag_key": "x", "tier": 1}}],
+            pathlib.Path("test.yaml"),
+        )
+
+
+class TestEmitAchievements(unittest.TestCase):
+    def _sample_data(self) -> dict:
+        return {
+            "family": "achievements",
+            "locations": [
+                {"name": "Achievement: World Explorer (#46)", "location_id": 3600046,
+                 "trigger": {"kind": "achievement_complete", "achievement_id": 46, "category_id": 97, "subset": "explorer"}},
+                {"name": "Achievement: Duelist (#2092)", "location_id": 3602092,
+                 "trigger": {"kind": "achievement_complete", "achievement_id": 2092, "category_id": 165, "subset": "pvp", "extremely_hard": True}},
+            ],
+            "items": [
+                {"name": "Achievement Complete: World Explorer (#46)", "item_id": 3800046,
+                 "delivery": {"kind": "realm_state", "effect": "record_achievement", "achievement_id": 46}},
+                {"name": "Achievement Complete: Duelist (#2092)", "item_id": 3802092,
+                 "delivery": {"kind": "realm_state", "effect": "record_achievement", "achievement_id": 2092}},
+            ],
+            "constants": {"WORLD_EXPLORER_ACHIEVEMENT_ID": 46},
+        }
+
+    def test_emit_python_produces_valid_python_with_expected_exports(self) -> None:
+        data = self._sample_data()
+        output = emit_python(data)
+        compile(output, "<test>", "exec")
+        namespace: dict = {}
+        exec(output, namespace)
+        self.assertEqual(namespace["WORLD_EXPLORER_ACHIEVEMENT_ID"], 46)
+        self.assertEqual(namespace["LOCATIONS"]["Achievement: World Explorer (#46)"], 3600046)
+        self.assertEqual(namespace["ITEMS"]["Achievement Complete: Duelist (#2092)"], (3802092, 1))
+        self.assertEqual(
+            namespace["ACHIEVEMENTS_BY_SUBSET"]["pvp"],
+            frozenset({"Achievement Complete: Duelist (#2092)"}),
+        )
+        self.assertEqual(
+            namespace["EXTREMELY_HARD_ITEM_NAMES"],
+            frozenset({"Achievement Complete: Duelist (#2092)"}),
+        )
+        self.assertEqual(namespace["WORLD_EXPLORER_LOCATION_NAME"], "Achievement: World Explorer (#46)")
+        self.assertEqual(namespace["WORLD_EXPLORER_ITEM_NAME"], "Achievement Complete: World Explorer (#46)")
+
+    def test_emit_python_raises_if_world_explorer_id_has_no_matching_location(self) -> None:
+        data = self._sample_data()
+        data["constants"]["WORLD_EXPLORER_ACHIEVEMENT_ID"] = 999999
+        with self.assertRaises(ValidationError):
+            emit_python(data)
+
+    def test_emit_cpp_produces_expected_lookup_tables(self) -> None:
+        data = self._sample_data()
+        output = emit_cpp(data)
+        self.assertIn("namespace Archipelago::Achievements", output)
+        self.assertIn("WORLD_EXPLORER_ACHIEVEMENT_ID = 46", output)
+        self.assertIn("ACHIEVEMENT_ID_TO_LOCATION_ID_RAW", output)
+        self.assertIn("{ 46, 3600046 }", output)
+        self.assertIn("AP_ITEM_ID_TO_ACHIEVEMENT_ID_RAW", output)
+        self.assertIn("{ 3800046, 46 }", output)
+
+    def test_load_family_rejects_achievement_complete_trigger_missing_achievement_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "test.yaml"
+            path.write_text(textwrap.dedent("""
+                family: achievements
+                locations:
+                  - name: 'Achievement: Bad Row (#1)'
+                    location_id: 3600001
+                    trigger: {kind: achievement_complete}
+                items: []
+                constants: {WORLD_EXPLORER_ACHIEVEMENT_ID: 46}
+            """), encoding="utf-8")
+            with self.assertRaises(ValidationError):
+                load_family(path)
+
+    def test_load_family_accepts_a_well_formed_achievements_row(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "test.yaml"
+            path.write_text(textwrap.dedent("""
+                family: achievements
+                locations:
+                  - name: 'Achievement: World Explorer (#46)'
+                    location_id: 3600046
+                    trigger: {kind: achievement_complete, achievement_id: 46, category_id: 97, subset: explorer}
+                items:
+                  - name: 'Achievement Complete: World Explorer (#46)'
+                    item_id: 3800046
+                    delivery: {kind: realm_state, effect: record_achievement, achievement_id: 46}
+                constants: {WORLD_EXPLORER_ACHIEVEMENT_ID: 46}
+            """), encoding="utf-8")
+            data = load_family(path)  # must not raise
+        self.assertEqual(len(data["locations"]), 1)
+
+
+class TestGameobjectLootTriggerLookup(unittest.TestCase):
+    def test_validate_gameobject_loot_rows_accepts_well_formed_data(self) -> None:
+        # M4.11.4.2 Task 3: gathersanity's own FAMILY_SCHEMAS entry no
+        # longer accepts gameobject_loot either (replaced by
+        # zone_pool_credit, same as containersanity in M4.11.4.1) -- as of
+        # this task, NO real family's schema accepts gameobject_loot as a
+        # valid_trigger_kind any more, so a fixture routed through the full
+        # validate_family(data) pipeline would now be rejected by
+        # _validate_recognized_kinds before ever reaching this test's real
+        # target, _validate_gameobject_loot_rows itself. Calling that
+        # validator directly keeps testing its real behavior (accepts
+        # well-formed (loot_id, item_entry) rows) without depending on a
+        # trigger kind no family's schema can reach in practice any more.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
+        _validate_gameobject_loot_rows("gathersanity", locations)  # must not raise
+
+    def test_duplicate_loot_id_item_entry_pair_is_a_hard_validation_error(self) -> None:
+        # gameobject_loot_template's real PK is (Entry, Item) -- a real
+        # extraction collision on that key would mean a genuine extraction
+        # bug (unlike vendor_purchase's soft dedup, which exists because
+        # npc_vendor legitimately allows repeated (npc,item) pairs via
+        # ExtendedCost variations). This must hard-fail, same as quest_reward.
+        #
+        # M4.11.4.2 Task 3: same "no family's schema accepts gameobject_loot
+        # any more" consequence as the sibling test above -- calls
+        # _validate_gameobject_loot_rows directly instead of going through
+        # validate_family, so this test again exercises its real duplicate-
+        # pair check rather than failing earlier on "unrecognized
+        # trigger.kind" for the wrong reason.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+            {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_gameobject_loot_rows("gathersanity", locations)
+
+    def test_duplicate_gameobject_loot_error_names_the_owning_family(self) -> None:
+        # M4.10.2 final whole-branch review fix (M1): this message hardcoded
+        # the literal "containersanity", but _validate_gameobject_loot_rows is
+        # called unconditionally and also validates gathersanity's own 284
+        # gameobject_loot rows -- a real gathersanity duplicate raised an
+        # error blaming the wrong family.
+        #
+        # M4.11.4.2 Task 3: same "no family's schema accepts gameobject_loot
+        # any more" consequence as the two sibling tests above -- calls
+        # _validate_gameobject_loot_rows directly instead of going through
+        # validate_family.
+        locations = [
+            {"name": "Gathersanity: A (#1/2)", "location_id": 9000000,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+            {"name": "Gathersanity: B (#1/2)", "location_id": 9000001,
+             "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2},
+             "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+        ]
+        with self.assertRaises(ValidationError) as ctx:
+            _validate_gameobject_loot_rows("gathersanity", locations)
+        self.assertIn("gathersanity:", str(ctx.exception))
+        self.assertNotIn("containersanity", str(ctx.exception))
+
+    def test_emit_cpp_trigger_lookup_gameobject_loot_shape(self) -> None:
+        data = {
+            "family": "containersanity",
+            "locations": [
+                {"name": "Container: A (#1/2)", "location_id": 8000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1, "item_entry": 2}, "tags": {}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1, 2 }, 8000000 }", joined)
+        self.assertIn("std::map<std::pair<uint32_t, uint32_t>, int64_t> GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID", joined)
+
+
+class TestSkinningAndDisenchantLootTriggerLookup(unittest.TestCase):
+    def test_validate_skinning_loot_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "Gathersanity: A (skinning #1/2)", "location_id": 9000000,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+            ],
+            "items": [{"name": "Gathersanity Item: A", "item_id": 9500000,
+                       "delivery": {"kind": "mail", "wow_item_entry": 2}}],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_skinning_loot_id_item_entry_pair_is_a_hard_validation_error(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "A", "location_id": 9000000,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+                {"name": "B", "location_id": 9000001,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 1, "item_entry": 2},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+            ],
+            "items": [
+                {"name": "A item", "item_id": 9500000, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+                {"name": "B item", "item_id": 9500001, "delivery": {"kind": "mail", "wow_item_entry": 2}},
+            ],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_mixed_kind_family_emits_one_map_per_kind(self) -> None:
+        data = {
+            "family": "gathersanity",
+            "locations": [
+                {"name": "Node", "location_id": 9000000,
+                 "trigger": {"kind": "gameobject_loot", "loot_id": 1502, "item_entry": 774},
+                 "tags": {"expansion": ["vanilla"], "source": ["gathering_node"]}},
+                {"name": "Skin", "location_id": 9000001,
+                 "trigger": {"kind": "skinning_loot", "loot_id": 193, "item_entry": 4304},
+                 "tags": {"expansion": ["vanilla"], "source": ["skinning"]}},
+                {"name": "Dis", "location_id": 9000002,
+                 "trigger": {"kind": "disenchant_loot", "loot_id": 1, "item_entry": 10938},
+                 "tags": {"expansion": ["vanilla"], "source": ["disenchant"]}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("GAMEOBJECT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1502, 774 }, 9000000 }", joined)
+        self.assertIn("SKINNING_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 193, 4304 }, 9000001 }", joined)
+        self.assertIn("DISENCHANT_LOOT_SLOT_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ { 1, 10938 }, 9000002 }", joined)
+
+
+class TestValidateTriggerLookupUniquenessMixedKinds(unittest.TestCase):
+    """M4.10.2 final whole-branch review fix (I2): _validate_trigger_lookup_
+    uniqueness used to read locations[0]["trigger"]["kind"] once and dispatch
+    the ENTIRE locations list on that single value, so in a mixed-kind family
+    only the first kind was ever validated and every other kind was silently
+    skipped. Uses a synthetic two-kind `recipes` fixture (recipes is
+    export_triggers=True, and quest_reward/learn_spell are two kinds this
+    function actually has branches for -- gathersanity's own three loot kinds
+    have no branch here at all and are covered by the dedicated
+    _validate_*_loot_rows validators instead)."""
+
+    def test_second_kind_is_validated_not_just_the_first(self) -> None:
+        # quest_reward first (all unique, so the old code found nothing),
+        # duplicate learn_spell rows second. Pre-fix this returned silently.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
+            {"name": "S: B (#2)", "location_id": 2,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+            {"name": "S: C (#3)", "location_id": 3,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+        ]
+        with self.assertRaises(generate_content.ValidationError) as ctx:
+            generate_content._validate_trigger_lookup_uniqueness(
+                "recipes", locations, [], pathlib.Path("test.yaml")
+            )
+        self.assertIn("spell_id=100", str(ctx.exception))
+
+    def test_first_kind_is_still_validated_in_a_mixed_family(self) -> None:
+        # Mirror image of the above: the duplicate is now in the FIRST kind,
+        # with a clean second kind following it.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
+            {"name": "Q: B (#2)", "location_id": 2,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 0}},
+            {"name": "S: C (#3)", "location_id": 3,
+             "trigger": {"kind": "learn_spell", "spell_id": 100}},
+        ]
+        with self.assertRaises(generate_content.ValidationError) as ctx:
+            generate_content._validate_trigger_lookup_uniqueness(
+                "recipes", locations, [], pathlib.Path("test.yaml")
+            )
+        self.assertIn("(quest_id, column_index)=(10, 0)", str(ctx.exception))
+
+    def test_each_kind_gets_its_own_seen_keys_scope(self) -> None:
+        # A quest_id and a spell_id that happen to share the same numeric
+        # value are NOT a collision -- they land in two different emitted C++
+        # maps. The single shared `seen_keys` dict the pre-fix code used would
+        # only ever have compared them if one dispatch branch had processed
+        # both kinds, which it could not; this locks the correct behavior in
+        # now that both kinds really are processed in one call.
+        locations = [
+            {"name": "Q: A (#1)", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 42, "column_index": 0}},
+            {"name": "S: B (#2)", "location_id": 2,
+             "trigger": {"kind": "learn_spell", "spell_id": 42}},
+        ]
+        generate_content._validate_trigger_lookup_uniqueness(
+            "recipes", locations, [], pathlib.Path("test.yaml")
+        )  # must not raise
+
+    def test_same_quest_id_different_column_index_is_not_a_collision(self) -> None:
+        # M4.11.5.0.6: a multi-choice/multi-fixed-reward quest legitimately
+        # produces several locations sharing one quest_id, distinguished by
+        # column_index -- only a repeated (quest_id, column_index) PAIR is a
+        # real collision now (test_first_kind_is_still_validated_in_a_mixed_
+        # family covers that case).
+        locations = [
+            {"name": "Q: A (#1) [RewardChoiceItemID1]", "location_id": 1,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 4}},
+            {"name": "Q: A (#1) [RewardChoiceItemID2]", "location_id": 2,
+             "trigger": {"kind": "quest_reward", "quest_id": 10, "column_index": 5}},
+        ]
+        generate_content._validate_trigger_lookup_uniqueness(
+            "quest_rewards", locations, [], pathlib.Path("test.yaml")
+        )  # must not raise
+
+    def test_vendor_purchase_indexes_items_by_original_position(self) -> None:
+        # The vendor_purchase branch pairs locations[i] with items[i]. Grouping
+        # by kind must therefore carry each location's ORIGINAL index, not its
+        # index within the per-kind subset: with subset indices the two vendor
+        # rows below would read items[0]/items[1] (wow entries 100/200), see no
+        # collision, and silently mispair every vendor row with someone else's
+        # item. With original indices they read items[1]/items[2] (200/200) and
+        # the real (npc_entry=5, wow_item_entry=200) collision is reported.
+        locations = [
+            {"name": "S: A (#1)", "location_id": 1,
+             "trigger": {"kind": "learn_spell", "spell_id": 7}},
+            {"name": "V: B (#2)", "location_id": 2,
+             "trigger": {"kind": "vendor_purchase", "npc_entry": 5}},
+            {"name": "V: C (#3)", "location_id": 3,
+             "trigger": {"kind": "vendor_purchase", "npc_entry": 5}},
+        ]
+        items = [
+            {"name": "S item", "item_id": 11, "delivery": {"kind": "mail", "wow_item_entry": 100}},
+            {"name": "V item B", "item_id": 12, "delivery": {"kind": "mail", "wow_item_entry": 200}},
+            {"name": "V item C", "item_id": 13, "delivery": {"kind": "mail", "wow_item_entry": 200}},
+        ]
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            generate_content._validate_trigger_lookup_uniqueness(
+                "vendor_stock", locations, items, pathlib.Path("test.yaml")
+            )
+        output = buffer.getvalue()
+        self.assertIn("1 trigger-lookup collisions", output)
+        self.assertIn("(npc_entry=5, wow_item_entry=200)", output)
+        self.assertIn("V: B (#2)", output)
+        self.assertIn("V: C (#3)", output)
+
+
+class TestCreatureKillTriggerLookup(unittest.TestCase):
+    def test_validate_creature_kill_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448},
+                 "tags": {"type": ["regular"], "expansion": ["vanilla"]}},
+            ],
+            "items": [],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_creature_entry_is_a_hard_validation_error(self) -> None:
+        # creature_template.entry is a real PRIMARY KEY -- a duplicate here
+        # would mean a genuine extraction bug, not a legitimate real-world
+        # collision. Hard-fail, same discipline as _validate_quest_reward_rows
+        # / the learn_spell branch.
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: A (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+                {"name": "Enemy: B (#448)", "location_id": 10500001,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+            ],
+            "items": [],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_emit_cpp_trigger_lookup_creature_kill_shape(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("CREATURE_ENTRY_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ 448, 10500000 }", joined)
+        self.assertIn("std::unordered_map<uint32_t, int64_t> CREATURE_ENTRY_TO_LOCATION_ID", joined)
+
+    def test_emit_python_generic_emits_empty_items_dict_for_a_locations_only_family(self) -> None:
+        data = {
+            "family": "enemysanity",
+            "locations": [
+                {"name": "Enemy: Kobold Vermin (#448)", "location_id": 10500000,
+                 "trigger": {"kind": "creature_kill", "creature_entry": 448}, "tags": {"type": ["regular"]}},
+            ],
+            "items": [],
+        }
+        source = emit_python(data)
+        self.assertIn("ITEMS: dict[str, tuple[int, int]] = {\n}", source)
+
+    def test_emit_cpp_generic_emits_reputation_rank_trigger_lookup(self) -> None:
+        data = {
+            "family": "repsanity",
+            "locations": [
+                {
+                    "name": "Reputation: Bloodsail Buccaneers (Hostile)",
+                    "location_id": 11000000,
+                    "trigger": {"kind": "reputation_rank", "faction_id": 87, "rank": 1},
+                    "tags": {"expansion": ["vanilla"], "rank_tier": ["negative"]},
+                },
+            ],
+            "items": [],
+        }
+        cpp = emit_cpp_generic(data)
+        self.assertIn("FACTION_RANK_TO_LOCATION_ID_RAW", cpp)
+        self.assertIn("{ { 87, 1 }, 11000000 }", cpp)
+        self.assertIn(
+            "std::map<std::pair<uint32_t, uint32_t>, int64_t> FACTION_RANK_TO_LOCATION_ID",
+            cpp,
+        )
+
+
+class TestCraftsanityFamily(unittest.TestCase):
+    def test_craftsanity_registered_as_generic_with_recipe_craft_trigger(self) -> None:
+        schema = FAMILY_SCHEMAS["craftsanity"]
+        self.assertTrue(schema.generic)
+        self.assertEqual(schema.valid_trigger_kinds, {"recipe_craft"})
+        self.assertEqual(schema.valid_delivery_kinds, {"mail"})
+        self.assertTrue(schema.export_triggers)
+        self.assertTrue(schema.export_tags)
+        self.assertTrue(schema.export_item_delivery)
+
+    def test_duplicate_item_entry_in_recipe_craft_rows_is_rejected(self) -> None:
+        locations = [
+            {"name": "Craft: A (#1)", "location_id": 1, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+            {"name": "Craft: B (#2)", "location_id": 2, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recipe_craft_rows("craftsanity", locations)
+
+    def test_emit_cpp_trigger_lookup_recipe_craft_produces_item_entry_map(self) -> None:
+        locations = [
+            {"name": "Craft: A (#500)", "location_id": 11_500_000, "trigger": {"kind": "recipe_craft", "item_entry": 500}},
+        ]
+        lines = _emit_cpp_trigger_lookup_recipe_craft(locations)
+        text = "\n".join(lines)
+        self.assertIn("ITEM_ENTRY_TO_LOCATION_ID", text)
+        self.assertIn("{ 500, 11500000 }", text)
+
+
+class TestItemFirstHeldTriggerLookup(unittest.TestCase):
+    def test_validate_item_first_held_rows_accepts_well_formed_data(self) -> None:
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#6948)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 6948},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+            "items": [{"name": "Itemsanity Item: A (#6948)", "item_id": 13500000,
+                       "delivery": {"kind": "mail", "wow_item_entry": 6948}}],
+        }
+        validate_family(data)  # must not raise
+
+    def test_duplicate_item_entry_is_a_hard_validation_error(self) -> None:
+        # item_template.entry is a real PK -- a duplicate in extracted data
+        # means a genuine extraction bug, same discipline as
+        # _validate_gameobject_loot_rows/_validate_learn_spell_rows-family
+        # collision checks elsewhere in this file.
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#1)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 1},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+                {"name": "Itemsanity: B (#1)", "location_id": 12500001,
+                 "trigger": {"kind": "item_first_held", "item_entry": 1},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+            "items": [
+                {"name": "Itemsanity Item: A (#1)", "item_id": 13500000, "delivery": {"kind": "mail", "wow_item_entry": 1}},
+                {"name": "Itemsanity Item: B (#1)", "item_id": 13500001, "delivery": {"kind": "mail", "wow_item_entry": 1}},
+            ],
+        }
+        with self.assertRaises(ValidationError):
+            validate_family(data)
+
+    def test_emit_cpp_trigger_lookup_item_first_held_shape(self) -> None:
+        data = {
+            "family": "itemsanity",
+            "locations": [
+                {"name": "Itemsanity: A (#6948)", "location_id": 12500000,
+                 "trigger": {"kind": "item_first_held", "item_entry": 6948},
+                 "tags": {"class": ["misc"], "quality": ["normal"], "expansion": ["vanilla"]}},
+            ],
+        }
+        lines = _emit_cpp_trigger_lookup(data)
+        joined = "\n".join(lines)
+        self.assertIn("ITEM_ENTRY_TO_LOCATION_ID_RAW", joined)
+        self.assertIn("{ 6948, 12500000 }", joined)
+        self.assertIn("std::unordered_map<uint32_t, int64_t> ITEM_ENTRY_TO_LOCATION_ID", joined)
+
+
+class TestHolidaysanityFamilySchema(unittest.TestCase):
+    def test_holidaysanity_registered_with_flag_delivery_only(self) -> None:
+        schema = FAMILY_SCHEMAS["holidaysanity"]
+        self.assertEqual(schema.valid_trigger_kinds, set())
+        self.assertEqual(schema.valid_delivery_kinds, {"flag"})
+        self.assertFalse(schema.generic)  # 14 rows, nowhere near the 2000-row hand-rolled-emitter threshold
+
+    def test_holidaysanity_yaml_has_no_locations(self) -> None:
+        import pathlib
+        import yaml
+        path = pathlib.Path(__file__).parent.parent / "content" / "holidaysanity.yaml"
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        self.assertEqual(data["locations"], [])
+        self.assertEqual(len(data["items"]), 14)
+
+
+class TestZonePoolCreditTriggerLookup(unittest.TestCase):
+    # M4.11.4.1 Task 2: containersanity moves from per-loot-row
+    # gameobject_loot triggers to the new abstracted zone_pool_credit
+    # trigger kind (spec: 2026-09-03-archipelago-wow-m4.11.4-abstracted-
+    # zone-pool-design.md).
+    def test_containersanity_schema_accepts_zone_pool_credit(self) -> None:
+        self.assertIn("zone_pool_credit", FAMILY_SCHEMAS["containersanity"].valid_trigger_kinds)
+        self.assertTrue(FAMILY_SCHEMAS["containersanity"].export_zone_pool_spawn_zones)
+
+    def test_emit_cpp_trigger_lookup_zone_pool_credit_groups_and_sorts_by_ordinal(self) -> None:
+        locations = [
+            {"name": "Container: Barrens - Chest 2", "location_id": 8000001,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "barrens", "ordinal": 2}},
+            {"name": "Container: Barrens - Chest 1", "location_id": 8000000,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "barrens", "ordinal": 1}},
+            {"name": "Container: Durotar - Chest 1", "location_id": 8000002,
+             "trigger": {"kind": "zone_pool_credit", "zone_key": "durotar", "ordinal": 1}},
+        ]
+        lines = _emit_cpp_trigger_lookup_zone_pool_credit(locations)
+        text = "\n".join(lines)
+        self.assertIn('"barrens"', text)
+        self.assertIn("8000000", text)
+        self.assertIn("8000001", text)
+        self.assertIn("8000002", text)
+        # ordinal 1 must appear before ordinal 2 within the barrens group
+        self.assertLess(text.index("8000000"), text.index("8000001"))
+
+    def test_emit_cpp_zone_pool_spawn_zones_flattens_multi_zone_spawns(self) -> None:
+        data = {"zone_pool_spawn_zones": {12345: ["barrens", "durotar"], 999: ["barrens"]}}
+        lines = _emit_cpp_zone_pool_spawn_zones(data)
+        text = "\n".join(lines)
+        self.assertIn("12345", text)
+        self.assertIn("999", text)
+        self.assertIn('"barrens"', text)
+        self.assertIn('"durotar"', text)
+
+
+class TestGathersanityZonePoolNodeTiers(unittest.TestCase):
+    # M4.11.4.2 Task 3: gathersanity's own gathering_node moves from
+    # per-loot-row gameobject_loot triggers to the zone_pool_credit trigger
+    # kind, plus a new per-entry skill-tier lookup so the same zone pool
+    # crediting hook can build the "<zone_key>|<profession>|<tier>" composite
+    # key (spec: 2026-09-03-archipelago-wow-m4.11.4.2-gathersanity-skill-
+    # tier-zone-pool-design.md).
+    def test_gathersanity_schema_accepts_zone_pool_credit_alongside_existing_kinds(self) -> None:
+        schema = FAMILY_SCHEMAS["gathersanity"]
+        self.assertEqual(schema.valid_trigger_kinds, {"zone_pool_credit", "skinning_loot", "disenchant_loot"})
+        self.assertTrue(schema.export_zone_pool_spawn_zones)
+
+    def test_emit_cpp_zone_pool_node_tiers(self) -> None:
+        # Values are "profession|tier" composites (M4.11.4.2 Task 2) -- this
+        # emitter treats them as opaque strings, it never parses them.
+        data = {"zone_pool_node_tier_by_entry": {1731: "mining|apprentice", 1617: "herbalism|apprentice", 9999: "mining|expert"}}
+        lines = _emit_cpp_zone_pool_node_tiers(data)
+        text = "\n".join(lines)
+        self.assertIn("1731", text)
+        self.assertIn('"mining|apprentice"', text)
+        self.assertIn("9999", text)
+        self.assertIn('"mining|expert"', text)
+
+
+class TestQuestRewardSlotTriggerLookup(unittest.TestCase):
+    def test_quest_reward_trigger_lookup_emits_composite_slot_map_and_choice_siblings(self) -> None:
+        from generate_content import _emit_cpp_trigger_lookup_quest_reward
+        locations = [
+            {"name": "a", "location_id": 1000005000, "trigger": {"kind": "quest_reward", "quest_id": 500, "column_index": 4}},
+            {"name": "b", "location_id": 1000005001, "trigger": {"kind": "quest_reward", "quest_id": 500, "column_index": 5}},
+            {"name": "c", "location_id": 1000005020, "trigger": {"kind": "quest_reward", "quest_id": 502, "column_index": 0}},
+        ]
+        lines = "\n".join(_emit_cpp_trigger_lookup_quest_reward(locations))
+        self.assertIn("QUEST_REWARD_SLOT_TO_LOCATION_ID", lines)
+        self.assertIn("{ { 500, 4 }, 1000005000 }", lines)
+        self.assertIn("{ { 500, 5 }, 1000005001 }", lines)
+        self.assertIn("{ { 502, 0 }, 1000005020 }", lines)
+        self.assertIn("QUEST_ID_TO_CHOICE_LOCATION_IDS", lines)
+        self.assertIn("{ 500, { 1000005000, 1000005001 } }", lines)
+        self.assertNotIn("{ 502,", lines.split("QUEST_ID_TO_CHOICE_LOCATION_IDS")[1])
+
+
+class TestItemDeliveryLookupLearnSpellKind(unittest.TestCase):
+    def test_emits_both_maps_when_both_kinds_present(self) -> None:
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 7500116, "name": "x", "delivery": {"kind": "learn_spell", "spell_id": 116}},
+            {"item_id": 7500118, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 117}},
+        ]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_spell"}))
+        self.assertIn("ApItemIdToSpellId", lines)
+        self.assertIn("{ 7500116, 116 }", lines)
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertIn("{ 7500118, 117 }", lines)
+
+    def test_mail_only_family_output_is_unaffected(self) -> None:
+        # Every generic family before M4.11.5.0.5 (quest_rewards, vendor_stock,
+        # recipes, filler_reward_items) has only "mail" in valid_delivery_kinds
+        # -- confirm their output stays byte-identical (no ApItemIdToSpellId
+        # emitted at all when the family isn't even schema-eligible for it).
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 1750001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail"}))
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertNotIn("ApItemIdToSpellId", lines)
+
+    def test_learn_spell_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
+        # Trainer Spells' real case today: schema-eligible for "learn_spell"
+        # but zero real rows currently use it -- the symbol must still exist
+        # (empty) since the C++ dispatch code references it unconditionally.
+        # Must NOT go through the raw-array-plus-builder pattern with zero
+        # elements -- MSVC rejects `T arr[] = {};` in a range-based for
+        # (C3316: array of unknown size) -- so the empty case defines the
+        # map directly instead.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 7500001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_spell"}))
+        self.assertIn("ApItemIdToSpellId", lines)
+        self.assertNotIn("AP_ITEM_ID_TO_SPELL_ID_RAW", lines)
+        self.assertIn("std::unordered_map<int64_t, uint32_t> ApItemIdToSpellId = {};", lines)
+
+
+class TestLearnNextChainRankDelivery(unittest.TestCase):
+    """M4.11.5.7 (Task 7): trainer_spells' replacement for "learn_spell" --
+    one "Progressive <Spell>" item per multi-rank chain, delivery.spell_ids
+    the ordered rank spell_ids. Sibling coverage to
+    TestLearnSpellTriggerLookup.test_learn_spell_row_missing_spell_id_is_rejected
+    (validation) and TestItemDeliveryLookupLearnSpellKind's real-rows/empty-
+    map-fallback pair (emission) -- same direct-call-the-function,
+    assertRaises/assertIn style those use, applied to the new
+    "learn_next_chain_rank" delivery.kind branches instead of "learn_spell"."""
+
+    def test_learn_next_chain_rank_row_missing_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank"}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_learn_next_chain_rank_row_with_empty_spell_ids_is_rejected(self) -> None:
+        from generate_content import _validate_recognized_kinds
+        items = [
+            {"name": "Progressive Frostbolt", "delivery": {"kind": "learn_next_chain_rank", "spell_ids": []}},
+        ]
+        with self.assertRaises(ValidationError):
+            _validate_recognized_kinds("trainer_spells", [], items, pathlib.Path("test.yaml"))
+
+    def test_emits_chain_spell_ids_map_for_real_chain_rows(self) -> None:
+        # M4.11.6 post-Task-8 crash fix: the raw array is flattened to one
+        # `std::pair<uint32_t, uint32_t>` row per (item_id, single rank
+        # spell_id) instead of nesting a std::initializer_list<uint32_t> as
+        # the row's value -- storing an initializer_list as a value inside a
+        # constexpr static-duration array doesn't keep its backing storage
+        # alive, which crashed worldserver.exe (and this module's own
+        # doctest binary) at static-init time before main() ever ran.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 7500116, "name": "Progressive Frostbolt",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+            {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+        ]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertNotIn("initializer_list", lines)
+        self.assertIn(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {",
+            lines,
+        )
+        self.assertIn("{ 7500116, 116 }, // \"Progressive Frostbolt\" rank 1", lines)
+        self.assertIn("{ 7500116, 205 }, // \"Progressive Frostbolt\" rank 2", lines)
+        self.assertIn("{ 7500116, 837 }, // \"Progressive Frostbolt\" rank 3", lines)
+        self.assertIn("result[row.first].push_back(row.second);", lines)
+        self.assertIn("ApItemIdToWowItemEntry", lines)
+        self.assertIn("{ 7500999, 42 }", lines)
+
+    def test_multi_rank_chain_rows_flatten_in_rank_order_and_regroup_by_item_id(self) -> None:
+        # Sibling coverage focused specifically on the flattening/regrouping
+        # mechanism for MULTIPLE chains: each chain's rank spell_ids must
+        # appear as separate rows in ascending rank order, interleaved
+        # correctly across chains, since the C++ builder relies on
+        # `result[row.first].push_back(row.second)` (ordered append, not
+        # emplace) to regroup the flat rows back into one ordered vector per
+        # item_id -- this only works if emission preserves rank order.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [
+            {"item_id": 100, "name": "Progressive Death Coil (Death Knight)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [47541, 49895]}},
+            {"item_id": 200, "name": "Progressive Death Coil (Warlock)",
+             "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [6789, 17925, 27223]}},
+        ]
+        lines_list = _emit_cpp_item_delivery_lookup(items, {"learn_next_chain_rank"})
+        lines = "\n".join(lines_list)
+
+        # Extract just the raw-array row lines (between the array's opening
+        # and closing braces) to check relative order precisely.
+        start = lines_list.index(
+            "inline constexpr std::pair<uint32_t, uint32_t> AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW[] = {"
+        )
+        end = lines_list.index("};", start)
+        row_lines = lines_list[start + 1:end]
+
+        self.assertEqual(
+            row_lines,
+            [
+                '    { 100, 47541 }, // "Progressive Death Coil (Death Knight)" rank 1',
+                '    { 100, 49895 }, // "Progressive Death Coil (Death Knight)" rank 2',
+                '    { 200, 6789 }, // "Progressive Death Coil (Warlock)" rank 1',
+                '    { 200, 17925 }, // "Progressive Death Coil (Warlock)" rank 2',
+                '    { 200, 27223 }, // "Progressive Death Coil (Warlock)" rank 3',
+            ],
+        )
+        self.assertIn("result[row.first].push_back(row.second);", lines)
+
+    def test_learn_next_chain_rank_eligible_family_emits_empty_map_when_no_rows_use_it(self) -> None:
+        # trainer_spells' real shape today (Task 8 regenerates the actual
+        # content, but the schema is already eligible): schema-eligible for
+        # "learn_next_chain_rank" -- the symbol must still exist (empty)
+        # since the C++ dispatch code (ArchipelagoPlayerScript.cpp)
+        # references it unconditionally, same MSVC C3316 concern
+        # (empty `T arr[] = {};` can't be used in a range-based for) as the
+        # sibling "learn_spell" empty-map fallback.
+        from generate_content import _emit_cpp_item_delivery_lookup
+        items = [{"item_id": 7500001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}}]
+        lines = "\n".join(_emit_cpp_item_delivery_lookup(items, {"mail", "learn_next_chain_rank"}))
+        self.assertIn("ApItemIdToChainSpellIds", lines)
+        self.assertNotIn("AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW", lines)
+        self.assertIn("std::unordered_map<uint32_t, std::vector<uint32_t>> ApItemIdToChainSpellIds = {};", lines)
+
+
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEmitPythonGenericChainSpellIdsByItemName(unittest.TestCase):
+    """M4.11.7-fix: sibling coverage to TestLearnNextChainRankDelivery, on
+    the Python side -- emit_python_generic's CHAIN_SPELL_IDS_BY_ITEM_NAME
+    export mirrors the C++ AP_ITEM_ID_TO_CHAIN_SPELL_IDS_RAW data so
+    create_optional_category_item_pool (Archipelago/worlds/wow/items.py)
+    can group a category's locations by which chain item covers them."""
+
+    def test_emits_chain_spell_ids_for_learn_next_chain_rank_rows_only(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "trainer_spells",
+            "locations": [],
+            "items": [
+                {"item_id": 7500116, "name": "Progressive Frostbolt",
+                 "delivery": {"kind": "learn_next_chain_rank", "spell_ids": [116, 205, 837]}},
+                {"item_id": 7500999, "name": "y", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME", lines)
+        self.assertIn('"Progressive Frostbolt": [116, 205, 837]', lines)
+        self.assertNotIn('"y":', lines.split("CHAIN_SPELL_IDS_BY_ITEM_NAME")[1])
+
+    def test_emits_empty_dict_when_no_rows_use_learn_next_chain_rank(self) -> None:
+        from generate_content import emit_python_generic
+        data = {
+            "family": "recipes",
+            "locations": [],
+            "items": [
+                {"item_id": 1750001, "name": "x", "delivery": {"kind": "mail", "wow_item_entry": 42}},
+            ],
+        }
+        lines = emit_python_generic(data)
+        self.assertIn("CHAIN_SPELL_IDS_BY_ITEM_NAME: dict[str, list[int]] = {\n}", lines)

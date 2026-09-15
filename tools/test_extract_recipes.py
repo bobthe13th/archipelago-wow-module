@@ -66,13 +66,18 @@ class TestExtract(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": []}
         mock_parse_skills.return_value = {2543: 185}
         mock_run_query.return_value = [
-            ("728", "Recipe: Westfall Stew", "0", "483", "0", "2543", "6", "0", "0", "0", "0", "0", "0"),
+            ("728", "Recipe: Westfall Stew", "0", "15", "483", "0", "2543", "6", "0", "0", "0", "0", "0", "0"),
         ]
         result = extract()
         self.assertEqual(len(result["locations"]), 1)
         self.assertEqual(len(result["items"]), 1)
         self.assertEqual(result["locations"][0]["name"], "Recipe: Westfall Stew (#728)")
-        self.assertEqual(result["locations"][0]["trigger"], {"kind": "learn_spell", "spell_id": 2543})
+        # min_level (M4.11.1 Task 12): the recipe item's own real
+        # item_template.RequiredLevel ("15" in this mock row), exported
+        # verbatim into `trigger` for Zone Leveler's whole_game_scaled filter.
+        self.assertEqual(
+            result["locations"][0]["trigger"], {"kind": "learn_spell", "spell_id": 2543, "min_level": 15},
+        )
         self.assertEqual(result["locations"][0]["tags"], {"profession": ["cooking"], "expansion": ["vanilla"]})
         self.assertEqual(result["items"][0]["delivery"], {"kind": "mail", "wow_item_entry": 728})
 
@@ -85,8 +90,8 @@ class TestExtract(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": []}
         mock_parse_skills.return_value = {6417: 185}
         mock_run_query.return_value = [
-            ("44977", "Recipe: Dig Rat Stew", "0", "0", "0", "6417", "6", "0", "0", "0", "0", "0", "0"),
-            ("5487", "Recipe: Dig Rat Stew", "0", "0", "0", "6417", "6", "0", "0", "0", "0", "0", "0"),
+            ("44977", "Recipe: Dig Rat Stew", "0", "0", "0", "0", "6417", "6", "0", "0", "0", "0", "0", "0"),
+            ("5487", "Recipe: Dig Rat Stew", "0", "0", "0", "0", "6417", "6", "0", "0", "0", "0", "0", "0"),
         ]
         result = extract()
         self.assertEqual(len(result["locations"]), 1)
@@ -99,7 +104,7 @@ class TestExtract(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": [r"(?i)\bdeprecated\b"]}
         mock_parse_skills.return_value = {}
         mock_run_query.return_value = [
-            ("999", "Deprecated Pattern: X", "0", "0", "0", "111", "6", "0", "0", "0", "0", "0", "0"),
+            ("999", "Deprecated Pattern: X", "0", "0", "0", "0", "111", "6", "0", "0", "0", "0", "0", "0"),
         ]
         result = extract()
         self.assertEqual(len(result["locations"]), 0)
@@ -117,7 +122,7 @@ class TestExtract(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": []}
         mock_parse_skills.return_value = {7788: 165}
         mock_run_query.return_value = [
-            ("12345", "Pattern: Fine Leather Boots", "0", "0", "0", "7788", "6", "0", "0", "0", "0", "0", "0"),
+            ("12345", "Pattern: Fine Leather Boots", "0", "0", "0", "0", "7788", "6", "0", "0", "0", "0", "0", "0"),
         ]
         result = extract()
         self.assertEqual(result["locations"][0]["name"], "Recipe: Pattern: Fine Leather Boots (#12345)")
@@ -132,7 +137,7 @@ class TestExtract(unittest.TestCase):
         mock_load_rules.return_value = {"name_denylist": []}
         mock_parse_skills.return_value = {}
         mock_run_query.return_value = [
-            ("966", "Tome of Frost Shield", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
+            ("966", "Tome of Frost Shield", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"),
         ]
         result = extract()
         self.assertEqual(len(result["locations"]), 0)

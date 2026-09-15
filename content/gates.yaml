@@ -78,33 +78,29 @@ items:
     count: 1
     delivery: {kind: flag, flag_key: proficiency_weapon_wand, tier: 1}
 
-  # Access gating (Task 8, §5.1 -- optional, off by default; only pooled
-  # when the "access_gating" apworld option is on). Researched against this
-  # checkout's real hook surface before writing rows (per finding #10's
-  # precedent): only 3 of the 5 access types named in the design spec have
-  # an actual interception point --
+  # Access gating (Task 8, §5.1; M4.9 closed the bank/gathering gap). All 5
+  # of the design's access types now have a real interception point --
   #   - Auction House: WorldSession::HandleAuctionHelloOpcode calls
   #     sScriptMgr->CanSendAuctionHello (MiscScript::CanSendAuctionHello) --
   #     gates opening the AH window.
   #   - Hearthstone: gated via the same PLAYERHOOK_CAN_USE_ITEM hook as
   #     Tasks 5/7, keyed on the real Hearthstone item entry (6948, spell
   #     8690 -- confirmed directly in src/server/game/Spells/SpellEffects.cpp).
-  #   - Mailbox: gated via PLAYERHOOK_CAN_SEND_MAIL (Player::CanSendMail),
-  #     which only fires from player-initiated opcode paths -- confirmed
-  #     this module's own AP item delivery (APDelivery.cpp) builds a
-  #     MailDraft and calls SendMailTo() directly, a separate server-side
-  #     API that never touches this hook, so gating it cannot block AP's own
-  #     delivery mail. Covers both composing new mail AND returning existing
-  #     mail to its sender (MailHandler.cpp's HandleReturnToSender also
-  #     calls this same hook) -- reading/collecting mail into your inbox is
-  #     the only mailbox action that stays open always (no hook exists on
-  #     HandleGetMailList).
-  # Bank and gathering (mining/herbalism/skinning) have NO ScriptMgr hook
-  # anywhere in their interaction path (confirmed by grepping BankHandler.cpp,
-  # Player::GetNPCIfCanInteractWith, and GameObject.cpp's Use() path -- zero
-  # sScriptMgr calls in any of them). Adding one would mean patching
-  # AzerothCore core engine files, which is out of scope for this module-only
-  # plan; both are deferred as a named follow-on rather than invented here.
+  #   - Mailbox: gated via PLAYERHOOK_CAN_SEND_MAIL (Player::CanSendMail).
+  #   - Bank (M4.9): BankHandler.cpp::HandleBankerActivateOpcode has no
+  #     ScriptMgr hook of its own, so this is gated via a weak extern
+  #     function-pointer hook the module sets at script-load time instead --
+  #     see APGating.cpp/APGateDecision.h and BankHandler.cpp.
+  #   - Gathering (M4.9, covers mining/herbalism/skinning as one access
+  #     type): gated via ALLSPELLHOOK_CAN_PREPARE, checking the real
+  #     Lock.dbc skill requirement of the target GameObject (mining/
+  #     herbalism) or SPELL_EFFECT_SKINNING structurally (skinning) -- see
+  #     ArchipelagoGatheringGateScript in APGating.cpp. This turned out
+  #     feasible after all, reversing this comment's own earlier "no
+  #     ScriptMgr hook anywhere in their interaction path" finding, which
+  #     was correct about BankHandler.cpp/GameObject.cpp's Use() path but
+  #     missed that gathering is triggered via a spell cast, not a raw
+  #     opcode/Use() call.
   - name: "Auction House Access"
     item_id: 830015
     count: 1
@@ -117,6 +113,14 @@ items:
     item_id: 830017
     count: 1
     delivery: {kind: flag, flag_key: access_mailbox, tier: 1}
+  - name: "Bank Access"
+    item_id: 830029
+    count: 1
+    delivery: {kind: flag, flag_key: access_bank, tier: 1}
+  - name: "Gathering Access"
+    item_id: 830030
+    count: 1
+    delivery: {kind: flag, flag_key: access_gathering, tier: 1}
 
   # Character-unlock gating (Task 10, §5.1 -- optional, off by default; only
   # pooled when the "character_unlock_gating" apworld option is on). Unlike
@@ -142,20 +146,20 @@ items:
   #     setter directly -- that function also copies/clears per-spec action
   #     bars and calls SendTalentsInfoData(false) to sync the client, which
   #     a bare setter call would skip.
-  #   - Talent Point Access (flag_key access_talent_points, tier 1 boolean):
-  #     the one item in this family that IS continuous suppression, not a
-  #     grant -- named "Access" (not "Progressive"/"Unlock") to match that.
-  #     Gated via PLAYERHOOK_CAN_LEARN_TALENT (Player::LearnTalent, confirmed
-  #     real and boolean-returning at Player.cpp:14281), blocking every
-  #     talent point spend realm-wide until received.
-  # Glyph Slot: Major/Minor (also named in the design spec's example) is
-  # deferred, not shipped: PLAYER_FIELD_GLYPH_SLOTS_1 is a per-slot-index
-  # field but m_Glyphs is declared as [MAX_TALENT_SPECS][MAX_GLYPH_SLOT_INDEX]
-  # (Player.h:2880), and it wasn't verified in the time available whether
-  # slot *availability* is genuinely spec-independent or needs per-spec
-  # handling -- shipping an unverified per-character field mutation is the
-  # kind of invented behavior this plan avoids elsewhere (see Task 7's
-  # proficiency-data research standard).
+  #   - Talent Point Access (flag_key access_talent_points, now 3 tranches --
+  #     M4.14.1 retrofit): the one item in this family that IS continuous
+  #     suppression, not a grant -- named "Access" (not "Progressive"/
+  #     "Unlock") to match that. Gated via PLAYERHOOK_CAN_LEARN_TALENT
+  #     (Player::LearnTalent, confirmed real and boolean-returning at
+  #     Player.cpp:14281), checking cumulative talent points already spent
+  #     (Player::CalculateTalentsPoints() - Player::GetFreeTalentPoints())
+  #     against a tier-derived cap, not a bare boolean. The originally-
+  #     shipped tier-1 item (830025) is kept as-is and reinterpreted as
+  #     Tranche 1 (points 1-25) for backward compatibility with
+  #     already-generated seeds; Tranche 2 (830041, points 1-50) and Tranche
+  #     3 (830042, no cap) are new. See APGateDecision.h's
+  #     ShouldSuppressTalentLearn for why Tranche 3 is expressed as "skip the
+  #     cap comparison" rather than a hardcoded max (RATE_TALENT-dependent).
   - name: "Progressive Bank Bag Slot: Slot 1"
     item_id: 830018
     count: 1
@@ -188,10 +192,56 @@ items:
     item_id: 830025
     count: 1
     delivery: {kind: flag, flag_key: access_talent_points, tier: 1}
+  - name: "Talent Point Access: Tranche 2"
+    item_id: 830041
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 2}
+  - name: "Talent Point Access: Tranche 3"
+    item_id: 830042
+    count: 1
+    delivery: {kind: flag, flag_key: access_talent_points, tier: 3}
   - name: "Dual Spec Unlock"
     item_id: 830026
     count: 1
     delivery: {kind: flag, flag_key: dual_spec, tier: 1}
+  # Glyph Slot (M4.9): Player::InitGlyphsForLevel() (Player.cpp) confirmed
+  # real -- iterates sGlyphSlotStore (GlyphSlot.dbc), calling
+  # SetGlyphSlot(gs->Order - 1, gs->Id) per row. Confirmed this field
+  # (PLAYER_FIELD_GLYPH_SLOTS_1 + slot, via SetGlyphSlot/GetGlyphSlot) is
+  # NOT spec-indexed -- unlike the actually-socketed glyph itself
+  # (m_Glyphs[m_activeSpec][slot], PLAYER_FIELD_GLYPHS_1), slot
+  # *availability* is realm-character-wide, resolving the "wasn't verified
+  # in the time available" caveat this comment used to carry. WotLK's own
+  # level-gating bitmask inside InitGlyphsForLevel (levels 15/30/50/70/80,
+  # bits 0x01|0x02|0x08|0x04|0x10|0x20) confirms exactly 6 real glyph slots
+  # total, tiered the same progressive way as Progressive Bank Bag Slot
+  # above -- gated via the same weak extern function-pointer hook shape as
+  # Bank Access, wrapping each SetGlyphSlot call (see Player.cpp/
+  # APGating.cpp/APGateDecision.h).
+  - name: "Progressive Glyph Slot: Slot 1"
+    item_id: 830031
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 1}
+  - name: "Progressive Glyph Slot: Slot 2"
+    item_id: 830032
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 2}
+  - name: "Progressive Glyph Slot: Slot 3"
+    item_id: 830033
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 3}
+  - name: "Progressive Glyph Slot: Slot 4"
+    item_id: 830034
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 4}
+  - name: "Progressive Glyph Slot: Slot 5"
+    item_id: 830035
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 5}
+  - name: "Progressive Glyph Slot: Slot 6"
+    item_id: 830036
+    count: 1
+    delivery: {kind: flag, flag_key: glyph_slots, tier: 6}
   # Task 21 (design spec Sec5.5): expansion-tier combo unlocks. Gates the
   # whole race (TBC: Blood Elf/Draenei) or class (WotLK: Death Knight), not
   # every individual race/class pairing -- see the module's
@@ -207,4 +257,112 @@ items:
     item_id: 830028
     count: 1
     delivery: {kind: flag, flag_key: combo_unlock_wotlk, tier: 1}
+
+  # Progressive Bag Slots (Task 1, M4.14.1 -- part of the "character_unlocks"
+  # family alongside Progressive Bank Bag Slot/Glyph Slot above, same
+  # continuous-suppression shape as Talent Point Access, not a grant). Gates
+  # the 4 non-backpack inventory bag slots (INVENTORY_SLOT_BAG_START=19
+  # through INVENTORY_SLOT_BAG_END-1=22, real AzerothCore constants
+  # confirmed in Player.h) via PLAYERHOOK_CAN_EQUIP_ITEM, denying the equip
+  # of a container (ItemTemplate::InventoryType == INVTYPE_BAG) into a slot
+  # whose 1-indexed tier exceeds the realm's "bag_slots" GetFlagTier -- see
+  # ArchipelagoBagSlotGateScript in APGating.cpp. Distinct from Progressive
+  # Bank Bag Slot above: that flag_key (bank_bag_slots) grants
+  # Player::SetBankBagSlotCount for the *bank* bag slots; this one
+  # suppresses equipping into the *inventory* bag slots and never touches
+  # the bank.
+  - name: "Progressive Bag Slot: Slot 1"
+    item_id: 830037
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 1}
+  - name: "Progressive Bag Slot: Slot 2"
+    item_id: 830038
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 2}
+  - name: "Progressive Bag Slot: Slot 3"
+    item_id: 830039
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 3}
+  - name: "Progressive Bag Slot: Slot 4"
+    item_id: 830040
+    count: 1
+    delivery: {kind: flag, flag_key: bag_slots, tier: 4}
+
+  # Random Flight Path Unlock (Task 4, M4.14.1 "Useful Items"). Grant-shaped,
+  # not flag-shaped: unlike every other item in this family, receipt
+  # immediately grants one uniformly-random previously-unknown real taxi
+  # node (sTaxiNodesStore) to the delivery character via
+  # PlayerTaxi::SetTaximaskNode -- see GrantRandomTaxiNode in
+  # ArchipelagoPlayerScript.cpp. item_id 830043-830044 were reserved for
+  # Task 6 -- see the Progressive EXP/Move-Speed Boost items below.
+  - name: "Random Flight Path Unlock"
+    item_id: 830045
+    count: 1
+    delivery: {kind: grant_random_taxi_node}
+
+  # Portable Mailbox (Task 5, M4.14.1 "Useful Items"). A real, mailable
+  # consumable item (wow_item_entry 850104, a custom item_template row --
+  # see data/sql/updates/pending_db_world/) whose spellid_1 is bound to
+  # spell 5735 ("REUSE", a real, empirically-verified single-SPELL_EFFECT_
+  # DUMMY placeholder spell shipped in Blizzard's own Spell.dbc, unused by
+  # any other item_template row or src/server/scripts/ SpellScript in this
+  # checkout) -- see ArchipelagoPortableMailboxScript.cpp's
+  # spell_archipelago_portable_mailbox for the real on-use effect (summons
+  # gameobject_template entry 850200, a despawn-timed clone of the real
+  # static mailbox row 32349). Uses the same `mail` delivery kind every
+  # other "just hand over a real WoW item" family already uses; the
+  # "gates" family's own C++ emitter (_emit_cpp_gates) was extended to
+  # also emit Archipelago::Gates::ApItemIdToWowItemEntry for this and any
+  # future mail-kind gates item, since gates was otherwise an all-flag
+  # family with no such map before this task.
+  - name: "Portable Mailbox"
+    item_id: 830046
+    count: 1
+    delivery: {kind: mail, wow_item_entry: 850104}
+
+  # Progressive EXP/Move-Speed Boost (Task 6, M4.14.1 "Useful Items").
+  # Flag-shaped, applied as a permanent login aura in
+  # Archipelago::Gating::SyncCharacterUnlocksToPlayer (APGating.cpp), the
+  # same login-sync function that already handles bank_bag_slots/dual_spec
+  # above -- not a new login hook. Real, spot-verified spell ids (see this
+  # task's own report for the full DBC field-offset calibration and
+  # zero-reference check against item_template.spellid_1..5,
+  # spell_script_names, playercreateinfo_cast_spell, spell_area, and
+  # src/server/scripts/): spell 42138 "Brewfest Enthusiast" (single-effect
+  # SPELL_AURA_MOD_XP_PCT, EffectBasePoints[0]=9, ~10%) for xp_boost; spell
+  # 22587 "8% speed bonus" (single-effect SPELL_AURA_MOD_INCREASE_SPEED,
+  # EffectBasePoints[0]=7, ~8%) for speed_boost. Both are simple flat-
+  # percentage passive auras with no stacking/proc side effects, so
+  # Player::AddAura re-applying an already-present aura on every login is a
+  # harmless idempotent refresh. Drop-rate is explicitly out of scope per
+  # the design spec.
+  - name: "Progressive EXP Boost"
+    item_id: 830043
+    count: 1
+    delivery: {kind: flag, flag_key: xp_boost, tier: 1}
+  - name: "Progressive Move Speed Boost"
+    item_id: 830044
+    count: 1
+    delivery: {kind: flag, flag_key: speed_boost, tier: 1}
+
+  # Zone Access gating (M4.14.2, design spec Sec1 Sec2 -- optional, off by
+  # default; only pooled when the "zone_gating" apworld option is on).
+  # Real, hand-curated zone ids from AreaTable.dbc (see
+  # tools/extract_zone_names.py's CURATED_ZONE_IDS) -- deliberately NOT every
+  # WotLK zone, and deliberately excludes zones already covered by other
+  # mechanisms (Icecrown Citadel/Sunwell Plateau: instance-clear gating;
+  # Wintergrasp: excluded, own complex world-state mechanics not yet
+  # verified safe to gate this way).
+  - name: "Zone Access: Shattrath City"
+    item_id: 830047
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_shattrath_city, tier: 1}
+  - name: "Zone Access: Isle of Quel'Danas"
+    item_id: 830048
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_isle_of_quel_danas, tier: 1}
+  - name: "Zone Access: Dalaran"
+    item_id: 830049
+    count: 1
+    delivery: {kind: flag, flag_key: zone_access_dalaran, tier: 1}
 

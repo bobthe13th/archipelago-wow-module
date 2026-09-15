@@ -7,20 +7,24 @@ this plan's Global Constraints on cross-family spell_id collisions)."""
 from __future__ import annotations
 
 import pathlib
+from collections import Counter
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_spell_names
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_spell_names,
+    parse_world_map_areas, parse_area_zone_ids, parse_area_names, resolve_area_tags_for_positions,
+)
 
 _LOCATION_ID_BASE = 7_000_000
 _ITEM_ID_BASE = 7_500_000
 
 _TRAINER_TYPE_CLASS = 0  # Trainer::Type::Class, Trainer.h:33 -- Mount(1)/Tradeskill(2)/Pet(3)
                           # excluded (see this plan's Global Constraints).
-_FILLER_ITEM_ENTRY = 7073  # "Broken Fang" -- same M4.7.1.3 filler-reward item quest_rewards
-                            # reuses for a reward-less location; no natural WoW item exists
-                            # for "you may now train this class ability" the way a quest
-                            # reward or recipe item does.
+_FILLER_ITEM_ENTRY = 7073  # "Broken Fang" -- M4.11.5.0.5's own safe-fallback-of-last-resort
+                            # value, kept for parity with quest_rewards' identical constant;
+                            # in practice _query_consumable_items() below always has real
+                            # candidates, so this is never actually used against real data.
 
 # Real WotLK class ids (Trainer::IsTrainerValidForPlayer, Trainer.cpp:
 # 216-219: for Type::Class, trainer.Requirement IS player->getClass()
@@ -52,6 +56,47 @@ def _load_recipe_spell_ids() -> frozenset[int]:
     return frozenset(loc["trigger"]["spell_id"] for loc in data.get("locations", []))
 
 
+def _query_consumable_items() -> list[tuple[int, str]]:
+    """Real fallback item universe for a standalone (single-rank) Trainer
+    Spells reward's mail delivery: the exact same real WHERE clause
+    extract_filler_reward_items.py's own "consumable" category already uses
+    and has already been vetted safe there (denylist-filtered, no learn-on-
+    use side effect, unlike a recipe item) -- deliberately NOT importing
+    that module (this file stays independently runnable, same discipline as
+    _load_recipe_spell_ids' own missing-file fallback), just reusing its
+    real, already-proven-safe query shape."""
+    rows = run_query("""
+        SELECT entry, name FROM item_template
+        WHERE class = 0 AND subclass IN (1,2,3,4,5) AND HolidayId = 0 AND entry < 4000000
+        ORDER BY entry
+    """)
+    return [(int(entry), name) for entry, name in rows]
+
+
+def _assign_consumable_item(candidates: list[tuple[int, str]], index: int) -> int:
+    """Cycles the real consumable universe across every Trainer Spells row
+    needing a safe fallback item, as evenly as possible -- same "fixed once
+    at generation time" discipline as every other family's item assignment
+    in this project (mirrors extract_gathersanity.py's own
+    _assign_candidate_item, M4.11.5.0.4). Falls back to _FILLER_ITEM_ENTRY
+    only for the genuinely degenerate case of zero real candidates found."""
+    if not candidates:
+        return _FILLER_ITEM_ENTRY
+    return candidates[index % len(candidates)][0]
+
+
+def _load_spell_ranks() -> dict[int, tuple[int, int]]:
+    """spell_id -> (first_spell_id, rank), from the real `spell_ranks` world-DB
+    table (columns first_spell_id, spell_id, rank -- confirmed via
+    SpellMgr::LoadSpellRanks, src/server/game/Spells/SpellMgr.cpp:1279-1385;
+    NOT a table called `spell_chain`, which doesn't exist in this schema).
+    A spell_id absent from this dict has no rank chain at all (a genuine
+    single-rank spell) -- callers must treat absence as "standalone," not
+    as an error."""
+    rows = run_query("SELECT first_spell_id, spell_id, `rank` FROM spell_ranks")
+    return {int(spell_id): (int(first_spell_id), int(rank)) for first_spell_id, spell_id, rank in rows}
+
+
 def _load_trainer_expansions() -> dict[int, str]:
     """trainer.Id -> expansion, resolved from creature_default_trainer's
     real CreatureId (a creature_template.entry per ObjectMgr::LoadTrainers'
@@ -73,11 +118,59 @@ def _load_trainer_expansions() -> dict[int, str]:
     return {int(trainer_id): map_expansions.get(int(map_id), "vanilla") for trainer_id, map_id in rows}
 
 
+def _load_trainer_positions() -> dict[int, list[tuple[int, float, float]]]:
+    """trainer_id -> list of every real (map, x, y) spawn position for the
+    creature(s) that serve as this trainer's own creature_default_trainer
+    row. A trainer can have more than one real spawn (city guards/trainers
+    sometimes have multiple spawn rows) -- collect all of them, the caller
+    resolves each independently and unions the results (M4.11.2)."""
+    rows = run_query(f"""
+        SELECT cdt.TrainerId, c.map, c.position_x, c.position_y
+        FROM creature_default_trainer cdt
+        JOIN creature c ON c.id = cdt.CreatureId
+        JOIN trainer t ON t.Id = cdt.TrainerId
+        WHERE t.Type = {_TRAINER_TYPE_CLASS}
+    """)
+    positions: dict[int, list[tuple[int, float, float]]] = {}
+    for trainer_id_str, map_id_str, x_str, y_str in rows:
+        positions.setdefault(int(trainer_id_str), []).append(
+            (int(map_id_str), float(x_str), float(y_str))
+        )
+    return positions
+
+
+def _trainer_area_tags(
+    trainer_ids: set[int], trainer_positions: dict[int, list[tuple[int, float, float]]],
+    world_map_areas, area_zone_ids, area_names,
+) -> frozenset[str]:
+    """M4.11.3.1: replaces M4.11.2's own _resolve_trainer_zone_ids, which was
+    built on the old single-winner resolve_zone_id_from_position (raw
+    trigger["trainer_zone_ids"] ints). Unions every real (map, x, y)
+    position across every trainer that teaches this spell into one
+    resolve_area_tags_for_positions() call (Task 3's fixed mechanism,
+    db_extract.py) -- produces canonical, deduplicated zone-name strings
+    for tags["area"] instead. A trainer_id with no matching
+    creature_default_trainer/creature row at all contributes no positions
+    (defensive; extract()'s own real join already filters to trainers with
+    a real creature)."""
+    positions = [
+        position
+        for trainer_id in trainer_ids
+        for position in trainer_positions.get(trainer_id, [])
+    ]
+    return resolve_area_tags_for_positions(positions, world_map_areas, area_zone_ids, area_names)
+
+
 def extract() -> dict:
     rules = load_exclusion_rules()
     already_claimed = _load_recipe_spell_ids()
     trainer_expansions = _load_trainer_expansions()
     spell_names = parse_spell_names()
+    trainer_positions = _load_trainer_positions()
+    world_map_areas = parse_world_map_areas()
+    area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
+    spell_ranks = _load_spell_ranks()
 
     rows = run_query(f"""
         SELECT ts.SpellId, t.Requirement, t.Id, ts.ReqLevel
@@ -105,7 +198,17 @@ def extract() -> dict:
         entry["req_level"] = min(entry["req_level"], int(req_level_str))
         entry["trainer_ids"].add(int(trainer_id_str))
 
-    locations, items = [], []
+    consumable_candidates = _query_consumable_items()
+
+    # Group spell_ids by rank chain (spell_ranks, real world-DB table --
+    # _load_spell_ranks) as we build locations: a multi-rank chain (e.g.
+    # Frostbolt ranks 1-7) becomes ONE "Progressive <name>" item after the
+    # loop, keyed by the chain's first_spell_id; a spell absent from
+    # spell_ranks entirely has no chain (a genuine single-rank spell) and
+    # stays a standalone mail item, unchanged from before this grouping.
+    locations = []
+    chains: dict[int, list[tuple[int, int]]] = {}  # first_spell_id -> [(rank, spell_id), ...]
+    standalone_spell_ids: list[int] = []
     for spell_id in sorted(by_spell):
         info = by_spell[spell_id]
         name = spell_names.get(spell_id, "")
@@ -114,17 +217,101 @@ def extract() -> dict:
 
         lowest_trainer_id = min(info["trainer_ids"])
         expansion = trainer_expansions.get(lowest_trainer_id, "vanilla")
+        area_tags = _trainer_area_tags(
+            info["trainer_ids"], trainer_positions, world_map_areas, area_zone_ids, area_names
+        )
+
+        # area: real, deduplicated, sorted canonical zone-name strings at
+        # least one teaching trainer resolves to (M4.11.3.1, Task 3's fixed
+        # resolve_area_tags_for_positions mechanism -- replaces M4.11.2's
+        # own trigger["trainer_zone_ids"] int list). Zone Leveler's own
+        # physical-reachability check for this possession-triggered family
+        # (locations.py) reads this instead. `area` is OMITTED (not an
+        # empty list) when none of this spell's trainers resolve to a real
+        # zone -- generate_content.py's own _validate_tags_rows rejects an
+        # empty list for any dimension present in an export_tags family's
+        # tags block (same edge case extract_quest_rewards.py's own
+        # tags["area"] omission already handles). Every real consumer reads
+        # it via `tags.get("area", frozenset())` (or equivalent), never
+        # assumes presence.
+        tags = {"class": sorted(info["classes"]), "expansion": [expansion]}
+        if area_tags:
+            tags["area"] = sorted(area_tags)
 
         locations.append({
             "name": f"Trainer Spell: {name} (#{spell_id})",
             "location_id": _LOCATION_ID_BASE + spell_id,
-            "trigger": {"kind": "learn_spell", "spell_id": spell_id, "is_filler_reward": True},
-            "tags": {"class": sorted(info["classes"]), "expansion": [expansion]},
+            # min_level: real trainer_spell.ReqLevel, minimum across every
+            # class trainer that teaches this spell_id (M4.11.1 Task 12) --
+            # already computed above (info["req_level"]) for aggregation
+            # purposes; now also exported so Zone Leveler's whole_game_scaled
+            # filter (locations.py) can read it. Lives in `trigger`, not
+            # `tags`, same placement extract_quest_rewards.py's own min_level/
+            # zone_id already use -- TAGS is dict[str, frozenset[str]]-only
+            # (generate_content.py's export_tags emission), TRIGGERS keeps the
+            # raw trigger dict verbatim.
+            "trigger": {
+                "kind": "trainer_purchase_attempt", "spell_id": spell_id,
+                "min_level": info["req_level"],
+            },
+            "tags": tags,
         })
+        if spell_id in spell_ranks:
+            first_spell_id, rank = spell_ranks[spell_id]
+            chains.setdefault(first_spell_id, []).append((rank, spell_id))
+        else:
+            standalone_spell_ids.append(spell_id)
+
+    # Second pass, now that every rank's location exists: one "Progressive
+    # <name>" item per chain (ordered lowest-to-highest rank), then one
+    # standalone mail item per genuine single-rank spell -- same
+    # _assign_consumable_item cycling as before, just applied after the
+    # chain items so the whole item universe is cycled evenly.
+    # Two different chains can share a display name -- confirmed against
+    # real live-DB data (regenerating this file, M4.11.6/Task 8): Death
+    # Knight's and Warlock's spells are BOTH named "Death Coil" in
+    # spell.dbc, distinct chains (first_spell_id 49892 vs 6789). Undetected,
+    # this produces two items both named "Progressive Death Coil", which
+    # generate_content.py's own _validate_unique_names correctly rejects as
+    # a cross-item name collision. Computed as a first pass so every
+    # colliding chain (not just the second one encountered) gets
+    # disambiguated identically.
+    chain_names: dict[int, str] = {
+        first_spell_id: spell_names.get(
+            first_spell_id, spell_names.get(sorted(chains[first_spell_id])[0][1], "")
+        )
+        for first_spell_id in chains
+    }
+    name_counts = Counter(chain_names.values())
+
+    items = []
+    for first_spell_id in sorted(chains):
+        ordered = [spell_id for _rank, spell_id in sorted(chains[first_spell_id])]
+        chain_name = chain_names[first_spell_id]
+        if name_counts[chain_name] > 1:
+            # Disambiguate with the teaching class(es). first_spell_id
+            # itself is NOT guaranteed to be in by_spell (a chain's rank 1
+            # is sometimes not directly taught by any class trainer --
+            # confirmed against real data, e.g. first_spell_id 47541); use
+            # ordered[0] instead -- the lowest-ranked spell_id that IS
+            # actually taught, guaranteed present in by_spell because
+            # chains is only ever populated from `for spell_id in
+            # sorted(by_spell)` above. Same snake_case -> Title Case
+            # convention extract_gathersanity.py's tier_label already uses.
+            classes = sorted(by_spell[ordered[0]]["classes"])
+            class_label = "/".join(c.replace("_", " ").title() for c in classes)
+            chain_name = f"{chain_name} ({class_label})"
         items.append({
-            "name": f"Trainer Spell Item: {name} (#{spell_id})",
+            "name": f"Progressive {chain_name}",
+            "item_id": _ITEM_ID_BASE + first_spell_id,
+            "delivery": {"kind": "learn_next_chain_rank", "spell_ids": ordered},
+        })
+    for spell_id in standalone_spell_ids:
+        wow_item_entry = _assign_consumable_item(consumable_candidates, len(items))
+        items.append({
+            "name": f"Trainer Spell Item: {spell_names[spell_id]} (#{spell_id})",
             "item_id": _ITEM_ID_BASE + spell_id,
-            "delivery": {"kind": "mail", "wow_item_entry": _FILLER_ITEM_ENTRY},
+            "delivery": {"kind": "mail", "wow_item_entry": wow_item_entry},
         })
 
     return {"family": "trainer_spells", "locations": locations, "items": items, "constants": {}}

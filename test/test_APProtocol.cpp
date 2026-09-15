@@ -320,6 +320,118 @@ TEST_CASE("ParseVendorCheckRepeatBehaviorFromSlotData returns nullopt when cmd i
     CHECK_FALSE(behavior.has_value());
 }
 
+TEST_CASE("ParseInstanceClearModeFromSlotData parses instance_clear_mode from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "instance_clear_mode": "final_boss_only"
+        }
+    }])";
+
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData(raw);
+
+    REQUIRE(mode.has_value());
+    CHECK(*mode == "final_boss_only");
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData(raw);
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt on malformed JSON")
+{
+    auto mode = Archipelago::ParseInstanceClearModeFromSlotData("not json");
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when the key is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "instance_clear_mode": 12345
+        }
+    }])";
+
+    std::optional<std::string> mode;
+    CHECK_NOTHROW(mode = Archipelago::ParseInstanceClearModeFromSlotData(raw));
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseInstanceClearModeFromSlotData returns nullopt when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "instance_clear_mode": "all_bosses"
+        }
+    }])";
+
+    std::optional<std::string> mode;
+    CHECK_NOTHROW(mode = Archipelago::ParseInstanceClearModeFromSlotData(raw));
+    CHECK_FALSE(mode.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData parses loot_slot_check_repeat_behavior from Connected's slot_data")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": "gold_conversion"
+        }
+    }])";
+
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw);
+
+    REQUIRE(behavior.has_value());
+    CHECK(*behavior == "gold_conversion");
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when slot_data is absent")
+{
+    std::string raw = R"([{"cmd": "Connected"}])";
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw);
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt on malformed JSON")
+{
+    auto behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData("not json");
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when the key is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": "Connected",
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": 12345
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
+TEST_CASE("ParseLootSlotCheckRepeatBehaviorFromSlotData returns nullopt when cmd is wrong-typed instead of throwing")
+{
+    std::string raw = R"([{
+        "cmd": 5,
+        "slot_data": {
+            "loot_slot_check_repeat_behavior": "gold_conversion"
+        }
+    }])";
+
+    std::optional<std::string> behavior;
+    CHECK_NOTHROW(behavior = Archipelago::ParseLootSlotCheckRepeatBehaviorFromSlotData(raw));
+    CHECK_FALSE(behavior.has_value());
+}
+
 TEST_CASE("APInterception::ClassifiesEachSingleFlagBit")
 {
     using namespace Archipelago::Interception;
@@ -340,4 +452,179 @@ TEST_CASE("APInterception::SkipBalancingBitIsIgnoredForDisplay")
     using namespace Archipelago::Interception;
     CHECK(ClassifyItem(0b01001) == ItemClass::Progression); // progression + skip_balancing
     CHECK(ClassifyItem(0b01000) == ItemClass::Filler);       // skip_balancing alone
+}
+
+TEST_CASE("BuildSayPacket produces a valid Say command")
+{
+    std::string packet = BuildSayPacket("!hint Alice's Sword of Might");
+    CHECK(packet.find("\"cmd\":\"Say\"") != std::string::npos);
+    CHECK(packet.find("\"text\":\"!hint Alice's Sword of Might\"") != std::string::npos);
+}
+
+TEST_CASE("ParseMissingLocationsFromConnected extracts location ids")
+{
+    std::string raw = R"([{"cmd": "Connected", "team": 0, "slot": 1,
+        "missing_locations": [100, 200, 300], "checked_locations": [50]}])";
+    std::vector<int64_t> missing = ParseMissingLocationsFromConnected(raw);
+    REQUIRE(missing.size() == 3);
+    CHECK(missing[0] == 100);
+    CHECK(missing[1] == 200);
+    CHECK(missing[2] == 300);
+}
+
+TEST_CASE("ParseMissingLocationsFromConnected returns empty when missing_locations is absent")
+{
+    std::string raw = R"([{"cmd": "Connected", "team": 0, "slot": 1}])";
+    CHECK(ParseMissingLocationsFromConnected(raw).empty());
+}
+
+TEST_CASE("ParseMissingLocationsFromConnected returns empty on malformed JSON")
+{
+    CHECK(ParseMissingLocationsFromConnected("not json").empty());
+}
+
+TEST_CASE("ParseMissingLocationsFromConnected ignores a non-array missing_locations field")
+{
+    std::string raw = R"([{"cmd": "Connected", "missing_locations": "oops"}])";
+    CHECK(ParseMissingLocationsFromConnected(raw).empty());
+}
+
+TEST_CASE("ParsePrintJSONText concatenates literal text parts")
+{
+    // Tagged raw-string delimiter (R"json(...)json") rather than the plain
+    // R"(...)" form: the JSON payload's "(unspecified)" literal contains a
+    // bare )" sequence, which would otherwise prematurely terminate an
+    // untagged raw string right there.
+    std::string raw = R"json([{"cmd": "PrintJSON", "data": [
+        {"text": "[Hint]: "}, {"text": "42", "type": "player_id"}, {"text": "'s item is at "},
+        {"text": "1234", "type": "item_id", "player": 1}, {"text": ". "}, {"text": "(unspecified)", "type": "hint_status"}
+    ]}])json";
+    std::vector<std::string> texts = ParsePrintJSONText(raw);
+    REQUIRE(texts.size() == 1);
+    CHECK(texts[0] == "[Hint]: 42's item is at 1234. (unspecified)");
+}
+
+TEST_CASE("ParsePrintJSONText returns one entry per PrintJSON message in a batched frame")
+{
+    std::string raw = R"([
+        {"cmd": "PrintJSON", "data": [{"text": "first"}]},
+        {"cmd": "ReceivedItems", "items": []},
+        {"cmd": "PrintJSON", "data": [{"text": "second"}]}
+    ])";
+    std::vector<std::string> texts = ParsePrintJSONText(raw);
+    REQUIRE(texts.size() == 2);
+    CHECK(texts[0] == "first");
+    CHECK(texts[1] == "second");
+}
+
+TEST_CASE("ParsePrintJSONText returns empty on malformed JSON")
+{
+    CHECK(ParsePrintJSONText("not json").empty());
+}
+
+TEST_CASE("ParsePrintJSONText skips a data part with no text field rather than throwing")
+{
+    std::string raw = R"([{"cmd": "PrintJSON", "data": [{"text": "a"}, {"color": "red"}, {"text": "b"}]}])";
+    REQUIRE(ParsePrintJSONText(raw).size() == 1);
+    CHECK(ParsePrintJSONText(raw)[0] == "ab");
+}
+
+TEST_CASE("ParseItemSendEvents extracts source slot from a real ItemSend message")
+{
+    std::string raw = R"json([{
+        "cmd": "PrintJSON",
+        "type": "ItemSend",
+        "receiving": 2,
+        "item": {"item": 111, "location": 222, "player": 5, "flags": 0},
+        "data": [{"text": "Player5 sent Sword to Player2"}]
+    }])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 1);
+    CHECK(events[0].sourceSlot == 5);
+    CHECK(events[0].destinationSlot == 2);
+}
+
+TEST_CASE("ParseItemSendEvents returns one entry per ItemSend message in a batched frame")
+{
+    std::string raw = R"json([
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 1, "item": {"item": 10, "location": 20, "player": 3, "flags": 0}, "data": []},
+        {"cmd": "PrintJSON", "type": "Chat", "data": [{"text": "hello"}]},
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 4, "item": {"item": 30, "location": 40, "player": 1, "flags": 0}, "data": []}
+    ])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 2);
+    CHECK(events[0].sourceSlot == 3);
+    CHECK(events[0].destinationSlot == 1);
+    CHECK(events[1].sourceSlot == 1);
+    CHECK(events[1].destinationSlot == 4);
+}
+
+TEST_CASE("ParseItemSendEvents ignores a PrintJSON message whose type is not ItemSend")
+{
+    std::string raw = R"json([{"cmd": "PrintJSON", "type": "Hint", "data": [{"text": "hint text"}]}])json";
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents ignores a PrintJSON message with no type field at all")
+{
+    // Real, common case: most PrintJSON messages (Chat, ServerChat, ...) never
+    // carry a "type" at all -- this must not throw or misparse, only skip.
+    std::string raw = R"json([{"cmd": "PrintJSON", "data": [{"text": "plain chat"}]}])json";
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents skips a malformed ItemSend message rather than throwing")
+{
+    std::string raw = R"json([{"cmd": "PrintJSON", "type": "ItemSend", "receiving": 1, "data": []}])json";
+    // Missing "item" entirely -- no source slot to extract, must be skipped, not crash.
+    CHECK(ParseItemSendEvents(raw).empty());
+}
+
+TEST_CASE("ParseItemSendEvents returns empty on malformed JSON")
+{
+    CHECK(ParseItemSendEvents("not json").empty());
+}
+
+TEST_CASE("ParseItemSendEvents ignores a non-PrintJSON command in the same frame")
+{
+    std::string raw = R"json([
+        {"cmd": "ReceivedItems", "index": 0, "items": [{"item": 1, "location": 1, "player": 1, "flags": 0}]},
+        {"cmd": "PrintJSON", "type": "ItemSend", "receiving": 9, "item": {"item": 1, "location": 1, "player": 8, "flags": 0}, "data": []}
+    ])json";
+    std::vector<ItemSendEvent> events = ParseItemSendEvents(raw);
+    REQUIRE(events.size() == 1);
+    CHECK(events[0].sourceSlot == 8);
+    CHECK(events[0].destinationSlot == 9);
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData extracts the real per-seed count")
+{
+    std::string raw = R"([{"cmd": "Connected", "team": 0, "slot": 1,
+        "slot_data": {"filler_needed_count": 60}}])";
+    std::optional<uint32_t> result = ParseFillerNeededCountFromSlotData(raw);
+    REQUIRE(result.has_value());
+    CHECK(*result == 60);
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData returns nullopt when filler_needed_count is absent")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"other_key": 1}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData returns nullopt on malformed JSON")
+{
+    CHECK(!ParseFillerNeededCountFromSlotData("not json").has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData ignores a non-integer filler_needed_count field")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"filler_needed_count": "oops"}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
+}
+
+TEST_CASE("ParseFillerNeededCountFromSlotData ignores a negative filler_needed_count field")
+{
+    std::string raw = R"([{"cmd": "Connected", "slot_data": {"filler_needed_count": -1}}])";
+    CHECK(!ParseFillerNeededCountFromSlotData(raw).has_value());
 }

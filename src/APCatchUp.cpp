@@ -5,11 +5,15 @@
 #include <array>
 #include <cmath>
 
+#include "APBotDecision.h"
+#include "APBotSupport.h"
 #include "APDelivery.h"
+#include "APRaidlogger.h"
 #include "ArchipelagoRealmState.h"
 #include "Chat.h"
 #include "DatabaseEnv.h"
 #include "Player.h"
+#include "QueryResult.h"
 #include "WorldSession.h"
 
 namespace
@@ -100,6 +104,21 @@ namespace Archipelago::CatchUp
         if (!sArchipelagoRealmState->IsEnabled())
             return;
 
+        // M4.11.7 (Raidlogger): re-check a pending instant_level_set jump on
+        // every login, not just a character's first-ever one -- unlike the
+        // AllMailedOnLogin/first-login-only policy below, a Raidlogger jump
+        // deferred because the delivery character was offline at receipt
+        // time should apply the moment they're back, regardless of
+        // Archipelago.CatchUpPolicy (which governs item delivery catch-up,
+        // not this). Resolves the delivery character itself via realm
+        // state, not the player parameter -- matches this module's
+        // single-delivery-character-slot convention.
+        Archipelago::Raidlogger::ReapplyPendingLevelIfEligible();
+
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsReceiveCatchUpEnabled()))
+            return;
+
         Policy policy = ParsePolicy(sArchipelagoRealmState->GetCatchUpPolicy());
         // Only AllMailedOnLogin acts here, and only on a character's very first
         // login ever -- PercentPerLevel/LevelScaledBundle grant incrementally as
@@ -114,6 +133,10 @@ namespace Archipelago::CatchUp
     void OnPlayerLevelChanged(Player* player, uint8_t oldLevel, uint8_t newLevel)
     {
         if (!sArchipelagoRealmState->IsEnabled())
+            return;
+
+        bool isBot = Archipelago::Bots::IsBotControlledPlayer(player);
+        if (!Archipelago::Bots::ShouldApplyToBot(isBot, sArchipelagoRealmState->IsBotsReceiveCatchUpEnabled()))
             return;
 
         Policy policy = ParsePolicy(sArchipelagoRealmState->GetCatchUpPolicy());

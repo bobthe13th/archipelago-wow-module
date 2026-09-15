@@ -1,3 +1,4 @@
+import os
 import pathlib
 import unittest
 
@@ -6,7 +7,28 @@ from generate_content import load_family, emit_python, emit_cpp
 _TOOLS_DIR = pathlib.Path(__file__).parent
 _MODULE_DIR = _TOOLS_DIR.parent
 _CONTENT_DIR = _MODULE_DIR / "content"
-_ARCHIPELAGO_WOW_DIR = _MODULE_DIR.parent.parent.parent / "Archipelago" / "worlds" / "wow"
+
+# M4.10.4: unlike the M4.10.1/M4.10.2 worktree escape hatches (see commits
+# b629565/db869d0, eafd02d/2e64891), this milestone's whole session runs
+# with BOTH repos as sibling git worktrees directly under a shared
+# .worktrees/ directory, rather than the module worktree nesting at its
+# normal azerothcore-wotlk/modules/archipelago_wow/ depth. That shallower
+# nesting means _MODULE_DIR.parent.parent.parent does not resolve to the
+# real checkout's parent directory for THIS worktree -- so unlike prior
+# milestones, every family (not just the newly-added one) needs the
+# override, not only repsanity's own py_out below. ARCHIPELAGO_WOW_WORLDS_DIR
+# reuses the exact same env var name as the earlier per-family escape
+# hatches for the same reason eafd02d's comment gave for gathersanity: same
+# convention, no need to invent a second one. Once this worktree's branch
+# is merged, a normal run with this env var unset resolves to the same
+# sibling-checkout directory as before -- remove this override in a
+# follow-up chore commit at that point, same as db869d0/2e64891 did.
+_ARCHIPELAGO_WOW_DIR = pathlib.Path(
+    os.environ.get(
+        "ARCHIPELAGO_WOW_WORLDS_DIR",
+        str(_MODULE_DIR.parent.parent.parent / "Archipelago" / "worlds" / "wow"),
+    )
+)
 
 _FAMILIES = {
     "core_loop": {
@@ -16,6 +38,14 @@ _FAMILIES = {
     "gates": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "gates_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGatesContentTable.h",
+    },
+    "holidaysanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "holidaysanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoHOLIDAYSANITYContent.h",
+    },
+    "raidlogger": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "raidlogger_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoRaidloggerContentTable.h",
     },
     "filler": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "filler_content_data.py",
@@ -28,6 +58,10 @@ _FAMILIES = {
     "rares": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "rares_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoRaresContentTable.h",
+    },
+    "golden_boar_statues": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "golden_boar_statues_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGoldenBoarStatuesContentTable.h",
     },
     "fish": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "fish_content_data.py",
@@ -56,6 +90,42 @@ _FAMILIES = {
     "trainer_spells": {
         "py_out": _ARCHIPELAGO_WOW_DIR / "trainer_spells_content_data.py",
         "cpp_out": _MODULE_DIR / "src" / "ArchipelagoTrainerSpellsContentTable.h",
+    },
+    "filler_reward_effects": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_effects_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardEffectsContentTable.h",
+    },
+    "filler_reward_items": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "filler_reward_items_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoFillerRewardItemsContentTable.h",
+    },
+    "achievements": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "achievements_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoAchievementsContentTable.h",
+    },
+    "containersanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "containersanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCONTAINERSANITYContent.h",
+    },
+    "gathersanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "gathersanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoGATHERSANITYContent.h",
+    },
+    "enemysanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "enemysanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoENEMYSANITYContent.h",
+    },
+    "repsanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "repsanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoREPSANITYContent.h",
+    },
+    "craftsanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "craftsanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoCRAFTSANITYContent.h",
+    },
+    "itemsanity": {
+        "py_out": _ARCHIPELAGO_WOW_DIR / "itemsanity_content_data.py",
+        "cpp_out": _MODULE_DIR / "src" / "ArchipelagoITEMSANITYContent.h",
     },
 }
 
@@ -86,3 +156,4 @@ class TestContentFreshness(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

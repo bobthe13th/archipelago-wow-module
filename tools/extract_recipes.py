@@ -78,8 +78,14 @@ def _expansion_tag(required_skill_rank: int) -> str:
 def extract() -> dict:
     rules = load_exclusion_rules()
     spell_to_skill = parse_skill_line_abilities()
+    # RequiredLevel (M4.11.1 Task 12): the recipe ITEM's own real
+    # item_template.RequiredLevel -- distinct from RequiredSkillRank (the
+    # profession-tier gate this query already selected for _expansion_tag).
+    # No new join needed, since this query already reads item_template
+    # directly; consumed by Zone Leveler's whole_game_scaled filter
+    # (locations.py) the same way Itemsanity's own RequiredLevel is.
     rows = run_query(f"""
-        SELECT entry, name, RequiredSkillRank,
+        SELECT entry, name, RequiredSkillRank, RequiredLevel,
                spellid_1, spelltrigger_1, spellid_2, spelltrigger_2,
                spellid_3, spelltrigger_3, spellid_4, spelltrigger_4,
                spellid_5, spelltrigger_5
@@ -102,11 +108,11 @@ def extract() -> dict:
     best_row_by_spell: dict[int, tuple] = {}
     for row in rows:
         row_dict = {
-            "spellid_1": row[3], "spelltrigger_1": row[4],
-            "spellid_2": row[5], "spelltrigger_2": row[6],
-            "spellid_3": row[7], "spelltrigger_3": row[8],
-            "spellid_4": row[9], "spelltrigger_4": row[10],
-            "spellid_5": row[11], "spelltrigger_5": row[12],
+            "spellid_1": row[4], "spelltrigger_1": row[5],
+            "spellid_2": row[6], "spelltrigger_2": row[7],
+            "spellid_3": row[8], "spelltrigger_3": row[9],
+            "spellid_4": row[10], "spelltrigger_4": row[11],
+            "spellid_5": row[12], "spelltrigger_5": row[13],
         }
         taught_spell = _pick_taught_spell(row_dict)
         if taught_spell is None:
@@ -114,11 +120,11 @@ def extract() -> dict:
         entry_int = int(row[0])
         existing = best_row_by_spell.get(taught_spell)
         if existing is None or entry_int < existing[0]:
-            best_row_by_spell[taught_spell] = (entry_int, row[1], int(row[2]), taught_spell)
+            best_row_by_spell[taught_spell] = (entry_int, row[1], int(row[2]), taught_spell, int(row[3]))
 
     locations, items = [], []
     for taught_spell in sorted(best_row_by_spell):
-        entry_int, name, required_skill_rank, _ = best_row_by_spell[taught_spell]
+        entry_int, name, required_skill_rank, _, required_level = best_row_by_spell[taught_spell]
         if not name or is_denylisted(name, rules):
             continue
 
@@ -138,7 +144,16 @@ def extract() -> dict:
         locations.append({
             "name": f"{recipe_name} (#{entry_int})",
             "location_id": _LOCATION_ID_BASE + entry_int,
-            "trigger": {"kind": "learn_spell", "spell_id": taught_spell},
+            # min_level: real item_template.RequiredLevel of the recipe ITEM
+            # that teaches this spell (M4.11.1 Task 12) -- distinct from
+            # required_skill_rank (profession-tier gate, drives
+            # _expansion_tag above). Lives in `trigger`, not `tags`, same
+            # placement extract_quest_rewards.py's own min_level/zone_id
+            # already use -- TAGS is dict[str, frozenset[str]]-only
+            # (generate_content.py's export_tags emission), TRIGGERS keeps
+            # the raw trigger dict verbatim. Consumed by Zone Leveler's
+            # whole_game_scaled filter (locations.py).
+            "trigger": {"kind": "learn_spell", "spell_id": taught_spell, "min_level": required_level},
             "tags": {"profession": [profession], "expansion": [expansion]},
         })
         items.append({

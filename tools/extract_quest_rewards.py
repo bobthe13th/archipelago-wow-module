@@ -4,11 +4,13 @@ Run this to regenerate content/quest_rewards.yaml; never hand-edit that file."""
 from __future__ import annotations
 
 import pathlib
-from typing import Optional
 
 import yaml
 
-from db_extract import run_query, is_denylisted, load_exclusion_rules, parse_map_expansions
+from db_extract import (
+    run_query, is_denylisted, load_exclusion_rules, parse_map_expansions, parse_area_zone_ids,
+    parse_area_names,
+)
 
 _LOCATION_ID_BASE = 1_000_000
 _ITEM_ID_BASE = 1_750_000
@@ -56,18 +58,23 @@ _ALWAYS_PRESENT_QUEST_IDS = frozenset({
 })
 
 
-def pick_representative_reward(row: dict) -> Optional[int]:
-    """Exactly one reward item per quest, matching this codebase's 1:1
-    location:item invariant -- prefer a fixed reward slot over a
-    player-choice slot, and return None for a quest whose only reward is a
-    spell grant with no item."""
-    for col in _FIXED_REWARD_COLS:
-        if int(row[col]) != 0:
-            return int(row[col])
-    for col in _CHOICE_REWARD_COLS:
-        if int(row[col]) != 0:
-            return int(row[col])
-    return None
+_ALL_REWARD_COLS = _FIXED_REWARD_COLS + _CHOICE_REWARD_COLS
+
+
+def _nonzero_reward_slots(row: dict) -> list[tuple[int, str, int]]:
+    """Every real, non-zero reward slot in this quest row, as (column_index,
+    column_name, reward_item) triples, column_index 0-9 in
+    _ALL_REWARD_COLS order (fixed slots first, matching this project's own
+    QUEST_REWARD_COLUMNS_IN_PREFERENCE_ORDER convention on the C++ side --
+    keep these two orderings in sync if either ever changes). Replaces
+    pick_representative_reward's old "first non-zero wins, one pick only"
+    behavior -- every non-zero slot is now real, separately-tracked content
+    (M4.11.5.0.6), not collapsed to one representative."""
+    return [
+        (i, col, int(row[col]))
+        for i, col in enumerate(_ALL_REWARD_COLS)
+        if int(row[col]) != 0
+    ]
 
 
 def _compute_quest_type_tags(quest_info_id: int, suggested_group_num: int, flags: int) -> list[str]:
@@ -119,15 +126,33 @@ def _load_quest_expansions() -> dict[int, str]:
     return {int(quest_id): map_expansions.get(int(map_id), "vanilla") for quest_id, map_id in rows}
 
 
+def _resolve_zone_id(quest_sort_id: int, area_zone_ids: dict[int, int]) -> int:
+    """quest_template.QuestSortID (`ZoneOrSort` in this codebase's own Quest
+    class) -> a real top-level zone_id, or 0 ("no resolvable real-world
+    zone") -- see parse_area_zone_ids's own docstring (db_extract.py) for
+    the full empirical justification of this mechanism, why 0 is an
+    unambiguous sentinel (AreaTable.dbc's real ids start at 1), and why a
+    negative/zero QuestSortID must NOT be looked up by absolute value (a
+    real id-space collision exists between AreaTable.dbc and QuestSort.dbc:
+    e.g. id 22 is a real AreaTable.dbc zone AND a real QuestSort.dbc
+    category, and this checkout's live DB confirms 7 such collisions among
+    the ids actually seen -- 1, 22, 24, 25, 41, 141, 221)."""
+    if quest_sort_id <= 0:
+        return 0
+    return area_zone_ids.get(quest_sort_id, 0)
+
+
 def extract() -> dict:
     rules = load_exclusion_rules()
     quest_expansions = _load_quest_expansions()
+    area_zone_ids = parse_area_zone_ids()
+    area_names = parse_area_names()
     rows = run_query("""
         SELECT q.ID, q.LogTitle, q.MinLevel, a.PrevQuestID,
                q.RewardItem1, q.RewardItem2, q.RewardItem3, q.RewardItem4,
                q.RewardChoiceItemID1, q.RewardChoiceItemID2, q.RewardChoiceItemID3,
                q.RewardChoiceItemID4, q.RewardChoiceItemID5, q.RewardChoiceItemID6,
-               q.QuestInfoID, q.SuggestedGroupNum, q.Flags
+               q.QuestInfoID, q.SuggestedGroupNum, q.Flags, q.QuestSortID
         FROM quest_template q
         LEFT JOIN quest_template_addon a ON q.ID = a.ID
         WHERE q.LogTitle != ''
@@ -138,7 +163,7 @@ def extract() -> dict:
     for row in rows:
         (quest_id, title, min_level, prev_quest_id,
          ri1, ri2, ri3, ri4, rc1, rc2, rc3, rc4, rc5, rc6,
-         quest_info_id, suggested_group_num, flags) = row
+         quest_info_id, suggested_group_num, flags, quest_sort_id) = row
         if not title or is_denylisted(title, rules):
             continue
 
@@ -147,49 +172,51 @@ def extract() -> dict:
             "RewardChoiceItemID1": rc1, "RewardChoiceItemID2": rc2, "RewardChoiceItemID3": rc3,
             "RewardChoiceItemID4": rc4, "RewardChoiceItemID5": rc5, "RewardChoiceItemID6": rc6,
         }
-        reward_item = pick_representative_reward(row_dict)
-        # M4.7.1.3: a quest with NO real reward item (only a spell grant, or
-        # genuinely nothing) used to be skipped entirely here. It's now a
-        # real, first-class member of this family -- every quest deserves a
-        # checkable location, not just the ones that happened to already
-        # hand out an item. is_filler_reward marks the location distinctly
-        # (present only on these rows; absent, not False, on every other
-        # row) so a future consumer (e.g. an M4.8-style tag dimension) can
-        # tell the two cases apart without re-deriving it from the item id.
-        is_filler_reward = reward_item is None
-        if is_filler_reward:
-            reward_item = _FILLER_ITEM_ENTRY
-
+        slots = _nonzero_reward_slots(row_dict)
         quest_id_int = int(quest_id)
-        location_name = f"Quest: {title} Reward (#{quest_id_int})"
-        item_name = f"Quest Reward: {title} (#{quest_id_int})"
-        trigger = {
-            "kind": "quest_reward",
-            "quest_id": quest_id_int,
-            "min_level": int(min_level),
-            "prev_quest_id": int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None,
-        }
-        if is_filler_reward:
-            trigger["is_filler_reward"] = True
-
+        zone_id = _resolve_zone_id(int(quest_sort_id), area_zone_ids)
         type_tags = _compute_quest_type_tags(int(quest_info_id), int(suggested_group_num), int(flags))
         expansion = quest_expansions.get(quest_id_int, "vanilla")
+        tags = {"type": type_tags, "expansion": [expansion]}
+        if zone_id in area_names:
+            tags["area"] = [area_names[zone_id]]
+        prev_quest_id_value = int(prev_quest_id) if prev_quest_id not in (None, "", "0", "NULL") else None
 
-        loc_dict = {
-            "name": location_name,
-            "location_id": _LOCATION_ID_BASE + quest_id_int,
-            "trigger": trigger,
-            "tags": {"type": type_tags, "expansion": [expansion]},
-        }
-        if quest_id_int in _ALWAYS_PRESENT_QUEST_IDS:
-            loc_dict["always_present"] = True
-        locations.append(loc_dict)
+        # M4.11.5.0.6: a quest with zero real reward slots still gets exactly
+        # one location (column_index 0, RewardItem1, is_filler_reward) --
+        # unchanged from this family's pre-split behavior.
+        if not slots:
+            slots = [(0, "RewardItem1", _FILLER_ITEM_ENTRY)]
+            is_filler_reward = True
+        else:
+            is_filler_reward = False
 
-        items.append({
-            "name": item_name,
-            "item_id": _ITEM_ID_BASE + quest_id_int,
-            "delivery": {"kind": "mail", "wow_item_entry": reward_item},
-        })
+        for column_index, column, reward_item in slots:
+            location_id = _LOCATION_ID_BASE + quest_id_int * 10 + column_index
+            item_id = _ITEM_ID_BASE + quest_id_int * 10 + column_index
+            suffix = "" if len(slots) == 1 else f" [{column}]"
+            trigger = {
+                "kind": "quest_reward", "quest_id": quest_id_int, "column_index": column_index,
+                "min_level": int(min_level), "prev_quest_id": prev_quest_id_value,
+            }
+            if is_filler_reward:
+                trigger["is_filler_reward"] = True
+
+            loc_dict = {
+                "name": f"Quest: {title} Reward (#{quest_id_int}){suffix}",
+                "location_id": location_id,
+                "trigger": trigger,
+                "tags": tags,
+            }
+            if quest_id_int in _ALWAYS_PRESENT_QUEST_IDS:
+                loc_dict["always_present"] = True
+            locations.append(loc_dict)
+
+            items.append({
+                "name": f"Quest Reward: {title} (#{quest_id_int}){suffix}",
+                "item_id": item_id,
+                "delivery": {"kind": "mail", "wow_item_entry": reward_item},
+            })
 
     return {"family": "quest_rewards", "locations": locations, "items": items, "constants": {}}
 
