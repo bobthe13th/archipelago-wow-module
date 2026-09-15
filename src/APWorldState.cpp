@@ -17,28 +17,27 @@ using json = nlohmann::json;
 
 namespace
 {
-    // Sec8's row_id BIGINT column snapshots exactly one table's worth of
-    // PK per row -- apply/restore need to know which real column that
-    // BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
-    // <pk column> = ?`. creature_template (PK `entry`) and creature
-    // (PK `guid`) are wired up as of M5.0/M5.1.0, game_weather
-    // (PK `zone`) as of M5.6.0, creature_template_model as of M5.6.2 (composite key, caveat below),
-    // creature_template_addon as of M5.6.3 (genuine single-column PK), and gameobject_template
-    // as of M5.6.4 (genuine single-column PK) -- extend this map, one line per table, the moment
-    // a later milestone's category snapshots a new single-PK table. IMPORTANT: creature_template_model has a COMPOSITE primary
-    // key (CreatureID, Idx) in the schema, but registering CreatureID alone is ONLY
-    // SAFE because M5.6.2's extraction step (in a separate Python repository) restricts
-    // candidates to creatures with exactly one creature_template_model row -- for that
-    // specific subset, CreatureID alone uniquely identifies the one row. This map has
-    // no way to express "single-column PK for restricted subset only" -- the safety
-    // boundary lives entirely in the Python layer, not here. A future developer reusing
-    // creature_template_model for another purpose (without the single-row restriction)
-    // could silently corrupt data. See M5.6.2's Global Constraints for context.
-    // Composite-keyed tables without such restrictions (npc_vendor, the loot templates --
-    // Sec8's own documented caveat) need a different resolution entirely and are out of
-    // scope until whichever milestone first touches one;
-    // Apply()/RestoreAllSnapshottedRows() below both log and skip any row
-    // for a table not in this map, rather than guessing a column name.
+    // Sec8's row_id BIGINT column snapshots exactly one table's worth of PK per row -- apply/restore need
+    // to know which real column that BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
+    // <pk column> = ?`. Extend this map, one line per table, the moment a later milestone's category
+    // snapshots a new single-PK table. Apply()/RestoreAllSnapshottedRows() below both log and skip any
+    // row for a table not in this map, rather than guessing a column name.
+    //
+    // Tables wired up so far: creature_template (PK `entry`, M5.0), creature (PK `guid`, M5.1.0),
+    // game_weather (PK `zone`, M5.6.0), creature_template_model (PK `CreatureID`, M5.6.2 -- composite
+    // key, see caveat below), creature_template_addon (PK `entry`, M5.6.3), and gameobject_template
+    // (PK `entry`, M5.6.4). Composite-keyed tables without a single-row-per-key restriction (npc_vendor,
+    // the loot templates -- Sec8's own documented caveat) need a different resolution entirely and are
+    // out of scope until whichever milestone first touches one.
+    //
+    // IMPORTANT composite-key caveat: creature_template_model has a COMPOSITE primary key (CreatureID,
+    // Idx) in the schema, but registering CreatureID alone here is ONLY SAFE because M5.6.2's extraction
+    // step (in a separate Python repository) restricts candidates to creatures with exactly one
+    // creature_template_model row -- for that specific subset, CreatureID alone uniquely identifies the
+    // one row. This map has no way to express "single-column PK for a restricted subset only" -- the
+    // safety boundary lives entirely in the Python layer, not here. A future developer reusing
+    // creature_template_model for another purpose (without the single-row restriction) could silently
+    // corrupt data. See M5.6.2's Global Constraints for context.
     std::unordered_map<std::string, std::string> const PK_COLUMN_BY_TABLE = {
         {"creature_template", "entry"},
         {"creature", "guid"},
