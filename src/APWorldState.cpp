@@ -22,7 +22,8 @@ namespace
     // BIGINT maps back onto for a plain `UPDATE <table> SET ... WHERE
     // <pk column> = ?`. creature_template (PK `entry`) and creature
     // (PK `guid`) are wired up as of M5.0/M5.1.0, game_weather
-    // (PK `zone`) as of M5.6.0, and creature_template_model as of M5.6.2 -- extend
+    // (PK `zone`) as of M5.6.0, creature_template_model as of M5.6.2 (composite key, caveat below),
+    // and creature_template_addon as of M5.6.3 (genuine single-column PK) -- extend
     // this map, one line per table, the moment a later milestone's category snapshots
     // a new single-PK table. IMPORTANT: creature_template_model has a COMPOSITE primary
     // key (CreatureID, Idx) in the schema, but registering CreatureID alone is ONLY
@@ -43,6 +44,7 @@ namespace
         {"creature", "guid"},
         {"game_weather", "zone"},
         {"creature_template_model", "CreatureID"},
+        {"creature_template_addon", "entry"},
     };
 }
 
